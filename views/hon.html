@@ -1,0 +1,44 @@
+<div class="container-fluid">
+<hr class="bg-silver border-2 border-top border-silver">
+<div class="row">
+<div class="col">
+    <div class="media">
+        <a href="/user/{{feed.PubKeyAddress}}"><img class="align-self-start mr-3" 
+                src="{%static 'img/ghost_background_black@1x.png'%}"></a>
+        <div class="media-body">
+            <div class="container-fluid pl-0">
+                <div class="row pb-1">
+                    <div class="col">
+                        <b>{{feed.GhostNickname}}</b>
+                        <small class="text-muted">@{{feed.Time|ConvertToDate}}</small><br>
+                        {{feed.FeedMsg}}<br>
+                    </div>
+                </div>
+                {% if feed.Filename %}
+                <div class="row pb-1">
+                    <div class="col">
+                    <img src="/media/{{feed.Filename}}"  class="rounded mx-auto d-block" 
+                                                            style="width:100%;object-fit:cover;">
+                    </div>
+                </div>
+                {% endif %}
+                <div class="row no-gutters">
+                    <div class="col-sm">
+                        <img src="{%static 'img/reply.png'%}">
+                    </div>
+                    <div class="col-sm">
+                        <img src="{%static 'img/re.png'%}">
+                    </div>
+                    <div class="col-sm">
+                        <img src="{%static 'img/heart.png'%}">
+                    </div>
+                    <div class="col-sm">
+                        <img src="{%static 'img/share.png'%}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>

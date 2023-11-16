@@ -1,0 +1,113 @@
+<!-- 
+<menubar class="menubar">
+    <div class="material-icons menubar-toggler"><a href="">menu</a></div>
+    <div class="menubar-logo">
+        <img src="static/img/ghost_background_black@1x.png" width="40">
+    </div>
+    <div class="menubar-brand">
+        <a href="/"> <b>GhostWebService</b></a>
+    </div>
+    <div class="menubar-container">
+        <form>
+            <div class="input-set">
+                <input type="text" class="menubar-search" placeholder="search" aria-label="Username"
+                    aria-describedby="basic-addon1">
+            </div>
+        </form>
+    </div>
+    <div class="menubar-nav">
+        <ul class="menubar-items">
+            <li class="menubar-item"> <a class="menu-link" href="javascript:void(0)"
+                    onclick="ClickLoadPage('hons')">Hons</a> </li>
+            <li class="menubar-item"> <a class="menu-link" href="javascript:void(0)"
+                    onclick="ClickLoadPage('blockscan')">GhostBlock Scan</a> </li>
+        </ul>
+    </div>
+    <div class="menubar-nav-right">
+        <ul class="menubar-items">
+            <li class="menubar-item"> <a class="menu-link" href="javascript:void(0)"
+                    onclick="ClickLoadPage('signin')">SignIn</a> </li>
+            <li class="menubar-item"> <a class="menu-link" href="javascript:void(0)"
+                    onclick="ClickLoadPage('signup')">SignUp</a> </li>
+        </ul>
+    </div>
+</menubar>
+-->
+<!-- 네비게이션바 -->
+<nav id="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+    <div class="container">
+        <div class="menubar-logo">
+            <img src="static/img/ghost_background_black@1x.png" width="40">
+        </div>
+        <a class="navbar-brand handcursor" onclick="ClickLoadPage('main', false)">
+            <b>GhostWebService</b></a>
+        <!--<button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span
+            class="navbar-toggler-icon"></span> </button>-->
+        <div class="material-icons navbar-toggler ml-auto"><a href="javascript:void(0)" onclick="NavExpended()">menu</a>
+        </div>
+        <div class="collapse navbar-collapse flex-grow-0" id="navbarNav">
+            <ul class="navbar-nav">
+                <!--<li class="nav-item ">
+                <form class="container-fluid">
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1"><img class='img-fluid'
+                                src="static/img/search.png"></span>
+                        <input type="text" class="form-control" placeholder="Text" aria-label="Username"
+                            aria-describedby="basic-addon1">
+                    </div>
+                </form>
+            </li>
+        -->
+                <li class="nav-item ">
+                    <a class="nav-link" href="javascript:void(0)" 
+                    onclick="ClickLoadPage('doc', true)">Docs</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="javascript:void(0)" 
+                    onclick="ClickLoadPage('service', true)">Services</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="javascript:void(0)"
+                        onclick="ClickLoadPage('blockscan', true)">BlockChain</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">Download ▾</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="javascript:void(0)"
+                            onclick="ClickLoadPage('download_win', true)">Windows</a>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                            onclick="ClickLoadPage('download', true)">Others</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse flex-grow-0" style="margin-left:auto;" id="navbarNavRight">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">GhostWebAppStore ▾</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="javascript:void(0)"
+                            onclick="ClickLoadPage('webappstore', true)"><b>WebApp List</b></a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="ClickLoadPage('hons', true)">Hons
+                            (SNS)</a>
+                        <a class="dropdown-item" href="javascript:void(0)"
+                            onclick="ClickLoadPage('diffusion', true)">Generate Image</a>
+                    </div>
+                </li>
+            </ul>
+            <!--
+            <ul class="navbar-nav" id="sessioninfo">
+                <li class="nav-item "> <a class="nav-link" href="javascript:void(0)"
+                        onclick="ClickLoadPage('signin', true)">Sign
+                        In</a> </li>
+                <li class="nav-item "> <a class="nav-link" href="javascript:void(0)"
+                        onclick="ClickLoadPage('signup', true)">Sign
+                        Up</a> </li>
+            </ul>
+            -->
+        </div>
+    </div>
+</nav>

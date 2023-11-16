@@ -1,0 +1,128 @@
+<div class="container my-3">
+    <div class="row">
+        <div class="col">
+            <div class="twPc-div">
+                <style>
+                    .bg-profile {
+                        background-image: url("{{mainImgUrl}}");
+                    }
+                </style>
+                <a class="twPc-bg twPc-block bg-profile"></a>
+                <div>
+                    <div class="twPc-button">
+                        <!-- Twitter Button | you can get from: https://about.twitter.com/tr/resources/buttons#follow -->
+                        <button type="button" class="btn btn-primary btn-sm">팔로우</button>
+                    </div>
+
+                    <a href="/user/{{userInfo.PubKeyAddress}}" class="twPc-avatarLink">
+                        <img alt="{{userInfo.GhostNickname}}" src="static/img/ghost_background_black.png"
+                            class="twPc-avatarImg">
+                    </a>
+
+                    <div class="twPc-divUser">
+                        <div class="twPc-divName" id="nickname"> </div>
+                        <span id="email"> </span>
+                    </div>
+
+                    <div class="twPc-divStats">
+                        <ul class="twPc-Arrange">
+                            <li class="twPc-ArrangeSizeFit">
+                                <a href="#" title="9.840 Tweet">
+                                    <span class="twPc-StatValue">4</span>
+                                    <span class="twPc-StatLabel twPc-block">Feeds</span>
+                                </a>
+                            </li>
+                            <li class="twPc-ArrangeSizeFit">
+                                <a href="#" title="885 Following">
+                                    <span class="twPc-StatValue">7</span>
+                                    <span class="twPc-StatLabel twPc-block">NFT</span>
+                                </a>
+                            </li>
+                            <li class="twPc-ArrangeSizeFit">
+                                <a href="#" title="1.810 Followers">
+                                    <span class="twPc-StatValue">7</span>
+                                    <span class="twPc-StatLabel twPc-block">NFT Market</span>
+                                </a>
+                            </li>
+                            <li class="twPc-ArrangeSizeFit">
+                                <a href="#" onclick="ClickLoadPage('uploadhon', false)">
+                                +
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col"><br>
+            <nav class="nav nav-pills nav-justified">
+                <a class="nav-item nav-link active" id="feed-tab" data-toggle="tab" href="#feed" role="tab"
+                    aria-controls="feed" href="#">
+                    <h5>Feeds</h5>
+                </a>
+                <a class="nav-item nav-link" id="nft-tab" data-toggle="tab" href="#nft" role="tab" aria-controls="nft"
+                    href="#">
+                    <h5>NFTs</h5>
+                </a>
+                <!--<a class="nav-item nav-link" id="market-tab" data-toggle="tab" href="#market" role="tab" aria-controls="market" href="#"><h5>Market</h5></a>-->
+            </nav>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="feed" role="tabpanel" aria-labelledby="feed-tab">
+                </div>
+                <div class="tab-pane fade" id="nft" role="tabpanel" aria-labelledby="nft-tab">
+                    <div class="container-fluid">
+                        <hr class="bg-silver border-2 border-top border-silver">
+                        <div class="row row-cols-1 row-cols-md-3 g-3">
+                            <div class="col mb-4">
+                                <div class="card h-150">
+                                    <a href="/nfts/{{nft.DataTxId|GetBase58DataTxId}}/">
+                                        <img src="/media/{{nft.Filename}}" class="card-img-top h-30" alt="..."
+                                            style="width:100%;height:200px;object-fit:cover;">
+                                    </a>
+                                    <div class="card-body">
+                                        <p class="card-text"><b>{{nft.Title}}</b>
+                                            <br>{{nft.Content}}
+                                        </p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <small class="text-muted">#{{nft.Category|GetCategoryString}} ·
+                                            {{nft.Time|ConvertToDate}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+
+                <!--<div class="tab-pane fade" id="market" role="tabpanel" aria-labelledby="market-tab">  
+                <div class="container-fluid">
+                    <hr class="bg-silver border-2 border-top border-silver">          
+                    <div class="row row-cols-1 row-cols-md-3 g-3">
+                        {% if nftMarketList %}
+                        {% for nftContract in nftMarketList%}
+                        <div class="col mb-4">
+                            <div class="card h-100">
+                                <img src="/media/{{nftContract.Filename}}" class="card-img-top h-30" alt="..."  style="width:100%;height:200px;object-fit:cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{nftContract.Title}}</h5>
+                                    <p class="card-text"><b>{{nftContract.ContractFee|GetGhostCoin}} GTC</b></p>
+                                    <a href="/nft_market/{{nftContract.TxId|GetBase58DataTxId}}/" class="btn btn-primary">NFT Id #{{nftContract.Id}}</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>-->
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-import { SHA256 } from "../libs/sha256.js";
+import { SHA256 } from "./libs/sha256.js";
 const SigninTxId = "7Vsfok3Cfkoq2IMGuOvhWvFFnXTDxDn2Wt1XDD22Os4=";
 export class Signin {
     constructor(blockStore, session) {

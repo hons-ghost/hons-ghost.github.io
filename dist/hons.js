@@ -1,4 +1,4 @@
-import { elapsedTime } from "../utils.js";
+import { elapsedTime } from "./utils.js";
 const HonsTxId = "dcRfHIj75kpsGhu/fZq/8LrnQDIF4qIJbJJz3YM4XiA=";
 const HonTxId = "gWKlQ+lzus3I/m/K9qGm4VICaBr9byPTyL83E+ef4gA=";
 export class Hons {

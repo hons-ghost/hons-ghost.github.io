@@ -1,5 +1,4 @@
 import { BlockStore } from "./store.js";
-import { Socket } from "./libs/socket.js";
 import { HonDetail } from "./hondetail.js";
 import { Hons } from "./hons.js";
 import { Hon } from "./hon.js";
@@ -7,42 +6,20 @@ import { NewHon } from "./newhon.js";
 import { Signup } from "./signup.js";
 import { Signin } from "./signin.js";
 import { Session } from "./session.js";
-import { GhostWebUser } from "./models/param.js";
 import { UploadHon } from "./uploadhon.js";
-
 const blockStore = new BlockStore();
 const session = new Session();
-
-interface IPage {
-    Run(str: string): boolean; 
-    Release(): void;
-}
-
-type FuncMap = { [key: string]: IPage };
-type UrlMap = { [key: string]: string; };
-declare global {
-    interface Window {
-        ClickLoadPage: (key: string, from: boolean, ...arg: string[]) => void;
-        NavExpended: () => void;
-        MasterAddr: string;
-        MasterWsAddr: string;
-        MasterNode: GhostWebUser;
-        NodeCount: number;
-    }
-}
-
 const hons = new Hons(blockStore, session);
-const funcMap: FuncMap = {
+const funcMap = {
     "signin": new Signin(blockStore, session),
     "signup": new Signup(blockStore, session),
     "hon": new Hon(blockStore, session),
     "hons": hons,
-    "hondetail": new HonDetail(blockStore,session),
+    "hondetail": new HonDetail(blockStore, session),
     "newhon": new NewHon(blockStore, session),
     "uploadhon": new UploadHon(blockStore, session),
 };
-
-const urlToFileMap: UrlMap = {
+const urlToFileMap = {
     "signin": "views/signin.html",
     "signup": "views/signup.html",
     "hons": "views/hons.html",
@@ -51,84 +28,76 @@ const urlToFileMap: UrlMap = {
     "newhon": "views/newhon.html",
     "uploadhon": "views/uploadhon.html",
 };
-
 const getPageIdParam = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const pageid = urlParams.get("pageid");
     const key = (pageid == null) ? "hons" : pageid;
-    if (beforPage == undefined) beforPage = key;
+    if (beforPage == undefined)
+        beforPage = key;
     return key;
-}
-
-let beforPage: string;
-window.ClickLoadPage = (key: string, fromEvent: boolean, ...args: string[]) => {
+};
+let beforPage;
+window.ClickLoadPage = (key, fromEvent, ...args) => {
     //if (getPageIdParam() == key) return;
     session.DrawHtmlSessionInfo();
-
     const url = urlToFileMap[key];
-    const state = { 
+    const state = {
         'url': window.location.href,
         'key': key,
         'fromEvent': fromEvent,
         'args': args
     };
-    console.log(`page change : ${beforPage} ==> ${key}`)
+    console.log(`page change : ${beforPage} ==> ${key}`);
     const backUpBeforPage = beforPage;
     beforPage = key;
-
     history.pushState(state, "login", "./?pageid=" + key + args);
     fetch(url)
         .then(response => { return response.text(); })
-        .then(data => { (document.querySelector("contents") as HTMLDivElement).innerHTML = data; })
+        .then(data => { document.querySelector("contents").innerHTML = data; })
         .then(() => {
-            const beforePageObj = funcMap[backUpBeforPage];
-            if (beforePageObj != undefined) {
-                beforePageObj.Release();
-            }
-
-            const pageObj = funcMap[key];
-            if (pageObj != undefined) {
-                pageObj.Run(window.MasterAddr);
-            }
-        });
+        const beforePageObj = funcMap[backUpBeforPage];
+        if (beforePageObj != undefined) {
+            beforePageObj.Release();
+        }
+        const pageObj = funcMap[key];
+        if (pageObj != undefined) {
+            pageObj.Run(window.MasterAddr);
+        }
+    });
     if (fromEvent) {
         window.NavExpended();
     }
-    console.log(fromEvent)
+    console.log(fromEvent);
 };
 let expendFlag = false;
 window.NavExpended = () => {
     let view = (expendFlag == false) ? "block" : "none";
-    (document.querySelector("#navbarNav") as HTMLDivElement).style.display = view;
-    (document.querySelector("#navbarNavRight") as HTMLDivElement).style.display = view;
+    document.querySelector("#navbarNav").style.display = view;
+    document.querySelector("#navbarNavRight").style.display = view;
     expendFlag = !expendFlag;
 };
-
 window.onpopstate = (event) => {
     //window.ClickLoadPage(event.state['key'], event.state['fromEvent'], event.state['args'])
     includeContentHTML(window.MasterAddr);
 };
-
-const parseResponse = (nodes: GhostWebUser[]) => {
+const parseResponse = (nodes) => {
     let randIdx = Math.floor(Math.random() * nodes.length);
     window.NodeCount = nodes.length;
     console.log(nodes);
     return nodes[randIdx];
 };
-
-const loadNodesHtml = (node: GhostWebUser) => {
+const loadNodesHtml = (node) => {
     window.MasterNode = node;
     window.MasterAddr = `http://${node.User.ip.Ip}:${node.User.ip.Port}`;
     window.MasterWsAddr = `ws://${node.User.ip.Ip}:${node.User.ip.Port}`;
     return window.MasterAddr;
 };
-const includeHTML = (id: string, filename: string) => {
+const includeHTML = (id, filename) => {
     window.addEventListener('load', () => fetch(filename)
         .then(response => { return response.text(); })
-        .then(data => { (document.querySelector(id) as HTMLDivElement).innerHTML = data; }));
-}
-
-const includeContentHTML = (master: string) => {
+        .then(data => { document.querySelector(id).innerHTML = data; }));
+};
+const includeContentHTML = (master) => {
     session.DrawHtmlSessionInfo();
     const key = getPageIdParam();
     const filename = urlToFileMap[key];
@@ -136,18 +105,17 @@ const includeContentHTML = (master: string) => {
     beforPage = key;
     fetch(filename)
         .then(response => { return response.text(); })
-        .then(data => { (document.querySelector("contents") as HTMLDivElement).innerHTML = data; })
+        .then(data => { document.querySelector("contents").innerHTML = data; })
         .then(() => {
-            const beforePageObj = funcMap[backUpBeforPage];
-            if (beforePageObj != undefined) {
-                beforePageObj.Release();
-            }
-
-            const pageObj = funcMap[key];
-            if (pageObj != undefined) {
-                pageObj.Run(master);
-            }
-        });
-}
-
-export { includeContentHTML, includeHTML, loadNodesHtml, parseResponse }
+        const beforePageObj = funcMap[backUpBeforPage];
+        if (beforePageObj != undefined) {
+            beforePageObj.Release();
+        }
+        const pageObj = funcMap[key];
+        if (pageObj != undefined) {
+            pageObj.Run(master);
+        }
+    });
+};
+export { includeContentHTML, includeHTML, loadNodesHtml, parseResponse };
+//# sourceMappingURL=ghostweb.js.map

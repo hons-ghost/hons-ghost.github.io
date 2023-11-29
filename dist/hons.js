@@ -1,6 +1,5 @@
 import { elapsedTime } from "./utils.js";
-const HonsTxId = "dcRfHIj75kpsGhu/fZq/8LrnQDIF4qIJbJJz3YM4XiA=";
-const HonTxId = "gWKlQ+lzus3I/m/K9qGm4VICaBr9byPTyL83E+ef4gA=";
+import { HonTxId, HonsTxId } from "./models/tx.js";
 export class Hons {
     constructor(blockStore, session) {
         this.blockStore = blockStore;
@@ -26,7 +25,16 @@ export class Hons {
         }
         return [];
     }
+    drawHtmlConnectMaster() {
+        const bodyTag = document.getElementById('connect');
+        if (bodyTag == null)
+            return;
+        console.log(window.MasterNode);
+        bodyTag.innerHTML = `<b>Connected Master</b> - 
+        ${window.MasterNode.User.Nickname}`;
+    }
     drawHtmlHon(ret) {
+        const uniqId = ret.id + ret.time.toString();
         const feeds = document.getElementById("feeds");
         if (feeds == null)
             return;
@@ -34,20 +42,39 @@ export class Hons {
         <br>
             <div class="card">
                 <div class="card-header"> 
-                    <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${ret.Email}')">
-                    <strong class="me-auto">${ret.Id}</strong>
+                    <span id="${uniqId}" class="m-1"></span>
+                    <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${ret.email}')">
+                    <strong class="me-auto">${ret.id}</strong>
                     </a>
-                    <small> ${elapsedTime(Number(ret.Time))}</small>
+                    <small> ${elapsedTime(Number(ret.time))}</small>
                 </div>
                 <div class="card-body">
-                    ${ret.Content}
+                    ${ret.content}
                 </div>
             </div>
         `;
+        const addrProfile = window.MasterAddr + "/glambda?txid=" +
+            encodeURIComponent(HonTxId) + "&table=profile&key=";
+        fetch(addrProfile + ret.email)
+            .then((response) => response.json())
+            .then((result) => {
+            if ("file" in result) {
+                fetch("data:image/jpg;base64," + result.file)
+                    .then(res => res.blob())
+                    .then(img => {
+                    const imageUrl = URL.createObjectURL(img);
+                    const imageElement = new Image();
+                    imageElement.src = imageUrl;
+                    imageElement.className = 'profile-sm';
+                    const container = document.getElementById(uniqId);
+                    container.appendChild(imageElement);
+                });
+            }
+        });
     }
     RequestHon(keys, callback) {
         const addr = this.m_masterAddr + "/glambda?txid=" +
-            encodeURIComponent(HonTxId) + "&Table=feeds&key=";
+            encodeURIComponent(HonTxId) + "&table=feeds&key=";
         keys.forEach((key) => {
             fetch(addr + atob(key))
                 .then((response) => response.json())
@@ -59,7 +86,7 @@ export class Hons {
         const masterAddr = this.m_masterAddr;
         const user = this.m_session.GetHonUser();
         const addr = `
-        ${masterAddr}/glambda?txid=${encodeURIComponent(HonsTxId)}&Table=feeds&Start=0&Count=${n}`;
+        ${masterAddr}/glambda?txid=${encodeURIComponent(HonsTxId)}&table=feeds&start=0&count=${n}`;
         fetch(addr)
             .then((response) => response.json())
             .then((result) => this.honsResult(result))
@@ -71,6 +98,7 @@ export class Hons {
     }
     Run(masterAddr) {
         this.m_masterAddr = masterAddr;
+        this.drawHtmlConnectMaster();
         this.RequestHons(5, this.drawHtmlHon);
         return true;
     }

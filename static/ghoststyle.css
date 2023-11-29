@@ -8,6 +8,10 @@ footer {
     */
     width: 100%;
 }
+.profile-sm {
+    width:40px;
+    border-radius: 70%;
+}
 a, a:hover, a:focus {
     text-decoration: none;
     color: inherit;

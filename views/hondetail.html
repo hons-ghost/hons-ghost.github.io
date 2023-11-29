@@ -14,18 +14,21 @@
                         <button type="button" class="btn btn-primary btn-sm">팔로우</button>
                     </div>
 
-                    <a href="/user/{{userInfo.PubKeyAddress}}" class="twPc-avatarLink">
+                    <a href="/user/{{userInfo.PubKeyAddress}}" class="twPc-avatarLink" id="bg-profile">
                         <img alt="{{userInfo.GhostNickname}}" src="static/img/ghost_background_black.png"
                             class="twPc-avatarImg">
                     </a>
 
                     <div class="twPc-divUser">
                         <div class="twPc-divName" id="nickname"> </div>
-                        <span id="email"> </span>
+                        <span id="email"> </span><br>
+                        <span><a href="#" onclick="ClickLoadPage('profile', false)">
+                                +</a></span>
                     </div>
 
                     <div class="twPc-divStats">
                         <ul class="twPc-Arrange">
+                            <!--
                             <li class="twPc-ArrangeSizeFit">
                                 <a href="#" title="9.840 Tweet">
                                     <span class="twPc-StatValue">4</span>
@@ -48,6 +51,7 @@
                                 <a href="#" onclick="ClickLoadPage('uploadhon', false)">
                                 +
                             </li>
+                            -->
                         </ul>
                     </div>
                 </div>
@@ -56,6 +60,7 @@
     </div>
     <div class="row">
         <div class="col"><br>
+            <!--
             <nav class="nav nav-pills nav-justified">
                 <a class="nav-item nav-link active" id="feed-tab" data-toggle="tab" href="#feed" role="tab"
                     aria-controls="feed" href="#">
@@ -65,8 +70,9 @@
                     href="#">
                     <h5>NFTs</h5>
                 </a>
-                <!--<a class="nav-item nav-link" id="market-tab" data-toggle="tab" href="#market" role="tab" aria-controls="market" href="#"><h5>Market</h5></a>-->
+                <a class="nav-item nav-link" id="market-tab" data-toggle="tab" href="#market" role="tab" aria-controls="market" href="#"><h5>Market</h5></a>
             </nav>
+        -->
         </div>
     </div>
     <div class="row">

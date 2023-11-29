@@ -1,5 +1,5 @@
 import { SHA256 } from "./libs/sha256.js";
-const SigninTxId = "7Vsfok3Cfkoq2IMGuOvhWvFFnXTDxDn2Wt1XDD22Os4=";
+import { SigninTxId } from "./models/tx.js";
 export class Signin {
     constructor(blockStore, session) {
         this.blockStore = blockStore;
@@ -16,8 +16,8 @@ export class Signin {
     }
     loginResult(ret) {
         console.log(ret);
-        if ("Email" in ret) {
-            this.m_session.SignIn({ Email: ret.Email, Nickname: ret.Id, Password: ret.Password });
+        if ("email" in ret) {
+            this.m_session.SignIn({ Email: ret.email, Nickname: ret.id, Password: ret.password });
             window.ClickLoadPage("main", false);
         }
         else {
@@ -36,12 +36,16 @@ export class Signin {
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(SigninTxId);
         this.m_user.Email = email;
         this.m_user.Password = password;
+        const formData = new FormData();
+        formData.append("key", email);
+        formData.append("email", email);
+        formData.append("password", password);
+        console.log(JSON.stringify({ key: email, Email: email, password: password }));
         fetch(addr, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ key: email, Email: email, password: password })
+            cache: "no-cache",
+            headers: {},
+            body: formData
         })
             .then((response) => response.json())
             .then((result) => this.loginResult(result))
@@ -51,7 +55,7 @@ export class Signin {
         this.m_masterAddr = masterAddr;
         const txLink = document.getElementById("txLink");
         txLink.innerHTML = `
-            <a class="handcursor" onclick='ClickLoadPage("txdetail", false, "&txid=${encodeURIComponent(SigninTxId)}")'>
+            <a class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(SigninTxId)}">
                 ${SigninTxId}
             </a> `;
         const btn = document.getElementById("signinBtn");

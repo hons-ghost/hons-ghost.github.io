@@ -1,4 +1,5 @@
 import { BlockStore } from "./store.js";
+import { Socket } from "./libs/socket.js";
 import { HonDetail } from "./hondetail.js";
 import { Hons } from "./hons.js";
 import { Hon } from "./hon.js";
@@ -7,6 +8,7 @@ import { Signup } from "./signup.js";
 import { Signin } from "./signin.js";
 import { Session } from "./session.js";
 import { UploadHon } from "./uploadhon.js";
+import { Profile } from "./profile.js";
 const blockStore = new BlockStore();
 const session = new Session();
 const hons = new Hons(blockStore, session);
@@ -15,18 +17,22 @@ const funcMap = {
     "signup": new Signup(blockStore, session),
     "hon": new Hon(blockStore, session),
     "hons": hons,
+    "main": hons,
     "hondetail": new HonDetail(blockStore, session),
     "newhon": new NewHon(blockStore, session),
     "uploadhon": new UploadHon(blockStore, session),
+    "profile": new Profile(blockStore, session, new Socket),
 };
 const urlToFileMap = {
     "signin": "views/signin.html",
     "signup": "views/signup.html",
+    "main": "views/hons.html",
     "hons": "views/hons.html",
     "hon": "views/hon.html",
     "hondetail": "views/hondetail.html",
     "newhon": "views/newhon.html",
     "uploadhon": "views/uploadhon.html",
+    "profile": "views/profile.html",
 };
 const getPageIdParam = () => {
     const urlParams = new URLSearchParams(window.location.search);

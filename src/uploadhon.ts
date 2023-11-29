@@ -1,7 +1,7 @@
 import { BlockStore } from "./store.js";
 import { Session } from "./session.js";
+import { UploadTxId } from "./models/tx.js";
 
-const UploadTxId = "";
 
 export class UploadHon {
     m_masterAddr: string;

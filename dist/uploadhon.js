@@ -1,4 +1,4 @@
-const UploadTxId = "";
+import { UploadTxId } from "./models/tx.js";
 export class UploadHon {
     constructor(blockStore, session) {
         this.blockStore = blockStore;

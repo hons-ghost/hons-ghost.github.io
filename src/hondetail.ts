@@ -1,7 +1,7 @@
 import { BlockStore } from "./store.js";
 import { HonUser, Session } from "./session.js";
+import { HonDetailTxId, HonTxId } from "./models/tx.js";
 
-const HonDetailTxId ="gWKlQ+lzus3I/m/K9qGm4VICaBr9byPTyL83E+ef4gA=";
 
 export class HonDetail {
     m_masterAddr: string;
@@ -12,10 +12,9 @@ export class HonDetail {
         this.m_session = session;
     }
     drawHtml(ret: any) {
-        console.log(ret);
         const honUser :HonUser = {
-            Email: ret.Email,
-            Nickname: ret.Id,
+            Email: ret.email,
+            Nickname: ret.id,
             Password: ""
         }
         const nicknameTag = document.getElementById('nickname');
@@ -24,19 +23,32 @@ export class HonDetail {
         const emailTag = document.getElementById('email');
         if (emailTag == null) return;
         emailTag.innerHTML = honUser.Email;
-
+        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
+            encodeURIComponent(HonTxId) + "&table=profile&key=";
+        fetch(addrProfile + ret.email)
+            .then((response) => response.json())
+            .then((result) => {
+                if ("file" in result) {
+                    fetch("data:image/jpg;base64," + result.file)
+                        .then(res => res.blob())
+                        .then(img => {
+                            const imageUrl = URL.createObjectURL(img)
+                            const imageElement = new Image()
+                            imageElement.src = imageUrl
+                            imageElement.className = 'twPc-avatarImg';
+                            const container = document.getElementById("bg-profile")
+                            if (container == null) return
+                            container.innerHTML = ""
+                            container.appendChild(imageElement)
+                        })
+                }
+            })
     }
     requestUserInfo(email: string) {
         const masterAddr = this.m_masterAddr;
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(HonDetailTxId);
 
-        fetch(addr, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ Table: "member", key: email })
-        })
+        fetch(addr + "&table=member&key=" + email)
             .then((response) => response.json())
             .then((result) => this.drawHtml(result))
             .catch(() => { console.log("Server에 문제가 생긴듯 합니다;;") });

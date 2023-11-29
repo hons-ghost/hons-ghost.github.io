@@ -9,6 +9,7 @@ import { Signin } from "./signin.js";
 import { Session } from "./session.js";
 import { GhostWebUser } from "./models/param.js";
 import { UploadHon } from "./uploadhon.js";
+import { Profile } from "./profile.js";
 
 const blockStore = new BlockStore();
 const session = new Session();
@@ -37,19 +38,23 @@ const funcMap: FuncMap = {
     "signup": new Signup(blockStore, session),
     "hon": new Hon(blockStore, session),
     "hons": hons,
+    "main": hons,
     "hondetail": new HonDetail(blockStore,session),
     "newhon": new NewHon(blockStore, session),
     "uploadhon": new UploadHon(blockStore, session),
+    "profile": new Profile(blockStore, session, new Socket),
 };
 
 const urlToFileMap: UrlMap = {
     "signin": "views/signin.html",
     "signup": "views/signup.html",
+    "main": "views/hons.html",
     "hons": "views/hons.html",
     "hon": "views/hon.html",
     "hondetail": "views/hondetail.html",
     "newhon": "views/newhon.html",
     "uploadhon": "views/uploadhon.html",
+    "profile": "views/profile.html",
 };
 
 const getPageIdParam = () => {

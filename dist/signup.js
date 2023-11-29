@@ -1,5 +1,5 @@
 import { SHA256 } from "./libs/sha256.js";
-const SignupTxId = "QwUA466vP2SRYLKfvmUghqj4t4a1yVULPIF56e/c48s=";
+import { SignupTxId } from "./models/tx.js";
 export class Signup {
     constructor(blockStore, session) {
         this.blockStore = blockStore;
@@ -34,12 +34,16 @@ export class Signup {
         const inputId = document.getElementById("inputId");
         const id = inputId === null || inputId === void 0 ? void 0 : inputId.value;
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(SignupTxId);
+        const formData = new FormData();
+        formData.append("key", email);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("id", id);
         fetch(addr, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ key: email, Email: email, Password: password, Id: id })
+            cache: "no-cache",
+            headers: {},
+            body: formData
         })
             .then((response) => response.json())
             .then((result) => this.signupResult(result))

@@ -1,6 +1,8 @@
 import { BlockStore } from "./store.js";
 import { HonUser, Session } from "./session.js";
-import { HonDetailTxId, HonTxId } from "./models/tx.js";
+import { HonDetailTxId, HonTxId, NewHonTxId } from "./models/tx.js";
+import { HonEntry } from "./models/param.js";
+import { DrawHtmlHonItem } from "./models/honview.js";
 
 
 export class HonDetail {
@@ -60,13 +62,56 @@ export class HonDetail {
         if (email == null) return null;
         return email;
     }
-
+    drawHtmlHon(ret: HonEntry) {
+        const uniqId = ret.id + ret.time.toString()
+        const feeds = document.getElementById("feeds");
+        if (feeds == null) return;
+        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret.id, ret.email, ret.content, ret.time)
+        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
+            encodeURIComponent(HonTxId) + "&table=profile&key=";
+        fetch(addrProfile + ret.email)
+            .then((response) => response.json())
+            .then((result) => {
+                if ("file" in result) {
+                    fetch("data:image/jpg;base64," + result.file)
+                        .then(res => res.blob())
+                        .then(img => {
+                            const imageUrl = URL.createObjectURL(img)
+                            const imageElement = new Image()
+                            imageElement.src = imageUrl
+                            imageElement.className = 'profile-sm';
+                            const container = document.getElementById(uniqId) as HTMLSpanElement
+                            container.appendChild(imageElement)
+                        })
+                }
+            })
+    }
+    public RequestHon(keys: string[], callback: (h: HonEntry) => void) {
+        const addr = this.m_masterAddr + "/glambda?txid=" + 
+            encodeURIComponent(HonTxId) + "&table=feeds&key=";
+        keys.forEach((key) => {
+            fetch(addr + atob(key))
+                .then((response) => response.json())
+                .then((result)=>callback(result))
+        });
+    }
+    public RequestHons(email: string) {
+        this.m_masterAddr = window.MasterAddr;
+        const masterAddr = this.m_masterAddr;
+        const addr = `
+        ${masterAddr}/glambda?txid=${encodeURIComponent(NewHonTxId)}&table=feedlink&key=${email}`;
+        console.log(addr)
+        fetch(addr)
+            .then((response) => response.json())
+            .then((feedlist) => console.log(feedlist))
+    }
 
     public Run(masterAddr: string): boolean {
         this.m_masterAddr = masterAddr;
         const email = this.getParam();
         if(email == null) return false;
         this.requestUserInfo(email)
+        this.RequestHons(email);
         return true;
     }
 

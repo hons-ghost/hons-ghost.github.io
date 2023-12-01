@@ -35,3 +35,11 @@ export type FetchResult = {
 export type JsonFetchResult = {
     json: string
 }
+export type HonEntry = {
+    email: string,
+    id: string,
+    content: string,
+    time: number,
+    file: string,
+}
+

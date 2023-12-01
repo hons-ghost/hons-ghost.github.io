@@ -1,15 +1,8 @@
 import { BlockStore } from "./store.js";
-import { elapsedTime} from "./utils.js";
 import { Session } from "./session.js";
-import { HonTxId, HonsTxId, NewProfileTxId } from "./models/tx.js";
-
-export type HonEntry = {
-    email: string,
-    id: string,
-    content: string,
-    time: number,
-    file: string,
-}
+import { HonTxId, HonsTxId } from "./models/tx.js";
+import { HonEntry } from "./models/param.js";
+import { DrawHtmlHonItem } from "./models/honview.js";
 
 
 export class Hons {
@@ -49,21 +42,7 @@ export class Hons {
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
-        feeds.innerHTML += `
-        <br>
-            <div class="card">
-                <div class="card-header"> 
-                    <span id="${uniqId}" class="m-1"></span>
-                    <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${ret.email}')">
-                    <strong class="me-auto">${ret.id}</strong>
-                    </a>
-                    <small> ${elapsedTime(Number(ret.time))}</small>
-                </div>
-                <div class="card-body">
-                    ${ret.content}
-                </div>
-            </div>
-        `;
+        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret.id, ret.email, ret.content, ret.time)
         const addrProfile = window.MasterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=profile&key=";
         fetch(addrProfile + ret.email)

@@ -1,9 +1,9 @@
 import { elapsedTime } from "../utils.js";
 export const DrawHtmlHonItem = (uniqId, nickname, email, content, time) => {
     return `
-<div class="container-sm p-2 border-top">
+<div class="container p-2 border-top">
     <div class="row">
-        <div class="col-1 text-center">
+        <div class="col-auto text-center">
                     <span id="${uniqId}" class="m-1"></span>
         </div>
         <div class="col">

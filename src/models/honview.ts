@@ -6,7 +6,7 @@ export const DrawHtmlHonItem = (uniqId: string, nickname: string,
     return `
 <div class="container p-2 border-top">
     <div class="row">
-        <div class="col-1 text-center">
+        <div class="col-auto text-center">
                     <span id="${uniqId}" class="m-1"></span>
         </div>
         <div class="col">

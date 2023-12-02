@@ -1,6 +1,6 @@
 import { BlockStore } from "./store.js";
 import { HonUser, Session } from "./session.js";
-import { HonDetailTxId, HonTxId, NewHonTxId } from "./models/tx.js";
+import { HonDetailTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
 import { HonEntry } from "./models/param.js";
 import { DrawHtmlHonItem } from "./models/honview.js";
 
@@ -86,11 +86,16 @@ export class HonDetail {
                 }
             })
     }
+    honsResult(ret: any): string[] {
+        const keys: string[] = ret.result
+        if (keys.length == 0) return []
+        return keys
+    }
     public RequestHon(keys: string[], callback: (h: HonEntry) => void) {
         const addr = this.m_masterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=feeds&key=";
         keys.forEach((key) => {
-            fetch(addr + atob(key))
+            fetch(addr + key)
                 .then((response) => response.json())
                 .then((result)=>callback(result))
         });
@@ -99,11 +104,11 @@ export class HonDetail {
         this.m_masterAddr = window.MasterAddr;
         const masterAddr = this.m_masterAddr;
         const addr = `
-        ${masterAddr}/glambda?txid=${encodeURIComponent(NewHonTxId)}&table=feedlink&key=${email}`;
-        console.log(addr)
+        ${masterAddr}/glambda?txid=${encodeURIComponent(MyHonsTxId)}&table=feedlink&key=${email}`;
         fetch(addr)
             .then((response) => response.json())
-            .then((feedlist) => console.log(feedlist))
+            .then((result) => this.honsResult(result))
+            .then((feedlist) => this.RequestHon(feedlist, this.drawHtmlHon))
     }
 
     public Run(masterAddr: string): boolean {

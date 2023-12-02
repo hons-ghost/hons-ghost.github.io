@@ -85,7 +85,7 @@ export class Hons {
     Run(masterAddr) {
         this.m_masterAddr = masterAddr;
         this.drawHtmlConnectMaster();
-        this.RequestHons(5, this.drawHtmlHon);
+        this.RequestHons(10, this.drawHtmlHon);
         return true;
     }
     Release() {

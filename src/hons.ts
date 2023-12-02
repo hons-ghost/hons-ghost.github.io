@@ -89,7 +89,7 @@ export class Hons {
     public Run(masterAddr: string): boolean {
         this.m_masterAddr = masterAddr;
         this.drawHtmlConnectMaster()
-        this.RequestHons(5, this.drawHtmlHon);
+        this.RequestHons(10, this.drawHtmlHon);
         return true;
     }
 

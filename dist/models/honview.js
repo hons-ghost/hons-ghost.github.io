@@ -15,7 +15,7 @@ export const DrawHtmlHonItem = (uniqId, nickname, email, content, time) => {
                     <small>@${email} · ${elapsedTime(Number(time))}</small>
                 </div>
                 <div class="row">
-                    <pre>${content}</pre>
+                    <pre style="white-space:pre-wrap;">${content}</pre>
                 </div>
         </div>
     </div>

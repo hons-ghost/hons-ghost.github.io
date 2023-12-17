@@ -4,7 +4,9 @@ export const DrawHtmlHonItem = (uniqId, nickname, email, content, time) => {
 <div class="container p-2 border-top">
     <div class="row">
         <div class="col-auto text-center">
+                    <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${email}')">
                     <span id="${uniqId}" class="m-1"></span>
+                    </a>
         </div>
         <div class="col">
             <div class="container">

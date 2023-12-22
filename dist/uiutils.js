@@ -5,7 +5,7 @@ if (tag != null) {
         tag.innerHTML = errmsg(` https 를 지원하지 않습니다.`, `링크를 클릭해주세요. <a href="http://hons.ghostwebservice.com"> <strong class="me-auto">hons.ghostwebservice.com</strong> </a> `);
     }
     else {
-        addEventListener("load", () => fetch("http://ghostnetroot.com:58080/nodes")
+        addEventListener("load", () => fetch("http://lb.ghostnetroot.com:58083/nodes")
             .then((response) => response.json())
             .then(parseResponse)
             .then(loadNodesHtml)

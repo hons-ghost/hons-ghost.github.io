@@ -8,6 +8,12 @@ footer {
     */
     width: 100%;
 }
+body {
+    margin-top: 50px;
+}
+.navbar {
+    width: 100%;
+}
 .profile-sm {
     width:40px;
     border-radius: 70%;

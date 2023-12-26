@@ -14,7 +14,7 @@
                         <button type="button" class="btn btn-primary btn-sm">팔로우</button>
                     </div>
 
-                    <a href="/user/{{userInfo.PubKeyAddress}}" class="twPc-avatarLink" id="bg-profile">
+                    <a href="#" onclick="ClickLoadPage('profile', false)" class="twPc-avatarLink" id="bg-profile">
                         <img alt="{{userInfo.GhostNickname}}" src="static/img/ghost_background_black.png"
                             class="twPc-avatarImg">
                     </a>
@@ -75,12 +75,13 @@
         -->
         </div>
     </div>
-    <div class="row border-left border-right border-bottom m-0 p-0">
+    <div class="row border-start border-end border-bottom m-0 p-0">
         <div class="col p-0" id="feeds">
         </div>
     </div>
     <div class="row">
         <div class="col">
+            <br><br>
             <!--<div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="feed" role="tabpanel" aria-labelledby="feed-tab">
                 </div>

@@ -1,6 +1,6 @@
 import { BlockStore } from "./store.js";
 import { HonUser, Session } from "./session.js";
-import { HonDetailTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
+import { HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
 import { HonEntry } from "./models/param.js";
 import { DrawHtmlHonItem } from "./models/honview.js";
 
@@ -62,11 +62,11 @@ export class HonDetail {
         if (email == null) return null;
         return email;
     }
-    drawHtmlHon(ret: HonEntry) {
+    drawHtmlHon(ret: HonEntry, key: string) {
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
-        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret.id, ret.email, ret.content, ret.time)
+        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, btoa(key))
         const addrProfile = window.MasterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=profile&key=";
         fetch(addrProfile + ret.email)
@@ -91,14 +91,30 @@ export class HonDetail {
         if (keys.length == 0) return []
         return keys
     }
-    public RequestHon(keys: string[], callback: (h: HonEntry) => void) {
+    public RequestHon(keys: string[], callback: (h: HonEntry, i: string) => void) {
         const addr = this.m_masterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=feeds&key=";
         keys.forEach((key) => {
             fetch(addr + key)
                 .then((response) => response.json())
-                .then((result)=>callback(result))
+                .then((result)=>callback(result, key))
+                .then(() => this.RequestHonsReplys(btoa(key)))
         });
+    }
+    public RequestHonsReplys(key: string) {
+        this.m_masterAddr = window.MasterAddr;
+        const masterAddr = this.m_masterAddr;
+        const addr = `
+        ${masterAddr}/glambda?txid=${encodeURIComponent(HonReplyLinkTxId)}&table=replylink&key=${key}`;
+        fetch(addr)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result.result)
+                if (result.result.constructor == Array) {
+                    const container = document.getElementById(key + "-cnt") as HTMLElement
+                    container.innerHTML = result.result.length
+                }
+            })
     }
     public RequestHons(email: string) {
         this.m_masterAddr = window.MasterAddr;

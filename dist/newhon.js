@@ -49,7 +49,7 @@ export class NewHon {
         const txLink = document.getElementById("txLink");
         txLink.innerHTML = `
             <a target="_blank" class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(NewHonTxId)}">
-                ${NewHonTxId}
+                Tx link
             </a> `;
         const cont = document.getElementById("inputContent");
         cont.onfocus = () => { if (cont.value == "Enter text")

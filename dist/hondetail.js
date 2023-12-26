@@ -1,4 +1,4 @@
-import { HonDetailTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
+import { HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
 import { DrawHtmlHonItem } from "./models/honview.js";
 export class HonDetail {
     constructor(blockStore, session) {
@@ -59,12 +59,12 @@ export class HonDetail {
             return null;
         return email;
     }
-    drawHtmlHon(ret) {
+    drawHtmlHon(ret, key) {
         const uniqId = ret.id + ret.time.toString();
         const feeds = document.getElementById("feeds");
         if (feeds == null)
             return;
-        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret.id, ret.email, ret.content, ret.time);
+        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, btoa(key));
         const addrProfile = window.MasterAddr + "/glambda?txid=" +
             encodeURIComponent(HonTxId) + "&table=profile&key=";
         fetch(addrProfile + ret.email)
@@ -96,7 +96,23 @@ export class HonDetail {
         keys.forEach((key) => {
             fetch(addr + key)
                 .then((response) => response.json())
-                .then((result) => callback(result));
+                .then((result) => callback(result, key))
+                .then(() => this.RequestHonsReplys(btoa(key)));
+        });
+    }
+    RequestHonsReplys(key) {
+        this.m_masterAddr = window.MasterAddr;
+        const masterAddr = this.m_masterAddr;
+        const addr = `
+        ${masterAddr}/glambda?txid=${encodeURIComponent(HonReplyLinkTxId)}&table=replylink&key=${key}`;
+        fetch(addr)
+            .then((response) => response.json())
+            .then((result) => {
+            console.log(result.result);
+            if (result.result.constructor == Array) {
+                const container = document.getElementById(key + "-cnt");
+                container.innerHTML = result.result.length;
+            }
         });
     }
     RequestHons(email) {

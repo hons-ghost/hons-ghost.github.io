@@ -1,6 +1,6 @@
 import { BlockStore } from "./store.js";
 import { Session } from "./session.js";
-import { HonTxId, HonsTxId } from "./models/tx.js";
+import { HonReplyLinkTxId, HonTxId, HonsTxId } from "./models/tx.js";
 import { HonEntry } from "./models/param.js";
 import { DrawHtmlHonItem } from "./models/honview.js";
 
@@ -25,6 +25,7 @@ export class Hons {
     honsResult(ret: any) :string[]{
         if ("json" in ret) {
             const keys = JSON.parse(ret.json);
+            console.log(keys)
             return keys;
         } else {
             this.warningMsg("Loading 실패");
@@ -38,11 +39,11 @@ export class Hons {
         bodyTag.innerHTML = `<b>Connected Master</b> - 
         ${window.MasterNode.User.Nickname}`;
     }
-    drawHtmlHon(ret: HonEntry) {
+    drawHtmlHon(ret: HonEntry, id: string) {
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
-        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret.id, ret.email, ret.content, ret.time)
+        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, id)
         const addrProfile = window.MasterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=profile&key=";
         fetch(addrProfile + ret.email)
@@ -62,16 +63,32 @@ export class Hons {
                 }
             })
     }
-    public RequestHon(keys: string[], callback: (h: HonEntry) => void) {
+    public RequestHon(keys: string[], callback: (h: HonEntry, i: string) => void) {
         const addr = this.m_masterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=feeds&key=";
         keys.forEach((key) => {
             fetch(addr + atob(key))
                 .then((response) => response.json())
-                .then((result)=>callback(result))
+                .then((result) => callback(result, key))
+                .then(() => this.RequestHonsReplys(key))
         });
     }
-    public RequestHons(n: number, callback: (h: HonEntry) => void) {
+    public RequestHonsReplys(key: string) {
+        this.m_masterAddr = window.MasterAddr;
+        const masterAddr = this.m_masterAddr;
+        const addr = `
+        ${masterAddr}/glambda?txid=${encodeURIComponent(HonReplyLinkTxId)}&table=replylink&key=${key}`;
+        fetch(addr)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result.result)
+                if (result.result.constructor == Array) {
+                    const container = document.getElementById(key + "-cnt") as HTMLElement
+                    container.innerHTML = result.result.length
+                }
+            })
+    }
+    public RequestHons(n: number, callback: (h: HonEntry, i: string) => void) {
         this.m_masterAddr = window.MasterAddr;
         const masterAddr = this.m_masterAddr;
         const user = this.m_session.GetHonUser();

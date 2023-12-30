@@ -10,7 +10,7 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
                 const imageUrl = URL.createObjectURL(img)
                 const imageElement = new Image()
                 imageElement.src = imageUrl
-                imageElement.className = "rounded"
+                imageElement.className = "rounded img-fluid"
                 const container = document.getElementById(uniqId + "-file") as HTMLSpanElement
                 container.appendChild(imageElement)
             })

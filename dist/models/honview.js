@@ -7,7 +7,7 @@ export const DrawHtmlHonItem = (uniqId, e, key) => {
             const imageUrl = URL.createObjectURL(img);
             const imageElement = new Image();
             imageElement.src = imageUrl;
-            imageElement.className = "rounded img-fluid";
+            imageElement.className = "rounded img-fluid w-100";
             const container = document.getElementById(uniqId + "-file");
             container.appendChild(imageElement);
         });

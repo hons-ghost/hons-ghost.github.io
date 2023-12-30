@@ -81,8 +81,8 @@ export class NewHon {
         const nprompt = npromptTag.value.toLowerCase();
         const stepTag = document.getElementById("step");
         const step = (stepTag.value == "") ? "20" : stepTag.value;
-        const height = "256";
-        const width = "256";
+        const height = "512";
+        const width = "512";
         const seed = "-1";
         const printTag = document.getElementById("printImg");
         printTag.innerHTML = `

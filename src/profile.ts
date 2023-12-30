@@ -2,40 +2,40 @@ import { BlockStore } from "./store.js";
 import { Channel } from "./models/com.js";
 import { HonUser, Session } from "./session.js";
 import { NewProfileTxId } from "./models/tx.js";
+import { Rout } from "./libs/router.js";
 
 
-export class Profile {
+export class Profile implements Rout{
     m_masterAddr: string
     m_session: Session
-    m_ipc: Channel;
     m_img: Blob;
     public constructor(private blockStore: BlockStore
         , private session: Session
-        , ipc: Channel) {
+        , private ipc: Channel) {
         this.m_masterAddr = "";
         this.m_session = session;
-        this.m_ipc = ipc;
         this.m_img = new Blob()
-
-        ipc.RegisterMsgHandler('generateLog', (log: string) => {
-            this.printLog(log)
-            
-        });
-
-        ipc.RegisterMsgHandler('reply_generateImage', (filename: string) => {
-            fetch(`${window.MasterAddr}/image?filename=${filename}`)
-                .then(response => response.blob())
-                .then(data => {
-                    const img = new Blob([data], {type: 'image/bmp'})
-                    const imageUrl = URL.createObjectURL(img)
-                    const imageElement = new Image()
-                    imageElement.src = imageUrl
-                    const container = document.getElementById("printImg") as HTMLDivElement;
-                    container.innerHTML = ""
-                    container.appendChild(imageElement)
-                    this.m_img = img
-                })
-        });
+    }
+    MsgHandler(msg: string, param: any): void {
+        switch (msg) {
+            case 'generateLog':
+                this.printLog(param)
+                break;
+            case 'reply_generateImage':
+                const filename: string = param
+                fetch(`${window.MasterAddr}/image?filename=${filename}`)
+                    .then(response => response.blob())
+                    .then(data => {
+                        const img = new Blob([data], { type: 'image/bmp' })
+                        const imageUrl = URL.createObjectURL(img)
+                        const imageElement = new Image()
+                        imageElement.src = imageUrl
+                        const container = document.getElementById("printImg") as HTMLDivElement;
+                        container.innerHTML = ""
+                        container.appendChild(imageElement)
+                        this.m_img = img
+                    })
+        }
     }
     printLog(msg: string) {
         const printTag = document.getElementById("log") as HTMLDivElement;
@@ -74,7 +74,7 @@ export class Profile {
         const npromptTag = document.getElementById("nprompt") as HTMLInputElement;
         const nprompt = npromptTag.value.toLowerCase();
         const stepTag = document.getElementById("step") as HTMLInputElement;
-        const step = stepTag.value;
+        const step = (stepTag.value == "") ? "20" : stepTag.value;
         const height = "256"
         const width = "256"
         const seed = "-1"
@@ -86,10 +86,10 @@ export class Profile {
         `;
         const prevent19 = (nprompt == "") ? "nude, naked, nsfw":", nude, naked, nsfw"
         console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",step, "|",seed)
-        this.m_ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);
+        this.ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);
     }
    public Run(masterAddr: string): boolean {
-        if (!this.m_ipc.IsOpen()) this.m_ipc.OpenChannel(window.MasterWsAddr + "/ws")
+        if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
             <a target="_blank" class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(NewProfileTxId)}">

@@ -10,6 +10,7 @@ import { Session } from "./session.js";
 import { GhostWebUser } from "./models/param.js";
 import { UploadHon } from "./uploadhon.js";
 import { Profile } from "./profile.js";
+import { Router } from "./libs/router.js";
 
 const blockStore = new BlockStore();
 const session = new Session();
@@ -33,6 +34,11 @@ declare global {
 }
 
 const hons = new Hons(blockStore, session);
+const ipc = new Socket
+const router = new Router(ipc)
+const newHon = new NewHon(blockStore, session, ipc)
+const profile = new Profile(blockStore, session, ipc)
+
 const funcMap: FuncMap = {
     "signin": new Signin(blockStore, session),
     "signup": new Signup(blockStore, session),
@@ -40,10 +46,12 @@ const funcMap: FuncMap = {
     "hons": hons,
     "main": hons,
     "hondetail": new HonDetail(blockStore,session),
-    "newhon": new NewHon(blockStore, session),
+    "newhon": newHon,
     "uploadhon": new UploadHon(blockStore, session),
-    "profile": new Profile(blockStore, session, new Socket),
+    "profile": profile,
 };
+router.RegisterClient("newhon", newHon)
+router.RegisterClient("profile", profile)
 
 const urlToFileMap: UrlMap = {
     "signin": "views/signin.html",
@@ -81,6 +89,7 @@ window.ClickLoadPage = (key: string, fromEvent: boolean, ...args: string[]) => {
     const backUpBeforPage = beforPage;
     beforPage = key;
 
+    router.Activate(key)
     history.pushState(state, "login", "./?pageid=" + key + args);
     fetch(url)
         .then(response => { return response.text(); })
@@ -139,6 +148,7 @@ const includeContentHTML = (master: string) => {
     const filename = urlToFileMap[key];
     const backUpBeforPage = beforPage;
     beforPage = key;
+    router.Activate(key)
     fetch(filename)
         .then(response => { return response.text(); })
         .then(data => { (document.querySelector("contents") as HTMLDivElement).innerHTML = data; })

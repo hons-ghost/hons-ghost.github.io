@@ -124,7 +124,7 @@ export class Hon {
     public RequestHon(key: string) {
         const addr = this.m_masterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=feeds&key=";
-        fetch(addr + atob(key))
+        return fetch(addr + atob(key))
             .then((response) => response.json())
             .then((result) => this.drawHtmlHon(result, key, "feed"))
     }
@@ -150,10 +150,11 @@ export class Hon {
                 if (result.result.constructor == Array) {
                     const container = document.getElementById(key + "-cnt") as HTMLElement
                     container.innerHTML = result.result.length
+
+                    result.result.forEach((key: any) => {
+                        this.RequestHonReply(key)
+                    });
                 }
-                result.result.forEach((key: any) => {
-                    this.RequestHonReply(key)
-                });
             })
     }
     public CheckReplyForm ( ): boolean {
@@ -168,11 +169,12 @@ export class Hon {
         this.m_masterAddr = masterAddr;
         const key = this.getParam();
         if (key == null) return false
-        this.RequestHon(key)
-        this.drawHtmlUserReply()
-        this.RequestHonsReplys(key)
+        this.RequestHon(key).then(() => {
+            this.drawHtmlUserReply()
+            this.RequestHonsReplys(key)
+            if (!this.CheckReplyForm()) return false
+        })
 
-        if (!this.CheckReplyForm()) return false
 
         const btn = document.getElementById("replyBtn") as HTMLButtonElement
         btn.onclick = () => this.RequestNewReplyHon(key);

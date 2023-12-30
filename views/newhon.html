@@ -16,16 +16,76 @@
                 </div>
                 <div class="row">
                     <div class="col text-center">
-                            <div class="form-group">
-                                <textarea type="text" class="form-control" rows="3" id="inputContent" 
-                                aria-describedby="contentHelp">Enter text</textarea>
-                                <small id="contentHelp" class="form-text text-muted">max 150.</small>
+                        <div class="form-group">
+                            <textarea type="text" class="form-control" rows="3" id="inputContent"
+                                aria-describedby="contentHelp"></textarea>
+                            <small id="contentHelp" class="form-text text-muted">max 150.</small>
+                        </div>
+                        <p id="information"></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col m-2">
+            <div class="card">
+                <div class="card-header font-weight-bold"> 사진 만들기 </div>
+                <div class="card-body p-2">
+                    <div class="row mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Prompt</span>
                             </div>
-                            <button type="submit" id="feedBtn" class="btn btn-primary">Submit</button>
-                            <p id="information"></p>
+                            <input type="text" id="prompt" class="form-control" aria-describedby="basic-addon3">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">Negative Prompt</span>
+                            </div>
+                            <input type="text" id="nprompt" class="form-control" aria-describedby="basic-addon3">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">Step</span>
+                            </div>
+                            <input type="text" id="step" class="form-control" aria-describedby="basic-addon3"
+                                placeholder="20">
+                        </div>
+                    </div>
+                    <!--
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="step" class="form-label" id="stepvalue">Step</label>
+                            <input type="range" id="step" class="form-range" step="2" min="2" max="40">
+                        </div>
+                    </div>
+                    -->
+                    <div class="row">
+                        <div class="col m-2">
+                            <button class="btn btn-outline-primary" type="button" id="generateBtn">
+                                Generate Image</button>
+                        </div>
+                        <div class="col m-2">
+                            <button type="button" id="feedBtn" class="btn btn-primary">Submit</button>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col m-2 text-center" id="log">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col m-2 text-center" id="printImg">
+            <img src="static/img/ghost_background_black.png">
         </div>
     </div>
 </div>

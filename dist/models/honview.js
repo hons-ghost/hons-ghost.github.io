@@ -1,5 +1,17 @@
 import { elapsedTime } from "../utils.js";
 export const DrawHtmlHonItem = (uniqId, e, key) => {
+    if (typeof e.file != "undefined" && e.file != "") {
+        fetch("data:image/jpg;base64," + e.file)
+            .then(res => res.blob())
+            .then(img => {
+            const imageUrl = URL.createObjectURL(img);
+            const imageElement = new Image();
+            imageElement.src = imageUrl;
+            imageElement.className = "rounded";
+            const container = document.getElementById(uniqId + "-file");
+            container.appendChild(imageElement);
+        });
+    }
     return `
 <div class="container p-2 border-top">
     <div class="row p-0 handcursor">
@@ -22,6 +34,9 @@ export const DrawHtmlHonItem = (uniqId, e, key) => {
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <pre style="white-space:pre-wrap;">${e.content}</pre>
+                </div>
+                <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
+                    <span id="${uniqId}-file" class="m-1"></span>
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <div class="col-auto pe-0">

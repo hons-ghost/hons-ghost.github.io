@@ -9,9 +9,14 @@ import { Signin } from "./signin.js";
 import { Session } from "./session.js";
 import { UploadHon } from "./uploadhon.js";
 import { Profile } from "./profile.js";
+import { Router } from "./libs/router.js";
 const blockStore = new BlockStore();
 const session = new Session();
 const hons = new Hons(blockStore, session);
+const ipc = new Socket;
+const router = new Router(ipc);
+const newHon = new NewHon(blockStore, session, ipc);
+const profile = new Profile(blockStore, session, ipc);
 const funcMap = {
     "signin": new Signin(blockStore, session),
     "signup": new Signup(blockStore, session),
@@ -19,10 +24,12 @@ const funcMap = {
     "hons": hons,
     "main": hons,
     "hondetail": new HonDetail(blockStore, session),
-    "newhon": new NewHon(blockStore, session),
+    "newhon": newHon,
     "uploadhon": new UploadHon(blockStore, session),
-    "profile": new Profile(blockStore, session, new Socket),
+    "profile": profile,
 };
+router.RegisterClient("newhon", newHon);
+router.RegisterClient("profile", profile);
 const urlToFileMap = {
     "signin": "views/signin.html",
     "signup": "views/signup.html",
@@ -56,6 +63,7 @@ window.ClickLoadPage = (key, fromEvent, ...args) => {
     console.log(`page change : ${beforPage} ==> ${key}`);
     const backUpBeforPage = beforPage;
     beforPage = key;
+    router.Activate(key);
     history.pushState(state, "login", "./?pageid=" + key + args);
     fetch(url)
         .then(response => { return response.text(); })
@@ -109,6 +117,7 @@ const includeContentHTML = (master) => {
     const filename = urlToFileMap[key];
     const backUpBeforPage = beforPage;
     beforPage = key;
+    router.Activate(key);
     fetch(filename)
         .then(response => { return response.text(); })
         .then(data => { document.querySelector("contents").innerHTML = data; })

@@ -9,4 +9,5 @@ export const NewProfileTxId = "4fhM/3+DLdGX6n116OjsNpzpAAe5mcg1U+4S/EZZJxU=";
 export const MyHonsTxId = "nPyKGx9M0eetb8pDFFF/q9ebTl3bLG7hloYhEb2gH7U=";
 export const HonReplyTxId = "66MHWnS1ZDMT/dmWJx72pUSYnclgRX5tGMEBZlZY/eg=";
 export const HonReplyLinkTxId = "ztY04MiyZPHrhKract3zXWv3xjIQ69X+F75gDqlRxAU=";
+export const FollowTxId = "jvviU3o5Ldn6G1yyRsnBUjdwyWoEnPXhrJGtmZQIVUk=";
 //# sourceMappingURL=tx.js.map

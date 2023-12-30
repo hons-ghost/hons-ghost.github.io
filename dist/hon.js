@@ -124,7 +124,7 @@ export class Hon {
     RequestHon(key) {
         const addr = this.m_masterAddr + "/glambda?txid=" +
             encodeURIComponent(HonTxId) + "&table=feeds&key=";
-        fetch(addr + atob(key))
+        return fetch(addr + atob(key))
             .then((response) => response.json())
             .then((result) => this.drawHtmlHon(result, key, "feed"));
     }
@@ -149,16 +149,16 @@ export class Hon {
             if (result.result.constructor == Array) {
                 const container = document.getElementById(key + "-cnt");
                 container.innerHTML = result.result.length;
+                result.result.forEach((key) => {
+                    this.RequestHonReply(key);
+                });
             }
-            result.result.forEach((key) => {
-                this.RequestHonReply(key);
-            });
         });
     }
     CheckReplyForm() {
         if (!this.session.CheckLogin()) {
             const div = document.getElementById("replyform");
-            div.innerHTML = "<b class='text-center'>login</b>";
+            div.innerHTML = "<b>login</b>";
             return false;
         }
         return true;
@@ -168,11 +168,12 @@ export class Hon {
         const key = this.getParam();
         if (key == null)
             return false;
-        this.RequestHon(key);
-        this.drawHtmlUserReply();
-        this.RequestHonsReplys(key);
-        if (!this.CheckReplyForm())
-            return false;
+        this.RequestHon(key).then(() => {
+            this.drawHtmlUserReply();
+            this.RequestHonsReplys(key);
+            if (!this.CheckReplyForm())
+                return false;
+        });
         const btn = document.getElementById("replyBtn");
         btn.onclick = () => this.RequestNewReplyHon(key);
         return true;

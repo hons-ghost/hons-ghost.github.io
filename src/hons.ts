@@ -40,6 +40,7 @@ export class Hons {
         ${window.MasterNode.User.Nickname}`;
     }
     drawHtmlHon(ret: HonEntry, id: string) {
+        console.log(ret)
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;

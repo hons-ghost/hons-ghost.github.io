@@ -23,7 +23,7 @@
                                 <span class="input-group-text">Prompt</span>
                             </div>
                             <input type="text" id="prompt" class="form-control"
-                                aria-describedby="basic-addon3"></textarea>
+                                aria-describedby="basic-addon3">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -32,15 +32,26 @@
                                 <span class="input-group-text" id="basic-addon3">Negative Prompt</span>
                             </div>
                             <input type="text" id="nprompt" class="form-control"
-                                aria-describedby="basic-addon3"></textarea>
+                                aria-describedby="basic-addon3">
                         </div>
                     </div>
+                    <div class="row mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">Step</span>
+                            </div>
+                            <input type="text" id="step" class="form-control"
+                                aria-describedby="basic-addon3" placeholder="20">
+                        </div>
+                    </div>
+                    <!--
                     <div class="row mb-3">
                         <div class="col">
                             <label for="step" class="form-label" id="stepvalue">Step</label>
                             <input type="range" id="step" class="form-range" step="2" min="2" max="40">
                         </div>
                     </div>
+                    -->
                     <div class="row">
                         <div class="col m-2">
                             <button class="btn btn-outline-primary" type="button" id="generateBtn">

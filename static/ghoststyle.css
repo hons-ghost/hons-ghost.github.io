@@ -34,6 +34,14 @@ header {
     left: 0;
     width: 100%;
 }
+.container-hons {
+    max-width: 520px;
+}
+.hon-contents {
+    white-space: pre-wrap;
+    font-size: 14px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
 .menubar {
     background-color: #2081E2 !important;
     display: flex;

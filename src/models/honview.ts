@@ -18,13 +18,13 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
     return `
 <div class="container p-2 border-top">
     <div class="row p-0 handcursor">
-        <div class="col-auto text-center">
+        <div class="col-auto text-center pe-0">
                     <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${e.email}')">
                     <span id="${uniqId}" class="m-1"></span>
                     </a>
         </div>
         <div class="col m-0 p-0">
-            <div class="container">
+            <div class="container ps-1">
                 <div class="row">
                 <div class="col-auto pe-0">
                     <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${e.email}')">
@@ -36,7 +36,7 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
                     </div>
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
-                    <pre style="white-space:pre-wrap;">${e.content}</pre>
+                    <pre class="hon-contents">${e.content}</pre>
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <span id="${uniqId}-file" class="m-1"></span>

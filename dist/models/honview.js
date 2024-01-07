@@ -12,6 +12,13 @@ export const DrawHtmlHonItem = (uniqId, e, key) => {
             container.appendChild(imageElement);
         });
     }
+    console.log(e.tag);
+    const tag = (e.tag == undefined || e.tag == "") ? "" : `
+        <div class="row">
+        <div class="col">
+            <span class='badge bg-primary'>${e.tag}</span>
+        </div>
+        </div>`;
     return `
 <div class="container p-2 border-top">
     <div class="row p-0 handcursor">
@@ -33,11 +40,12 @@ export const DrawHtmlHonItem = (uniqId, e, key) => {
                     </div>
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
-                    <pre class="hon-contents">${e.content}</pre>
+                    <pre class="hon-contents m-0">${e.content}</pre>
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <span id="${uniqId}-file" class="m-1"></span>
                 </div>
+                ${tag}
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <div class="col-auto pe-0">
                     <span class="material-symbols-outlined" style="font-size:14px;">

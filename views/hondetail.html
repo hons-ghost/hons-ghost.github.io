@@ -11,7 +11,7 @@
                 <div>
                     <div class="twPc-button">
                         <!-- Twitter Button | you can get from: https://about.twitter.com/tr/resources/buttons#follow -->
-                        <button type="button" class="btn btn-primary btn-sm">팔로우</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="followBtn">팔로우</button>
                     </div>
 
                     <a href="#" onclick="ClickLoadPage('profile', false)" class="twPc-avatarLink" id="bg-profile">
@@ -59,24 +59,34 @@
         </div>
     </div>
     <div class="row">
-        <div class="col"><br>
-            <!--
+        <div class="col pb-1"><br>
             <nav class="nav nav-pills nav-justified">
-                <a class="nav-item nav-link active" id="feed-tab" data-toggle="tab" href="#feed" role="tab"
-                    aria-controls="feed" href="#">
+                <a class="nav-item nav-link active" id="feeds-tab" data-toggle="tab" href="#feeds" role="tab"
+                    aria-controls="feeds" href="#">
                     <h5>Feeds</h5>
                 </a>
-                <a class="nav-item nav-link" id="nft-tab" data-toggle="tab" href="#nft" role="tab" aria-controls="nft"
+                <a class="nav-item nav-link" id="follower-tab" data-toggle="tab" href="#follower" role="tab" aria-controls="follower"
                     href="#">
-                    <h5>NFTs</h5>
+                    <h5>Follower</h5>
                 </a>
-                <a class="nav-item nav-link" id="market-tab" data-toggle="tab" href="#market" role="tab" aria-controls="market" href="#"><h5>Market</h5></a>
+                <!--
+                <a class="nav-item nav-link" id="market-tab" data-toggle="tab" href="#market" role="tab" aria-controls="market" href="#">
+                    <h5>Market</h5></a>
+                -->
             </nav>
-        -->
         </div>
     </div>
     <div class="row border-start border-end border-bottom m-0 p-0">
-        <div class="col p-0" id="feeds">
+        <div class="col p-0">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active p-0" id="feeds" role="tabpanel" aria-labelledby="feeds-tab">
+                </div>
+                <div class="tab-pane fade" id="follower" role="tabpanel" aria-labelledby="follower-tab">
+                    <div id="followerlist" class="container">
+
+                    </div>
+                </div> 
+            </div>
         </div>
     </div>
     <div class="row">

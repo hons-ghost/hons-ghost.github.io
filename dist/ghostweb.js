@@ -90,7 +90,7 @@ window.NavExpended = () => {
     document.querySelector("#navbarNavRight").style.display = view;
     expendFlag = !expendFlag;
 };
-window.onpopstate = (event) => {
+window.onpopstate = () => {
     //window.ClickLoadPage(event.state['key'], event.state['fromEvent'], event.state['args'])
     includeContentHTML(window.MasterAddr);
 };

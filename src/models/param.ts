@@ -41,5 +41,6 @@ export type HonEntry = {
     content: string,
     time: number,
     file: string,
+    tag: string
 }
 

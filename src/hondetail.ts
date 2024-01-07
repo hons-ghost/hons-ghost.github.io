@@ -1,6 +1,6 @@
 import { BlockStore } from "./store.js";
 import { HonUser, Session } from "./session.js";
-import { HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
+import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
 import { HonEntry } from "./models/param.js";
 import { DrawHtmlHonItem } from "./models/honview.js";
 
@@ -8,9 +8,10 @@ import { DrawHtmlHonItem } from "./models/honview.js";
 export class HonDetail {
     m_masterAddr: string;
     m_session: Session
+    targetHonEmail: string
     public constructor(private blockStore: BlockStore
         , private session: Session) {
-        this.m_masterAddr = "";
+        this.targetHonEmail = this.m_masterAddr = "";
         this.m_session = session;
     }
     drawHtml(ret: any) {
@@ -126,13 +127,87 @@ export class HonDetail {
             .then((result) => this.honsResult(result))
             .then((feedlist) => this.RequestHon(feedlist, this.drawHtmlHon))
     }
+    public Follow() {
+        const followBtn = document.getElementById("followBtn") as HTMLButtonElement
+        followBtn.onclick = () => {
+            if (!this.m_session.CheckLogin()) return
+            const targetKey = this.targetHonEmail
+            const user = this.m_session.GetHonUser();
+            const formData = new FormData()
+            formData.append("key", user.Email)
+            formData.append("email", user.Email)
+            formData.append("password", user.Password)
+            formData.append("targetkey", targetKey)
+            const addr = `
+                ${this.m_masterAddr}/glambda?txid=${encodeURIComponent(FollowTxId)}`;
+            fetch(addr, {
+                method: "POST",
+                cache: "no-cache",
+                headers: {},
+                body: formData
+            })
+                .then((response) => response.json())
+                .then((ret) => console.log(ret))
+        }
+    }
+
+    public GetFollowerList() {
+        const targetKey = this.targetHonEmail
+        const addr = `
+                ${this.m_masterAddr}/glambda?txid=${encodeURIComponent(GetFollowerTxId)}&table=follower&key=${targetKey}`;
+        fetch(addr)
+            .then((response) => response.json())
+            .then((followers) => {
+                followers["result"].forEach((follower: string) => { 
+                    this.GetProfile(follower)
+                })
+            })
+    }
+    public GetProfile(email: string) {
+        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
+            encodeURIComponent(HonTxId) + "&table=profile&key=";
+        fetch(addrProfile + email)
+            .then((response) => response.json())
+            .then((ret: HonEntry) => {
+                console.log(ret)
+                const uniqId = ret.id + ret.time.toString()
+                const followerTag = document.getElementById("followerlist") as HTMLDivElement;
+                followerTag.innerHTML += `
+                <div class="row p-1 border-top">
+                    <div class="col-auto">
+                            <span id="${uniqId}" class="m-1"></span>
+                    </div>
+                    <div class="col">
+                        <b>${ret.id}</b> @${ret.email}
+                    </div>
+                </div>
+                `
+
+                if ("file" in ret) {
+                    fetch("data:image/jpg;base64," + ret.file)
+                        .then(res => res.blob())
+                        .then(img => {
+                            const imageUrl = URL.createObjectURL(img)
+                            const imageElement = new Image()
+                            imageElement.src = imageUrl
+                            imageElement.className = 'profile-sm';
+                            const container = document.getElementById(uniqId) as HTMLSpanElement
+                            container.appendChild(imageElement)
+                        })
+                }
+            })
+
+    }
 
     public Run(masterAddr: string): boolean {
         this.m_masterAddr = masterAddr;
         const email = this.getParam();
         if(email == null) return false;
+        this.targetHonEmail = email
         this.requestUserInfo(email)
         this.RequestHons(email);
+        this.Follow()
+        this.GetFollowerList()
         return true;
     }
 

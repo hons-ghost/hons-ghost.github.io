@@ -61,6 +61,10 @@ export class NewHon {
         const user = this.m_session.GetHonUser();
         const inputContent = document.getElementById("inputContent") as HTMLTextAreaElement;
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(NewHonTxId);
+
+        const threadTag = document.getElementById("thread") as HTMLInputElement
+        const tag = "#" + ((threadTag.value == "") ? "daliy log" : threadTag.value)
+        console.log(tag)
         const formData = new FormData()
         formData.append("file", this.m_img)
         formData.append("key", user.Email)
@@ -69,6 +73,7 @@ export class NewHon {
         formData.append("id", user.Nickname)
         formData.append("time", (new Date()).getTime().toString())
         formData.append("table", "feeds")
+        formData.append("tag", tag)
         formData.append("content", inputContent?.value)
         fetch(addr, {
             method: "POST",
@@ -103,11 +108,13 @@ export class NewHon {
     public Run(masterAddr: string): boolean {
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
         this.m_masterAddr = masterAddr;
+    /*
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
             <a target="_blank" class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(NewHonTxId)}">
                 Tx link
             </a> `;
+            */
         const cont = document.getElementById("inputContent") as HTMLTextAreaElement;
         cont.onfocus = ()=>{ if (cont.value == "Enter text") cont.value = ''; };
 

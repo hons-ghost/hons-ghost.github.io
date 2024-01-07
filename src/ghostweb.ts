@@ -118,7 +118,7 @@ window.NavExpended = () => {
     expendFlag = !expendFlag;
 };
 
-window.onpopstate = (event) => {
+window.onpopstate = () => {
     //window.ClickLoadPage(event.state['key'], event.state['fromEvent'], event.state['args'])
     includeContentHTML(window.MasterAddr);
 };

@@ -1,3 +1,11 @@
+.avatar-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-attachment: fixed;
+    width: 100%;
+    height: 100%;
+}
 .feedLayout {
     display: grid;
 }
@@ -5,16 +13,15 @@
     background: #fff none repeat scroll 0 0;
     border: 1px solid #e1e8ed;
     border-radius: 6px;
-    height: 100%;
     max-width: 100%; /* orginal twitter width: 290px;*/
 }
 .twPc-bg {    
-    background-color: #cfd9de;
+    /*background-color: #cfd9de;*/
     background-position: 0 50%;
     background-size: 100% auto;
-    border-bottom: 1px solid #e1e8ed;
+    /*border-bottom: 1px solid #e1e8ed; */
     border-radius: 4px 4px 0 0;
-    height: 200px;
+    height: 300px;
     width: 100%;
 }
 .twPc-block {

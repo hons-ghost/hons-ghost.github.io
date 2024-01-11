@@ -37,6 +37,12 @@ header {
 .container-hons {
     max-width: 520px;
 }
+.container-detail {
+    position: relative;
+}
+.container-honview {
+    background-color: #fff !important;
+}
 .hon-contents {
     white-space: pre-wrap;
     font-size: 14px;

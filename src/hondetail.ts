@@ -198,6 +198,16 @@ export class HonDetail {
             })
 
     }
+    public CanvasRenderer() {
+        const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
+        const ctx = canvas.getContext("2d")
+        if (ctx == null) return
+        ctx.fillStyle = "#66ccff"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        const space = document.getElementById("avatar-space") as HTMLAnchorElement
+        space.style.height = window.innerHeight - 230 + "px"
+    }
 
     public Run(masterAddr: string): boolean {
         this.m_masterAddr = masterAddr;
@@ -208,6 +218,7 @@ export class HonDetail {
         this.RequestHons(email);
         this.Follow()
         this.GetFollowerList()
+        this.CanvasRenderer()
         return true;
     }
 

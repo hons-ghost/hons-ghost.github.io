@@ -3,6 +3,7 @@ import { HonUser, Session } from "./session";
 import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx";
 import { HonEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
+import App from "./meta/app";
 
 
 export class HonDetail {
@@ -199,11 +200,16 @@ export class HonDetail {
 
     }
     public CanvasRenderer() {
+        /*
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         const ctx = canvas.getContext("2d")
         if (ctx == null) return
         ctx.fillStyle = "#66ccff"
         ctx.fillRect(0, 0, canvas.width, canvas.height)
+        */
+        const app = new App()
+        app.init()
+        app.render()
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"

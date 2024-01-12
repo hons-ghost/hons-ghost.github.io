@@ -1,6 +1,6 @@
-import { BlockStore } from "./store.js";
-import { Session } from "./session.js";
-import { UploadTxId } from "./models/tx.js";
+import { BlockStore } from "./store";
+import { Session } from "./session";
+import { UploadTxId } from "./models/tx";
 
 
 export class UploadHon {

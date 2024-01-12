@@ -1,4 +1,4 @@
-import { includeContentHTML, includeHTML, parseResponse, loadNodesHtml } from "./ghostweb.js";
+import { includeContentHTML, includeHTML, parseResponse, loadNodesHtml } from "./index";
 
 const tag = document.getElementById("contents");
 if (tag != null) {

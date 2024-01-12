@@ -1,8 +1,8 @@
-import { BlockStore } from "./store.js";
-import { Channel } from "./models/com.js";
-import { HonUser, Session } from "./session.js";
-import { NewProfileTxId } from "./models/tx.js";
-import { Rout } from "./libs/router.js";
+import { BlockStore } from "./store";
+import { Channel } from "./models/com";
+import { HonUser, Session } from "./session";
+import { NewProfileTxId } from "./models/tx";
+import { Rout } from "./libs/router";
 
 
 export class Profile implements Rout{

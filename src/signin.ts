@@ -1,7 +1,7 @@
-import { BlockStore } from "./store.js";
-import { Session, HonUser } from "./session.js";
-import { SHA256 } from "./libs/sha256.js";
-import { SigninTxId } from "./models/tx.js";
+import { BlockStore } from "./store";
+import { Session, HonUser } from "./session";
+import { SHA256 } from "./libs/sha256";
+import { SigninTxId } from "./models/tx";
 
 
 export class Signin {

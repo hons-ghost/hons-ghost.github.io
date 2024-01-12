@@ -1,8 +1,8 @@
-import { BlockStore } from "./store.js";
-import { Session } from "./session.js";
-import { FetchResult } from "./models/param.js";
-import { SHA256 } from "./libs/sha256.js";
-import { SignupTxId } from "./models/tx.js";
+import { BlockStore } from "./store";
+import { Session } from "./session";
+import { FetchResult } from "./models/param";
+import { SHA256 } from "./libs/sha256";
+import { SignupTxId } from "./models/tx";
 
 
 export class Signup {

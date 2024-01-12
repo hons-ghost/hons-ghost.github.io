@@ -1,8 +1,8 @@
-import { BlockStore } from "./store.js";
-import { HonUser, Session } from "./session.js";
-import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx.js";
-import { HonEntry } from "./models/param.js";
-import { DrawHtmlHonItem } from "./models/honview.js";
+import { BlockStore } from "./store";
+import { HonUser, Session } from "./session";
+import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx";
+import { HonEntry } from "./models/param";
+import { DrawHtmlHonItem } from "./models/honview";
 
 
 export class HonDetail {

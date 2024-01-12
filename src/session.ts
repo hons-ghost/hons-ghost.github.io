@@ -1,4 +1,4 @@
-import { SigninTxId } from "./models/tx.js";
+import { SigninTxId } from "./models/tx";
 
 export type HonUser = {
     Email: string,

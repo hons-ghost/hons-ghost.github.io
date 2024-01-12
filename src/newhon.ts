@@ -1,8 +1,8 @@
-import { BlockStore } from "./store.js";
-import { FetchResult } from "./models/param.js";
-import { Session } from "./session.js";
-import { NewHonTxId } from "./models/tx.js";
-import { Channel } from "./models/com.js";
+import { BlockStore } from "./store";
+import { FetchResult } from "./models/param";
+import { Session } from "./session";
+import { NewHonTxId } from "./models/tx";
+import { Channel } from "./models/com";
 
 
 export class NewHon {

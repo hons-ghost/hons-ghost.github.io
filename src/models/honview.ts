@@ -1,5 +1,5 @@
-import { elapsedTime} from "../utils.js";
-import { HonEntry } from "./param.js";
+import { elapsedTime} from "../utils";
+import { HonEntry } from "./param";
 
 
 export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): string => {

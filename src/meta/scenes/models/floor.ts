@@ -34,7 +34,7 @@ class PhysicsFloor extends CANNON.Body {
         const shape = new CANNON.Box(
             new CANNON.Vec3(width / 2, height / 2, depth / 2)
         )
-        const material = new CANNON.Material({ friction: 0.1, restitution: 0.5 })
+        const material = new CANNON.Material({ friction: 0.1, restitution: 0.2 })
 
         super({shape, material, mass: 0, position})
     }

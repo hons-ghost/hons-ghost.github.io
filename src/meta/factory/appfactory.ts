@@ -36,13 +36,12 @@ export class AppFactory {
         this.floor = new Floor(30, 2, 20, new Vec3(0, 0, 0))
 
         this.physics.RegisterKeyControl(this.bird)
-        this.physics.add(this.bird, this.floor)
+        this.physics.add(this.floor, this.bird)
 
         this.camera = new Camera(this.canvas, this.bird)
         this.light = new Light(this.canvas, this.bird)
 
-        this.game = new Game(this.physics, this.light, 
-            this.floor)
+        this.game = new Game(this.physics, this.light, this.floor)
         this.currentScene = this.game
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.phydebugger = CannonDebugger(this.game, this.physics)
@@ -59,11 +58,14 @@ export class AppFactory {
 
     async GltfLoad() {
         return await Promise.all([
-            this.bird.Loader(0.04, new Vec3(0, 30, 0)),
+            this.bird.Loader(0.04, new Vec3(0, 5, 0)),
         ])
     }
     InitScene() {
         this.game.add(this.bird.Meshs)
+    }
+    Despose() {
+        this.game.dispose()
     }
     get PhysicDebugger(): any { return this.PhysicDebugger }
     get Canvas(): Canvas { return this.canvas }

@@ -51,6 +51,7 @@ export class Bird implements ICtrlObject, IPhysicsObject {
                     child.castShadow = true 
                 })
                 this.body.position = position
+                this.body.velocity.set(0, 0 ,0)
                 this.mixer = new THREE.AnimationMixer(gltf.scene)
                 this.idleClip = gltf.animations[0]
                 this.runClip = gltf.animations[1]
@@ -138,8 +139,9 @@ class PhysicsBird extends CANNON.Body {
         if (dot > 0.5) {
             this.canJump = true
         }
-        if (event.body.name == "floor")
+        if (event.body.name == "floor") {
             this.canJump = true
+        }
     }
     
 

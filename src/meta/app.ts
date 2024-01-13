@@ -42,6 +42,10 @@ export default class App {
         })
     }
 
+    despose() {
+        this.factory.Despose()
+    }
+
     render() {
         this.currentScene.play()
         this.canvas.update()

@@ -40,7 +40,6 @@ export class Hons {
         ${window.MasterNode.User.Nickname}`;
     }
     drawHtmlHon(ret: HonEntry, id: string) {
-        console.log(ret)
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
@@ -89,12 +88,21 @@ export class Hons {
                 }
             })
     }
+    getParam(): string | null {
+        const urlParams = new URLSearchParams(window.location.search);
+        console.log(urlParams.get("tag"))
+        const tag = encodeURIComponent(urlParams.get("tag")??"");
+        if (tag == "") return null;
+        return tag;
+    }
     public RequestHons(n: number, callback: (h: HonEntry, i: string) => void) {
         this.m_masterAddr = window.MasterAddr;
         const masterAddr = this.m_masterAddr;
-        const user = this.m_session.GetHonUser();
+        const tag = this.getParam()
+        const table = (tag == null) ? "feeds" : tag
         const addr = `
-        ${masterAddr}/glambda?txid=${encodeURIComponent(HonsTxId)}&table=feeds&start=0&count=${n}`;
+        ${masterAddr}/glambda?txid=${encodeURIComponent(HonsTxId)}&table=${table}&start=0&count=${n}`;
+        console.log(addr)
         fetch(addr)
             .then((response) => response.json())
             .then((result) => this.honsResult(result))

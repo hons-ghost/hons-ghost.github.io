@@ -64,7 +64,6 @@ export class NewHon {
 
         const threadTag = document.getElementById("thread") as HTMLInputElement
         const tag = "#" + ((threadTag.value == "") ? "daliy log" : threadTag.value)
-        console.log(tag)
         const formData = new FormData()
         formData.append("file", this.m_img)
         formData.append("key", user.Email)
@@ -73,7 +72,8 @@ export class NewHon {
         formData.append("id", user.Nickname)
         formData.append("time", (new Date()).getTime().toString())
         formData.append("table", "feeds")
-        formData.append("tag", tag)
+        formData.append("tag", btoa(encodeURIComponent(tag)))
+        console.log("register tag", tag)
         formData.append("content", inputContent?.value)
         fetch(addr, {
             method: "POST",

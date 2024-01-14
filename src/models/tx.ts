@@ -7,7 +7,7 @@ export const HonTxId = "bzMGsbUxMD5yg5V3Z7FFLTUm/jHnAgOkNMA7kje/jQo=";
 
 export const HonDetailTxId = HonTxId
 //export const NewHonTxId = "m5SJO4K5RcGh/ZmkIXIqQaEtbknOp8atvRV6XcVepRA=";
-export const NewHonTxId = "dPkGynE7YVukVg2u1dIZtqL5h3kKKnB/n520xItXzpc=";
+export const NewHonTxId = "6E3kd7/WGO0OJy0VUarAej1UJ0ngU1aCNkky9VKcdc8=";
 export const UploadTxId = "";
 export const NewProfileTxId = "4fhM/3+DLdGX6n116OjsNpzpAAe5mcg1U+4S/EZZJxU="
 export const MyHonsTxId = "nPyKGx9M0eetb8pDFFF/q9ebTl3bLG7hloYhEb2gH7U="

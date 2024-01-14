@@ -15,11 +15,16 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
                 container.appendChild(imageElement)
             })
     }
-    console.log(e.tag)
+    const rawTag = e.tag
+    try {
+        e.tag = decodeURIComponent(atob(e.tag))
+    } catch {
+        e.tag = ""
+    }
     const tag = (e.tag == undefined || e.tag == "")?"": `
         <div class="row">
         <div class="col">
-            <span class='badge bg-primary'>${e.tag}</span>
+            <span class='badge bg-primary' onclick="ClickLoadPage('hons', false, '&tag=${rawTag}')">${e.tag}</span>
         </div>
         </div>`
     return `

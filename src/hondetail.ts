@@ -202,11 +202,14 @@ export class HonDetail {
     }
     public VisibleUi() {
         const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
+        const footer = document.getElementById("footer") as HTMLDivElement
         if (this.profileVisible) {
             wrapper.style.display = "none"
+            footer.style.display = "none"
             this.profileVisible = false
         } else {
             wrapper.style.display = "block"
+            footer.style.display = "block"
             this.profileVisible = true
         }
     }
@@ -241,5 +244,8 @@ export class HonDetail {
         return true;
     }
 
-    public Release(): void { }
+    public Release(): void { 
+        const footer = document.getElementById("footer") as HTMLDivElement
+        footer.style.display = "block"
+    }
 }

@@ -7,9 +7,10 @@ import App from "./meta/app";
 
 
 export class HonDetail {
-    m_masterAddr: string;
+    m_masterAddr: string
     m_session: Session
     targetHonEmail: string
+    profileVisible = true
     public constructor(private blockStore: BlockStore
         , private session: Session) {
         this.targetHonEmail = this.m_masterAddr = "";
@@ -210,6 +211,16 @@ export class HonDetail {
         const app = new App()
         app.init()
         app.render()
+        app.canvas.Canvas.onclick = () => {
+            const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
+            if (this.profileVisible) {
+                wrapper.style.display = "none"
+                this.profileVisible = false
+            } else {
+                wrapper.style.display = "block"
+                this.profileVisible = true
+            }
+        }
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"

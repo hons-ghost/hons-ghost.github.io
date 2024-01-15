@@ -101,6 +101,7 @@ export class NewHon {
                 <span class="visually-hidden"></span>
             </div>
         `;
+
         const prevent19 = (nprompt == "") ? "nude, naked, nsfw":", nude, naked, nsfw"
         console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",step, "|",seed)
         this.ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);

@@ -11,6 +11,16 @@ footer {
 body {
     margin-top: 50px;
 }
+.main-view {
+    position: relative;
+}
+.main-text {
+    position: absolute;
+    top:0%;
+    left:0%;
+    font-size: 20px;
+    color: #fff;
+}
 .navbar {
     width: 100%;
 }

@@ -11,6 +11,7 @@ import { GhostWebUser } from "./models/param";
 import { UploadHon } from "./uploadhon";
 import { Profile } from "./profile";
 import { Router } from "./libs/router";
+import { Main } from "./main";
 
 const blockStore = new BlockStore();
 const session = new Session();
@@ -44,11 +45,11 @@ const funcMap: FuncMap = {
     "signup": new Signup(blockStore, session),
     "hon": new Hon(blockStore, session),
     "hons": hons,
-    "main": hons,
     "hondetail": new HonDetail(blockStore,session),
     "newhon": newHon,
     "uploadhon": new UploadHon(blockStore, session),
     "profile": profile,
+    "main": new Main(blockStore, session),
 };
 router.RegisterClient("newhon", newHon)
 router.RegisterClient("profile", profile)
@@ -56,7 +57,7 @@ router.RegisterClient("profile", profile)
 const urlToFileMap: UrlMap = {
     "signin": "views/signin.html",
     "signup": "views/signup.html",
-    "main": "views/hons.html",
+    "main": "views/main.html",
     "hons": "views/hons.html",
     "hon": "views/hon.html",
     "hondetail": "views/hondetail.html",
@@ -68,7 +69,7 @@ const urlToFileMap: UrlMap = {
 const getPageIdParam = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const pageid = urlParams.get("pageid");
-    const key = (pageid == null) ? "hons" : pageid;
+    const key = (pageid == null) ? "main" : pageid;
     if (beforPage == undefined) beforPage = key;
     return key;
 }

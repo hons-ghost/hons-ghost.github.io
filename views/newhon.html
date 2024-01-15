@@ -25,7 +25,7 @@
                         </div>
                         <div class="input-group">
                             <div class="input-group-prepend">
-                                <span class="input-group-text">Thread (like tag)</span>
+                                <span class="input-group-text">Tag (only one...)</span>
                             </div>
                             <input type="text" id="thread" class="form-control" aria-describedby="basic-addon3">
                         </div>
@@ -41,7 +41,7 @@
             <div class="card">
                 <div class="card-header font-weight-bold"> 사진 만들기 </div>
                 <div class="card-body p-2">
-                    <div class="row mb-3">
+                    <div class="row">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Prompt</span>
@@ -49,7 +49,10 @@
                             <input type="text" id="prompt" class="form-control" aria-describedby="basic-addon3">
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row mb-3 ms-1">
+                            <small id="prompthelp" class="form-text text-muted">recommand: high quality, masterpiece</small>
+                    </div>
+                    <div class="row">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon3">Negative Prompt</span>
@@ -57,6 +60,9 @@
                             <input type="text" id="nprompt" class="form-control" aria-describedby="basic-addon3">
                         </div>
                     </div>
+                    <div class="row mb-3 ms-1">
+                            <small id="nprompthelp" class="form-text text-muted">recommand: low quality, worst quality</small>
+                    </div>  
                     <div class="row mb-3">
                         <div class="input-group">
                             <div class="input-group-prepend">

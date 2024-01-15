@@ -200,6 +200,16 @@ export class HonDetail {
             })
 
     }
+    public VisibleUi() {
+        const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
+        if (this.profileVisible) {
+            wrapper.style.display = "none"
+            this.profileVisible = false
+        } else {
+            wrapper.style.display = "block"
+            this.profileVisible = true
+        }
+    }
     public CanvasRenderer() {
         /*
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
@@ -211,19 +221,11 @@ export class HonDetail {
         const app = new App()
         app.init()
         app.render()
-        app.canvas.Canvas.onclick = () => {
-            const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
-            if (this.profileVisible) {
-                wrapper.style.display = "none"
-                this.profileVisible = false
-            } else {
-                wrapper.style.display = "block"
-                this.profileVisible = true
-            }
-        }
+        app.canvas.Canvas.onclick = this.VisibleUi
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
+        space.onclick = this.VisibleUi
     }
 
     public Run(masterAddr: string): boolean {

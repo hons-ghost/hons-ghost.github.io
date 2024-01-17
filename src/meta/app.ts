@@ -40,6 +40,21 @@ export default class App {
                 case "Space": this.eventCtrl.OnKeyUpEvent(new KeySpace); break;
             }
         })
+        const goup = document.getElementById("goup") as HTMLDivElement
+        const goleft = document.getElementById("goleft") as HTMLDivElement
+        const goright = document.getElementById("goright") as HTMLDivElement
+        const godown = document.getElementById("godown") as HTMLDivElement
+        const jump = document.getElementById("joypad_button1") as HTMLDivElement
+        goup.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyUp) }
+        goup.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyUp) }
+        goleft.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyLeft) }
+        goleft.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyLeft) }
+        goright.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyRight) }
+        goright.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyRight) }
+        godown.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyDown) }
+        godown.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyDown) }
+        jump.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeySpace) }
+        jump.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeySpace) }
     }
 
     despose() {

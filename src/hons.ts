@@ -9,11 +9,14 @@ export class Hons {
     m_masterAddr: string;
     m_session: Session;
     m_blockStore: BlockStore
+    loadedCount: number
+    requestCount = 5
     public constructor(private blockStore: BlockStore
         , private session: Session) {
         this.m_masterAddr = "";
         this.m_session = session;
         this.m_blockStore = blockStore;
+        this.loadedCount = 0
     }
 
     warningMsg(msg: string) {
@@ -95,31 +98,51 @@ export class Hons {
         if (tag == "") return null;
         return tag;
     }
-    public RequestHons(n: number, callback: (h: HonEntry, i: string) => void) {
+    public RequestHons(s: number, n: number, callback: (h: HonEntry, i: string) => void) {
         this.m_masterAddr = window.MasterAddr;
         const masterAddr = this.m_masterAddr;
         const tag = this.getParam()
         const table = (tag == null) ? "feeds" : tag
         const addr = `
-        ${masterAddr}/glambda?txid=${encodeURIComponent(HonsTxId)}&table=${table}&start=0&count=${n}`;
+        ${masterAddr}/glambda?txid=${encodeURIComponent(HonsTxId)}&table=${table}&start=${s}&count=${n}`;
         console.log(addr)
         fetch(addr)
             .then((response) => response.json())
             .then((result) => this.honsResult(result))
-            .then((keys)=> this.RequestHon(keys, callback))
+            .then((keys)=> {
+                this.CheckReloading(keys.length)
+                this.RequestHon(keys, callback)
+            })
             .catch(() => { this.warningMsg("Server에 문제가 생긴듯 합니다;;") });
     }
+    public CheckReloading(keyCount: number) {
+        const reload = document.getElementById("reload") as HTMLSpanElement;
+        if (this.requestCount > keyCount) {
+            reload.style.display = "none"
+        } else {
+            reload.style.display = "block"
+        }
+        this.loadedCount += keyCount
+    }
     public GetHons(n:number, callback: (hon: HonEntry) => void) {
-        this.RequestHons(n, callback);
+        this.RequestHons(0, n, callback);
     }
     public Run(masterAddr: string): boolean {
+        
+        this.loadedCount = 0
         this.m_masterAddr = masterAddr;
         this.drawHtmlConnectMaster()
-        this.RequestHons(10, this.drawHtmlHon);
+        this.RequestHons(this.loadedCount, this.requestCount, this.drawHtmlHon);
+
+        const reload = document.getElementById("reload") as HTMLSpanElement;
+        reload.onclick = () => {
+            this.RequestHons(this.loadedCount, this.requestCount, this.drawHtmlHon);
+        }
         return true;
     }
 
     public Release(): void { 
+        this.loadedCount = 0
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
         feeds.innerHTML = ``;

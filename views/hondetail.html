@@ -3,15 +3,38 @@
     <label for="progress-bar">Loading...</label>
     <progress id="progress-bar" value="0" max="100"></progress>
 </div>
+<div id="joypad">
+    <div class="container p-2 ms-1">
+        <div class="row text-center" id="goup">
+            <div class="joypad_arrow"> </div>
+        </div>
+        <div class="row">
+            <div class="col" id="goleft">
+                <div class="joypad_arrow"> </div>
+            </div>
+            <div class="col text-right" id="goright">
+                <div class="joypad_arrow"> </div>
+            </div>
+        </div>
+        <div class="row text-center" id="godown">
+            <div class="joypad_arrow"><span class="visually-hidden">joypad</span></div>
+        </div>
+    </div>
+</div>
+<div id="joypad_buttons">
+    <div class="container p-2 me-1">
+        <div id="joypad_button1" class="joypad_button"></div>
+    </div>
+</div>
 <div class="container container-hons container-detail" id="wrapper-profile">
     <div class="row">
         <div class="col">
             <style>
-                    .bg-profile {
-                        /*background-image: url("{{mainImgUrl}}");*/
-                    }
-                </style>
-                <a class="twPc-bg twPc-block bg-profile" id="avatar-space"></a>
+                .bg-profile {
+                    /*background-image: url("{{mainImgUrl}}");*/
+                }
+            </style>
+            <a class="twPc-bg twPc-block bg-profile" id="avatar-space"></a>
             <div class="twPc-div">
                 <!--<style>
                     .bg-profile {
@@ -77,20 +100,26 @@
                     <div class="col pb-1">
                         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#feeds" type="button" role="tab" aria-controls="feeds" aria-selected="true">Feeds</button>
+                                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                                    data-bs-target="#feeds" type="button" role="tab" aria-controls="feeds"
+                                    aria-selected="true">Feeds</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-follow-tab" data-bs-toggle="pill" data-bs-target="#followerlist" type="button" role="tab" aria-controls="followerlist" aria-selected="false">Follower</button>
+                                <button class="nav-link" id="pills-follow-tab" data-bs-toggle="pill"
+                                    data-bs-target="#followerlist" type="button" role="tab" aria-controls="followerlist"
+                                    aria-selected="false">Follower</button>
                             </li>
                         </ul>
-                        
+
                     </div>
                 </div>
                 <div class="row border-start border-end border-bottom m-0 p-0">
                     <div class="col p-0">
                         <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active p-0" id="feeds" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0"></div>
-                            <div class="tab-pane fade show" id="followerlist" role="tabpanel" aria-labelledby="pills-follow-tab" tabindex="0"></div>
+                            <div class="tab-pane fade show active p-0" id="feeds" role="tabpanel"
+                                aria-labelledby="pills-home-tab" tabindex="0"></div>
+                            <div class="tab-pane fade show" id="followerlist" role="tabpanel"
+                                aria-labelledby="pills-follow-tab" tabindex="0"></div>
                         </div>
                     </div>
                 </div>

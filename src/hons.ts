@@ -9,12 +9,14 @@ import App from "./meta/app";
 export class Hons {
     m_masterAddr: string;
     loadedCount: number
+    targetLoadCount: number
     profileVisible = true
     requestCount = 5
     public constructor(private blockStore: BlockStore
         , private session: Session, private meta: App) {
         this.m_masterAddr = "";
         this.loadedCount = 0
+        this.targetLoadCount = 0
     }
 
     warningMsg(msg: string) {
@@ -97,6 +99,7 @@ export class Hons {
         return tag;
     }
     public RequestHons(s: number, n: number, callback: (h: HonEntry, i: string) => void) {
+        this.targetLoadCount = s + n
         this.m_masterAddr = window.MasterAddr;
         const masterAddr = this.m_masterAddr;
         const tag = this.getParam()
@@ -170,6 +173,8 @@ export class Hons {
         }
         const reload = document.getElementById("reload") as HTMLSpanElement;
         reload.onclick = () => {
+            if (this.loadedCount != this.targetLoadCount) 
+                return
             this.RequestHons(this.loadedCount, this.requestCount, this.drawHtmlHon);
         }
         this.CanvasRenderer()

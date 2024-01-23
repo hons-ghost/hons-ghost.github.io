@@ -76,6 +76,13 @@ export default class App {
         })
     }
 
+    CloseUp() {
+        this.factory.camera.closeUp()
+    }
+    LongShot() {
+        this.factory.camera.longShot()
+    }
+
     resize() {
         this.canvas.resize()
     }

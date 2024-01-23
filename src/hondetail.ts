@@ -84,7 +84,7 @@ export class HonDetail {
                             imageElement.src = imageUrl
                             imageElement.className = 'profile-sm';
                             const container = document.getElementById(uniqId) as HTMLSpanElement
-                            container.appendChild(imageElement)
+                            container?.appendChild(imageElement)
                         })
                 }
             })
@@ -226,10 +226,14 @@ export class HonDetail {
         ctx.fillStyle = "#66ccff"
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         */
+        const play = document.getElementById("playBtn") as HTMLButtonElement
+        play.onclick = this.VisibleUi
+
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init()
         this.meta.render()
+        this.meta.CloseUp()
         this.meta.canvas.Canvas.onclick = this.VisibleUi
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement

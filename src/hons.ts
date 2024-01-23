@@ -155,7 +155,7 @@ export class Hons {
         this.meta.canvas.Canvas.onclick = this.VisibleUi
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
-        space.style.height = window.innerHeight - 330 + "px"
+        space.style.height = window.innerHeight - 230 + "px"
         space.onclick = this.VisibleUi
 
         this.profileVisible = false

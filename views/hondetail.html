@@ -1,31 +1,3 @@
-<canvas id="avatar-bg" class="avatar-bg"></canvas>
-<div id="progress-bar-container">
-    <label for="progress-bar">Loading...</label>
-    <progress id="progress-bar" value="0" max="100"></progress>
-</div>
-<div id="joypad">
-    <div class="container p-2 ms-1">
-        <div class="row text-center" id="goup">
-            <div class="joypad_arrow"> </div>
-        </div>
-        <div class="row">
-            <div class="col" id="goleft">
-                <div class="joypad_arrow"> </div>
-            </div>
-            <div class="col text-right" id="goright">
-                <div class="joypad_arrow"> </div>
-            </div>
-        </div>
-        <div class="row text-center" id="godown">
-            <div class="joypad_arrow"><span class="visually-hidden">joypad</span></div>
-        </div>
-    </div>
-</div>
-<div id="joypad_buttons">
-    <div class="container p-2 me-1">
-        <div id="joypad_button1" class="joypad_button"></div>
-    </div>
-</div>
 <div class="container container-hons container-detail" id="wrapper-profile">
     <div class="row">
         <div class="col">
@@ -129,58 +101,6 @@
     <div class="row">
         <div class="col">
             <br><br>
-            <!--<div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="feed" role="tabpanel" aria-labelledby="feed-tab">
-                </div>
-                <div class="tab-pane fade" id="nft" role="tabpanel" aria-labelledby="nft-tab">
-                    <div class="container-fluid">
-                        <hr class="bg-silver border-2 border-top border-silver">
-                        <div class="row row-cols-1 row-cols-md-3 g-3">
-                            <div class="col mb-4">
-                                <div class="card h-150">
-                                    <a href="/nfts/{{nft.DataTxId|GetBase58DataTxId}}/">
-                                        <img src="/media/{{nft.Filename}}" class="card-img-top h-30" alt="..."
-                                            style="width:100%;height:200px;object-fit:cover;">
-                                    </a>
-                                    <div class="card-body">
-                                        <p class="card-text"><b>{{nft.Title}}</b>
-                                            <br>{{nft.Content}}
-                                        </p>
-                                    </div>
-                                    <div class="card-footer">
-                                        <small class="text-muted">#{{nft.Category|GetCategoryString}} ·
-                                            {{nft.Time|ConvertToDate}}</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                            <br>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="market" role="tabpanel" aria-labelledby="market-tab">  
-                <div class="container-fluid">
-                    <hr class="bg-silver border-2 border-top border-silver">          
-                    <div class="row row-cols-1 row-cols-md-3 g-3">
-                        {% if nftMarketList %}
-                        {% for nftContract in nftMarketList%}
-                        <div class="col mb-4">
-                            <div class="card h-100">
-                                <img src="/media/{{nftContract.Filename}}" class="card-img-top h-30" alt="..."  style="width:100%;height:200px;object-fit:cover;">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{nftContract.Title}}</h5>
-                                    <p class="card-text"><b>{{nftContract.ContractFee|GetGhostCoin}} GTC</b></p>
-                                    <a href="/nft_market/{{nftContract.TxId|GetBase58DataTxId}}/" class="btn btn-primary">NFT Id #{{nftContract.Id}}</a>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            </div>-->
         </div>
     </div>
 </div>

@@ -28,7 +28,7 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
         </div>
         </div>`
     return `
-<div class="container p-2 border-top container-honview">
+<div class="container p-2 border-bottom container-honview">
     <div class="row p-0 handcursor">
         <div class="col-auto text-center pe-0">
                     <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${e.email}')">

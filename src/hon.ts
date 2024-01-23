@@ -165,10 +165,15 @@ export class Hon {
         }
         return true
     }
+    canvasVisible(onoff: boolean) {
+        const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
+        canvas.style.display = (onoff) ? "block" : "none"
+    }
     public Run(masterAddr: string): boolean {
         this.m_masterAddr = masterAddr;
         const key = this.getParam();
         if (key == null) return false
+        this.canvasVisible(false)
         this.RequestHon(key).then(() => {
             this.drawHtmlUserReply()
             this.RequestHonsReplys(key)
@@ -181,5 +186,7 @@ export class Hon {
         return true;
     }
 
-    public Release(): void { }
+    public Release(): void { 
+        this.canvasVisible(true)
+    }
 }

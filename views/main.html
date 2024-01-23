@@ -6,7 +6,7 @@
     <div class="row row-cols-1 row-cols-md-2 ps-0 pe-0 ms-0 me-0">
         <div class="col ps-0 pe-0 ms-0 me-0 main-view">
             <div class="p-0 m-0 main-img">
-                <div id="carouselExampleAutoplaying" class="carousel slide"  data-bs-ride="carousel">
+                <div id="carouselExampleAutoplaying" class="carousel slide"  data-bs-ride="carousel" data-bs-interval="1000">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="0" class="active"
                             aria-current="true" aria-label="Slide 1"></button>
@@ -16,17 +16,17 @@
                             aria-label="Slide 3"></button>
                     </div>
                     <div class="carousel-inner">
-                        <div class="carousel-item active">
+                        <div class="carousel-item active" data-bs-interval="2000">
                             <img src="static/img/main.jpg" class="img-fluid rounded">
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item" data-bs-interval="2000">
                             <img src="static/img/main2.jpg" class="img-fluid rounded">
                             <div class="carousel-caption d-none d-md-block" style="text-shadow: 1px 1px #000;">
                                 <h5><b>Anime Style</b></h5>
                                 <p>Expression of various pictures using animation-style models.</p>
                             </div>
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item" data-bs-interval="2000">
                             <img src="static/img/main3.jpg" class="img-fluid rounded">
                             <div class="carousel-caption d-none d-md-block" style="text-shadow: 1px 1px #000;">
                                 <h5><b>Anime Style</b></h5>
@@ -51,8 +51,24 @@
             </div>
         </div>
         <div class="col">
-            <span class='badge bg-primary handcursor' onclick="ClickLoadPage('hons', false)">#최신글</span>
-            개발해야할 것: user list, tag list
+            <div class="container">
+                <div class="row">
+                    <div class="col m-2" id="taglist">
+                        <span class='badge bg-primary handcursor' onclick="ClickLoadPage('hons', false)">#최신글</span>
+                    </div>
+                </div>
+                <div class="row" id="userlist">
+                    <span style="font-size: 20px;"><b>New Members</b></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row p-3">
+        <div class="col text-center">
+            <button type="button" class="btn btn-primary" 
+                        onclick="ClickLoadPage('signin', true)">Sign-In</button>
+            <button type="button" class="btn btn-secondary" 
+                        onclick="ClickLoadPage('signup', true)">Sign-Up</button>
         </div>
     </div>
 </div>

@@ -106,9 +106,14 @@ export class NewHon {
         console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",step, "|",seed)
         this.ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);
     }
+    canvasVisible(onoff: boolean) {
+        const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
+        canvas.style.display = (onoff) ? "block" : "none"
+    }
     public Run(masterAddr: string): boolean {
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
         this.m_masterAddr = masterAddr;
+        this.canvasVisible(false)
     /*
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
@@ -125,10 +130,15 @@ export class NewHon {
         const gbtn = document.getElementById("generateBtn") as HTMLButtonElement
         gbtn.onclick = () => this.generateImage();
         const btn = document.getElementById("feedBtn") as HTMLButtonElement
-        btn.onclick = () => this.RequestNewHon();
+        btn.onclick = () => {
+            btn.disabled = true
+            this.RequestNewHon();
+        }
 
         return true;
     }
 
-    public Release(): void { }
+    public Release(): void { 
+        this.canvasVisible(true)
+    }
 }

@@ -12,7 +12,7 @@ export class HonDetail {
     targetHonEmail: string
     profileVisible = true
     public constructor(private blockStore: BlockStore
-        , private session: Session) {
+        , private session: Session, private meta: App) {
         this.targetHonEmail = this.m_masterAddr = "";
         this.m_session = session;
     }
@@ -175,7 +175,7 @@ export class HonDetail {
                 const uniqId = ret.id + ret.time.toString()
                 const followerTag = document.getElementById("followerlist") as HTMLDivElement;
                 followerTag.innerHTML += `
-                <div class="row p-1 border-top">
+                <div class="row p-1 border-top handcursor" onclick="ClickLoadPage('hondetail', false, '&email=${ret.email}')">
                     <div class="col-auto">
                             <span id="${uniqId}" class="m-1"></span>
                     </div>
@@ -198,7 +198,6 @@ export class HonDetail {
                         })
                 }
             })
-
     }
     public VisibleUi() {
         const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
@@ -227,10 +226,11 @@ export class HonDetail {
         ctx.fillStyle = "#66ccff"
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         */
-        const app = new App()
-        app.init()
-        app.render()
-        app.canvas.Canvas.onclick = this.VisibleUi
+        const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
+        canvas.style.display = "block"
+        this.meta.init()
+        this.meta.render()
+        this.meta.canvas.Canvas.onclick = this.VisibleUi
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
@@ -247,6 +247,7 @@ export class HonDetail {
         this.Follow()
         this.GetFollowerList()
         this.CanvasRenderer()
+
         return true;
     }
 

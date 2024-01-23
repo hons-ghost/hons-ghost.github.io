@@ -10,10 +10,13 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
     constructor(canvas: Canvas, private player: IPhysicsObject) {
         super(75, canvas.Width/ canvas.Height, 0.1, 100)
         canvas.RegisterViewer(this)
-        //this.controls = new OrbitControls(this, canvas.Canvas)
+        this.controls = new OrbitControls(this, canvas.Canvas)
         const position = this.player.Position
         this.rotation.x = -Math.PI / 4
-        this.position.set(position.x, position.y + 10, position.z + 8)
+        this.position.set(position.x, position.y + 17, position.z + 33)
+        Gui.add(this.position, 'x', 0, 100, 1).listen()
+        Gui.add(this.position, 'y', 0, 100, 1).listen()
+        Gui.add(this.position, 'z', 0, 100, 1).listen()
     }
 
     resize(width: number, height: number) {
@@ -22,8 +25,8 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
     }
 
     update() {
-        //this.controls?.update()
-        //return
+        this.controls?.update()
+        return
         const position = this.player.Position
         const mode = "far"
         switch (mode) {

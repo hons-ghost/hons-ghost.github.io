@@ -12,10 +12,12 @@ export class Light extends THREE.DirectionalLight implements IViewer {
         this.castShadow = true
         this.shadow.radius = 8
         canvas.RegisterViewer(this)
+        /*
         Gui.add(this, "intensity", -30, 30).step(1).listen()
         Gui.add(this.position, "x", -30, 30).step(1).listen()
         Gui.add(this.position, "y", -30, 30).step(1).listen()
         Gui.add(this.position, "z", -30, 30).step(1).listen()
+        */
     }
 
     resize(width: number, height: number): void {

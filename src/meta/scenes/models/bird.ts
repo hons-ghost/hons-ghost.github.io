@@ -41,7 +41,7 @@ export class Bird implements ICtrlObject, IPhysicsObject {
 
     async Loader(scale: number, position: CANNON.Vec3) {
         return new Promise((resolve) => {
-            this.loader.Load.load("assets/boy/happychar.gltf", (gltf) => {
+            this.loader.Load.load("assets/boy/child.gltf", (gltf) => {
                 this.meshs = gltf.scene
                 this.meshs.scale.set(scale, scale, scale)
                 this.meshs.position.set(position.x, position.y, position.z)
@@ -49,9 +49,10 @@ export class Bird implements ICtrlObject, IPhysicsObject {
                 this.meshs.receiveShadow = false
                 this.meshs.traverse(child => { 
                     child.castShadow = true 
+                    child.receiveShadow = false
                 })
-                this.body.position = position
                 this.body.velocity.set(0, 0 ,0)
+                this.body.position = position
                 this.mixer = new THREE.AnimationMixer(gltf.scene)
                 this.idleClip = gltf.animations[0]
                 this.runClip = gltf.animations[1]
@@ -111,7 +112,7 @@ class PhysicsBird extends CANNON.Body {
     constructor(position: CANNON.Vec3, private eventCtrl: EventController) {
         const shape = new CANNON.Cylinder(1, 1, 6.5, 5)
         const material = new CANNON.Material({ friction: 0.1, restitution: 0.1 })
-        super({ shape, material, mass: 10, position })
+        super({ shape, material, mass: 5, position })
 
         this.keyDownQueue = []
         this.keyUpQueue = []

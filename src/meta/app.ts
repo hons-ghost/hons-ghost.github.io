@@ -10,14 +10,18 @@ export default class App {
     canvas: Canvas
     currentScene: IScene
     eventCtrl: EventController
+    initFlag: boolean
     constructor() {
         this.factory = new AppFactory()
         this.canvas = this.factory.Canvas
         this.currentScene = this.factory.Scene
         this.eventCtrl = this.factory.EventCtrl
+        this.initFlag = false
     }
 
     async init() {
+        if (this.initFlag) return
+
         await this.factory.GltfLoad()
         this.factory.InitScene()
 
@@ -55,6 +59,8 @@ export default class App {
         godown.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyDown) }
         jump.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeySpace) }
         jump.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeySpace) }
+
+        this.initFlag = true
     }
 
     despose() {

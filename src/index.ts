@@ -12,6 +12,7 @@ import { UploadHon } from "./uploadhon";
 import { Profile } from "./profile";
 import { Router } from "./libs/router";
 import { Main } from "./main";
+import App from "./meta/app";
 
 const blockStore = new BlockStore();
 const session = new Session();
@@ -34,7 +35,8 @@ declare global {
     }
 }
 
-const hons = new Hons(blockStore, session);
+const meta = new App()
+const hons = new Hons(blockStore, session, meta);
 const ipc = new Socket
 const router = new Router(ipc)
 const newHon = new NewHon(blockStore, session, ipc)
@@ -45,7 +47,7 @@ const funcMap: FuncMap = {
     "signup": new Signup(blockStore, session),
     "hon": new Hon(blockStore, session),
     "hons": hons,
-    "hondetail": new HonDetail(blockStore,session),
+    "hondetail": new HonDetail(blockStore,session, meta),
     "newhon": newHon,
     "uploadhon": new UploadHon(blockStore, session),
     "profile": profile,
@@ -165,6 +167,7 @@ const includeContentHTML = (master: string) => {
             }
         });
 }
+
 const tag = document.getElementById("contents");
 if (tag != null) {
     if (location.protocol != 'http:') {
@@ -177,21 +180,6 @@ if (tag != null) {
                 .then(parseResponse)
                 .then(loadNodesHtml)
                 .then((url) => includeContentHTML(url))
-                .then(() => {
-                    const navbar = document.querySelector("navbar");
-                    const navbarHeight = navbar?.getBoundingClientRect().height || 40;
-                    addEventListener("scroll", () => {
-                        if (window.scrollY > navbarHeight) {
-                            navbar?.classList.remove("navbar-dark");
-                            navbar?.classList.remove("bg-dark");
-                            navbar?.classList.add("navbar-transition");
-                        } else {
-                            navbar?.classList.remove("navbar-transition");
-                            navbar?.classList.add("navbar-dark");
-                            navbar?.classList.add("bg-dark");
-                        }
-                    })
-                })
                 .catch(() => {
                     tag.innerHTML = errmsg(` Network Down`, ` 사용가능한 Node가 존재하지 않습니다.`);
                 }));

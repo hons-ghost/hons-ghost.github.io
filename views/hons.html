@@ -1,24 +1,64 @@
-<div class="container container-hons py-3 ps-0 pe-0 border-start border-end h-100">
-    <div class="row ps-3 pe-3">
-        <div class="col" id="connect">
-        </div>
-        <div class="col text-end">
-            <a class="handcursor" onclick='ClickLoadPage("newhon", false)'>
-                +
-            </a>
-        </div>
-    </div>
-    <div class="row my-2">
+<div class="container container-hons container-detail" id="wrapper-profile">
+    <div class="row">
         <div class="col">
+            <style>
+                .bg-profile {
+                    /*background-image: url("{{mainImgUrl}}");*/
+                }
+            </style>
+            <a class="twPc-bg twPc-block bg-profile" id="avatar-space"></a>
+            <div class="twPc-div">
+                <!--<style>
+                    .bg-profile {
+                        /*background-image: url("{{mainImgUrl}}");*/
+                    }
+                </style>
+                <a class="twPc-bg twPc-block bg-profile"></a>
+            -->
+                <div>
+                    <div class="twPc-button">
+                        <!-- Twitter Button | you can get from: https://about.twitter.com/tr/resources/buttons#follow -->
+                        <button type="button" class="btn btn-primary btn-sm" id="">Following</button>
+                    </div>
+
+                    <div class="twPc-divUser ps-2">
+                        <span class="twPc-divName" style="color: #007bff;" id="tagtitle"> </span>
+                        <span>
+                            <a class="handcursor" onclick='ClickLoadPage("newhon", false)'>
+                                + 
+                            </a>
+                        </span><br>
+                        <span id="connect"> </span>
+                    </div>
+
+                    <div class="twPc-divStats">
+                        <ul class="twPc-Arrange">
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row ps-0 pe-0 ms-0 me-0">
-        <div class="col ps-0 pe-0 ms-0 me-0" id="feeds">
+    <div class="row">
+        <div class="col pb-1"><br>
+            <div class="twPc-div pt-2 pb-2">
+                <div class="row m-0 p-0">
+                    <div class="col p-0" id="feeds">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center p-2">
+                        <span class="material-symbols-outlined handcursor" id="reload">
+                            refresh
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row text-center border-top ps-0 pe-0 ms-0 me-0 pt-2">
-        <span class="material-symbols-outlined handcursor" id="reload">
-            refresh
-        </span>
+    <div class="row">
+        <div class="col text-center">
+            <br><br>
+        </div>
     </div>
-    </div>
+</div>

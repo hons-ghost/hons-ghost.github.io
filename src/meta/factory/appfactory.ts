@@ -12,6 +12,7 @@ import { Bird } from "../scenes/models/bird";
 import { Loader } from "../common/loader";
 import CannonDebugger from "cannon-es-debugger"
 import { GUI } from "lil-gui"
+import { Island } from "../scenes/models/island";
 
 export const Gui = new GUI()
 Gui.hide()
@@ -25,7 +26,8 @@ export class AppFactory {
     phydebugger: any
     game: Game
     bird: Bird
-    floor: Floor
+    //floor: Floor
+    island: Island
     camera: Camera
     light: Light
     renderer: Renderer
@@ -33,15 +35,16 @@ export class AppFactory {
     currentScene: IScene
     constructor() {
         this.bird = new Bird(this.loader, this.eventCtrl)
-        this.floor = new Floor(30, 2, 20, new Vec3(0, 0, 0))
+        //this.floor = new Floor(30, 2, 20, new Vec3(0, 0, 0))
+        this.island = new Island(this.loader)
 
         this.physics.RegisterKeyControl(this.bird)
-        this.physics.add(this.floor, this.bird)
+        this.physics.add(this.bird, this.island)
 
         this.camera = new Camera(this.canvas, this.bird)
         this.light = new Light(this.canvas, this.bird)
 
-        this.game = new Game(this.physics, this.light, this.floor)
+        this.game = new Game(this.physics, this.light)
         this.currentScene = this.game
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.phydebugger = CannonDebugger(this.game, this.physics)
@@ -57,12 +60,15 @@ export class AppFactory {
     }
 
     async GltfLoad() {
+        const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
+        progressBarContainer.style.display = "flex"
         return await Promise.all([
-            this.bird.Loader(0.04, new Vec3(0, 5, 0)),
+            this.bird.Loader(0.04, new Vec3(0, 7, 5)),
+            this.island.Loader(5, new Vec3(0, 0, 0)),
         ])
     }
     InitScene() {
-        this.game.add(this.bird.Meshs)
+        this.game.add(this.bird.Meshs, this.island.Meshs)
     }
     Despose() {
         this.game.dispose()

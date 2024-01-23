@@ -3,19 +3,17 @@ import { Session } from "./session";
 import { HonReplyLinkTxId, HonTxId, HonsTxId } from "./models/tx";
 import { HonEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
+import App from "./meta/app";
 
 
 export class Hons {
     m_masterAddr: string;
-    m_session: Session;
-    m_blockStore: BlockStore
     loadedCount: number
+    profileVisible = true
     requestCount = 5
     public constructor(private blockStore: BlockStore
-        , private session: Session) {
+        , private session: Session, private meta: App) {
         this.m_masterAddr = "";
-        this.m_session = session;
-        this.m_blockStore = blockStore;
         this.loadedCount = 0
     }
 
@@ -39,10 +37,11 @@ export class Hons {
         const bodyTag = document.getElementById('connect');
         if (bodyTag == null) return;
         console.log(window.MasterNode);
-        bodyTag.innerHTML = `<b>Connected Master</b> - 
+        bodyTag.innerHTML = `Connected Master - 
         ${window.MasterNode.User.Nickname}`;
     }
     drawHtmlHon(ret: HonEntry, id: string) {
+        if ("result" in ret) return
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
@@ -93,7 +92,6 @@ export class Hons {
     }
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
-        console.log(urlParams.get("tag"))
         const tag = encodeURIComponent(urlParams.get("tag")??"");
         if (tag == "") return null;
         return tag;
@@ -105,7 +103,6 @@ export class Hons {
         const table = (tag == null) ? "feeds" : tag
         const addr = `
         ${masterAddr}/glambda?txid=${encodeURIComponent(HonsTxId)}&table=${table}&start=${s}&count=${n}`;
-        console.log(addr)
         fetch(addr)
             .then((response) => response.json())
             .then((result) => this.honsResult(result))
@@ -127,6 +124,36 @@ export class Hons {
     public GetHons(n:number, callback: (hon: HonEntry) => void) {
         this.RequestHons(0, n, callback);
     }
+    public VisibleUi() {
+        const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
+        const footer = document.getElementById("footer") as HTMLDivElement
+        const controller = document.getElementById("joypad") as HTMLDivElement
+        const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
+        if (this.profileVisible) {
+            wrapper.style.display = "none"
+            footer.style.display = "none"
+            controller.style.display = "block"
+            controllerBtn.style.display = "block"
+            this.profileVisible = false
+        } else {
+            wrapper.style.display = "block"
+            footer.style.display = "block"
+            controller.style.display = "none"
+            controllerBtn.style.display = "none"
+            this.profileVisible = true
+        }
+    }
+    public CanvasRenderer() {
+        const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
+        canvas.style.display = "block"
+        this.meta.init()
+        this.meta.render()
+        this.meta.canvas.Canvas.onclick = this.VisibleUi
+
+        const space = document.getElementById("avatar-space") as HTMLAnchorElement
+        space.style.height = window.innerHeight - 330 + "px"
+        space.onclick = this.VisibleUi
+    }
     public Run(masterAddr: string): boolean {
         
         this.loadedCount = 0
@@ -134,10 +161,18 @@ export class Hons {
         this.drawHtmlConnectMaster()
         this.RequestHons(this.loadedCount, this.requestCount, this.drawHtmlHon);
 
+        const tagBtn = document.getElementById("tagtitle") as HTMLDivElement
+        const tagText = this.getParam()
+        if (tagText == null ) {
+            tagBtn.innerText = "#최신글"
+        } else {
+            tagBtn.innerText = decodeURIComponent(atob(tagText))
+        }
         const reload = document.getElementById("reload") as HTMLSpanElement;
         reload.onclick = () => {
             this.RequestHons(this.loadedCount, this.requestCount, this.drawHtmlHon);
         }
+        this.CanvasRenderer()
         return true;
     }
 

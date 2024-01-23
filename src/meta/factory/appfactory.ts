@@ -15,7 +15,7 @@ import { GUI } from "lil-gui"
 import { Island } from "../scenes/models/island";
 
 export const Gui = new GUI()
-Gui.hide()
+//Gui.hide()
 
 export class AppFactory {
     physics = new Physics()

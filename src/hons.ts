@@ -157,6 +157,9 @@ export class Hons {
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 330 + "px"
         space.onclick = this.VisibleUi
+
+        this.profileVisible = false
+        this.VisibleUi()
     }
     public Run(masterAddr: string): boolean {
         

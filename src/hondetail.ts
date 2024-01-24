@@ -28,12 +28,9 @@ export class HonDetail {
         const emailTag = document.getElementById('email');
         if (emailTag == null) return;
         emailTag.innerHTML = honUser.Email;
-        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=profile&key=";
-        fetch(addrProfile + ret.email)
-            .then((response) => response.json())
+        this.blockStore.FetchProfile(window.MasterAddr, ret.email)
             .then((result) => {
-                if ("file" in result) {
+                if (result.file != "") {
                     fetch("data:image/jpg;base64," + result.file)
                         .then(res => res.blob())
                         .then(img => {

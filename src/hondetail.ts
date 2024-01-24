@@ -173,7 +173,7 @@ export class HonDetail {
                 </div>
                 `
 
-                if ("file" in ret) {
+                if (ret.file != "") {
                     fetch("data:image/jpg;base64," + ret.file)
                         .then(res => res.blob())
                         .then(img => {

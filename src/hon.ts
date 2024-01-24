@@ -11,12 +11,9 @@ export class Hon {
         this.m_masterAddr = "";
     }
     drawHtmlUserReply() {
-        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=profile&key=";
-        fetch(addrProfile + this.session.GetHonUser().Email)
-            .then((response) => response.json())
+        this.blockStore.FetchProfile(window.MasterAddr, this.session.GetHonUser().Email)
             .then((result) => {
-                if ("file" in result) {
+                if (result.file != "") {
                     fetch("data:image/jpg;base64," + result.file)
                         .then(res => res.blob())
                         .then(img => {
@@ -31,10 +28,7 @@ export class Hon {
             })
     }
     drawHtmlReply() {
-        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=profile&key=";
-        fetch(addrProfile + this.session.GetHonUser().Email)
-            .then((response) => response.json())
+        this.blockStore.FetchProfile(window.MasterAddr, this.session.GetHonUser().Email)
             .then((result) => {
                 if ("file" in result) {
                     fetch("data:image/jpg;base64," + result.file)
@@ -63,12 +57,9 @@ export class Hon {
         const feeds = document.getElementById(targetDiv);
         if (feeds == null) return;
         feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, key)
-        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=profile&key=";
-        fetch(addrProfile + ret.email)
-            .then((response) => response.json())
+        this.blockStore.FetchProfile(window.MasterAddr, ret.email)
             .then((result) => {
-                if ("file" in result) {
+                if (result.file != "") {
                     fetch("data:image/jpg;base64," + result.file)
                         .then(res => res.blob())
                         .then(img => {
@@ -124,8 +115,7 @@ export class Hon {
     public RequestHon(key: string) {
         const addr = this.m_masterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=feeds&key=";
-        return fetch(addr + atob(key))
-            .then((response) => response.json())
+        return this.blockStore.FetchHon(this.m_masterAddr, atob(key))
             .then((result) => this.drawHtmlHon(result, key, "feed"))
     }
     /* reply feed */

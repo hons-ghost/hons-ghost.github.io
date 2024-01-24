@@ -28,7 +28,6 @@ export class Hons {
     honsResult(ret: any) :string[]{
         if ("json" in ret) {
             const keys = JSON.parse(ret.json);
-            console.log(keys)
             return keys;
         } else {
             this.warningMsg("Loading 실패");
@@ -48,12 +47,9 @@ export class Hons {
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
         feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, id)
-        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=profile&key=";
-        fetch(addrProfile + ret.email)
-            .then((response) => response.json())
+        this.blockStore.FetchProfile(this.m_masterAddr, ret.email)
             .then((result) => {
-                if ("file" in result) {
+                if (result.file != "") {
                     fetch("data:image/jpg;base64," + result.file)
                         .then(res => res.blob())
                         .then(img => {
@@ -67,13 +63,12 @@ export class Hons {
                 }
             })
     }
-    public RequestHon(keys: string[], callback: (h: HonEntry, i: string) => void) {
+    public RequestHon(keys: string[]) {
         const addr = this.m_masterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=feeds&key=";
         keys.forEach((key) => {
-            fetch(addr + atob(key))
-                .then((response) => response.json())
-                .then((result) => callback(result, key))
+            this.blockStore.FetchHon(this.m_masterAddr, atob(key))
+                .then((result) => this.drawHtmlHon(result, key))
                 .then(() => this.RequestHonsReplys(key))
         });
     }
@@ -98,7 +93,7 @@ export class Hons {
         if (tag == "") return null;
         return tag;
     }
-    public RequestHons(s: number, n: number, callback: (h: HonEntry, i: string) => void) {
+    public RequestHons(s: number, n: number) {
         this.targetLoadCount = s + n
         this.m_masterAddr = window.MasterAddr;
         const masterAddr = this.m_masterAddr;
@@ -111,7 +106,7 @@ export class Hons {
             .then((result) => this.honsResult(result))
             .then((keys)=> {
                 this.CheckReloading(keys.length)
-                this.RequestHon(keys, callback)
+                this.RequestHon(keys)
             })
             .catch(() => { this.warningMsg("Server에 문제가 생긴듯 합니다;;") });
     }
@@ -124,9 +119,7 @@ export class Hons {
         }
         this.loadedCount += keyCount
     }
-    public GetHons(n:number, callback: (hon: HonEntry) => void) {
-        this.RequestHons(0, n, callback);
-    }
+
     public VisibleUi() {
         const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
         const footer = document.getElementById("footer") as HTMLDivElement
@@ -166,7 +159,7 @@ export class Hons {
         this.loadedCount = 0
         this.m_masterAddr = masterAddr;
         this.drawHtmlConnectMaster()
-        this.RequestHons(this.loadedCount, this.requestCount, this.drawHtmlHon);
+        this.RequestHons(this.loadedCount, this.requestCount);
 
         const tagBtn = document.getElementById("tagtitle") as HTMLDivElement
         const tagText = this.getParam()
@@ -179,7 +172,7 @@ export class Hons {
         reload.onclick = () => {
             if (this.loadedCount != this.targetLoadCount) 
                 return
-            this.RequestHons(this.loadedCount, this.requestCount, this.drawHtmlHon);
+            this.RequestHons(this.loadedCount, this.requestCount);
         }
         this.CanvasRenderer()
         return true;

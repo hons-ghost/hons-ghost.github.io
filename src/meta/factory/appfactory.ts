@@ -38,8 +38,7 @@ export class AppFactory {
         //this.floor = new Floor(30, 2, 20, new Vec3(0, 0, 0))
         this.island = new Island(this.loader)
 
-        this.physics.RegisterKeyControl(this.bird)
-        this.physics.add(this.bird, this.island)
+        this.physics.add(this.island)
 
         this.camera = new Camera(this.canvas, this.bird)
         this.light = new Light(this.canvas, this.bird)
@@ -62,10 +61,14 @@ export class AppFactory {
     async GltfLoad() {
         const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
         progressBarContainer.style.display = "flex"
-        return await Promise.all([
+        const ret = await Promise.all([
             this.bird.Loader(0.04, new Vec3(0, 7, 5)),
             this.island.Loader(5, new Vec3(0, 0, 0)),
         ])
+
+        this.physics.RegisterKeyControl(this.bird)
+        this.physics.add(this.bird)
+        return ret
     }
     InitScene() {
         this.game.add(this.bird.Meshs, this.island.Meshs)

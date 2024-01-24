@@ -1,4 +1,4 @@
-import { HonEntry } from "./models/param";
+import { HonEntry, ProfileEntry } from "./models/param";
 import { GlobalLoadListTx, GlobalLoadTx, HonsTxId } from "./models/tx";
 import { Session } from "./session";
 import { BlockStore } from "./store";
@@ -26,7 +26,7 @@ export class Main {
             `
         })
     }
-    drawHtmlUserInfo(hon: any) {
+    drawHtmlUserInfo(hon: ProfileEntry) {
         const uniqId = hon.id + hon.time.toString()
         const userTag = document.getElementById("userlist") as HTMLDivElement;
         userTag.innerHTML += `
@@ -42,7 +42,7 @@ export class Main {
                 </div>
                 `
 
-        if ("file" in hon) {
+        if (hon.file != "") {
             fetch("data:image/jpg;base64," + hon.file)
                 .then(res => res.blob())
                 .then(img => {
@@ -71,10 +71,7 @@ export class Main {
         const table = "profile"
         emails.forEach((email) => {
             const key = atob(email)
-            const addr = `
-                ${masterAddr}/glambda?txid=${encodeURIComponent(GlobalLoadTx)}&table=${table}&key=${key}`;
-            fetch(addr)
-                .then((response) => response.json())
+            this.blockStore.FetchProfile(masterAddr, key)
                 .then((result) => this.drawHtmlUserInfo(result))
         })
     }

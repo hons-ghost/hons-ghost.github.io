@@ -43,4 +43,10 @@ export type HonEntry = {
     file: string,
     tag: string
 }
-
+export type ProfileEntry = {
+    email: string,
+    id: string,
+    password: string,
+    time: number,
+    file: string,
+}

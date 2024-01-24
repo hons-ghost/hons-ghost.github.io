@@ -1,7 +1,7 @@
 import { BlockStore } from "./store";
 import { HonUser, Session } from "./session";
 import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx";
-import { HonEntry } from "./models/param";
+import { HonEntry, ProfileEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import App from "./meta/app";
 
@@ -70,12 +70,9 @@ export class HonDetail {
         const feeds = document.getElementById("feeds");
         if (feeds == null) return;
         feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, btoa(key))
-        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=profile&key=";
-        fetch(addrProfile + ret.email)
-            .then((response) => response.json())
+        this.blockStore.FetchProfile(window.MasterAddr, ret.email)
             .then((result) => {
-                if ("file" in result) {
+                if (result.file != "") {
                     fetch("data:image/jpg;base64," + result.file)
                         .then(res => res.blob())
                         .then(img => {
@@ -94,13 +91,10 @@ export class HonDetail {
         if (keys.length == 0) return []
         return keys
     }
-    public RequestHon(keys: string[], callback: (h: HonEntry, i: string) => void) {
-        const addr = this.m_masterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=feeds&key=";
+    public RequestHon(keys: string[]) {
         keys.forEach((key) => {
-            fetch(addr + key)
-                .then((response) => response.json())
-                .then((result)=>callback(result, key))
+            this.blockStore.FetchHon(this.m_masterAddr, key)
+                .then((result) => this.drawHtmlHon(result, key))
                 .then(() => this.RequestHonsReplys(btoa(key)))
         });
     }
@@ -112,7 +106,6 @@ export class HonDetail {
         fetch(addr)
             .then((response) => response.json())
             .then((result) => {
-                console.log(result.result)
                 if (result.result.constructor == Array) {
                     const container = document.getElementById(key + "-cnt") as HTMLElement
                     container.innerHTML = result.result.length
@@ -127,7 +120,7 @@ export class HonDetail {
         fetch(addr)
             .then((response) => response.json())
             .then((result) => this.honsResult(result))
-            .then((feedlist) => this.RequestHon(feedlist, this.drawHtmlHon))
+            .then((feedlist) => this.RequestHon(feedlist))
     }
     public Follow() {
         const followBtn = document.getElementById("followBtn") as HTMLButtonElement
@@ -160,18 +153,16 @@ export class HonDetail {
         fetch(addr)
             .then((response) => response.json())
             .then((followers) => {
-                followers["result"].forEach((follower: string) => { 
-                    this.GetProfile(follower)
-                })
+                if (followers["result"].constructor == Array) {
+                    followers["result"].forEach((follower: string) => {
+                        this.GetProfile(follower)
+                    })
+                }
             })
     }
     public GetProfile(email: string) {
-        const addrProfile = window.MasterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=profile&key=";
-        fetch(addrProfile + email)
-            .then((response) => response.json())
-            .then((ret: HonEntry) => {
-                console.log(ret)
+        this.blockStore.FetchProfile(window.MasterAddr, email)
+            .then((ret: ProfileEntry) => {
                 const uniqId = ret.id + ret.time.toString()
                 const followerTag = document.getElementById("followerlist") as HTMLDivElement;
                 followerTag.innerHTML += `

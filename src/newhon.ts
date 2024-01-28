@@ -148,7 +148,23 @@ export class NewHon {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = (onoff) ? "block" : "none"
     }
+    dropmenuVisible = false
+    toggleMenu() {
+        const dropmenuTag = document.getElementById("modellist") as HTMLButtonElement;
+        if (this.dropmenuVisible == false) {
+            dropmenuTag.style.display = "block"
+            dropmenuTag.style.transform = "translate(0px, 40px)"
+        } else {
+            dropmenuTag.style.display = "none"
+            dropmenuTag.style.transform = "translate(0px, 40px)"
+        }
+        this.dropmenuVisible = (this.dropmenuVisible) ? false : true
+    }
     initFilterUi() {
+        const dropTag = document.getElementById("dropdownMenuButton") as HTMLButtonElement;
+        dropTag.onclick = () => {
+            this.toggleMenu()
+        }
         const streTag = document.getElementById("strength") as HTMLProgressElement;
         const streTxtTag = document.getElementById("strength-text") as HTMLInputElement;
         streTag.onchange = () => {
@@ -217,6 +233,8 @@ export class NewHon {
         this.bindClickEvent("child", 4)
     }
     selectModel(n: number) {
+        this.toggleMenu()
+   
         const btn = document.getElementById("dropdownMenuButton") as HTMLButtonElement
         switch (n) {
             case 1:

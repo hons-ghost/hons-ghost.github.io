@@ -2,6 +2,7 @@ import { HonEntry, ProfileEntry } from "./models/param";
 import { GlobalLoadListTx, GlobalLoadTx, HonsTxId } from "./models/tx";
 import { Session } from "./session";
 import { BlockStore } from "./store";
+import * as bootstrap from "bootstrap"
 
 
 export class Main {
@@ -110,9 +111,17 @@ export class Main {
         const joypad_buttons = document.getElementById("joypad_buttons") as HTMLDivElement
         joypad_buttons.style.display = "none"
     }
+    bugfixCarousel() {
+        const carouselTag = document.getElementById("carouselExampleAutoplaying") as HTMLDivElement
+        const carousel = new bootstrap.Carousel(carouselTag, {
+            interval: 1000,
+        })
+        carousel?.cycle()
+    }
 
     public Run(masterAddr: string): boolean {
         this.disableMeta()
+        this.bugfixCarousel()
         this.RequestTaglist(20)
         this.RequestUserlist(20)
 

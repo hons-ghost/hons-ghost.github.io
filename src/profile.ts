@@ -90,11 +90,13 @@ export class Profile implements Rout{
     }
    public Run(masterAddr: string): boolean {
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
+        /*
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
             <a target="_blank" class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(NewProfileTxId)}">
                 ${NewProfileTxId}
             </a> `;
+            */
         const btn = document.getElementById("generateBtn") as HTMLButtonElement
         btn.onclick = () => this.generateImage();
         const uploadBtn = document.getElementById("uploadBtn") as HTMLButtonElement

@@ -42,7 +42,6 @@ export class Hons {
     }
     drawHtmlHon(ret: HonEntry, id: string) {
         this.loadedCount++
-        console.log(this.loadedCount, this.targetLoadCount)
         if (this.loadedCount == this.targetLoadCount) {
             this.ViewLoadingSpinner(false)
         }
@@ -84,7 +83,6 @@ export class Hons {
         fetch(addr)
             .then((response) => response.json())
             .then((result) => {
-                console.log(result.result)
                 if (result.result.constructor == Array) {
                     const container = document.getElementById(key + "-cnt") as HTMLElement
                     container.innerHTML = result.result.length
@@ -119,7 +117,6 @@ export class Hons {
         const reload = document.getElementById("reload") as HTMLSpanElement;
         if (this.requestCount > keyCount) {
             reload.style.display = "none"
-            console.log(this.requestCount, keyCount)
         } else {
             reload.style.display = "block"
         }

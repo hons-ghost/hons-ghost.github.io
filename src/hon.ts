@@ -163,7 +163,7 @@ export class Hon {
         this.m_masterAddr = masterAddr;
         const key = this.getParam();
         if (key == null) return false
-        this.canvasVisible(false)
+        //this.canvasVisible(false)
         this.RequestHon(key).then(() => {
             this.drawHtmlUserReply()
             this.RequestHonsReplys(key)
@@ -177,6 +177,6 @@ export class Hon {
     }
 
     public Release(): void { 
-        this.canvasVisible(true)
+        //this.canvasVisible(true)
     }
 }

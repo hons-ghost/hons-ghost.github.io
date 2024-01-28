@@ -24,7 +24,6 @@ export class Session {
         formData.append("key", email)
         formData.append("email", email)
         formData.append("password", password)
-        console.log(JSON.stringify({ key: email, Email: email, password: password }))
         fetch(addr, {
             method: "POST",
             cache: "no-cache",

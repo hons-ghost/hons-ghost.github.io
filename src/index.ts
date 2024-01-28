@@ -137,6 +137,7 @@ const loadNodesHtml = (node: GhostWebUser) => {
     window.MasterNode = node;
     window.MasterAddr = `http://${node.User.ip.Ip}:${node.User.ip.Port}`;
     window.MasterWsAddr = `ws://${node.User.ip.Ip}:${node.User.ip.Port}`;
+    console.log(node.User.Nickname, window.MasterNode);
     return window.MasterAddr;
 };
 const includeHTML = (id: string, filename: string) => {

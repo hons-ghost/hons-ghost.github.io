@@ -3,15 +3,18 @@ import { FetchResult } from "./models/param";
 import { Session } from "./session";
 import { NewHonTxId } from "./models/tx";
 import { Channel } from "./models/com";
+import Cropper from "cropperjs"
 
 
 export class NewHon {
     m_masterAddr: string;
     m_session: Session
+    m_model: string;
     m_img: Blob;
     public constructor(private blockStore: BlockStore
         , private session: Session, private ipc: Channel) {
         this.m_masterAddr = "";
+        this.m_model = "toonyou_beta6-f16.gguf"
         this.m_session = session;
         this.m_img = new Blob()
     }
@@ -106,14 +109,140 @@ export class NewHon {
         console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",step, "|",seed)
         this.ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);
     }
+    processImage() {
+        const promptTag = document.getElementById("fprompt") as HTMLInputElement;
+        const prompt = promptTag.value.toLowerCase();
+        const npromptTag = document.getElementById("fnprompt") as HTMLInputElement;
+        const nprompt = npromptTag.value.toLowerCase();
+        const streTag = document.getElementById("strength") as HTMLInputElement;
+        const stre = (streTag.value == "") ? "0.5" : streTag.value;
+        const height = "512"
+        const width = "512"
+        const seed = "-1"
+        const printTag = document.getElementById("printImg") as HTMLDivElement;
+        printTag.innerHTML = `
+            <div class="spinner-grow text-primary" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        `;
+
+        const prevent19 = (nprompt == "") ? "nude, naked, nsfw":", nude, naked, nsfw"
+        console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",stre, "|",seed)
+        const samplingMethod = "euler"
+        const step = "20"
+        const cfgScale = "7"
+        const batchCnt = ""
+        const schedule = ""
+        const clipSkip = "2"
+        const vea = ""
+        const lora = ""
+        const reader = new FileReader()
+        reader.readAsDataURL(this.m_img)
+        reader.onloadend = () => {
+            this.ipc.SendMsg("processImage", prompt, nprompt + prevent19, height, width,
+                step, seed, this.m_model, samplingMethod, cfgScale, stre, batchCnt, schedule,
+                clipSkip, vea, lora, reader.result);
+        }
+    }
     canvasVisible(onoff: boolean) {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = (onoff) ? "block" : "none"
     }
+    initFilterUi() {
+        const cropTag = document.getElementById("cropimg") as HTMLImageElement;
+        let cropper = new Cropper(cropTag)
+
+        const tag = document.getElementById("origin-file") as HTMLInputElement;
+        tag.onchange = (e: any) => {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                const img = new Blob([new Uint8Array(e.target?.result as ArrayBuffer)], { type: 'image/bmp' })
+                const imageUrl = URL.createObjectURL(img)
+                cropTag.src = imageUrl
+                const scale = cropTag.width / window.innerWidth
+                cropTag.height *= scale
+                cropper.destroy()
+                cropper = new Cropper(cropTag, { 
+                    aspectRatio: 1,
+                    minContainerWidth: 512, minContainerHeight: 512,
+                    viewMode: 1,
+                })
+                console.log(cropper.getCropBoxData())
+
+            }
+            reader.readAsArrayBuffer(e.target.files[0])
+        }
+        const cropBtn = document.getElementById("cropBtn") as HTMLButtonElement;
+        cropBtn.onclick = () => {
+            cropper.getCroppedCanvas().toBlob((data) => {
+                if (data == null) return
+                const imageUrl = URL.createObjectURL(data)
+                const imageElement = new Image()
+                imageElement.src = imageUrl
+                imageElement.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = canvas.height = 512
+                    // var canvas = document.getElementById("canvas");
+                    const ctx = canvas.getContext("2d", { alpha: false });
+                    // Actual resizing
+                    ctx?.drawImage(imageElement, 0, 0, 512, 512);
+                    // Show resized image in preview element
+                    canvas.toBlob((b) => {
+                        if (b == null) return
+                        this.m_img = b
+                        const imageUrl = URL.createObjectURL(b)
+                        const cropImageElement = new Image()
+                        cropImageElement.src = imageUrl
+                        cropImageElement.className = "img-fluid"
+                        const container = document.getElementById("result") as HTMLDivElement;
+                        container.innerHTML = ""
+                        container.appendChild(cropImageElement)
+                    })
+                }
+            })
+        }
+        const gbtn = document.getElementById("processBtn") as HTMLButtonElement
+        gbtn.onclick = () => this.processImage()
+
+        this.bindClickEvent("toonyou", 1)
+        this.bindClickEvent("disney", 2)
+        this.bindClickEvent("sd1-4", 3)
+        this.bindClickEvent("child", 4)
+    }
+    selectModel(n: number) {
+        const btn = document.getElementById("dropdownMenuButton") as HTMLButtonElement
+        switch (n) {
+            case 1:
+                btn.innerText = "Animation Style"
+                this.m_model = "toonyou_beta6-f16.gguf"
+                break
+            case 2:
+                btn.innerText = "Disney Style"
+                this.m_model = "disneyPixarCartoon_v10-f16.gguf"
+                break
+            case 3:
+                btn.innerText = "Default Style"
+                this.m_model = "sd-v1-4-f16.gguf"
+                break
+            case 4:
+                btn.innerText = "Real-Picture Style"
+                this.m_model = "chilled_reversemix_v2-f16.gguf"
+                break
+        }
+    }
+    bindClickEvent(name: string, id: number) {
+        const tag = document.getElementById(name) as HTMLAnchorElement
+        tag.onclick = () => { this.selectModel(id) }
+    }
     public Run(masterAddr: string): boolean {
+        /* 잠시만...
+        if (!this.m_session.CheckLogin()) {
+            return false;
+        }
+        */
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
         this.m_masterAddr = masterAddr;
-        this.canvasVisible(false)
+        //this.canvasVisible(false)
     /*
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
@@ -121,24 +250,38 @@ export class NewHon {
                 Tx link
             </a> `;
             */
-        const cont = document.getElementById("inputContent") as HTMLTextAreaElement;
-        cont.onfocus = ()=>{ if (cont.value == "Enter text") cont.value = ''; };
-
-        if (!this.m_session.CheckLogin()) {
-            return false;
-        }
-        const gbtn = document.getElementById("generateBtn") as HTMLButtonElement
-        gbtn.onclick = () => this.generateImage();
-        const btn = document.getElementById("feedBtn") as HTMLButtonElement
-        btn.onclick = () => {
-            btn.disabled = true
-            this.RequestNewHon();
-        }
+        
+        fetch("views/sd1.html")
+            .then(response => { return response.text(); })
+            .then((res) => {
+                const tag = document.getElementById("sd1") as HTMLDivElement;
+                tag.innerHTML += res
+            })
+            .then(() => {
+                const cont = document.getElementById("inputContent") as HTMLTextAreaElement;
+                cont.onfocus = () => { if (cont.value == "Enter text") cont.value = ''; };
+                const gbtn = document.getElementById("generateBtn") as HTMLButtonElement
+                gbtn.onclick = () => this.generateImage();
+                const btn = document.getElementById("feedBtn") as HTMLButtonElement
+                btn.onclick = () => {
+                    btn.disabled = true
+                    this.RequestNewHon();
+                }
+            })
+        fetch("views/filter.html")
+            .then(response => { return response.text(); })
+            .then((res) => {
+                const tag = document.getElementById("filter") as HTMLDivElement;
+                tag.innerHTML += res
+            })
+            .then(() => {
+                this.initFilterUi()
+            })
 
         return true;
     }
 
     public Release(): void { 
-        this.canvasVisible(true)
+        //this.canvasVisible(true)
     }
 }

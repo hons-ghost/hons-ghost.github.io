@@ -1,0 +1,119 @@
+<div class="card">
+    <div class="card-header font-weight-bold"> AI 필터 </div>
+    <div class="card-body p-2">
+        <div class="row mb-3">
+            <div class="col">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Animation Style
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="modellist">
+                        <a class="dropdown-item" id="toonyou">Animation Style</a>
+                        <a class="dropdown-item" id="disney">Disney Style</a>
+                        <a class="dropdown-item" id="sd1-4">Default Style</a>
+                        <a class="dropdown-item" id="child">Real-Picture Style</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Prompt</span>
+                </div>
+                <input type="text" id="fprompt" class="form-control" aria-describedby="basic-addon3"
+                 value="masterpiece, high quality">
+            </div>
+        </div>
+        <div class="row mb-3 ms-1">
+            <small id="prompthelp" class="form-text text-muted">사진을 묘사하면 더욱 더 정확해집니다.</small>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Negative Prompt</span>
+                </div>
+                <input type="text" id="fnprompt" class="form-control" aria-describedby="basic-addon3">
+            </div>
+        </div>
+        <div class="row mb-3 ms-1">
+            <small id="nprompthelp" class="form-text text-muted">recommand: low quality, worst quality</small>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-auto">
+                            <span id="basic-addon3">AI Filter 강도</span>
+                        </div>
+                        <div class="col">
+                            <input type="text" id="strength-text" class="form-control" aria-describedby="basic-addon3"
+                                placeholder="">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <input type="range" id="strength" class="form-range" step="0.1" min="0.2" max="0.7">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">Seed</span>
+                    </div>
+                    <input type="text" id="seed" class="form-control" aria-describedby="basic-addon3">
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <small class="form-text text-muted">높을 수록 다른 사진이 됩니다.</small>
+            </div>
+            <div class="col">
+                <small class="form-text text-muted">값이 동일하면 같은 결과가 나옵니다.</small>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <label for="formFile" class="form-label">Original Image</label>
+                <input class="form-control" type="file" id="origin-file">
+            </div>
+            <div class="col">
+                <button class="btn btn-outline-primary btn-block" style="width: 100%;height:100%;" type="button"
+                    id="cropBtn">
+                    Crop Image</button>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col text-center">
+                <img src="static/img/ghost_background_black.png" class="img-fluid" id="cropimg">
+
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="col text-center" id="result">
+                512 x 512<br>
+                Empty Image
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col text-center">
+                <button class="btn btn-outline-primary btn-block" style="width: 100%;height:100%;" type="button"
+                    id="processBtn">
+                    AI Image Processing</button>
+            </div>
+        </div>
+
+        <!--
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="step" class="form-label" id="stepvalue">Step</label>
+                            <input type="range" id="step" class="form-range" step="2" min="2" max="40">
+                        </div>
+                    </div>
+                    -->
+    </div>
+</div>

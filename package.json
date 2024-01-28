@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
+    "cropperjs": "^1.6.1",
     "eventemitter3": "^5.0.1",
     "three": "^0.160.0"
   }

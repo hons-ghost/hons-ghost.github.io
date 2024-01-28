@@ -24,6 +24,12 @@ body {
 .navbar {
     width: 100%;
 }
+#navibar {
+    z-index: 3;
+}
+#contents {
+    z-index: 2;
+}
 .profile-sm {
     width:40px;
     border-radius: 70%;
@@ -58,7 +64,7 @@ header {
     font-size: 14px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
-.navbar-brand-ex {
+.select-disable {
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;

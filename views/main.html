@@ -1,4 +1,4 @@
-<div class="container py-3 ps-0 pe-0 border-start border-end h-100">
+<div class="container py-3 ps-0 pe-0 h-100">
     <div class="row ps-3 pe-3">
         <div class="col" id="connect">
         </div>
@@ -6,7 +6,7 @@
     <div class="row row-cols-1 row-cols-md-2 ps-0 pe-0 ms-0 me-0">
         <div class="col ps-0 pe-0 ms-0 me-0 main-view">
             <div class="p-0 m-0 main-img">
-                <div id="carouselExampleAutoplaying" class="carousel slide"  data-bs-ride="carousel" data-bs-interval="1000">
+                <div id="carouselExampleAutoplaying" class="carousel slide" data-ride="carousel" data-bs-ride="carousel">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide-to="0" class="active"
                             aria-current="true" aria-label="Slide 1"></button>
@@ -54,11 +54,18 @@
             <div class="container">
                 <div class="row">
                     <div class="col m-2" id="taglist">
-                        <span class='badge bg-primary handcursor' onclick="ClickLoadPage('hons', false)">#최신글</span>
+                        <span class='badge bg-primary handcursor select-disable' onclick="ClickLoadPage('hons', false)">#최신글</span>
                     </div>
                 </div>
-                <div class="row" id="userlist">
+                <div class="row m-1" id="userlist">
                     <span style="font-size: 20px;"><b>New Members</b></span>
+                </div>
+                <div class="row text-center">
+                    <div class="col text-center">
+                    <div class="spinner-grow text-primary" role="status" id="loadspinner">
+                        <span class="visually-hidden"></span>
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>

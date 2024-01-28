@@ -37,11 +37,15 @@ export class Hons {
     drawHtmlConnectMaster() {
         const bodyTag = document.getElementById('connect');
         if (bodyTag == null) return;
-        console.log(window.MasterNode);
         bodyTag.innerHTML = `Connected Master - 
         ${window.MasterNode.User.Nickname}`;
     }
     drawHtmlHon(ret: HonEntry, id: string) {
+        this.loadedCount++
+        console.log(this.loadedCount, this.targetLoadCount)
+        if (this.loadedCount == this.targetLoadCount) {
+            this.ViewLoadingSpinner(false)
+        }
         if ("result" in ret) return
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById("feeds");
@@ -94,7 +98,7 @@ export class Hons {
         return tag;
     }
     public RequestHons(s: number, n: number) {
-        this.targetLoadCount = s + n
+        this.ViewLoadingSpinner(true)
         this.m_masterAddr = window.MasterAddr;
         const masterAddr = this.m_masterAddr;
         const tag = this.getParam()
@@ -105,6 +109,7 @@ export class Hons {
             .then((response) => response.json())
             .then((result) => this.honsResult(result))
             .then((keys)=> {
+                this.targetLoadCount = s + keys.length
                 this.CheckReloading(keys.length)
                 this.RequestHon(keys)
             })
@@ -114,10 +119,18 @@ export class Hons {
         const reload = document.getElementById("reload") as HTMLSpanElement;
         if (this.requestCount > keyCount) {
             reload.style.display = "none"
+            console.log(this.requestCount, keyCount)
         } else {
             reload.style.display = "block"
         }
-        this.loadedCount += keyCount
+    }
+    public ViewLoadingSpinner(onoff: boolean){
+        const printTag = document.getElementById("loading") as HTMLDivElement;
+        printTag.innerHTML = (onoff) ? `
+            <div class="spinner-grow text-primary" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        `:"";
     }
 
     public VisibleUi() {
@@ -170,8 +183,9 @@ export class Hons {
         }
         const reload = document.getElementById("reload") as HTMLSpanElement;
         reload.onclick = () => {
-            if (this.loadedCount != this.targetLoadCount) 
+            if (this.loadedCount != this.targetLoadCount) {
                 return
+            }
             this.RequestHons(this.loadedCount, this.requestCount);
         }
         this.CanvasRenderer()

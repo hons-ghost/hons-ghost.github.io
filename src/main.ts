@@ -5,9 +5,12 @@ import { BlockStore } from "./store";
 
 
 export class Main {
+    targetloadCnt: number
+    currenloadCnt: number
 
     public constructor(private blockStore: BlockStore, 
         private session: Session) {
+            this.targetloadCnt = this.currenloadCnt = 0
     }
     tagResult(ret: any): string[] {
         if ("json" in ret) {
@@ -20,18 +23,19 @@ export class Main {
         const taglist = document.getElementById('taglist') as HTMLDivElement
         tags.forEach((tag: string) => {
             taglist.innerHTML += `
-            <span class='badge bg-primary handcursor' onclick="ClickLoadPage('hons', false, '&tag=${atob(tag)}')">
+            <span class='badge bg-primary handcursor select-disable' onclick="ClickLoadPage('hons', false, '&tag=${atob(tag)}')">
             ${decodeURIComponent(atob(atob(tag)))}
             </span>
             `
         })
     }
     drawHtmlUserInfo(hon: ProfileEntry) {
+        this.currenloadCnt++
         const uniqId = hon.id + hon.time.toString()
         const userTag = document.getElementById("userlist") as HTMLDivElement;
         userTag.innerHTML += `
-                <div class="container">
-                <div class="row p-1 border-top handcursor" onclick="ClickLoadPage('hondetail', false, '&email=${hon.email}')">
+                <div class="container pt-2">
+                <div class="row p-1 border rounded handcursor" onclick="ClickLoadPage('hondetail', false, '&email=${hon.email}')">
                     <div class="col-auto">
                             <span id="${uniqId}" class="m-1"></span>
                     </div>
@@ -54,6 +58,10 @@ export class Main {
                     container.appendChild(imageElement)
                 })
         }
+        if (this.targetloadCnt == this.currenloadCnt) {
+            const tag = document.getElementById("loadspinner") as HTMLSpanElement
+            tag.style.display = "none"
+        }
     }
     public RequestTaglist(n: number) {
         const masterAddr = window.MasterAddr;
@@ -68,7 +76,8 @@ export class Main {
 
     public RequestUserInfo(emails: string[]) {
         const masterAddr = window.MasterAddr;
-        const table = "profile"
+        this.targetloadCnt = emails.length
+        this.currenloadCnt = 0
         emails.forEach((email) => {
             const key = atob(email)
             this.blockStore.FetchProfile(masterAddr, key)

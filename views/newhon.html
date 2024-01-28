@@ -38,59 +38,31 @@
     </div>
     <div class="row">
         <div class="col m-2">
-            <div class="card">
-                <div class="card-header font-weight-bold"> 사진 만들기 </div>
-                <div class="card-body p-2">
-                    <div class="row">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Prompt</span>
-                            </div>
-                            <input type="text" id="prompt" class="form-control" aria-describedby="basic-addon3">
-                        </div>
-                    </div>
-                    <div class="row mb-3 ms-1">
-                            <small id="prompthelp" class="form-text text-muted">recommand: high quality, masterpiece</small>
-                    </div>
-                    <div class="row">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon3">Negative Prompt</span>
-                            </div>
-                            <input type="text" id="nprompt" class="form-control" aria-describedby="basic-addon3">
-                        </div>
-                    </div>
-                    <div class="row mb-3 ms-1">
-                            <small id="nprompthelp" class="form-text text-muted">recommand: low quality, worst quality</small>
-                    </div>  
-                    <div class="row mb-3">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon3">Step</span>
-                            </div>
-                            <input type="text" id="step" class="form-control" aria-describedby="basic-addon3"
-                                placeholder="20">
-                        </div>
-                    </div>
-                    <!--
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="step" class="form-label" id="stepvalue">Step</label>
-                            <input type="range" id="step" class="form-range" step="2" min="2" max="40">
-                        </div>
-                    </div>
-                    -->
-                    <div class="row">
-                        <div class="col m-2">
-                            <button class="btn btn-outline-primary" type="button" id="generateBtn">
-                                Generate Image</button>
-                        </div>
-                        <div class="col m-2">
-                            <button type="button" id="feedBtn" class="btn btn-primary">Submit</button>
-                        </div>
-                    </div>
+            <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#sd1"
+                        type="button" role="tab" aria-controls="sd1" aria-selected="true">Anime 생성</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-follow-tab" data-bs-toggle="pill" data-bs-target="#filter"
+                        type="button" role="tab" aria-controls="filter" aria-selected="false">AI Filter</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mt-0 m-2">
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active p-0" id="sd1" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+                </div>
+                <div class="tab-pane fade show" id="filter" role="tabpanel" aria-labelledby="pills-follow-tab" tabindex="0">
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col m-2 text-center">
+            <button type="button" id="feedBtn" class="btn btn-primary">Submit</button>
         </div>
     </div>
     <div class="row">

@@ -22,7 +22,6 @@ export class Signin {
         info.innerHTML = msg;
     }
     loginResult(ret: any) {
-        console.log(ret);
         if ("email" in ret) {
             this.m_session.SignIn({ Email: ret.email, Nickname: ret.id, Password: ret.password });
             window.ClickLoadPage("main", false);
@@ -45,7 +44,6 @@ export class Signin {
         formData.append("key", email)
         formData.append("email", email)
         formData.append("password", password)
-        console.log(JSON.stringify({ key: email, Email: email, password: password }))
         fetch(addr, {
             method: "POST",
             cache: "no-cache",

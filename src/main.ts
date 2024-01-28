@@ -31,9 +31,10 @@ export class Main {
     }
     drawHtmlUserInfo(hon: ProfileEntry) {
         this.currenloadCnt++
-        const uniqId = hon.id + hon.time.toString()
-        const userTag = document.getElementById("userlist") as HTMLDivElement;
-        userTag.innerHTML += `
+        if ("file" in hon) {
+            const uniqId = hon.id + hon.time.toString()
+            const userTag = document.getElementById("userlist") as HTMLDivElement;
+            userTag.innerHTML += `
                 <div class="container pt-2">
                 <div class="row p-1 border rounded handcursor" onclick="ClickLoadPage('hondetail', false, '&email=${hon.email}')">
                     <div class="col-auto">
@@ -46,17 +47,21 @@ export class Main {
                 </div>
                 `
 
-        if (hon.file != "") {
-            fetch("data:image/jpg;base64," + hon.file)
-                .then(res => res.blob())
-                .then(img => {
-                    const imageUrl = URL.createObjectURL(img)
-                    const imageElement = new Image()
-                    imageElement.src = imageUrl
-                    imageElement.className = 'profile-sm';
-                    const container = document.getElementById(uniqId) as HTMLSpanElement
-                    container.appendChild(imageElement)
-                })
+            if (hon.file != "" && "file" in hon) {
+                fetch("data:image/jpg;base64," + hon.file)
+                    .then(res => res.blob())
+                    .then(img => {
+                        const imageUrl = URL.createObjectURL(img)
+                        const imageElement = new Image()
+                        imageElement.src = imageUrl
+                        imageElement.className = 'profile-sm';
+                        const container = document.getElementById(uniqId) as HTMLSpanElement
+                        container.appendChild(imageElement)
+                    })
+            } else {
+                const container = document.getElementById(uniqId) as HTMLSpanElement
+                container.innerHTML = `<img class="profile-sm" src="static/img/ghost_background_black.png">`
+            }
         }
         if (this.targetloadCnt == this.currenloadCnt) {
             const tag = document.getElementById("loadspinner") as HTMLSpanElement

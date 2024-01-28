@@ -149,6 +149,13 @@ export class NewHon {
         canvas.style.display = (onoff) ? "block" : "none"
     }
     initFilterUi() {
+        const streTag = document.getElementById("strength") as HTMLProgressElement;
+        const streTxtTag = document.getElementById("strength-text") as HTMLInputElement;
+        streTag.onchange = () => {
+            streTxtTag.value = streTag.value.toString()
+        }
+        streTxtTag.value = streTag.value.toString()
+
         const cropTag = document.getElementById("cropimg") as HTMLImageElement;
         let cropper = new Cropper(cropTag)
 

@@ -30,7 +30,7 @@ export class HonDetail {
         emailTag.innerHTML = honUser.Email;
         this.blockStore.FetchProfile(window.MasterAddr, ret.email)
             .then((result) => {
-                if (result.file != "") {
+                if (result.file != "" && "file" in result) {
                     fetch("data:image/jpg;base64," + result.file)
                         .then(res => res.blob())
                         .then(img => {
@@ -69,7 +69,7 @@ export class HonDetail {
         feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, btoa(key))
         this.blockStore.FetchProfile(window.MasterAddr, ret.email)
             .then((result) => {
-                if (result.file != "") {
+                if (result.file != "" && "file" in result) {
                     fetch("data:image/jpg;base64," + result.file)
                         .then(res => res.blob())
                         .then(img => {
@@ -80,6 +80,9 @@ export class HonDetail {
                             const container = document.getElementById(uniqId) as HTMLSpanElement
                             container?.appendChild(imageElement)
                         })
+                } else {
+                    const container = document.getElementById(uniqId) as HTMLSpanElement
+                    container.innerHTML = `<img class="profile-sm" src="static/img/ghost_background_black.png">`
                 }
             })
     }

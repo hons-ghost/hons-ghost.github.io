@@ -52,7 +52,6 @@ export class Hon {
         return email;
     }
     drawHtmlHon(ret: HonEntry, key: string, targetDiv: string) {
-        console.log(ret)
         const uniqId = ret.id + ret.time.toString()
         const feeds = document.getElementById(targetDiv);
         if (feeds == null) return;
@@ -79,7 +78,6 @@ export class Hon {
         info.innerHTML = msg;
     }
     newHonResult(ret: FetchResult) {
-        console.log(ret);
         if (ret.result == "null") {
             this.warningMsg("등록 실패");
         } else {
@@ -136,7 +134,6 @@ export class Hon {
         fetch(addr)
             .then((response) => response.json())
             .then((result) => {
-                console.log(result.result)
                 if (result.result.constructor == Array) {
                     const container = document.getElementById(key + "-cnt") as HTMLElement
                     container.innerHTML = result.result.length

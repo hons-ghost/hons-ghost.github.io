@@ -96,6 +96,9 @@ export class Main {
         const table = "member"
         const addr = `
         ${masterAddr}/glambda?txid=${encodeURIComponent(GlobalLoadListTx)}&table=${table}&start=0&count=${n}`;
+
+        const userTag = document.getElementById("userlist") as HTMLDivElement;
+        userTag.innerHTML = `<span style="font-size: 20px;"><b>New Members</b></span>`
         fetch(addr)
             .then((response) => response.json())
             .then((result) => this.tagResult(result))

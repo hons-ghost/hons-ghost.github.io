@@ -32,6 +32,7 @@ export class NewHon {
                         const imageUrl = URL.createObjectURL(img)
                         const imageElement = new Image()
                         imageElement.src = imageUrl
+                        imageElement.className = "img-fluid rounded"
                         const container = document.getElementById("printImg") as HTMLDivElement;
                         container.innerHTML = ""
                         container.appendChild(imageElement)

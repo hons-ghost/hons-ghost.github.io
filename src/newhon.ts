@@ -240,7 +240,9 @@ export class NewHon {
                     // var canvas = document.getElementById("canvas");
                     const ctx = canvas.getContext("2d", { alpha: false });
                     // Actual resizing
-                    ctx?.drawImage(imageElement, 0, 0, 512, 512);
+                    if (ctx == null) return
+
+                    ctx.drawImage(imageElement, 0, 0, 512, 512);
                     // Show resized image in preview element
                     canvas.toBlob((b) => {
                         if (b == null) return
@@ -340,14 +342,16 @@ export class NewHon {
                 const tag = document.getElementById("modalwindow") as HTMLDivElement;
                 tag.innerHTML = res
             })
-        fetch("views/filter.html")
-            .then(response => { return response.text(); })
-            .then((res) => {
-                const tag = document.getElementById("filter") as HTMLDivElement;
-                tag.innerHTML = res
-            })
             .then(() => {
-                this.initFilterUi()
+                fetch("views/filter.html")
+                    .then(response => { return response.text(); })
+                    .then((res) => {
+                        const tag = document.getElementById("filter") as HTMLDivElement;
+                        tag.innerHTML = res
+                    })
+                    .then(() => {
+                        this.initFilterUi()
+                    })
             })
 
         return true;

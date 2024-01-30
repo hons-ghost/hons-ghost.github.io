@@ -22,6 +22,7 @@ export class Hon {
                             imageElement.src = imageUrl
                             imageElement.className = 'profile-sm';
                             const container = document.getElementById("userId") as HTMLSpanElement
+                            container.innerHTML = ''
                             container.appendChild(imageElement)
                         })
                 }
@@ -39,6 +40,7 @@ export class Hon {
                             imageElement.src = imageUrl
                             imageElement.className = 'profile-sm';
                             const container = document.getElementById("userId") as HTMLSpanElement
+                            container.innerHTML = ''
                             container.appendChild(imageElement)
                         })
                 }
@@ -67,6 +69,7 @@ export class Hon {
                             imageElement.src = imageUrl
                             imageElement.className = 'profile-sm';
                             const container = document.getElementById(uniqId) as HTMLSpanElement
+                            container.innerHTML = ''
                             container.appendChild(imageElement)
                         })
                 }

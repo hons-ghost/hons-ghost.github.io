@@ -12,6 +12,7 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
                 imageElement.src = imageUrl
                 imageElement.className = "rounded img-fluid w-100"
                 const container = document.getElementById(uniqId + "-file") as HTMLSpanElement
+                container.innerHTML = ''
                 container.appendChild(imageElement)
             })
     }

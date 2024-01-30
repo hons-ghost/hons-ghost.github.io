@@ -158,15 +158,16 @@ export class Hons {
         this.meta.init()
         this.meta.render()
         this.meta.LongShot()
-        this.meta.canvas.Canvas.onclick = this.VisibleUi
+        this.meta.canvas.Canvas.onclick = () => { this.VisibleUi() }
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
-        space.onclick = this.VisibleUi
+        space.onclick = () => { this.VisibleUi() }
 
         this.profileVisible = false
         this.VisibleUi()
     }
+    
     public Run(masterAddr: string): boolean {
         
         this.loadedCount = 0

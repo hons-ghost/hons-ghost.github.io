@@ -195,6 +195,7 @@ export class HonDetail {
         const footer = document.getElementById("footer") as HTMLDivElement
         const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
+        console.log(this.profileVisible)
         if (this.profileVisible) {
             wrapper.style.display = "none"
             footer.style.display = "none"
@@ -218,18 +219,18 @@ export class HonDetail {
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         */
         const play = document.getElementById("playBtn") as HTMLButtonElement
-        play.onclick = this.VisibleUi
+        play.onclick = () => { this.VisibleUi() }
 
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init()
         this.meta.render()
         this.meta.CloseUp()
-        this.meta.canvas.Canvas.onclick = this.VisibleUi
+        this.meta.canvas.Canvas.onclick = () => { this.VisibleUi() }
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
-        space.onclick = this.VisibleUi
+        space.onclick = () => { this.VisibleUi() }
     }
 
     public Run(masterAddr: string): boolean {

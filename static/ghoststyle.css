@@ -258,3 +258,66 @@ display: inline-block;
     border-radius: 50%;
     margin: 0 auto;
 }
+._tooltip-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+._tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    display: block;
+    animation: fadeout 1s linear 3s;
+    animation-fill-mode: forwards;
+}
+
+._tooltip:after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	border: 10px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.5);
+	border-bottom: 0;
+	margin-left: -10px;
+	margin-bottom: -10px;
+}
+
+._tooltip-down {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    display: block;
+    animation: fadeout 1s linear 3s;
+    animation-fill-mode: forwards;
+}
+
+._tooltip-down:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border: 10px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.5);
+	border-top: 0;
+	margin-left: -10px;
+	margin-top: -10px;
+}
+@keyframes fadeout {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}

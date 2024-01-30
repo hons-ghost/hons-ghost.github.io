@@ -13,6 +13,10 @@ export class Router {
         this.curId = ""
         this.objs = {}
 
+        ipc.RegisterMsgHandler('close', (log: string) => {
+            this.objs[this.curId].MsgHandler('close', log)
+        });
+
         ipc.RegisterMsgHandler('generateLog', (log: string) => {
             this.objs[this.curId].MsgHandler('generateLog', log)
         });

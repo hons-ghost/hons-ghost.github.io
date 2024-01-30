@@ -5,23 +5,50 @@ import { NewHonTxId } from "./models/tx";
 import { Channel } from "./models/com";
 import Cropper from "cropperjs"
 
+const AiMode = {
+    Filter: 'Filter',
+    Gen: 'Gen'
+} as const
+type AiMode = typeof AiMode[keyof typeof AiMode]
 
 export class NewHon {
     m_masterAddr: string;
     m_session: Session
     m_model: string;
     m_img: Blob;
+    mode: AiMode
+    readyprocess = false
     public constructor(private blockStore: BlockStore
         , private session: Session, private ipc: Channel) {
         this.m_masterAddr = "";
         this.m_model = "toonyou_beta6-f16.gguf"
         this.m_session = session;
         this.m_img = new Blob()
+        this.mode = AiMode.Filter
     }
     MsgHandler(msg: string, param: any): void {
         switch (msg) {
+            case 'close':
+                this.printLog("server와 연결이 끊겼습니다. 새로고침하세요.")
+                break;
             case 'generateLog':
-                this.printLog(param)
+                if (this.mode == AiMode.Filter) {
+                    const result = JSON.parse(param.replaceAll('\'', '"'))
+                    const step = parseInt(result.step, 10)
+                    const steps = parseInt(result.steps, 10)
+                    const time = parseFloat(result.time)
+                    if (step == 0) {
+                        this.printLog(`시간을 계산중입니다.`)
+                    } else if(step == steps) {
+                        this.printLog(`사진을 생성 중입니다.`)
+                    } else {
+                        this.printLog(`남은 예상시간: 
+                        ${((steps - step) * time).toFixed(2)}s
+                        , 진행율: ${(step / steps * 100).toFixed(2)}%`)
+                    }
+                } else {
+                    this.printLog(param)
+                }
                 break;
             case 'reply_generateImage':
                 const filename: string = param
@@ -37,6 +64,7 @@ export class NewHon {
                         container.innerHTML = ""
                         container.appendChild(imageElement)
                         this.m_img = img
+                        this.printLog(`완료`)
                     })
         }
     }
@@ -90,6 +118,7 @@ export class NewHon {
             .catch(() => { this.warningMsg("Server에 문제가 생긴듯 합니다;;") });
     }
     generateImage() {
+        this.mode = AiMode.Gen
         const promptTag = document.getElementById("prompt") as HTMLInputElement;
         const prompt = promptTag.value.toLowerCase();
         const npromptTag = document.getElementById("nprompt") as HTMLInputElement;
@@ -109,8 +138,10 @@ export class NewHon {
         const prevent19 = (nprompt == "") ? "nude, naked, nsfw":", nude, naked, nsfw"
         console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",step, "|",seed)
         this.ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);
+        this.printLog(`전송중입니다.`)
     }
     processImage() {
+        this.mode = AiMode.Filter
         const promptTag = document.getElementById("fprompt") as HTMLInputElement;
         const prompt = promptTag.value.toLowerCase();
         const npromptTag = document.getElementById("fnprompt") as HTMLInputElement;
@@ -144,6 +175,7 @@ export class NewHon {
                 step, seed, this.m_model, samplingMethod, cfgScale, stre, batchCnt, schedule,
                 clipSkip, vea, lora, reader.result);
         }
+        this.printLog(`전송중입니다.`)
     }
     canvasVisible(onoff: boolean) {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
@@ -188,8 +220,7 @@ export class NewHon {
                 cropper.destroy()
                 cropper = new Cropper(cropTag, { 
                     aspectRatio: 1,
-                    minContainerWidth: 512, minContainerHeight: 512,
-                    viewMode: 1,
+                    viewMode: 2,
                 })
                 console.log(cropper.getCropBoxData())
 
@@ -221,30 +252,35 @@ export class NewHon {
                         const container = document.getElementById("result") as HTMLDivElement;
                         container.innerHTML = ""
                         container.appendChild(cropImageElement)
+                        this.readyprocess = true
                     })
                 }
             })
         }
         const gbtn = document.getElementById("processBtn") as HTMLButtonElement
-        gbtn.onclick = () => this.processImage()
+        gbtn.onclick = () => {
+            if (this.readyprocess) this.processImage()
+        }
 
         this.bindClickEvent("toonyou", 1)
         this.bindClickEvent("disney", 2)
-        this.bindClickEvent("sd1-4", 3)
         this.bindClickEvent("child", 4)
     }
     selectModel(n: number) {
         this.toggleMenu()
    
         const btn = document.getElementById("dropdownMenuButton") as HTMLButtonElement
+        const resultTag = document.getElementById("result") as HTMLButtonElement
         switch (n) {
             case 1:
                 btn.innerText = "Animation Style"
                 this.m_model = "toonyou_beta6-f16.gguf"
+                resultTag.innerHTML = `<img src="static/img/comp1.jpg" class="img-fluid rounded">`
                 break
             case 2:
                 btn.innerText = "Disney Style"
                 this.m_model = "disneyPixarCartoon_v10-f16.gguf"
+                resultTag.innerHTML = `<img src="static/img/comp2.jpg" class="img-fluid rounded">`
                 break
             case 3:
                 btn.innerText = "Default Style"
@@ -253,6 +289,7 @@ export class NewHon {
             case 4:
                 btn.innerText = "Real-Picture Style"
                 this.m_model = "chilled_reversemix_v2-f16.gguf"
+                resultTag.innerHTML = `<img src="static/img/comp3.jpg" class="img-fluid rounded">`
                 break
         }
     }
@@ -261,11 +298,16 @@ export class NewHon {
         tag.onclick = () => { this.selectModel(id) }
     }
     public Run(masterAddr: string): boolean {
-        /* 잠시만...
+        const btn = document.getElementById("feedBtn") as HTMLButtonElement
         if (!this.m_session.CheckLogin()) {
-            return false;
+            btn.innerText = "체험만 가능 (Login 후 등록할 수 있습니다.)"
+            btn.disabled = true
+        } else {
+            btn.onclick = () => {
+                btn.disabled = true
+                this.RequestNewHon();
+            }
         }
-        */
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
         this.m_masterAddr = masterAddr;
         //this.canvasVisible(false)
@@ -281,24 +323,28 @@ export class NewHon {
             .then(response => { return response.text(); })
             .then((res) => {
                 const tag = document.getElementById("sd1") as HTMLDivElement;
-                tag.innerHTML += res
+                tag.innerHTML = res
             })
             .then(() => {
                 const cont = document.getElementById("inputContent") as HTMLTextAreaElement;
                 cont.onfocus = () => { if (cont.value == "Enter text") cont.value = ''; };
                 const gbtn = document.getElementById("generateBtn") as HTMLButtonElement
-                gbtn.onclick = () => this.generateImage();
-                const btn = document.getElementById("feedBtn") as HTMLButtonElement
-                btn.onclick = () => {
-                    btn.disabled = true
-                    this.RequestNewHon();
+                gbtn.onclick = () => {
+                    this.generateImage();
                 }
+                
+            })
+        fetch("views/editimg.html")
+            .then(response => { return response.text(); })
+            .then((res) => {
+                const tag = document.getElementById("modalwindow") as HTMLDivElement;
+                tag.innerHTML = res
             })
         fetch("views/filter.html")
             .then(response => { return response.text(); })
             .then((res) => {
                 const tag = document.getElementById("filter") as HTMLDivElement;
-                tag.innerHTML += res
+                tag.innerHTML = res
             })
             .then(() => {
                 this.initFilterUi()

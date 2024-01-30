@@ -180,7 +180,11 @@ export class Hons {
         if (tagText == null ) {
             tagBtn.innerText = "#최신글"
         } else {
-            tagBtn.innerText = decodeURIComponent(atob(tagText))
+            try {
+                tagBtn.innerText = decodeURIComponent(atob(tagText))
+            } catch {
+                tagBtn.innerText = decodeURIComponent(atob(decodeURIComponent(tagText)))
+            }
         }
         const reload = document.getElementById("reload") as HTMLSpanElement;
         reload.onclick = () => {

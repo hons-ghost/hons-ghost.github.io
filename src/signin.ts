@@ -61,7 +61,7 @@ export class Signin {
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
             <a class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(SigninTxId)}">
-                ${SigninTxId}
+            link click
             </a> `;
         const btn = document.getElementById("signinBtn") as HTMLButtonElement
         btn.onclick = () => this.RequestSignin();

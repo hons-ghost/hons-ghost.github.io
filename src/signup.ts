@@ -59,8 +59,8 @@ export class Signup {
         this.m_masterAddr = masterAddr;
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
-            <a class="handcursor" onclick='ClickLoadPage("txdetail", false, "&txid=${encodeURIComponent(SignupTxId)}")'>
-                ${SignupTxId}
+            <a class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(SignupTxId)}">
+                link click
             </a> `;
         const btn = document.getElementById("signupBtn") as HTMLButtonElement
         btn.onclick = () => this.RequestSignup();

@@ -270,7 +270,7 @@ export class NewHon {
         this.toggleMenu()
    
         const btn = document.getElementById("dropdownMenuButton") as HTMLButtonElement
-        const resultTag = document.getElementById("result") as HTMLButtonElement
+        const resultTag = document.getElementById("result") as HTMLDivElement
         switch (n) {
             case 1:
                 btn.innerText = "Animation Style"

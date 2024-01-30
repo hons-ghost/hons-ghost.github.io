@@ -18,7 +18,7 @@ export class HonDetail {
     }
     drawHtml(ret: any) {
         const honUser :HonUser = {
-            Email: ret.email,
+            Email: decodeURIComponent(ret.email),
             Nickname: ret.id,
             Password: ""
         }
@@ -50,7 +50,7 @@ export class HonDetail {
         const masterAddr = this.m_masterAddr;
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(HonDetailTxId);
 
-        fetch(addr + "&table=member&key=" + email)
+        fetch(addr + "&table=member&key=" + encodeURIComponent(email))
             .then((response) => response.json())
             .then((result) => this.drawHtml(result))
             .catch(() => { console.log("Server에 문제가 생긴듯 합니다;;") });

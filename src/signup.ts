@@ -40,8 +40,8 @@ export class Signup {
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(SignupTxId);
 
         const formData = new FormData()
-        formData.append("key", email)
-        formData.append("email", email)
+        formData.append("key", encodeURIComponent(email))
+        formData.append("email", encodeURIComponent(email))
         formData.append("password", password)
         formData.append("id", id)
         fetch(addr, {

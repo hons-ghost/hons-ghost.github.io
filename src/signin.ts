@@ -41,8 +41,8 @@ export class Signin {
         this.m_user.Password = password;
 
         const formData = new FormData()
-        formData.append("key", email)
-        formData.append("email", email)
+        formData.append("key", encodeURIComponent(email))
+        formData.append("email", encodeURIComponent(email))
         formData.append("password", password)
         fetch(addr, {
             method: "POST",

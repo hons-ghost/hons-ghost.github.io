@@ -98,8 +98,8 @@ export class NewHon {
         const tag = "#" + ((threadTag.value == "") ? "daliy log" : threadTag.value)
         const formData = new FormData()
         formData.append("file", this.m_img)
-        formData.append("key", user.Email)
-        formData.append("email", user.Email)
+        formData.append("key", encodeURIComponent(user.Email))
+        formData.append("email", encodeURIComponent(user.Email))
         formData.append("password", user.Password)
         formData.append("id", user.Nickname)
         formData.append("time", (new Date()).getTime().toString())
@@ -275,12 +275,12 @@ export class NewHon {
             case 1:
                 btn.innerText = "Animation Style"
                 this.m_model = "toonyou_beta6-f16.gguf"
-                resultTag.innerHTML = `<img src="static/img/comp1.jpg" class="img-fluid rounded">`
+                if (!this.readyprocess) resultTag.innerHTML = `<img src="static/img/comp1.jpg" class="img-fluid rounded">`
                 break
             case 2:
                 btn.innerText = "Disney Style"
                 this.m_model = "disneyPixarCartoon_v10-f16.gguf"
-                resultTag.innerHTML = `<img src="static/img/comp2.jpg" class="img-fluid rounded">`
+                if (!this.readyprocess) resultTag.innerHTML = `<img src="static/img/comp2.jpg" class="img-fluid rounded">`
                 break
             case 3:
                 btn.innerText = "Default Style"
@@ -289,7 +289,7 @@ export class NewHon {
             case 4:
                 btn.innerText = "Real-Picture Style"
                 this.m_model = "chilled_reversemix_v2-f16.gguf"
-                resultTag.innerHTML = `<img src="static/img/comp3.jpg" class="img-fluid rounded">`
+                if (!this.readyprocess) resultTag.innerHTML = `<img src="static/img/comp3.jpg" class="img-fluid rounded">`
                 break
         }
     }
@@ -354,6 +354,7 @@ export class NewHon {
     }
 
     public Release(): void { 
+        this.readyprocess = false
         //this.canvasVisible(true)
     }
 }

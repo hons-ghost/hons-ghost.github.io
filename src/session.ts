@@ -35,11 +35,13 @@ export class Session {
     }
     drawHtmlLoginUi() {
         if (this.m_signinFlag) {
+            /*
             const brand = document.getElementById("brand") as HTMLUListElement;
             brand.innerHTML = `
         <a class="navbar-brand select-disable handcursor" onclick="ClickLoadPage('hons', false)">
             <b>Hons.Metaverse</b></a>
             `
+            */
             const seInfo = document.getElementById("sessioninfo") as HTMLUListElement;
             seInfo.innerHTML = `
                 <li class="nav-item ">

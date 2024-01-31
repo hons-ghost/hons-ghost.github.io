@@ -24,7 +24,7 @@ export class Signup {
         if (ret.result == "null") {
             this.warningMsg("Signup 실패");
         } else {
-            window.ClickLoadPage("sighin", false);
+            window.ClickLoadPage("signin", false);
         }
     }
 

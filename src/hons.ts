@@ -177,10 +177,12 @@ export class Hons {
         this.RequestHons(this.loadedCount, this.requestCount);
 
         const tagBtn = document.getElementById("tagtitle") as HTMLDivElement
+        const newFeedlink = document.getElementById("newfeed") as HTMLAnchorElement
         const tagText = this.getParam()
         if (tagText == null ) {
             tagBtn.innerText = "#최신글"
         } else {
+            newFeedlink.onclick = () => { window.ClickLoadPage("newhon", false, `&tag=${tagText}`) }
             try {
                 tagBtn.innerText = decodeURIComponent(atob(tagText))
             } catch {

@@ -95,7 +95,7 @@ export class NewHon {
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(NewHonTxId);
 
         const threadTag = document.getElementById("thread") as HTMLInputElement
-        const tag = "#" + ((threadTag.value == "") ? "daliy log" : threadTag.value)
+        const tag = "#" + ((threadTag.value == "") ? "daliy log" : threadTag.value.replace("#", ""))
         const formData = new FormData()
         formData.append("file", this.m_img)
         formData.append("key", encodeURIComponent(user.Email))
@@ -299,6 +299,12 @@ export class NewHon {
         const tag = document.getElementById(name) as HTMLAnchorElement
         tag.onclick = () => { this.selectModel(id) }
     }
+    getParam(): string | null {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tag = decodeURIComponent(atob(urlParams.get("tag") ?? "")).replace("#", "")
+        if (tag == "") return null;
+        return tag;
+    }
     public Run(masterAddr: string): boolean {
         const btn = document.getElementById("feedBtn") as HTMLButtonElement
         if (!this.m_session.CheckLogin()) {
@@ -313,13 +319,8 @@ export class NewHon {
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
         this.m_masterAddr = masterAddr;
         //this.canvasVisible(false)
-    /*
-        const txLink = document.getElementById("txLink") as HTMLElement;
-        txLink.innerHTML = `
-            <a target="_blank" class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(NewHonTxId)}">
-                Tx link
-            </a> `;
-            */
+        const threadTag = document.getElementById("thread") as HTMLInputElement
+        threadTag.value = this.getParam() ?? ""
         
         fetch("views/sd1.html")
             .then(response => { return response.text(); })

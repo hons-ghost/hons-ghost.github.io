@@ -126,9 +126,11 @@ export class HonDetail {
     public Follow() {
         const followBtn = document.getElementById("followBtn") as HTMLButtonElement
         followBtn.onclick = () => {
-            if (!this.m_session.CheckLogin()) return
             const targetKey = this.targetHonEmail
             const user = this.m_session.GetHonUser();
+            if (!this.m_session.CheckLogin() || 
+                user.Email == targetKey) return
+            
             const formData = new FormData()
             formData.append("key", user.Email)
             formData.append("email", user.Email)

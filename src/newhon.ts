@@ -175,7 +175,7 @@ export class NewHon {
                 step, seed, this.m_model, samplingMethod, cfgScale, stre, batchCnt, schedule,
                 clipSkip, vea, lora, reader.result);
         }
-        this.printLog(`전송중입니다.`)
+        this.printLog(`작업 대기중 입니다.`)
     }
     canvasVisible(onoff: boolean) {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement

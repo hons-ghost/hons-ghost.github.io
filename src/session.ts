@@ -17,6 +17,8 @@ export class Session {
         this.m_user = { Email: "", Nickname: "", Password: "" };
         this.m_signinFlag = false;
     }
+    get UserId(): string { return this.m_user.Email }
+
     public GetHonUser(): HonUser { return this.m_user; }
     public RequestSignIn(email: string, password: string, callback: Function) {
         const addr = window.MasterAddr + "/glambda?txid=" + encodeURIComponent(SigninTxId);

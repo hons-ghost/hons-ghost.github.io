@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { gsap } from "gsap"
 import { IViewer } from "../scenes/models/iviewer";
 import { IPhysicsObject } from "../scenes/models/iobject";
 import { Canvas } from "./canvas";
@@ -13,9 +14,8 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         super(75, canvas.Width/ canvas.Height, 0.1, 100)
         canvas.RegisterViewer(this)
         this.controls = new OrbitControls(this, canvas.Canvas)
-        this.movingPos = new THREE.Vector3(0, 0, 0)
+        this.movingPos = new THREE.Vector3(0, 44, 79)
         this.viewMode = ""
-        this.longShot()
         Gui.add(this.position, 'x', 0, 100, 1).listen()
         Gui.add(this.position, 'y', 0, 100, 1).listen()
         Gui.add(this.position, 'z', 0, 100, 1).listen()
@@ -28,14 +28,20 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
 
     longShot() {
         this.viewMode = "long"
+        this.player.Visible = false
         const position = this.player.Position
         this.rotation.x = -Math.PI / 4
-        this.position.set(position.x, position.y + 17, position.z + 33)
-        this.movingPos.set(0, 17, 33)
+        this.position.set(position.x, position.y, position.z)
+        gsap.to(this.movingPos, { x: 0, y: 17, z: 33, 
+            duration: 5, ease: "power1.inOut", onUpdate: () => {
+                this.position.set(this.movingPos.x, this.movingPos.y,
+                    this.movingPos.z)
+            }})
     }
 
     closeUp() {
         this.viewMode = "close"
+        this.player.Visible = true
         this.rotation.x = -Math.PI / 4
         this.position.set(0, 16, 15)
         this.movingPos.set(0, 13, 13)

@@ -10,6 +10,7 @@ export interface IPhysicsObject {
     get Position(): CANNON.Vec3
     set Position(v: CANNON.Vec3)
     set Quaternion(v: CANNON.Quaternion)
+    set Visible(flag: boolean)
 }
 
 export interface ICtrlObject {

@@ -93,6 +93,7 @@ export class HonDetail {
         return keys
     }
     public RequestHon(keys: string[]) {
+        if( keys)
         keys.forEach((key) => {
             this.blockStore.FetchHon(this.m_masterAddr, key)
                 .then((result) => this.drawHtmlHon(result, key))

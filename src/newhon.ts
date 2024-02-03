@@ -16,6 +16,7 @@ export class NewHon {
     m_session: Session
     m_model: string;
     m_img: Blob;
+    m_srcImg: Blob;
     mode: AiMode
     readyprocess = false
     public constructor(private blockStore: BlockStore
@@ -24,6 +25,7 @@ export class NewHon {
         this.m_model = "toonyou_beta6-f16.gguf"
         this.m_session = session;
         this.m_img = new Blob()
+        this.m_srcImg = new Blob()
         this.mode = AiMode.Filter
     }
     MsgHandler(msg: string, param: any): void {
@@ -169,7 +171,7 @@ export class NewHon {
         const vea = ""
         const lora = ""
         const reader = new FileReader()
-        reader.readAsDataURL(this.m_img)
+        reader.readAsDataURL(this.m_srcImg)
         reader.onloadend = () => {
             this.ipc.SendMsg("processImage", prompt, nprompt + prevent19, height, width,
                 step, seed, this.m_model, samplingMethod, cfgScale, stre, batchCnt, schedule,
@@ -246,7 +248,7 @@ export class NewHon {
                     // Show resized image in preview element
                     canvas.toBlob((b) => {
                         if (b == null) return
-                        this.m_img = b
+                        this.m_srcImg = b
                         const imageUrl = URL.createObjectURL(b)
                         const cropImageElement = new Image()
                         cropImageElement.src = imageUrl
@@ -306,6 +308,8 @@ export class NewHon {
         return tag;
     }
     public Run(masterAddr: string): boolean {
+        window.scrollTo(0, 0)
+
         const btn = document.getElementById("feedBtn") as HTMLButtonElement
         if (!this.m_session.CheckLogin()) {
             btn.innerText = "체험만 가능 (Login 후 등록할 수 있습니다.)"

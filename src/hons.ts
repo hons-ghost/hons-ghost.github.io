@@ -156,9 +156,10 @@ export class Hons {
     public CanvasRenderer() {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
-        this.meta.init()
+        this.meta.init().then(() => {
+            this.meta.LongShot()
+        })
         this.meta.render()
-        this.meta.LongShot()
         this.meta.canvas.Canvas.onclick = () => { this.VisibleUi() }
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement

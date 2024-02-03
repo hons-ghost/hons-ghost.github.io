@@ -33,6 +33,7 @@
     "cannon-es": "^0.20.0",
     "cropperjs": "^1.6.1",
     "eventemitter3": "^5.0.1",
+    "gsap": "^3.12.5",
     "three": "^0.160.0"
   }
 }

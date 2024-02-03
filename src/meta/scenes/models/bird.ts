@@ -36,6 +36,14 @@ export class Bird implements ICtrlObject, IPhysicsObject {
         this.body = new PhysicsBird(new CANNON.Vec3(0, 0, 0), this.eventCtrl)
     }
 
+    set Visible(flag: boolean) {
+        this.meshs.traverse(child => {
+            if (child instanceof THREE.Mesh) {
+                child.visible = flag
+            }
+        })
+    }
+
     async Init() {
     }
 

@@ -23,7 +23,9 @@ export class Signin {
     }
     loginResult(ret: any) {
         if ("email" in ret) {
-            this.m_session.SignIn({ Email: ret.email, Nickname: ret.id, Password: ret.password });
+            this.m_session.SignIn({ 
+                Email: ret.email, Nickname: ret.id, 
+                Password: this.m_user.Password });
             window.ClickLoadPage("hondetail", false, `&email=${ret.email}`);
         } else {
             this.warningMsg("ID와 Password가 맞지 않습니다.")

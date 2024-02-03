@@ -25,6 +25,9 @@ export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
         this.body = new PhysicsFloor(width, height, depth, position)
         this.receiveShadow = true
     }
+    set Visible(flag: boolean) {
+        this.visible = flag
+    }
     PostStep(): void { }
 }
 

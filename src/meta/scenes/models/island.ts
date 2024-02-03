@@ -23,6 +23,13 @@ export class Island implements IPhysicsObject {
         this.meshs = new THREE.Group
         this.body = new PhysicsIsland()
     }
+    set Visible(flag: boolean) {
+        this.meshs.traverse(child => {
+            if (child instanceof THREE.Mesh) {
+                child.visible = flag
+            }
+        })
+    }
 
     async Init() {
     }

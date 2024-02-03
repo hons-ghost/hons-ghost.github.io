@@ -68,7 +68,7 @@ export class Session {
             const user: HonUser = JSON.parse(str)
             this.RequestSignIn(user.Email, user.Password, (ret: any) => {
                 if ("email" in ret) {
-                    this.SignIn({ Email: ret.email, Nickname: ret.id, Password: ret.password });
+                    this.SignIn({ Email: ret.email, Nickname: ret.id, Password: user.Password });
                     this.drawHtmlLoginUi()
                 }
             })

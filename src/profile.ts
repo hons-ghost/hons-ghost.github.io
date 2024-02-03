@@ -43,6 +43,14 @@ export class Profile implements Rout{
                 ${msg}
             `;
     }
+    requestResult(ret: any) {
+        if ("result" in ret) {
+            console.log(ret)
+            window.ClickLoadPage("hondetail", false, `&email=${this.m_session.UserId}`);
+        } else {
+            this.printLog(ret)
+        }
+    }
     uploadImage() {
         if (!this.m_session.CheckLogin()) {
             this.printLog("need to sign in")
@@ -63,9 +71,9 @@ export class Profile implements Rout{
             cache: "no-cache",
             headers: {},
             body: formData
-        }).then(() => {
-            window.ClickLoadPage('hons', false)
         })
+            .then((response) => response.json())
+            .then((result) => this.requestResult(result))
     }
 
     generateImage() {

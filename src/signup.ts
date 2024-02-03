@@ -23,6 +23,8 @@ export class Signup {
         console.log(ret);
         if (ret.result == "null") {
             this.warningMsg("Signup 실패");
+        } else if ("result" in ret){
+            this.warningMsg(ret.result);
         } else {
             window.ClickLoadPage("signin", false);
         }

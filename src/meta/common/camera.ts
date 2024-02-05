@@ -18,6 +18,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         this.longPos = new THREE.Vector3(0, 44, 79)
         this.shortPos = new THREE.Vector3(0, 0, 0)
         this.viewMode = ""
+        Gui.add(this.rotation, 'x', -1, 1, 0.01).listen()
         Gui.add(this.position, 'x', 0, 100, 1).listen()
         Gui.add(this.position, 'y', 0, 100, 1).listen()
         Gui.add(this.position, 'z', 0, 100, 1).listen()
@@ -34,10 +35,15 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         const position = this.player.Position
         this.rotation.x = -Math.PI / 4
         this.position.set(position.x, position.y, position.z)
+        gsap.to(this.rotation, { x: -0.43,
+            duration: 4, ease: "power1.inOut"
+        })
+        
         gsap.to(this.longPos, { x: 0, y: 17, z: 33, 
             duration: 4, ease: "power1.inOut", onUpdate: () => {
                 this.position.set(this.longPos.x, this.longPos.y,
                     this.longPos.z)
+                console.log(this.position)
             }})
     }
 

@@ -47,7 +47,6 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         this.rotation.x = -Math.PI / 4
         this.position.set(0, 16, 15)
         this.shortPos.set(0, 13, 13)
-
     }
 
     update() {
@@ -57,7 +56,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                 this.controls?.update()
                 break;
             case "close":
-                this.lookAt(position.x, position.y, position.z)
+                //this.lookAt(position.x, position.y, position.z)
                 this.rotation.x = -Math.PI / 4
                 this.position.set(
                     position.x + this.shortPos.x, 

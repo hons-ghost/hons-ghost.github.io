@@ -7,14 +7,14 @@ import { OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import { Gui } from "../factory/appfactory"
 
 export class Camera extends THREE.PerspectiveCamera implements IViewer{
-    controls?: OrbitControls
+    //controls?: OrbitControls
     longPos: THREE.Vector3
     shortPos: THREE.Vector3
     viewMode: string
     constructor(canvas: Canvas, private player: IPhysicsObject) {
         super(75, canvas.Width/ canvas.Height, 0.1, 500)
         canvas.RegisterViewer(this)
-        this.controls = new OrbitControls(this, canvas.Canvas)
+        //this.controls = new OrbitControls(this, canvas.Canvas)
         this.longPos = new THREE.Vector3(0, 44, 79)
         this.shortPos = new THREE.Vector3(0, 0, 0)
         this.viewMode = ""
@@ -53,7 +53,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         const position = this.player.Position
         switch (this.viewMode) {
             case "long":
-                this.controls?.update()
+                //this.controls?.update()
                 break;
             case "close":
                 //this.lookAt(position.x, position.y, position.z)

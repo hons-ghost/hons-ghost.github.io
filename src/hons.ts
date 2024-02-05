@@ -139,17 +139,20 @@ export class Hons {
         const footer = document.getElementById("footer") as HTMLDivElement
         const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
+        const menuGui = document.getElementById("menu-gui") as HTMLDivElement
         if (this.profileVisible) {
             wrapper.style.display = "none"
             footer.style.display = "none"
             controller.style.display = "block"
             controllerBtn.style.display = "block"
+            menuGui.style.display = "block"
             this.profileVisible = false
         } else {
             wrapper.style.display = "block"
             footer.style.display = "block"
             controller.style.display = "none"
             controllerBtn.style.display = "none"
+            menuGui.style.display = "none"
             this.profileVisible = true
         }
     }
@@ -160,11 +163,15 @@ export class Hons {
             this.meta.LongShot()
         })
         this.meta.render()
-        this.meta.canvas.Canvas.onclick = () => { this.VisibleUi() }
+
+        const play = document.getElementById("playBtn") as HTMLButtonElement
+        play.onclick = () => { this.VisibleUi() }
+
+        const getback = document.getElementById("returnSns") as HTMLSpanElement
+        getback.onclick = () => { this.VisibleUi() }
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
-        space.onclick = () => { this.VisibleUi() }
 
         this.profileVisible = false
         this.VisibleUi()

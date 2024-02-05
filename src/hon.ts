@@ -84,7 +84,8 @@ export class Hon {
         if (ret.result == "null") {
             this.warningMsg("등록 실패");
         } else {
-            window.ClickLoadPage("hons", false);
+            const key = this.getParam();
+            window.ClickLoadPage("hon", false, `&key=${key}`);
         }
     }
     /* reply 신규 등록 */
@@ -98,7 +99,7 @@ export class Hon {
         formData.append("email", user.Email)
         formData.append("password", user.Password)
         formData.append("id", user.Nickname)
-        formData.append("targetkey", key)
+        formData.append("targetkey", decodeURIComponent(key))
         formData.append("time", (new Date()).getTime().toString())
         formData.append("table", "feeds")
         formData.append("content", inputContent?.value)
@@ -114,9 +115,8 @@ export class Hon {
     }
     /* 메인 feed */
     public RequestHon(key: string) {
-        const addr = this.m_masterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=feeds&key=";
-        return this.blockStore.FetchHon(this.m_masterAddr, atob(key))
+        const keystring = atob(decodeURIComponent(key))
+        return this.blockStore.FetchHon(this.m_masterAddr, keystring)
             .then((result) => this.drawHtmlHon(result, key, "feed"))
     }
     /* reply feed */
@@ -172,7 +172,10 @@ export class Hon {
 
 
         const btn = document.getElementById("replyBtn") as HTMLButtonElement
-        btn.onclick = () => this.RequestNewReplyHon(key);
+        btn.onclick = () => {
+            btn.disabled = true
+            this.RequestNewReplyHon(key);
+        }
         return true;
     }
 

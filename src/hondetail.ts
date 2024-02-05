@@ -165,8 +165,10 @@ export class HonDetail {
             })
     }
     public GetProfile(email: string) {
+        console.log(email)
         this.blockStore.FetchProfile(window.MasterAddr, email)
             .then((ret: ProfileEntry) => {
+                console.log(ret)
                 const uniqId = ret.id + ret.time.toString()
                 const followerTag = document.getElementById("followerlist") as HTMLDivElement;
                 followerTag.innerHTML += `
@@ -200,18 +202,21 @@ export class HonDetail {
         const footer = document.getElementById("footer") as HTMLDivElement
         const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
+        const menuGui = document.getElementById("menu-gui") as HTMLDivElement
         console.log(this.profileVisible)
         if (this.profileVisible) {
             wrapper.style.display = "none"
             footer.style.display = "none"
             controller.style.display = "block"
             controllerBtn.style.display = "block"
+            menuGui.style.display = "block"
             this.profileVisible = false
         } else {
             wrapper.style.display = "block"
             footer.style.display = "block"
             controller.style.display = "none"
             controllerBtn.style.display = "none"
+            menuGui.style.display = "none"
             this.profileVisible = true
         }
     }
@@ -226,12 +231,14 @@ export class HonDetail {
         const play = document.getElementById("playBtn") as HTMLButtonElement
         play.onclick = () => { this.VisibleUi() }
 
+        const getback = document.getElementById("returnSns") as HTMLSpanElement
+        getback.onclick = () => { this.VisibleUi() }
+
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init()
         this.meta.render()
         this.meta.CloseUp()
-        this.meta.canvas.Canvas.onclick = () => { this.VisibleUi() }
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"

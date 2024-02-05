@@ -13,6 +13,11 @@ import { Loader } from "../common/loader";
 import CannonDebugger from "cannon-es-debugger"
 import { GUI } from "lil-gui"
 import { Island } from "../scenes/models/island";
+import { Tree } from "../scenes/models/tree";
+import * as CANNON from "cannon-es"
+import { math } from "../../libs/math";
+import { Mushroom } from "../scenes/models/mushroom";
+import { DeadTree } from "../scenes/models/deadtree";
 
 export const Gui = new GUI()
 Gui.hide()
@@ -26,19 +31,25 @@ export class AppFactory {
     phydebugger: any
     game: Game
     bird: Bird
-    //floor: Floor
-    island: Island
+    floor: Floor
+    trees: Tree[]
+    deadtrees: DeadTree[]
+    mushrooms: Mushroom[]
+    //island: Island
     camera: Camera
     light: Light
     renderer: Renderer
+    worldSize: number
 
     currentScene: IScene
     constructor() {
+        this.worldSize = 300
         this.bird = new Bird(this.loader, this.eventCtrl)
-        //this.floor = new Floor(30, 2, 20, new Vec3(0, 0, 0))
-        this.island = new Island(this.loader)
-
-        this.physics.add(this.island)
+        this.floor = new Floor(this.worldSize, this.worldSize, 5, new Vec3(0, 0, 0))
+        //this.island = new Island(this.loader)
+        this.trees = []
+        this.mushrooms = []
+        this.deadtrees = []
 
         this.camera = new Camera(this.canvas, this.bird)
         this.light = new Light(this.canvas, this.bird)
@@ -57,21 +68,73 @@ export class AppFactory {
             progressBarContainer.style.display ='none'
         }
     }
+    async MassMushroomLoader() {
+        for (let i = 0; i < 100; i++) {
+            const pos = new CANNON.Vec3(
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                2.2,
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+            )
+            const scale = math.rand_int(5, 9)
+            const type = math.rand_int(1, 2)
+            const mushroom = new Mushroom(this.loader)
+            this.mushrooms.push(mushroom)
+            await mushroom.Loader(scale, pos, type)
+        }
+    }
+    async MassDeadTreeLoader() {
+        for (let i = 0; i < 50; i++) {
+            const pos = new CANNON.Vec3(
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                math.rand_int(1, 3),
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+            )
+            const type = math.rand_int(0, 2)
+            const scale = math.rand_int(5, 9)
+            const tree = new DeadTree(this.loader)
+            this.deadtrees.push(tree)
+            await tree.Loader(scale, pos, type)
+        }
+    }
+    async MassTreeLoad() {
+        for (let i = 0; i < 100; i++) {
+            const pos = new CANNON.Vec3(
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                2,
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+            )
+            const scale = math.rand_int(5, 9)
+            const tree = new Tree(this.loader)
+            this.trees.push(tree)
+            await tree.Loader(scale, pos)
+        }
+    }
 
     async GltfLoad() {
         const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
         progressBarContainer.style.display = "flex"
         const ret = await Promise.all([
-            this.bird.Loader(0.04, new Vec3(0, 7, 5)),
-            this.island.Loader(5, new Vec3(0, 0, 0)),
+            this.bird.Loader(0.04, new Vec3(0, 10, 5)),
+            //this.island.Loader(50, new Vec3(0, 0, 0)),
+            this.MassTreeLoad(),
+            this.MassMushroomLoader(),
+            this.MassDeadTreeLoader(),
         ])
-
         this.physics.RegisterKeyControl(this.bird)
-        this.physics.add(this.bird)
+        this.physics.add(this.bird, this.floor, ...this.trees)
         return ret
     }
     InitScene() {
-        this.game.add(this.bird.Meshs, this.island.Meshs)
+        this.game.add(this.bird.Meshs, this.floor.Meshs)
+        this.trees.forEach((tree) => {
+            this.game.add(tree.Meshs)
+        })
+        this.deadtrees.forEach((tree) => {
+            this.game.add(tree.Meshs)
+        })
+        this.mushrooms.forEach((mushroom) => {
+            this.game.add(mushroom.Meshs)
+        })
     }
     Despose() {
         this.game.dispose()

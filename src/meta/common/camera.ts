@@ -11,7 +11,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
     movingPos: THREE.Vector3
     viewMode: string
     constructor(canvas: Canvas, private player: IPhysicsObject) {
-        super(75, canvas.Width/ canvas.Height, 0.1, 100)
+        super(75, canvas.Width/ canvas.Height, 0.1, 500)
         canvas.RegisterViewer(this)
         this.controls = new OrbitControls(this, canvas.Canvas)
         this.movingPos = new THREE.Vector3(0, 44, 79)

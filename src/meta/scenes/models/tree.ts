@@ -1,27 +1,26 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
-import { ICtrlObject, IPhysicsObject } from "./iobject";
-import { EventController } from "../../event/eventctrl";
+import { IPhysicsObject } from "./iobject";
 import { Gui } from "../../factory/appfactory";
+import { math } from "../../../libs/math";
 
-export class Island implements IPhysicsObject {
-    body: PhysicsIsland
+export class Tree implements IPhysicsObject {
+    body: PhysicsTree
     get Body() { return this.body }
     get Position(): CANNON.Vec3 { return new CANNON.Vec3(
         this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
-    set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y + this.physioffset, v.z) }
+    set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
     set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
 
 
     meshs: THREE.Group
     get Meshs() { return this.meshs }
 
-    physioffset = 88.5
 
     constructor(private loader: Loader) {
         this.meshs = new THREE.Group
-        this.body = new PhysicsIsland()
+        this.body = new PhysicsTree()
     }
     set Visible(flag: boolean) {
         this.meshs.traverse(child => {
@@ -36,31 +35,27 @@ export class Island implements IPhysicsObject {
 
     async Loader(scale: number, position: CANNON.Vec3) {
         return new Promise((resolve) => {
-            this.loader.Load.load("assets/custom_island/island.glb", (gltf) => {
+            this.loader.Load.load("assets/custom_island/tree.glb", (gltf) => {
                 this.meshs = gltf.scene
                 this.meshs.scale.set(scale, scale, scale)
                 this.meshs.position.set(position.x, position.y, position.z)
-                this.meshs.castShadow = false
+                this.meshs.castShadow = true
                 this.meshs.receiveShadow = true
                 this.meshs.traverse(child => { 
-                    child.castShadow = false 
+                    child.castShadow = true 
                     child.receiveShadow = true
                 })
-                position.y -= this.physioffset
                 this.body.position = position
                 resolve(gltf.scene)
             })
         })
     }
 }
-
-class PhysicsIsland extends CANNON.Body {
-    name = "floor"
-    /*
+class PhysicsTree extends CANNON.Body {
+    name = "tree"
     constructor() {
-        const shape = new CANNON.Sphere(90)
+        const shape = new CANNON.Cylinder(1, 1, 6.5, 5)
         const material = new CANNON.Material({ friction: 100, restitution: 0 })
         super({ shape, material, mass: 0, position: new CANNON.Vec3(0, 0, 0)})
     }
-    */
 }

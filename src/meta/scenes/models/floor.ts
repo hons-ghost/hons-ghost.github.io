@@ -15,14 +15,14 @@ export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
     set Quaternion(q: CANNON.Quaternion) { this.quaternion.set(q.x, q.y, q.z, q.w) }
     get Meshs() { return this }
     constructor(width: number, height: number, depth: number, position: CANNON.Vec3) {
-        const geometry = new THREE.BoxGeometry(width, height, depth)
+        const geometry = new THREE.CylinderGeometry(width, height, depth, 8)
         const material = new THREE.MeshStandardMaterial({ 
             color: 0xffcc66,
         })
         Gui.addColor(material, "color")
 
         super(geometry, material)
-        this.body = new PhysicsFloor(width, height, depth, position)
+        this.body = new PhysicsFloor(width, height, depth, 8, position)
         this.receiveShadow = true
     }
     set Visible(flag: boolean) {
@@ -33,11 +33,12 @@ export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
 
 class PhysicsFloor extends CANNON.Body {
     name = "floor"
-    constructor(width: number, height: number, depth: number, position: CANNON.Vec3) {
-        const shape = new CANNON.Box(
-            new CANNON.Vec3(width / 2, height / 2, depth / 2)
+    constructor(width: number, height: number, depth: number, 
+        segments:number, position: CANNON.Vec3) {
+        const shape = new CANNON.Cylinder(
+            width, height, depth, segments
         )
-        const material = new CANNON.Material({ friction: 0.1, restitution: 0.2 })
+        const material = new CANNON.Material({ friction: 0.1, restitution: 0 })
 
         super({shape, material, mass: 0, position})
     }

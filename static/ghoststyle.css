@@ -227,7 +227,13 @@ header {
     height: 2%;
     margin-top: 4px;
 }
-
+#menu-gui {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 60;
+    font-size: large;
+}
 #joypad {
     display: none;
     position: absolute;

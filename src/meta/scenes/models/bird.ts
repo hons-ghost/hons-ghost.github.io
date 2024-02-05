@@ -49,7 +49,7 @@ export class Bird implements ICtrlObject, IPhysicsObject {
 
     async Loader(scale: number, position: CANNON.Vec3) {
         return new Promise((resolve) => {
-            this.loader.Load.load("assets/boy/child.gltf", (gltf) => {
+            this.loader.Load.load("assets/boy/happychar.gltf", (gltf) => {
                 this.meshs = gltf.scene
                 this.meshs.scale.set(scale, scale, scale)
                 this.meshs.position.set(position.x, position.y, position.z)
@@ -174,7 +174,7 @@ class PhysicsBird extends CANNON.Body {
 
             const force = new CANNON.Vec3(
                 this.forceAmount * Math.sin(this.ry),
-                this.forceAmount * Math.sin(this.ry),
+                0, //this.forceAmount * Math.sin(this.ry),
                 this.forceAmount * Math.cos(this.ry),
             )
             this.applyForce(force, this.position)

@@ -95,6 +95,7 @@ export class AppFactory {
                 math.rand_int(1, 3),
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
             )
+            if (pos.z > 0 && pos.z < 7) pos.z += 7
             const type = math.rand_int(0, 2)
             const scale = math.rand_int(5, 9)
             const tree = new DeadTree(this.loader)
@@ -109,6 +110,7 @@ export class AppFactory {
                 2,
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
             )
+            if (pos.z > 0 && pos.z < 7) pos.z += 7
             const scale = math.rand_int(5, 9)
             const tree = new Tree(this.loader)
             this.trees.push(tree)

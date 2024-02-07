@@ -77,10 +77,13 @@ export default class App {
     }
 
     CloseUp() {
+        // TODO: change to Event litener
         this.factory.camera.closeUp()
+        this.factory.helper.Visible = false
     }
     LongShot() {
         this.factory.camera.longShot()
+        this.factory.helper.Visible = true
     }
 
     resize() {

@@ -10,6 +10,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
     controls: OrbitControls
     longPos: THREE.Vector3
     shortPos: THREE.Vector3
+    bakRotation: THREE.Euler
     viewMode: string
     constructor(canvas: Canvas, private player: IPhysicsObject) {
         super(75, canvas.Width/ canvas.Height, 0.1, 500)
@@ -17,6 +18,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         this.controls = new OrbitControls(this, canvas.Canvas)
         this.longPos = new THREE.Vector3(0, 44, 79)
         this.shortPos = new THREE.Vector3(0, 0, 0)
+        this.bakRotation = this.rotation
         this.viewMode = ""
         /*
         Gui.add(this.rotation, 'x', -1, 1, 0.01).listen()
@@ -37,6 +39,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         this.controls.enabled = true
 
         const position = this.player.Position
+        this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
         this.rotation.x = -Math.PI / 4
         this.position.set(position.x, position.y, position.z)
         gsap.to(this.rotation, { x: -0.43,
@@ -55,8 +58,12 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         this.player.Visible = true
         this.controls.enabled = false
 
+        this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
         this.rotation.x = -Math.PI / 4
-        this.position.set(0, 16, 15)
+
+        const position = this.player.Position
+        this.position.set(position.x, position.y, position.z)
+        //this.position.set(0, 16, 15)
         this.shortPos.set(0, 13, 13)
     }
 

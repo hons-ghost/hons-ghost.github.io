@@ -49,7 +49,7 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
                     </div>
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
-                    <pre class="hon-contents m-0">${e.content}</pre>
+                    <pre class="hon-contents m-0" style="font-size:medium;">${e.content}</pre>
                 </div>
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <span id="${uniqId}-file" class="m-1"></span>

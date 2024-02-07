@@ -18,6 +18,8 @@ import * as CANNON from "cannon-es"
 import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
+import { Portal } from "../scenes/models/portal";
+import { Helper } from "../scenes/models/helper";
 
 export const Gui = new GUI()
 Gui.hide()
@@ -32,6 +34,8 @@ export class AppFactory {
     game: Game
     bird: Bird
     floor: Floor
+    portal: Portal
+    helper: Helper
     trees: Tree[]
     deadtrees: DeadTree[]
     mushrooms: Mushroom[]
@@ -46,6 +50,8 @@ export class AppFactory {
         this.worldSize = 300
         this.bird = new Bird(this.loader, this.eventCtrl)
         this.floor = new Floor(this.worldSize, this.worldSize, 5, new Vec3(0, 0, 0))
+        this.portal = new Portal(this.loader)
+        this.helper = new Helper(this.loader)
         //this.island = new Island(this.loader)
         this.trees = []
         this.mushrooms = []
@@ -115,6 +121,8 @@ export class AppFactory {
         progressBarContainer.style.display = "flex"
         const ret = await Promise.all([
             this.bird.Loader(0.04, new Vec3(0, 10, 5)),
+            this.portal.Loader(2.5, new Vec3(5, 4.6, -4)),
+            this.helper.Loader(3, new Vec3(0, 2.5, 6)),
             //this.island.Loader(50, new Vec3(0, 0, 0)),
             this.MassTreeLoad(),
             this.MassMushroomLoader(),
@@ -125,7 +133,7 @@ export class AppFactory {
         return ret
     }
     InitScene() {
-        this.game.add(this.bird.Meshs, this.floor.Meshs)
+        this.game.add(this.bird.Meshs, this.floor.Meshs, this.portal.Meshs, this.helper.Meshs)
         this.trees.forEach((tree) => {
             this.game.add(tree.Meshs)
         })

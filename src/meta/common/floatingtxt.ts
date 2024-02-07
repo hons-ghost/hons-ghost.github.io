@@ -67,10 +67,11 @@ class FloatingName extends THREE.Sprite {
     this.Destroy();
   }
 
-  CreateSprite_(msg: string) {
+  SetText(text: string) {
     if (!this.visible_ || this.context2d_ == null) {
       return;
     }
+    this.params_ = text
 
     this.context2d_.canvas.width = 256;
     this.context2d_.canvas.height = 128;
@@ -82,6 +83,14 @@ class FloatingName extends THREE.Sprite {
     this.context2d_.shadowBlur = 4;
     this.context2d_.textAlign = 'center';
     this.context2d_.fillText(this.params_, 128, 64);
+
+    const metrics = this.context2d_.measureText(this.params_)
+    const fontheight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent
+
+    this.context2d_.strokeStyle = "black"
+    this.context2d_.beginPath()
+    this.context2d_.roundRect(128, 64, metrics.width, fontheight)
+    this.context2d_.stroke()
 
     const map = new THREE.CanvasTexture(this.context2d_.canvas);
 

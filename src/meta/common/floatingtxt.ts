@@ -1,30 +1,45 @@
 import * as THREE from "three";
 
 
-export const floating_name = (() => {
+class FloatingName extends THREE.Sprite {
+  params_: string
+  visible_: boolean
+  element_: HTMLCanvasElement
+  context2d_: CanvasRenderingContext2D | null
 
-  class FloatingName {
-    params_: string
-    visible_: boolean
-    element_: HTMLCanvasElement
-    context2d_: CanvasRenderingContext2D | null
-    sprite_?: THREE.Sprite
+  constructor(params: string) {
+    const element = document.createElement('canvas') as HTMLCanvasElement;
+    const context2d = element.getContext('2d');
+    if (context2d == null) {
+      super()
+    } else {
+      context2d.canvas.width = 256;
+      context2d.canvas.height = 128;
+      context2d.fillStyle = '#FFF';
+      context2d.font = "18pt Helvetica";
+      context2d.shadowOffsetX = 3;
+      context2d.shadowOffsetY = 3;
+      context2d.shadowColor = "rgba(0,0,0,0.3)";
+      context2d.shadowBlur = 4;
+      context2d.textAlign = 'center';
+      context2d.fillText(params, 128, 64);
 
-    constructor(params: string) {
-      this.params_ = params;
-      this.visible_ = true;
-      this.element_ = document.createElement('canvas') as HTMLCanvasElement;
-      this.context2d_ = this.element_.getContext('2d');
+      const map = new THREE.CanvasTexture(context2d.canvas);
+
+      super(
+        new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false }));
+      this.scale.set(10, 5, 1)
     }
 
-    Destroy() {
-      if (!this.sprite_) {
-        this.visible_ = false;
-        return;
-      }
+    this.params_ = params;
+    this.visible_ = true;
+    this.element_ = element
+    this.context2d_ = context2d
+  }
 
-      /*
-      this.sprite_.traverse(c => {
+  Destroy() {
+    this.traverse(c => {
+      if (c instanceof THREE.Mesh) {
         if (c.material) {
           let materials = c.material;
           if (!(c.material instanceof Array)) {
@@ -38,47 +53,42 @@ export const floating_name = (() => {
         if (c.geometry) {
           c.geometry.dispose();
         }
-      });
-      if (this.sprite_.parent) {
-        this.sprite_.parent.remove(this.sprite_);
       }
-      */
+    });
+    if (this.parent) {
+      this.parent.remove(this);
+    }
+  }
+
+  InitComponent() {
+  }
+
+  OnDeath_() {
+    this.Destroy();
+  }
+
+  CreateSprite_(msg: string) {
+    if (!this.visible_ || this.context2d_ == null) {
+      return;
     }
 
-    InitComponent() {
-    }
+    this.context2d_.canvas.width = 256;
+    this.context2d_.canvas.height = 128;
+    this.context2d_.fillStyle = '#FFF';
+    this.context2d_.font = "18pt Helvetica";
+    this.context2d_.shadowOffsetX = 3;
+    this.context2d_.shadowOffsetY = 3;
+    this.context2d_.shadowColor = "rgba(0,0,0,0.3)";
+    this.context2d_.shadowBlur = 4;
+    this.context2d_.textAlign = 'center';
+    this.context2d_.fillText(this.params_, 128, 64);
 
-    OnDeath_() {
-      this.Destroy();
-    }
+    const map = new THREE.CanvasTexture(this.context2d_.canvas);
 
-    CreateSprite_(msg: string) {
-      if (!this.visible_ || this.context2d_ == null) {
-        return;
-      }
-
-      this.context2d_.canvas.width = 256;
-      this.context2d_.canvas.height = 128;
-      this.context2d_.fillStyle = '#FFF';
-      this.context2d_.font = "18pt Helvetica";
-      this.context2d_.shadowOffsetX = 3;
-      this.context2d_.shadowOffsetY = 3;
-      this.context2d_.shadowColor = "rgba(0,0,0,0.3)";
-      this.context2d_.shadowBlur = 4;
-      this.context2d_.textAlign = 'center';
-      this.context2d_.fillText(this.params_, 128, 64);
-
-      const map = new THREE.CanvasTexture(this.context2d_.canvas);
-
-      this.sprite_ = new THREE.Sprite(
-          new THREE.SpriteMaterial({map: map, color: 0xffffff, fog: false}));
-      this.sprite_.scale.set(10, 5, 1)
-      //this.sprite_.position.y += modelData.nameOffset;
-      //msg.model.add(this.sprite_);
-    }
-  };
-
-  return {
-      FloatingName: FloatingName,
-  };
-})();
+    this.material =
+      new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false });
+    this.scale.set(10, 5, 1)
+    //this.sprite_.position.y += modelData.nameOffset;
+    //msg.model.add(this.sprite_);
+  }
+}

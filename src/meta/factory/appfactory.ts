@@ -110,7 +110,10 @@ export class AppFactory {
                 2,
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
             )
-            if (pos.z > 0 && pos.z < 7) pos.z += 7
+            if (pos.z > 0 && pos.z < 10 && pos.x > -10 && pos.x < 10) {
+                pos.x += 10
+                pos.z += 10
+            }
             const scale = math.rand_int(5, 9)
             const tree = new Tree(this.loader)
             this.trees.push(tree)

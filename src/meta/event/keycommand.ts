@@ -13,14 +13,22 @@ export class KeyNone implements IKeyCommand{
         return new CANNON.Vec3(0, 0, 0)
     }
 }
-
-export class KeySpace implements IKeyCommand{
+export class KeyAction1 implements IKeyCommand{
     ExecuteKeyUp(): CANNON.Vec3 {
-        return new CANNON.Vec3(0, 5, 0)
+        return new CANNON.Vec3(0, 0, 0)
     }
 
     ExecuteKeyDown(): CANNON.Vec3 {
-        return new CANNON.Vec3(0, 5, 0)
+        return new CANNON.Vec3(0, 0, 0)
+    }
+}
+export class KeySpace implements IKeyCommand{
+    ExecuteKeyUp(): CANNON.Vec3 {
+        return new CANNON.Vec3(0, 7, 0)
+    }
+
+    ExecuteKeyDown(): CANNON.Vec3 {
+        return new CANNON.Vec3(0, 7, 0)
     }
 }
 export class KeyUp implements IKeyCommand{

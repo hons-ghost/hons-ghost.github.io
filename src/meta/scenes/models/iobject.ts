@@ -11,6 +11,7 @@ export interface IPhysicsObject {
     set Position(v: CANNON.Vec3)
     set Quaternion(v: CANNON.Quaternion)
     set Visible(flag: boolean)
+    UpdatePhysics(): void
 }
 
 export interface ICtrlObject {

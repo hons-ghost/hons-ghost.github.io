@@ -13,6 +13,7 @@ import { Profile } from "./profile";
 import { Router } from "./libs/router";
 import { Main } from "./main";
 import App from "./meta/app";
+import { EditHome } from "./edithome";
 
 const blockStore = new BlockStore();
 const session = new Session();
@@ -52,6 +53,7 @@ const funcMap: FuncMap = {
     "uploadhon": new UploadHon(blockStore, session),
     "profile": profile,
     "main": new Main(blockStore, session),
+    "edithome": new EditHome(blockStore, session, meta),
 };
 router.RegisterClient("newhon", newHon)
 router.RegisterClient("profile", profile)
@@ -66,6 +68,7 @@ const urlToFileMap: UrlMap = {
     "newhon": "views/newhon.html",
     "uploadhon": "views/uploadhon.html",
     "profile": "views/profile.html",
+    "edithome": "views/edithome.html",
 };
 
 const getPageIdParam = () => {

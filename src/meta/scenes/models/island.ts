@@ -3,7 +3,7 @@ import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
 import { ICtrlObject, IPhysicsObject } from "./iobject";
 import { EventController } from "../../event/eventctrl";
-import { Gui } from "../../factory/appfactory";
+//import { Gui } from "../../factory/appfactory";
 
 export class Island implements IPhysicsObject {
     body: PhysicsIsland
@@ -51,6 +51,11 @@ export class Island implements IPhysicsObject {
                 resolve(gltf.scene)
             })
         })
+    }
+
+    UpdatePhysics(): void {
+        this.Position = this.body.position
+        this.Quaternion = this.body.quaternion
     }
 }
 

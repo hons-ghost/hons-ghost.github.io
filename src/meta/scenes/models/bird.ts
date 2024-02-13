@@ -9,6 +9,27 @@ const enum ActionType {
     IdleAction,
     RunAction,
     JumpAction,
+    PunchAction,
+}
+const solidify = (mesh: THREE.Mesh) => {
+    const THICKNESS = 0.02
+    const geometry = mesh.geometry
+    const material = new THREE.ShaderMaterial( {
+        vertexShader: `
+        void main() {
+            vec3 newPosition = position + normal * ${THICKNESS};
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1);
+        }
+        `,
+        fragmentShader: `
+        void main() {
+            gl_FragColor = vec4(0, 0, 0, 1);
+        }
+        `,
+        side: THREE.BackSide
+    })
+    const outline = new THREE.Mesh(geometry, material)
+    //scene.add(outline)
 }
 
 export class Bird implements ICtrlObject, IPhysicsObject {
@@ -29,6 +50,7 @@ export class Bird implements ICtrlObject, IPhysicsObject {
     idleClip? :THREE.AnimationClip
     runClip? :THREE.AnimationClip
     jumpClip? :THREE.AnimationClip
+    punchingClip? :THREE.AnimationClip
 
 
     constructor(private loader: Loader, private eventCtrl: EventController) {
@@ -49,7 +71,7 @@ export class Bird implements ICtrlObject, IPhysicsObject {
 
     async Loader(scale: number, position: CANNON.Vec3) {
         return new Promise((resolve) => {
-            this.loader.Load.load("assets/boy/happychar.gltf", (gltf) => {
+            this.loader.Load.load("assets/male/male.gltf", (gltf) => {
                 this.meshs = gltf.scene
                 this.meshs.scale.set(scale, scale, scale)
                 this.meshs.position.set(position.x, position.y, position.z)
@@ -58,6 +80,9 @@ export class Bird implements ICtrlObject, IPhysicsObject {
                 this.meshs.traverse(child => { 
                     child.castShadow = true 
                     child.receiveShadow = false
+                    if ((child as THREE.Mesh).isMesh) {
+                        solidify(child as THREE.Mesh)
+                    }
                 })
                 this.body.velocity.set(0, 0 ,0)
                 this.body.position = position
@@ -65,8 +90,12 @@ export class Bird implements ICtrlObject, IPhysicsObject {
                 this.idleClip = gltf.animations[0]
                 this.runClip = gltf.animations[1]
                 this.jumpClip = gltf.animations[2]
+                this.punchingClip = gltf.animations[3]
                 this.changeAnimate(this.idleClip)
-                
+  
+        Gui.add(this.meshs.rotation, 'x', -1, 1, 0.01).listen()
+        Gui.add(this.meshs.rotation, 'y', -1, 1, 0.01).listen()
+        Gui.add(this.meshs.rotation, 'z', -1, 1, 0.01).listen()              
                 resolve(gltf.scene)
             })
         })
@@ -77,14 +106,16 @@ export class Bird implements ICtrlObject, IPhysicsObject {
         let fadeTime = 0.2
         this.currentAni?.fadeOut(0.2)
         const currentAction = this.mixer?.clipAction(animate)
+        if (currentAction == undefined) return
 
         if (animate == this.jumpClip) {
-            fadeTime = 2
-            currentAction?.setLoop(THREE.LoopPingPong, 1)
+            fadeTime = 0
+            currentAction.clampWhenFinished = true
+            currentAction.setLoop(THREE.LoopOnce, 1)
         } else {
-            currentAction?.setLoop(THREE.LoopRepeat, 10000)
+            currentAction.setLoop(THREE.LoopRepeat, 10000)
         }
-        currentAction?.reset().fadeIn(fadeTime).play()
+        currentAction.reset().fadeIn(fadeTime).play()
 
         this.currentAni = currentAction
         this.currentClip = animate
@@ -103,9 +134,16 @@ export class Bird implements ICtrlObject, IPhysicsObject {
             case ActionType.RunAction:
                 this.changeAnimate(this.runClip)
                 break
+            case ActionType.PunchAction:
+                this.changeAnimate(this.punchingClip)
+                break
         }
         this.mixer?.update(this.clock.getDelta())
         this.body?.PostStep()
+    }
+    UpdatePhysics(): void {
+        this.Position = this.body.position
+        this.Quaternion = this.body.quaternion
     }
 }
 
@@ -117,18 +155,27 @@ class PhysicsBird extends CANNON.Body {
     keyDownQueue: IKeyCommand[]
     keyUpQueue: IKeyCommand[]
     moveDirection: CANNON.Vec3
+    contollerEnable :boolean
+
+    set ControllerEnable(flag: boolean) { this.contollerEnable = flag }
+    get ControllerEnable(): boolean { return this.contollerEnable }
+
     constructor(position: CANNON.Vec3, private eventCtrl: EventController) {
-        const shape = new CANNON.Cylinder(1, 1, 6.5, 5)
+        const shape = new CANNON.Cylinder(1, 1, 4.5, 10)
         const material = new CANNON.Material({ friction: 0.1, restitution: 0.1 })
         super({ shape, material, mass: 5, position })
+
+        this.contollerEnable = true
 
         this.keyDownQueue = []
         this.keyUpQueue = []
         this.moveDirection = new CANNON.Vec3()
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
+            if (!this.contollerEnable) return
             this.keyDownQueue.push(keyCommand)
         })
         eventCtrl.RegisterKeyUpEvent((keyCommand: IKeyCommand) => {
+            if (!this.contollerEnable) return
             this.keyUpQueue.push(keyCommand)
         })
         

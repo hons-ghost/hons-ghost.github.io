@@ -1,6 +1,6 @@
 import { Canvas } from "./common/canvas";
 import { EventController } from "./event/eventctrl";
-import { KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "./event/keycommand";
+import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "./event/keycommand";
 import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
 
@@ -28,6 +28,7 @@ export default class App {
         window.addEventListener("resize", () => this.resize())
         window.addEventListener("keydown", (e) => {
             switch (e.code) {
+                case "1": this.eventCtrl.OnKeyDownEvent(new KeyAction1);break;
                 case "ArrowUp": this.eventCtrl.OnKeyDownEvent(new KeyUp); break
                 case "ArrowDown": this.eventCtrl.OnKeyDownEvent(new KeyDown); break;
                 case "ArrowLeft": this.eventCtrl.OnKeyDownEvent(new KeyLeft); break;
@@ -37,6 +38,7 @@ export default class App {
         })
         window.addEventListener("keyup", (e) => {
             switch (e.code) {
+                case "1": this.eventCtrl.OnKeyUpEvent(new KeyAction1);break;
                 case "ArrowUp": this.eventCtrl.OnKeyUpEvent(new KeyUp); break
                 case "ArrowDown": this.eventCtrl.OnKeyUpEvent(new KeyDown); break;
                 case "ArrowLeft": this.eventCtrl.OnKeyUpEvent(new KeyLeft); break;
@@ -75,15 +77,47 @@ export default class App {
             this.render()
         })
     }
+    BrickMode() {
+        this.factory.CreateBrickGuide()
+        this.factory.bird.Body.ControllerEnable = false
+        if (this.factory.brickGuide != undefined) {
+        this.factory.camera.brickMode(this.factory.brickGuide)
+            this.factory.brickGuide.ControllerEnable = true
+        }
+    }
+    EditMode() {
+        // TODO: change to Event litener
+        this.factory.camera.editMode()
+        this.factory.helper.Visible = false
+        this.factory.bird.Body.ControllerEnable = true
 
+        if (this.factory.brickGuide != undefined) {
+            this.factory.brickGuide.ControllerEnable = false
+            this.factory.brickGuide.Visible = false
+        }
+    }
     CloseUp() {
         // TODO: change to Event litener
+        console.log("close up")
         this.factory.camera.closeUp()
+        this.factory.bird.Body.ControllerEnable = true
         this.factory.helper.Visible = false
+
+        if (this.factory.brickGuide != undefined) {
+            this.factory.brickGuide.ControllerEnable = false
+            this.factory.brickGuide.Visible = false
+        }
     }
     LongShot() {
+        console.log("long shot")
         this.factory.camera.longShot()
+        this.factory.bird.Body.ControllerEnable = false
         this.factory.helper.Visible = true
+
+        if (this.factory.brickGuide != undefined) {
+            this.factory.brickGuide.ControllerEnable = false
+            this.factory.brickGuide.Visible = false
+        }
     }
 
     resize() {

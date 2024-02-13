@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { IObject, IPhysicsObject } from "./iobject";
-import { Gui } from "../../factory/appfactory"
+//import { Gui } from "../../factory/appfactory"
 
 
 export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
@@ -19,7 +19,6 @@ export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
         const material = new THREE.MeshStandardMaterial({ 
             color: 0xffcc66,
         })
-        Gui.addColor(material, "color")
 
         super(geometry, material)
         this.body = new PhysicsFloor(width, height, depth, 8, position)
@@ -29,6 +28,11 @@ export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
         this.visible = flag
     }
     PostStep(): void { }
+    
+    UpdatePhysics(): void {
+        this.Position = this.body.position
+        this.Quaternion = this.body.quaternion
+    }
 }
 
 class PhysicsFloor extends CANNON.Body {

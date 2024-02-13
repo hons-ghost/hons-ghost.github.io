@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
 import { IPhysicsObject } from "./iobject";
-import { Gui } from "../../factory/appfactory";
+//import { Gui } from "../../factory/appfactory";
 import { math } from "../../../libs/math";
 
 export class Tree implements IPhysicsObject {
@@ -49,6 +49,10 @@ export class Tree implements IPhysicsObject {
                 resolve(gltf.scene)
             })
         })
+    }
+    UpdatePhysics(): void {
+        this.Position = this.body.position
+        this.Quaternion = this.body.quaternion
     }
 }
 class PhysicsTree extends CANNON.Body {

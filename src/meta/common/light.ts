@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { IViewer } from "../scenes/models/iviewer";
 import { Canvas } from "./canvas";
 import { IPhysicsObject } from "../scenes/models/iobject";
-import { Gui } from "../factory/appfactory"
+//import { Gui } from "../factory/appfactory"
 
 export class Light extends THREE.DirectionalLight implements IViewer {
     constructor(canvas: Canvas, private player: IPhysicsObject) {

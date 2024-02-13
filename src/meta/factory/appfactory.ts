@@ -20,9 +20,11 @@ import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
 import { Helper } from "../scenes/models/helper";
+import { Bricks } from "../scenes/models/bricks";
+import { BrickGuide } from "../scenes/models/brickguide";
 
 export const Gui = new GUI()
-Gui.hide()
+//Gui.hide()
 
 export class AppFactory {
     physics = new Physics()
@@ -44,6 +46,8 @@ export class AppFactory {
     light: Light
     renderer: Renderer
     worldSize: number
+    brick: Bricks
+    brickGuide: BrickGuide | undefined
 
     currentScene: IScene
     constructor() {
@@ -64,6 +68,8 @@ export class AppFactory {
         this.currentScene = this.game
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.phydebugger = CannonDebugger(this.game, this.physics)
+
+        this.brick = new Bricks(this.loader, this.game, this.eventCtrl)
 
         const progressBar = document.querySelector('#progress-bar') as HTMLProgressElement
         const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
@@ -125,10 +131,10 @@ export class AppFactory {
         const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
         progressBarContainer.style.display = "flex"
         const ret = await Promise.all([
-            this.bird.Loader(0.04, new Vec3(0, 10, 5)),
+            this.bird.Loader(1, new Vec3(0, 5, 5)),
             this.portal.Loader(2.5, new Vec3(5, 4.6, -4)),
             this.helper.Loader(3, new Vec3(0, 2.5, 6)),
-            //this.island.Loader(50, new Vec3(0, 0, 0)),
+            this.brick.Loader(0.01, new Vec3(0, 2.5, 0)),
             this.MassTreeLoad(),
             this.MassMushroomLoader(),
             this.MassDeadTreeLoader(),
@@ -137,8 +143,21 @@ export class AppFactory {
         this.physics.add(this.bird, this.floor, ...this.trees)
         return ret
     }
+    CreateBrickGuide() {
+        if (this.brickGuide == undefined) {
+            this.brickGuide = new BrickGuide(this.bird, this.brick.Size, this.eventCtrl)
+            this.game.add(this.brickGuide)
+        } else {
+            this.brickGuide.Init()
+            this.brickGuide.Visible = true
+        }
+    }
     InitScene() {
-        this.game.add(this.bird.Meshs, this.floor.Meshs, this.portal.Meshs, this.helper.Meshs)
+        this.game.add(
+            this.bird.Meshs, 
+            this.floor.Meshs, 
+            this.portal.Meshs, 
+            this.helper.Meshs)
         this.trees.forEach((tree) => {
             this.game.add(tree.Meshs)
         })

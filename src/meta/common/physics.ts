@@ -33,8 +33,7 @@ export class Physics extends CANNON.World {
 
         this.models.forEach((model) => {
             if (model.Body) {
-                model.Position = model.Body.position
-                model.Quaternion = model.Body.quaternion
+                model.UpdatePhysics()
             }
         })
     }

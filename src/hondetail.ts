@@ -197,6 +197,13 @@ export class HonDetail {
                 }
             })
     }
+    drawHtmlEditHome(email: string) {
+        const link = document.getElementById("edithome") as HTMLAnchorElement
+        link.onclick = () => {
+            window.ClickLoadPage("edithome", false, "&email=" + email)
+        }
+
+    }
     public VisibleUi() {
         const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
         const footer = document.getElementById("footer") as HTMLDivElement
@@ -221,13 +228,6 @@ export class HonDetail {
         }
     }
     public CanvasRenderer() {
-        /*
-        const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
-        const ctx = canvas.getContext("2d")
-        if (ctx == null) return
-        ctx.fillStyle = "#66ccff"
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
-        */
         const play = document.getElementById("playBtn") as HTMLButtonElement
         play.onclick = () => { this.VisibleUi() }
 
@@ -236,13 +236,13 @@ export class HonDetail {
 
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
-        this.meta.init()
+        this.meta.init().then(() => {
+            this.meta.CloseUp()
+        })
         this.meta.render()
-        this.meta.CloseUp()
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
-        space.onclick = () => { this.VisibleUi() }
     }
 
     public Run(masterAddr: string): boolean {
@@ -252,6 +252,7 @@ export class HonDetail {
         this.targetHonEmail = email
         this.requestUserInfo(email)
         this.RequestHons(email);
+        this.drawHtmlEditHome(email)
         this.Follow()
         this.GetFollowerList()
         this.CanvasRenderer()

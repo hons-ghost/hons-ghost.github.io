@@ -22,4 +22,13 @@ export class EventController {
     RegisterKeyUpEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on("keyup", callback)
     }
+
+    OnCreateBrickEvent(e: THREE.Mesh) {
+        this.eventEmitter.emit("createbrick", e)
+    }
+
+    RegisterCreateBrickEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("createbrick", callback)
+    }
+
 }

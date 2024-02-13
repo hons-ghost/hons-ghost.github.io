@@ -14,7 +14,6 @@ import CannonDebugger from "cannon-es-debugger"
 import { GUI } from "lil-gui"
 import { Island } from "../scenes/models/island";
 import { Tree } from "../scenes/models/tree";
-import * as CANNON from "cannon-es"
 import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
@@ -22,9 +21,10 @@ import { Portal } from "../scenes/models/portal";
 import { Helper } from "../scenes/models/helper";
 import { Bricks } from "../scenes/models/bricks";
 import { BrickGuide } from "../scenes/models/brickguide";
+import { Owner } from "../scenes/models/owner";
 
 export const Gui = new GUI()
-//Gui.hide()
+Gui.hide()
 
 export class AppFactory {
     physics = new Physics()
@@ -47,6 +47,7 @@ export class AppFactory {
     renderer: Renderer
     worldSize: number
     brick: Bricks
+    owner: Owner | undefined
     brickGuide: BrickGuide | undefined
 
     currentScene: IScene
@@ -82,7 +83,7 @@ export class AppFactory {
     }
     async MassMushroomLoader() {
         for (let i = 0; i < 100; i++) {
-            const pos = new CANNON.Vec3(
+            const pos = new Vec3(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
                 2.2,
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
@@ -96,7 +97,7 @@ export class AppFactory {
     }
     async MassDeadTreeLoader() {
         for (let i = 0; i < 50; i++) {
-            const pos = new CANNON.Vec3(
+            const pos = new Vec3(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
                 math.rand_int(1, 3),
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
@@ -111,7 +112,7 @@ export class AppFactory {
     }
     async MassTreeLoad() {
         for (let i = 0; i < 100; i++) {
-            const pos = new CANNON.Vec3(
+            const pos = new Vec3(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
                 2,
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
@@ -150,6 +151,18 @@ export class AppFactory {
         } else {
             this.brickGuide.Init()
             this.brickGuide.Visible = true
+        }
+    }
+    async CreateOwner(name: string, position: Vec3) {
+        if (this.owner == undefined) {
+            this.owner = new Owner(this.loader, name)
+            await this.owner.Loader(1, position)
+            this.game.add(this.owner.Meshs)
+            this.physics.RegisterKeyControl(this.owner)
+        } else {
+            this.owner.Init(name)
+            this.owner.Position = position
+            this.owner.Visible = true
         }
     }
     InitScene() {

@@ -1,3 +1,4 @@
+import { Vec3 } from "math/Vec3";
 import { Canvas } from "./common/canvas";
 import { EventController } from "./event/eventctrl";
 import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "./event/keycommand";
@@ -81,14 +82,18 @@ export default class App {
         this.factory.CreateBrickGuide()
         this.factory.bird.Body.ControllerEnable = false
         if (this.factory.brickGuide != undefined) {
-        this.factory.camera.brickMode(this.factory.brickGuide)
+            this.factory.camera.brickMode(this.factory.brickGuide)
             this.factory.brickGuide.ControllerEnable = true
         }
     }
     EditMode() {
         // TODO: change to Event litener
         this.factory.camera.editMode()
+        if (this.factory.owner != undefined) {
+            this.factory.owner.Visible = false
+        }
         this.factory.helper.Visible = false
+        this.factory.bird.Visible = true
         this.factory.bird.Body.ControllerEnable = true
 
         if (this.factory.brickGuide != undefined) {
@@ -96,11 +101,30 @@ export default class App {
             this.factory.brickGuide.Visible = false
         }
     }
-    CloseUp() {
+    PlayMode() {
+        this.factory.camera.playMode()
+        if (this.factory.owner != undefined) {
+            this.factory.owner.Visible = true
+        }
+        this.factory.bird.Body.ControllerEnable = true
+        this.factory.bird.Visible = true
+        this.factory.helper.Visible = false
+
+        if (this.factory.brickGuide != undefined) {
+            this.factory.brickGuide.ControllerEnable = false
+            this.factory.brickGuide.Visible = false
+        }
+    }
+    async CloseUp(name: string, position: Vec3) {
         // TODO: change to Event litener
         console.log("close up")
-        this.factory.camera.closeUp()
-        this.factory.bird.Body.ControllerEnable = true
+
+        await this.factory.CreateOwner(name, position)
+        if (this.factory.owner != undefined) {
+            this.factory.camera.closeUp(this.factory.owner)
+        }
+        this.factory.bird.Visible = false
+        this.factory.bird.Body.ControllerEnable = false
         this.factory.helper.Visible = false
 
         if (this.factory.brickGuide != undefined) {
@@ -110,10 +134,14 @@ export default class App {
     }
     LongShot() {
         console.log("long shot")
-        this.factory.camera.longShot()
+        this.factory.camera.longShot(this.factory.helper)
         this.factory.bird.Body.ControllerEnable = false
+        this.factory.bird.Visible = false
         this.factory.helper.Visible = true
 
+        if (this.factory.owner != undefined) {
+            this.factory.owner.Visible = false
+        }
         if (this.factory.brickGuide != undefined) {
             this.factory.brickGuide.ControllerEnable = false
             this.factory.brickGuide.Visible = false

@@ -31,7 +31,9 @@ export class EditHome {
     public VisibleUi() {
         const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
+        const footer = document.getElementById("footer") as HTMLDivElement
 
+        footer.style.display = "none"
         controller.style.display = "block"
         controllerBtn.style.display = "block"
     }
@@ -55,6 +57,7 @@ export class EditHome {
         const email = this.getParam();
         if(email == null) return false;
         this.CanvasRenderer()
+        this.VisibleUi()
         this.MenuEvent(email)
 
         return true;

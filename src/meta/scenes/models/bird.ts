@@ -93,9 +93,11 @@ export class Bird implements ICtrlObject, IPhysicsObject {
                 this.punchingClip = gltf.animations[3]
                 this.changeAnimate(this.idleClip)
   
+                /*
         Gui.add(this.meshs.rotation, 'x', -1, 1, 0.01).listen()
         Gui.add(this.meshs.rotation, 'y', -1, 1, 0.01).listen()
         Gui.add(this.meshs.rotation, 'z', -1, 1, 0.01).listen()              
+        */
                 resolve(gltf.scene)
             })
         })

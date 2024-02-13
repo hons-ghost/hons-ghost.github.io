@@ -4,6 +4,7 @@ import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, 
 import { HonEntry, ProfileEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import App from "./meta/app";
+import { Vec3 } from "cannon-es";
 
 
 export class HonDetail {
@@ -227,17 +228,23 @@ export class HonDetail {
             this.profileVisible = true
         }
     }
-    public CanvasRenderer() {
+    public CanvasRenderer(email: string) {
         const play = document.getElementById("playBtn") as HTMLButtonElement
-        play.onclick = () => { this.VisibleUi() }
+        play.onclick = () => { 
+            this.VisibleUi() 
+            this.meta.PlayMode()
+        }
 
         const getback = document.getElementById("returnSns") as HTMLSpanElement
-        getback.onclick = () => { this.VisibleUi() }
+        getback.onclick = () => { 
+            this.VisibleUi() 
+            this.meta.CloseUp(email, new Vec3(10, 5, 15))
+        }
 
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init().then(() => {
-            this.meta.CloseUp()
+            this.meta.CloseUp(email, new Vec3(10, 5, 15))
         })
         this.meta.render()
 
@@ -255,7 +262,7 @@ export class HonDetail {
         this.drawHtmlEditHome(email)
         this.Follow()
         this.GetFollowerList()
-        this.CanvasRenderer()
+        this.CanvasRenderer(email)
 
         return true;
     }

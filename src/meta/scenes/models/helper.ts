@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
-//import { Gui } from "../../factory/appfactory";
+import { FloatingName } from "../../common/floatingtxt";
+import { Gui } from "../../factory/appfactory";
 
 export class Helper {
     get Position(): CANNON.Vec3 { return new CANNON.Vec3(
@@ -12,10 +13,12 @@ export class Helper {
 
     meshs: THREE.Group
     get Meshs() { return this.meshs }
+    text: FloatingName
 
 
     constructor(private loader: Loader) {
         this.meshs = new THREE.Group
+        this.text = new FloatingName("Welcome")
 
     }
     set Visible(flag: boolean) {
@@ -24,6 +27,7 @@ export class Helper {
                 child.visible = flag
             }
         })
+        this.text.visible = flag
     }
 
     async Init() {
@@ -41,14 +45,16 @@ export class Helper {
                     child.castShadow = true 
                     child.receiveShadow = true
                 })
+                this.text.SetText("환영합니다!")
+                this.meshs.add(this.text)
 
                 /*
-                Gui.add(this.meshs.rotation, 'x', -1, 1, 0.01).listen()
-                Gui.add(this.meshs.rotation, 'y', -1, 1, 0.01).listen()
-                Gui.add(this.meshs.rotation, 'z', -1, 1, 0.01).listen()
-                Gui.add(this.meshs.position, 'x', -50, 50, 0.1).listen()
-                Gui.add(this.meshs.position, 'y', -50, 50, 0.1).listen()
-                Gui.add(this.meshs.position, 'z', -50, 50, 0.1).listen()
+                Gui.add(this.text.scale, 'x', -10, 10, 1).listen()
+                Gui.add(this.text.scale, 'y', -10, 10, 1).listen()
+                Gui.add(this.text.scale, 'z', -10, 10, 1).listen()
+                Gui.add(this.text.position, 'x', -50, 50, 0.1).listen()
+                Gui.add(this.text.position, 'y', -50, 50, 0.1).listen()
+                Gui.add(this.text.position, 'z', -50, 50, 0.1).listen()
                 */
                 resolve(gltf.scene)
             })

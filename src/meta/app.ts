@@ -106,6 +106,7 @@ export default class App {
         if (this.factory.owner != undefined) {
             this.factory.owner.Visible = true
         }
+        this.factory.bird.Init()
         this.factory.bird.Body.ControllerEnable = true
         this.factory.bird.Visible = true
         this.factory.helper.Visible = false

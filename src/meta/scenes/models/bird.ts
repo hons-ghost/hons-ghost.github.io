@@ -66,7 +66,8 @@ export class Bird implements ICtrlObject, IPhysicsObject {
         })
     }
 
-    async Init() {
+    Init() {
+        this.meshs.position.set(0, 5, 5)
     }
 
     async Loader(scale: number, position: CANNON.Vec3) {

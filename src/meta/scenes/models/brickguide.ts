@@ -34,8 +34,7 @@ export class BrickGuide extends THREE.Mesh {
         super(geometry, material)
         this.castShadow = true
 
-        const pos = player.Position
-        this.position.set(pos.x, 3, pos.z + 2)
+        this.Init()
         console.log(size)
         this.contollerEnable = true
 
@@ -56,8 +55,10 @@ export class BrickGuide extends THREE.Mesh {
         this.visible = flag
     }
 
-    async Init() { 
+    Init() { 
         const pos = this.player.Position
-        this.position.set(pos.x, 3, pos.z + 2)
+        const x = pos.x - pos.x % this.size.x
+        const z = pos.z - pos.z % this.size.z + 2
+        this.position.set(x, 3, z)
     }
 }

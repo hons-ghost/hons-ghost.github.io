@@ -2,9 +2,6 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
 import { Gui } from "../../factory/appfactory"
-import { Canvas } from "../../common/canvas";
-import { Player } from "./player";
-import { EventController } from "../../event/eventctrl";
 
 export class Brick {
     get Position(): CANNON.Vec3 { return new CANNON.Vec3(

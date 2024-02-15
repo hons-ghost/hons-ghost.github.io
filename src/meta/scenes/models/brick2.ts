@@ -1,34 +1,24 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Gui } from "../../factory/appfactory"
-import { EventController } from "../../event/eventctrl";
-import { IKeyCommand } from "../../event/keycommand";
 
 
-export class BrickGuide extends THREE.Mesh {
-    private contollerEnable: boolean = true
-
+export class Brick2 extends THREE.Mesh {
     get Position(): CANNON.Vec3 {
         return new CANNON.Vec3(
         this.position.x, this.position.y, this.position.z) }
     set Position(v: CANNON.Vec3) { this.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.quaternion.set(q.x, q.y, q.z, q.w) }
     get Meshs() { return this }
-
-    set ControllerEnable(flag: boolean) { this.contollerEnable = flag }
-    get ControllerEnable(): boolean { return this.contollerEnable }
+    get Size() {return this.size}
 
     set Visible(flag: boolean) {
         this.visible = flag
     }
 
-    constructor(pos: CANNON.Vec3, private size: THREE.Vector3, private eventCtrl: EventController) {
+    constructor(pos: THREE.Vector3, private size: THREE.Vector3) {
         const geometry = new THREE.BoxGeometry(size.x, size.y, size.z)
         const material = new THREE.MeshStandardMaterial({ 
-            color: new THREE.Color(0, 255, 0),
-            transparent: true,
-            opacity: 0.5,
-            
+            color: 0xD9AB61,
         })
         super(geometry, material)
         this.castShadow = true
@@ -36,9 +26,9 @@ export class BrickGuide extends THREE.Mesh {
         this.Init(pos)
     }
 
-    Init(pos: CANNON.Vec3) { 
+    Init(pos: THREE.Vector3) { 
         const x = pos.x - pos.x % this.size.x
         const z = pos.z - pos.z % this.size.z
-        this.position.set(x, 3, z)
+        this.position.set(x, pos.y, z)
     }
 }

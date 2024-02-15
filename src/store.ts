@@ -1,4 +1,4 @@
-import { HonEntry, ProfileEntry } from "./models/param";
+import { HonEntry, ModelsEntry, ProfileEntry } from "./models/param";
 import { HonTxId } from "./models/tx";
 
 const MaxUnsignedInt = ((1 << 31) >>> 0); // unsigned int max
@@ -6,10 +6,32 @@ const MaxUnsignedInt = ((1 << 31) >>> 0); // unsigned int max
 export class BlockStore {
     hons: Map<string, HonEntry>
     profiles: Map<string, ProfileEntry>
+    models: Map<string, ModelsEntry>
 
     public constructor() {
         this.hons = new Map<string, HonEntry>()
         this.profiles = new Map<string, ProfileEntry>()
+        this.models = new Map<string, ModelsEntry>()
+    }
+
+    UpdateModels(model: ModelsEntry, key: string) {
+        this.models.set(key, model)
+    }
+
+    FetchModels(masterAddr: string, key: string): Promise<ModelsEntry>{
+        const model = this.models.get(key)
+        if (model != undefined) {
+            return Promise.resolve(model)
+        }
+        const addr = masterAddr + "/glambda?txid=" + 
+            encodeURIComponent(HonTxId) + "&table=meta&key=" + key;
+
+        return fetch(addr)
+            .then((response) => response.json())
+            .then((model: ModelsEntry) => {
+                this.models.set(key, model)
+                return model
+            })
     }
 
     FetchHon(masterAddr: string, key: string): Promise<HonEntry>{

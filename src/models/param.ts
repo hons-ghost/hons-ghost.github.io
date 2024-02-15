@@ -50,3 +50,12 @@ export type ProfileEntry = {
     time: number,
     file: string,
 }
+
+export type ModelsEntry = {
+    email: string,
+    key: string,
+    id: string,
+    password: string,
+    time: number,
+    models: string,
+}

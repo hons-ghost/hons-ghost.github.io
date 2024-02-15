@@ -3,10 +3,8 @@ import * as CANNON from "cannon-es"
 import { ICtrlObject, IPhysicsObject } from "./iobject";
 import { EventController } from "../../event/eventctrl";
 import { Loader } from "../../common/loader";
-import { IKeyCommand, KeyNone } from "../../event/keycommand";
 import { Gui } from "../../factory/appfactory"
 import { PhysicsPlayer } from "./playerctrl";
-import { UserInfo } from "../../common/param";
 
 export enum ActionType {
     IdleAction,
@@ -94,6 +92,7 @@ export class Player implements ICtrlObject, IPhysicsObject {
 
     Init() {
         this.meshs.position.set(0, 5, 5)
+        this.body.position.set(0, 5, 5)
     }
 
     async Loader(scale: number, position: CANNON.Vec3) {

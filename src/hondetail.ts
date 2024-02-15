@@ -238,13 +238,24 @@ export class HonDetail {
         const getback = document.getElementById("returnSns") as HTMLSpanElement
         getback.onclick = () => { 
             this.VisibleUi() 
-            this.meta.CloseUp(email, new Vec3(10, 5, 15))
+            this.meta.CloseUp()
         }
 
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init().then(() => {
-            this.meta.CloseUp(email, new Vec3(10, 5, 15))
+            this.blockStore.FetchModels(this.m_masterAddr, email)
+                .then((result) => {
+                    console.log(result)
+                    this.meta.ModelLoad(result.models, result.id)
+                })
+                .then(() => {
+                    this.meta.CloseUp()
+                })
+                .catch(() => {
+                    this.meta.ModelLoadEmpty(email)
+                    this.meta.CloseUp()
+                })
         })
         this.meta.render()
 

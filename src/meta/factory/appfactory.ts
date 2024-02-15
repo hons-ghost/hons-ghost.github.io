@@ -19,38 +19,46 @@ import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
 import { Bricks } from "../scenes/models/bricks";
-import { BrickGuide } from "../scenes/models/brickguide";
 import { NpcManager } from "../scenes/models/npcmanager";
+import { ModelStore } from "../common/modelstore";
 
 export const Gui = new GUI()
 Gui.hide()
 
 export class AppFactory {
-    physics = new Physics()
-    eventCtrl = new EventController()
-    canvas = new Canvas()
-    loader = new Loader()
+    private physics = new Physics()
+    private eventCtrl = new EventController()
+    private canvas = new Canvas()
+    private loader = new Loader()
+    private store = new ModelStore()
 
-    phydebugger: any
-    game: Game
+    private phydebugger: any
+    private game: Game
 
-    player: Player
-    floor: Floor
-    portal: Portal
-    npcs: NpcManager
+    private player: Player
+    private floor: Floor
+    private portal: Portal
+    private npcs: NpcManager
     
-    trees: Tree[]
-    deadtrees: DeadTree[]
-    mushrooms: Mushroom[]
+    private trees: Tree[]
+    private deadtrees: DeadTree[]
+    private mushrooms: Mushroom[]
     //island: Island
-    camera: Camera
-    light: Light
-    renderer: Renderer
-    worldSize: number
-    brick: Bricks
-    brickGuide: BrickGuide | undefined
+    private camera: Camera
+    private light: Light
+    private renderer: Renderer
+    private worldSize: number
+    private brick: Bricks
 
-    currentScene: IScene
+    private currentScene: IScene
+
+    get PhysicDebugger(): any { return this.PhysicDebugger }
+    get Canvas(): Canvas { return this.canvas }
+    get Scene(): IScene { return this.currentScene }
+    get EventCtrl(): EventController { return this.eventCtrl }
+    get ModelStore() { return this.store }
+    get Player() { return this.player }
+
     constructor() {
         this.worldSize = 300
         this.player = new Player(this.loader, this.eventCtrl)
@@ -65,8 +73,8 @@ export class AppFactory {
         this.game = new Game(this.physics, this.light)
         this.phydebugger = CannonDebugger(this.game, this.physics)
 
-        this.brick = new Bricks(this.loader, this.game, this.eventCtrl)
-        this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas)
+        this.brick = new Bricks(this.loader, this.game, this.eventCtrl, this.store)
+        this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
@@ -134,7 +142,6 @@ export class AppFactory {
         const ret = await Promise.all([
             this.player.Loader(1, new Vec3(0, 5, 5)),
             this.portal.Loader(2.5, new Vec3(5, 4.6, -4)),
-            this.brick.Loader(0.01, new Vec3(0, 2.5, 0)),
             this.MassTreeLoad(),
             this.MassMushroomLoader(),
             this.MassDeadTreeLoader(),
@@ -164,8 +171,4 @@ export class AppFactory {
     Despose() {
         this.game.dispose()
     }
-    get PhysicDebugger(): any { return this.PhysicDebugger }
-    get Canvas(): Canvas { return this.canvas }
-    get Scene(): IScene { return this.currentScene }
-    get EventCtrl(): EventController { return this.eventCtrl }
 }

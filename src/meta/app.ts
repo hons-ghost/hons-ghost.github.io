@@ -4,6 +4,7 @@ import { EventController } from "./event/eventctrl";
 import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "./event/keycommand";
 import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
+import { ModelStore } from "./common/modelstore";
 
 
 export default class App {
@@ -11,6 +12,7 @@ export default class App {
     canvas: Canvas
     currentScene: IScene
     eventCtrl: EventController
+    store: ModelStore
     initFlag: boolean
     constructor() {
         this.factory = new AppFactory()
@@ -18,6 +20,7 @@ export default class App {
         this.currentScene = this.factory.Scene
         this.eventCtrl = this.factory.EventCtrl
         this.initFlag = false
+        this.store = this.factory.ModelStore
     }
 
     async init() {
@@ -79,7 +82,7 @@ export default class App {
         })
     }
     BrickMode() {
-        this.eventCtrl.OnBrickModeEvent(this.factory.player.Position)
+        this.eventCtrl.OnBrickModeEvent(this.factory.Player.Position)
     }
     EditMode() {
         this.eventCtrl.OnEditModeEvent()
@@ -87,14 +90,29 @@ export default class App {
     PlayMode() {
         this.eventCtrl.OnPlayModeEvent()
     }
-    async CloseUp(name: string, position: Vec3) {
-        this.eventCtrl.OnCloseModeEvent({
-            name: name, 
-            position: position,
-        })
+    LocatMode() {
+        this.eventCtrl.OnLocatModeEvent()
+    }
+    WeaponMode() {
+        this.eventCtrl.OnWeaponModeEvent()
+    }
+    FunitureMode() {
+        this.eventCtrl.OnFunitureModeEvent()
+    }
+    async CloseUp() {
+        this.eventCtrl.OnCloseModeEvent()
     }
     LongShot() {
         this.eventCtrl.OnLongModeEvent()
+    }
+    ModelStore() {
+        return this.store.StoreModels()
+    }
+    ModelLoad(models: string, name: string) {
+        this.store.LoadModels(models, name)
+    }
+    ModelLoadEmpty(name: string) {
+        this.store.LoadModelsEmpty(name)
     }
 
     resize() {

@@ -102,7 +102,7 @@ export class FloatingName extends THREE.Sprite {
 
     this.material =
       new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false });
-    this.scale.set(2, 1, 1)
+    this.scale.set(3, 2, 1)
     this.position.y = 2
     //this.sprite_.position.y += modelData.nameOffset;
     //msg.model.add(this.sprite_);

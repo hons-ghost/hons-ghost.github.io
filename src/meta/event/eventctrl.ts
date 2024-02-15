@@ -25,15 +25,6 @@ export class EventController {
     RegisterKeyUpEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on("keyup", callback)
     }
-
-    OnCreateBrickEvent(e: THREE.Mesh) {
-        this.eventEmitter.emit("createbrick", e)
-    }
-
-    RegisterCreateBrickEvent(callback: (...e: any[]) => void) {
-        this.eventEmitter.on("createbrick", callback)
-    }
-
     // game mode
     OnBrickModeEvent(pos: Vec3) {
         this.eventEmitter.emit(SConf.BrickMode, pos)
@@ -53,8 +44,8 @@ export class EventController {
     RegisterPlayModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.PlayMode, callback)
     }
-    OnCloseModeEvent(info: UserInfo) {
-        this.eventEmitter.emit(SConf.CloseMode, info)
+    OnCloseModeEvent() {
+        this.eventEmitter.emit(SConf.CloseMode)
     }
     RegisterCloseModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.CloseMode, callback)
@@ -64,5 +55,23 @@ export class EventController {
     }
     RegisterLongModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.LongMode, callback)
+    }
+    OnWeaponModeEvent() {
+        this.eventEmitter.emit(SConf.WeaponMode)
+    }
+    RegisterWeaponModeEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on(SConf.WeaponMode, callback)
+    }
+    OnLocatModeEvent() {
+        this.eventEmitter.emit(SConf.LocatMode)
+    }
+    RegisterLocatModeEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on(SConf.LocatMode, callback)
+    }
+    OnFunitureModeEvent() {
+        this.eventEmitter.emit(SConf.FunitureMode)
+    }
+    RegisterFunitureModeEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on(SConf.FunitureMode, callback)
     }
 }

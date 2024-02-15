@@ -27,3 +27,5 @@ export const HonReplyLinkTxId = "ztY04MiyZPHrhKract3zXWv3xjIQ69X+F75gDqlRxAU="
 export const FollowTxId = "SIEMAHD4UoD6wDfQns3Xz5TPhlOTNyjCOVIgpQF7OIk="
 // New Follower: SIEMAHD4UoD6wDfQns3Xz5TPhlOTNyjCOVIgpQF7OIk=
 export const GetFollowerTxId = HonReplyLinkTxId
+
+export const MetaTxId = "+bo01CLDwef63KG0t4Rc83KekF/U2tgr6BVwcxgmCVA="

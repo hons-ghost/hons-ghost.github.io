@@ -5,25 +5,33 @@ import { FloatingName } from "../../common/floatingtxt";
 import { Gui } from "../../factory/appfactory";
 import { IViewer } from "./iviewer";
 import { EventController } from "../../event/eventctrl";
+import { IKeyCommand } from "../../event/keycommand";
 
 export class Npc implements IViewer {
     mixer?: THREE.AnimationMixer
-    currentAni? :THREE.AnimationAction
-    currentClip? :THREE.AnimationClip
+    currentAni?: THREE.AnimationAction
+    currentClip?: THREE.AnimationClip
 
-    idleClip? :THREE.AnimationClip
-    runClip? :THREE.AnimationClip
-    jumpClip? :THREE.AnimationClip
-    punchingClip? :THREE.AnimationClip
+    idleClip?: THREE.AnimationClip
+    runClip?: THREE.AnimationClip
+    jumpClip?: THREE.AnimationClip
+    punchingClip?: THREE.AnimationClip
 
-    text: FloatingName
-    meshs: THREE.Group
+    private controllerEnable: boolean = false
+    private text: FloatingName = new FloatingName("Welcome")
+    private meshs: THREE.Group = new THREE.Group
+    private size: THREE.Vector3 = new THREE.Vector3()
 
     vFlag = true
 
+    set ControllerEnable(flag: boolean) { this.controllerEnable = flag }
+    get ControllerEnable(): boolean { return this.controllerEnable }
+    get Size(): THREE.Vector3 { return this.size }
     get Meshs() { return this.meshs }
-    get Position(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
+    get Position(): CANNON.Vec3 {
+        return new CANNON.Vec3(
+            this.meshs.position.x, this.meshs.position.y, this.meshs.position.z)
+    }
     set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
     set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
 
@@ -39,14 +47,20 @@ export class Npc implements IViewer {
     }
 
     constructor(private loader: Loader, private eventCtrl: EventController) {
-        this.meshs = new THREE.Group
-        this.text = new FloatingName("Welcome")
 
+        eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
+            if (!this.controllerEnable) return
+            const position = keyCommand.ExecuteKeyDown()
+
+            this.meshs.position.x += position.x * this.size.x
+            this.meshs.position.z += position.z * this.size.z
+        })
     }
-    
+
 
     async Init(text: string) {
         this.text.SetText(text)
+        this.text.position.y += 0.5
     }
 
     async Loader(scale: number, position: CANNON.Vec3, path: string, text: string) {
@@ -57,21 +71,25 @@ export class Npc implements IViewer {
                 this.meshs.position.set(position.x, position.y, position.z)
                 this.meshs.castShadow = true
                 this.meshs.receiveShadow = true
-                this.meshs.traverse(child => { 
-                    child.castShadow = true 
+                this.meshs.traverse(child => {
+                    child.castShadow = true
                     child.receiveShadow = true
                 })
                 this.text.SetText(text)
                 this.text.position.y += 0.5
                 this.meshs.add(this.text)
 
-               this.mixer = new THREE.AnimationMixer(gltf.scene)
+                this.mixer = new THREE.AnimationMixer(gltf.scene)
                 this.idleClip = gltf.animations[0]
                 this.runClip = gltf.animations[1]
                 this.jumpClip = gltf.animations[2]
                 this.punchingClip = gltf.animations[3]
                 this.changeAnimate(this.idleClip)
-  
+
+                const box = new THREE.Box3().setFromObject(this.meshs)
+                this.size = box.getSize(new THREE.Vector3)
+                this.size.x = Math.ceil(this.size.x)
+                this.size.z = Math.ceil(this.size.z)
                 /*
                 Gui.add(this.text.scale, 'x', -10, 10, 1).listen()
                 Gui.add(this.text.scale, 'y', -10, 10, 1).listen()
@@ -86,7 +104,7 @@ export class Npc implements IViewer {
     }
     changeAnimate(animate: THREE.AnimationClip | undefined) {
         if (animate == undefined || this.currentClip == animate) return
-        
+
         let fadeTime = 0.2
         this.currentAni?.fadeOut(0.2)
         const currentAction = this.mixer?.clipAction(animate)

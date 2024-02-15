@@ -1,16 +1,14 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
-import { Loader } from "../../common/loader";
 import { Gui } from "../../factory/appfactory"
-import { IViewer } from "./iviewer";
-import { IPhysicsObject } from "./iobject";
-import { Canvas } from "../../common/canvas";
-import { Bird } from "./bird";
+import { Player } from "./player";
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand } from "../../event/keycommand";
 
 
 export class BrickGuide extends THREE.Mesh {
+    private contollerEnable: boolean = true
+
     get Position(): CANNON.Vec3 {
         return new CANNON.Vec3(
         this.position.x, this.position.y, this.position.z) }
@@ -21,9 +19,11 @@ export class BrickGuide extends THREE.Mesh {
     set ControllerEnable(flag: boolean) { this.contollerEnable = flag }
     get ControllerEnable(): boolean { return this.contollerEnable }
 
-    contollerEnable :boolean
+    set Visible(flag: boolean) {
+        this.visible = flag
+    }
 
-    constructor(private player: Bird, private size: THREE.Vector3, private eventCtrl: EventController) {
+    constructor(pos: CANNON.Vec3, private size: THREE.Vector3, private eventCtrl: EventController) {
         const geometry = new THREE.BoxGeometry(size.x, size.y, size.z)
         const material = new THREE.MeshStandardMaterial({ 
             color: new THREE.Color(0, 255, 0),
@@ -34,10 +34,7 @@ export class BrickGuide extends THREE.Mesh {
         super(geometry, material)
         this.castShadow = true
 
-        this.Init()
-        console.log(size)
-        this.contollerEnable = true
-
+        this.Init(pos)
 
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if (!this.contollerEnable) return
@@ -51,12 +48,8 @@ export class BrickGuide extends THREE.Mesh {
             }
         })
     }
-    set Visible(flag: boolean) {
-        this.visible = flag
-    }
 
-    Init() { 
-        const pos = this.player.Position
+    Init(pos: CANNON.Vec3) { 
         const x = pos.x - pos.x % this.size.x
         const z = pos.z - pos.z % this.size.z + 2
         this.position.set(x, 3, z)

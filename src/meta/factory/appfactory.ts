@@ -8,7 +8,7 @@ import { Renderer } from "../common/renderer";
 import { IScene } from "../scenes/models/iviewer";
 import { Light } from "../common/light";
 import { EventController } from "../event/eventctrl";
-import { Bird } from "../scenes/models/bird";
+import { Player as Player } from "../scenes/models/player";
 import { Loader } from "../common/loader";
 import CannonDebugger from "cannon-es-debugger"
 import { GUI } from "lil-gui"
@@ -18,10 +18,9 @@ import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
-import { Helper } from "../scenes/models/helper";
 import { Bricks } from "../scenes/models/bricks";
 import { BrickGuide } from "../scenes/models/brickguide";
-import { Owner } from "../scenes/models/owner";
+import { NpcManager } from "../scenes/models/npcmanager";
 
 export const Gui = new GUI()
 Gui.hide()
@@ -34,10 +33,12 @@ export class AppFactory {
 
     phydebugger: any
     game: Game
-    bird: Bird
+
+    player: Player
     floor: Floor
     portal: Portal
-    helper: Helper
+    npcs: NpcManager
+    
     trees: Tree[]
     deadtrees: DeadTree[]
     mushrooms: Mushroom[]
@@ -47,30 +48,29 @@ export class AppFactory {
     renderer: Renderer
     worldSize: number
     brick: Bricks
-    owner: Owner | undefined
     brickGuide: BrickGuide | undefined
 
     currentScene: IScene
     constructor() {
         this.worldSize = 300
-        this.bird = new Bird(this.loader, this.eventCtrl)
+        this.player = new Player(this.loader, this.eventCtrl)
         this.floor = new Floor(this.worldSize, this.worldSize, 5, new Vec3(0, 0, 0))
         this.portal = new Portal(this.loader)
-        this.helper = new Helper(this.loader)
         //this.island = new Island(this.loader)
         this.trees = []
         this.mushrooms = []
         this.deadtrees = []
 
-        this.camera = new Camera(this.canvas, this.bird)
-        this.light = new Light(this.canvas, this.bird)
-
+        this.light = new Light(this.canvas, this.player)
         this.game = new Game(this.physics, this.light)
-        this.currentScene = this.game
-        this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.phydebugger = CannonDebugger(this.game, this.physics)
 
         this.brick = new Bricks(this.loader, this.game, this.eventCtrl)
+        this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas)
+
+        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.eventCtrl)
+        this.renderer = new Renderer(this.camera, this.game, this.canvas)
+        this.currentScene = this.game
 
         const progressBar = document.querySelector('#progress-bar') as HTMLProgressElement
         const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
@@ -132,45 +132,24 @@ export class AppFactory {
         const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
         progressBarContainer.style.display = "flex"
         const ret = await Promise.all([
-            this.bird.Loader(1, new Vec3(0, 5, 5)),
+            this.player.Loader(1, new Vec3(0, 5, 5)),
             this.portal.Loader(2.5, new Vec3(5, 4.6, -4)),
-            this.helper.Loader(3, new Vec3(0, 2.5, 6)),
             this.brick.Loader(0.01, new Vec3(0, 2.5, 0)),
             this.MassTreeLoad(),
             this.MassMushroomLoader(),
             this.MassDeadTreeLoader(),
+            this.npcs.NpcLoader(),
         ])
-        this.physics.RegisterKeyControl(this.bird)
-        this.physics.add(this.bird, this.floor, ...this.trees)
+        this.physics.RegisterKeyControl(this.player)
+        this.physics.add(this.player, this.floor, ...this.trees)
         return ret
-    }
-    CreateBrickGuide() {
-        if (this.brickGuide == undefined) {
-            this.brickGuide = new BrickGuide(this.bird, this.brick.Size, this.eventCtrl)
-            this.game.add(this.brickGuide)
-        } else {
-            this.brickGuide.Init()
-            this.brickGuide.Visible = true
-        }
-    }
-    async CreateOwner(name: string, position: Vec3) {
-        if (this.owner == undefined) {
-            this.owner = new Owner(this.loader, name)
-            await this.owner.Loader(1, position)
-            this.game.add(this.owner.Meshs)
-            this.physics.RegisterKeyControl(this.owner)
-        } else {
-            this.owner.Init(name)
-            this.owner.Position = position
-            this.owner.Visible = true
-        }
     }
     InitScene() {
         this.game.add(
-            this.bird.Meshs, 
+            this.player.Meshs, 
             this.floor.Meshs, 
             this.portal.Meshs, 
-            this.helper.Meshs)
+        )
         this.trees.forEach((tree) => {
             this.game.add(tree.Meshs)
         })
@@ -180,6 +159,7 @@ export class AppFactory {
         this.mushrooms.forEach((mushroom) => {
             this.game.add(mushroom.Meshs)
         })
+        this.npcs.InitScene()
     }
     Despose() {
         this.game.dispose()

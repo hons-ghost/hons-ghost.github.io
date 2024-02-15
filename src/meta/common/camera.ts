@@ -9,7 +9,7 @@ import { NpcManager } from "../scenes/models/npcmanager";
 import { EventController } from "../event/eventctrl";
 import { Bricks } from "../scenes/models/bricks";
 import { Vec3 } from "cannon-es";
-//import { Gui } from "../factory/appfactory"
+import { Gui } from "../factory/appfactory"
 
 enum ViewMode {
     Close,
@@ -125,7 +125,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
             })
 
             this.animate = gsap.to(this.longPos, {
-                x: 0, y: 17, z: 33,
+                x: 0, y: 9, z: 16,
                 duration: 4, ease: "power1.inOut", onUpdate: () => {
                     this.position.set(this.longPos.x, this.longPos.y,
                         this.longPos.z)

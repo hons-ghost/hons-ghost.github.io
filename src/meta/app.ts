@@ -32,22 +32,26 @@ export default class App {
         window.addEventListener("resize", () => this.resize())
         window.addEventListener("keydown", (e) => {
             switch (e.code) {
-                case "1": this.eventCtrl.OnKeyDownEvent(new KeyAction1);break;
                 case "ArrowUp": this.eventCtrl.OnKeyDownEvent(new KeyUp); break
                 case "ArrowDown": this.eventCtrl.OnKeyDownEvent(new KeyDown); break;
                 case "ArrowLeft": this.eventCtrl.OnKeyDownEvent(new KeyLeft); break;
                 case "ArrowRight": this.eventCtrl.OnKeyDownEvent(new KeyRight); break;
             }
-            if (e.key == ' ') this.eventCtrl.OnKeyDownEvent(new KeySpace)
+            switch(e.key) {
+                case ' ':this.eventCtrl.OnKeyDownEvent(new KeySpace);break;
+                case "1": this.eventCtrl.OnKeyDownEvent(new KeyAction1);break;
+            }
         })
         window.addEventListener("keyup", (e) => {
             switch (e.code) {
-                case "1": this.eventCtrl.OnKeyUpEvent(new KeyAction1);break;
                 case "ArrowUp": this.eventCtrl.OnKeyUpEvent(new KeyUp); break
                 case "ArrowDown": this.eventCtrl.OnKeyUpEvent(new KeyDown); break;
                 case "ArrowLeft": this.eventCtrl.OnKeyUpEvent(new KeyLeft); break;
                 case "ArrowRight": this.eventCtrl.OnKeyUpEvent(new KeyRight); break;
                 case "Space": this.eventCtrl.OnKeyUpEvent(new KeySpace); break;
+            }
+            switch(e.key) {
+                case "1": this.eventCtrl.OnKeyUpEvent(new KeyAction1);break;
             }
         })
         const goup = document.getElementById("goup") as HTMLDivElement

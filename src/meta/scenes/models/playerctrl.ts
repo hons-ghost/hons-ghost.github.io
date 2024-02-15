@@ -1,6 +1,6 @@
 import * as CANNON from "cannon-es"
 import { EventController } from "../../event/eventctrl";
-import { IKeyCommand, KeyNone } from "../../event/keycommand";
+import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
 import { ActionType } from "./player";
 
 export class PhysicsPlayer extends CANNON.Body {
@@ -10,6 +10,7 @@ export class PhysicsPlayer extends CANNON.Body {
     ry = 0
     keyDownQueue: IKeyCommand[]
     keyUpQueue: IKeyCommand[]
+    keyType: KeyType = KeyType.None
     moveDirection: CANNON.Vec3
     contollerEnable :boolean
 
@@ -87,15 +88,19 @@ export class PhysicsPlayer extends CANNON.Body {
     getState(): ActionType {
         if (this.moveDirection.y > 0 || !this.canJump) return ActionType.JumpAction
         else if (this.moveDirection.x || this.moveDirection.z) return ActionType.RunAction
+        else if (this.keyType == KeyType.Action1)
+            return ActionType.PunchAction
         else
             return ActionType.IdleAction
     }
     updateDownKey() {
         let cmd = this.keyDownQueue.shift()
         if (cmd == undefined) {
+            this.keyType = KeyType.None
             cmd = this.none
             return
         }
+        this.keyType = cmd.Type
         const position = cmd.ExecuteKeyDown()
         if (position.x != 0) { this.moveDirection.x = position.x }
         if (position.y != 0) { this.moveDirection.y = position.y }
@@ -104,9 +109,11 @@ export class PhysicsPlayer extends CANNON.Body {
     updateUpKey() {
         let cmd = this.keyUpQueue.shift()
         if (cmd == undefined) {
+            this.keyType = KeyType.None
             cmd = this.none
             return
         }
+        this.keyType = cmd.Type
         const position = cmd.ExecuteKeyUp()
         if (position.x == this.moveDirection.x) { this.moveDirection.x = 0 }
         if (position.y == this.moveDirection.y) { this.moveDirection.y = 0 }

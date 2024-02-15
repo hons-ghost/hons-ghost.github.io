@@ -112,6 +112,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
             this.viewMode = ViewMode.Long
             this.controls.enabled = true
             if(this.animate != undefined) this.animate.kill()
+            console.log(this.position)
 
             const h = this.npcs.Helper
             const position = h.Position
@@ -120,12 +121,14 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
             this.position.set(this.longPos.x, this.longPos.y, this.longPos.z)
             this.lookAt(new THREE.Vector3(position.x, position.y, position.z))
             this.animate = gsap.to(this.rotation, {
-                x: -0.43,
-                duration: 4, ease: "power1.inOut"
+                x: -0.36,
+                duration: 4, ease: "power1.inOut", onComplete: () => {
+                    this.rotateX(-0.36)
+                }
             })
 
             this.animate = gsap.to(this.longPos, {
-                x: 0, y: 9, z: 16,
+                x: 0, y: 8, z: 16,
                 duration: 4, ease: "power1.inOut", onUpdate: () => {
                     this.position.set(this.longPos.x, this.longPos.y,
                         this.longPos.z)

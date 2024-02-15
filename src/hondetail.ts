@@ -111,7 +111,7 @@ export class HonDetail {
             .then((result) => {
                 if (result.result.constructor == Array) {
                     const container = document.getElementById(key + "-cnt") as HTMLElement
-                    container.innerHTML = result.result.length
+                    if (container != null) container.innerHTML = result.result.length
                 }
             })
     }
@@ -246,7 +246,6 @@ export class HonDetail {
         this.meta.init().then(() => {
             this.blockStore.FetchModels(this.m_masterAddr, email)
                 .then((result) => {
-                    console.log(result)
                     this.meta.ModelLoad(result.models, result.id)
                 })
                 .then(() => {

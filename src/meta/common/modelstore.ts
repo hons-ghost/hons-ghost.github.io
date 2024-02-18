@@ -1,11 +1,12 @@
-import * as CANNON from "cannon-es"
 import { Brick2 } from "../scenes/models/brick2";
 import { Npc } from "../scenes/models/npc";
-import * as zlib from "zlib"
+import { Char } from "../scenes/models/npcmanager";
+import { Player } from "../scenes/models/player";
 
 type StoreData = {
     bricks: THREE.Vector3[]
     owner: THREE.Vector3 | undefined
+    ownerModel: Char | undefined
 }
 
 export interface IModelReload {
@@ -16,11 +17,15 @@ export class ModelStore {
     private mgrs: IModelReload[] = []
     private bricks: Brick2[] = []
     private owner: Npc | undefined
-    private data: StoreData = { bricks: [], owner: undefined }
+    private player: Player | undefined
+    private playerModel: Char = Char.Male
+    private data: StoreData = { bricks: [], owner: undefined, ownerModel: Char.Male}
     private name: string = "unknown"
 
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
+    get OwnerModel() { return this.data.ownerModel }
+    get PlayerModel() { return this.playerModel }
     get Name() {return this.name}
 
     RegisterBricks(bricks: Brick2[], mgr: IModelReload) {
@@ -31,26 +36,48 @@ export class ModelStore {
         this.owner = owner
         this.mgrs.push(mgr)
     }
+    RegisterPlayer(player: Player, mgr: IModelReload) {
+        this.player = player
+        this.mgrs.push(mgr)
+    }
+    ChangeCharactor(model: Char) {
+        this.data.ownerModel = model
+        this.mgrs.forEach(async (mgr) => {
+            await mgr.Reload()
+        })
+    }
 
     StoreModels() {
         this.bricks.forEach((brick) => {
             this.data.bricks.push(brick.position)
         })
         this.data.owner = this.owner?.Meshs.position
+        this.data.ownerModel = this.owner?.Model
+
         const json = JSON.stringify(this.data)
         console.log(json)
         return json
     }
-    LoadModelsEmpty(name: string)  {
+    LoadModelsEmpty(name: string, playerModel: string | undefined)  {
+        if (playerModel != undefined) {
+            const playerData = JSON.parse(playerModel)
+            this.playerModel = playerData.ownerModel
+        }
         this.name = name
         this.data.bricks.length = 0
         this.data.owner = undefined
+        this.data.ownerModel = Char.Male
+
         this.mgrs.forEach(async (mgr) => {
             await mgr.Reload()
         })
     }
 
-    LoadModels(data: string, name: string)  {
+    LoadModels(data: string, name: string, playerModel: string | undefined)  {
+        if (playerModel != undefined) {
+            const playerData = JSON.parse(playerModel)
+            this.playerModel = playerData.ownerModel
+        }
         this.name = name
         this.data = JSON.parse(data)
         this.mgrs.forEach(async (mgr) => {

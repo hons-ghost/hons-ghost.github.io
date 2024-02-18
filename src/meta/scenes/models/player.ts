@@ -5,6 +5,10 @@ import { EventController, EventFlag } from "../../event/eventctrl";
 import { Loader } from "../../common/loader";
 import { Gui } from "../../factory/appfactory"
 import { PhysicsPlayer } from "./playerctrl";
+import SConf from "../../configs/staticconf";
+import { Char } from "./npcmanager";
+import { IModelReload, ModelStore } from "../../common/modelstore";
+import { Game } from "../game";
 
 export enum ActionType {
     IdleAction,
@@ -33,7 +37,7 @@ const solidify = (mesh: THREE.Mesh) => {
     //scene.add(outline)
 }
 
-export class Player implements ICtrlObject, IPhysicsObject {
+export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
     private body: PhysicsPlayer
     private meshs: THREE.Group
     mixer?: THREE.AnimationMixer
@@ -46,7 +50,9 @@ export class Player implements ICtrlObject, IPhysicsObject {
     punchingClip?: THREE.AnimationClip
 
     visibleFlag: boolean = true
+    private model: Char = Char.Male
 
+    set Model(model: Char) { this.model = model }
     get Body() { return this.body }
     get Position(): CANNON.Vec3 { return new CANNON.Vec3(
         this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
@@ -64,9 +70,16 @@ export class Player implements ICtrlObject, IPhysicsObject {
     }   
     get Meshs() { return this.meshs }
 
-    constructor(private loader: Loader, private eventCtrl: EventController) {
+    constructor(
+        private loader: Loader, 
+        private eventCtrl: EventController,
+        private store: ModelStore,
+        private game: Game
+    ) {
         this.meshs = new THREE.Group
         this.body = new PhysicsPlayer(new CANNON.Vec3(0, 0, 0), this.eventCtrl)
+
+        this.store.RegisterPlayer(this, this)
 
         this.eventCtrl.RegisterPlayModeEvent((e: EventFlag) => {
             switch (e) {
@@ -74,6 +87,7 @@ export class Player implements ICtrlObject, IPhysicsObject {
                     this.Init()
                     this.body.ControllerEnable = true
                     this.Visible = true
+                    console.log(this.visibleFlag)
                     break
                 case EventFlag.End:
                     this.body.ControllerEnable = false
@@ -84,13 +98,33 @@ export class Player implements ICtrlObject, IPhysicsObject {
     }
 
     Init() {
-        this.meshs.position.set(0, 5, 5)
-        this.body.position.set(0, 5, 5)
+        const pos = SConf.StartPosition
+        this.meshs.position.set(pos.x, pos.y, pos.z)
+        this.body.position.set(pos.x, pos.y, pos.z)
     }
 
-    async Loader(scale: number, position: CANNON.Vec3) {
+    async Reload(): Promise<void> {
+        this.game.remove(this.Meshs)
+        const pos = SConf.StartPosition
+        const model = this.store.PlayerModel
+        if (this.model == model) {
+            return 
+        }
+        console.log(this)
+        console.log(this.visibleFlag)
+        await this.Loader(1, new CANNON.Vec3(pos.x, pos.y, pos.z), model)
+        console.log(this)
+        console.log(this.visibleFlag)
+        this.game.add(this.Meshs)
+        this.Visible = false
+        this.model = model
+    }
+
+    async Loader(scale: number, position: CANNON.Vec3, model: Char) {
+        this.model = model
+        const path = SConf.ModelPath[model]
         return new Promise((resolve) => {
-            this.loader.Load.load("assets/male/male.gltf", (gltf) => {
+            this.loader.Load.load(path, (gltf) => {
                 this.meshs = gltf.scene
                 this.meshs.scale.set(scale, scale, scale)
                 this.meshs.position.set(position.x, position.y, position.z)

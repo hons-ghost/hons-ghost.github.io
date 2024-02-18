@@ -6,6 +6,7 @@ import { DrawHtmlHonItem } from "./models/honview";
 import { gsap } from "gsap"
 import App from "./meta/app";
 import { Vec3 } from "cannon-es";
+import { Char } from "./meta/scenes/models/npcmanager";
 
 
 export class HonDetail {
@@ -101,6 +102,7 @@ export class HonDetail {
             this.blockStore.FetchHon(this.m_masterAddr, key)
                 .then((result) => this.drawHtmlHon(result, key))
                 .then(() => this.RequestHonsReplys(btoa(key)))
+                .catch((err) => console.log(err))
         });
     }
     public RequestHonsReplys(key: string) {
@@ -249,10 +251,11 @@ export class HonDetail {
             this.alarm.style.display = "block"
             this.alarmText.innerHTML = "이동중입니다."
 
+            const myModel = this.blockStore.GetModel(this.session.UserId)
             this.blockStore.FetchModels(this.m_masterAddr, email)
                 .then((result) => {
                     console.log(result)
-                    this.meta.ModelLoad(result.models, result.id)
+                    this.meta.ModelLoad(result.models, result.id, myModel?.models)
                     this.alarm.style.display = "none"
                 })
                 .then(() => {
@@ -260,7 +263,7 @@ export class HonDetail {
                 })
                 .catch(() => {
                     this.alarm.style.display = "none"
-                    this.meta.ModelLoadEmpty(email)
+                    this.meta.ModelLoadEmpty(email, myModel?.models)
                     this.meta.CloseUp()
                 })
         })

@@ -17,6 +17,13 @@ export class BlockStore {
     UpdateModels(model: ModelsEntry, key: string) {
         this.models.set(key, model)
     }
+    GetModel(key: string): ModelsEntry | undefined{
+        const model = this.models.get(key)
+        if (model != undefined) {
+            return model
+        }
+        return undefined
+    }
 
     FetchModels(masterAddr: string, key: string): Promise<ModelsEntry>{
         const model = this.models.get(key)
@@ -46,6 +53,7 @@ export class BlockStore {
             .then((response) => response.json())
             .then((hon: HonEntry) => {
                 this.hons.set(key, hon)
+                //console.log(hon, "result" in hon)
                 return hon
             })
     }

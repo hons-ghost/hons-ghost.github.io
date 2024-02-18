@@ -19,8 +19,9 @@ import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
 import { Bricks } from "../scenes/models/bricks";
-import { NpcManager } from "../scenes/models/npcmanager";
+import { Char, NpcManager } from "../scenes/models/npcmanager";
 import { ModelStore } from "../common/modelstore";
+import SConf from "../configs/staticconf";
 
 export const Gui = new GUI()
 Gui.hide()
@@ -61,7 +62,6 @@ export class AppFactory {
 
     constructor() {
         this.worldSize = 300
-        this.player = new Player(this.loader, this.eventCtrl)
         this.floor = new Floor(this.worldSize, this.worldSize, 5, new Vec3(0, 0, 0))
         this.portal = new Portal(this.loader)
         //this.island = new Island(this.loader)
@@ -69,10 +69,11 @@ export class AppFactory {
         this.mushrooms = []
         this.deadtrees = []
 
-        this.light = new Light(this.canvas, this.player)
+        this.light = new Light(this.canvas)
         this.game = new Game(this.physics, this.light)
         this.phydebugger = CannonDebugger(this.game, this.physics)
 
+        this.player = new Player(this.loader, this.eventCtrl, this.store, this.game)
         this.brick = new Bricks(this.loader, this.game, this.eventCtrl, this.store)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store)
 
@@ -140,7 +141,7 @@ export class AppFactory {
         const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
         progressBarContainer.style.display = "flex"
         const ret = await Promise.all([
-            this.player.Loader(1, new Vec3(0, 5, 5)),
+            this.player.Loader(1, new Vec3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z), Char.Male),
             this.portal.Loader(2.5, new Vec3(5, 4.6, -4)),
             this.MassTreeLoad(),
             this.MassMushroomLoader(),

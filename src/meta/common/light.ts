@@ -2,13 +2,16 @@ import * as THREE from "three";
 import { IViewer } from "../scenes/models/iviewer";
 import { Canvas } from "./canvas";
 import { IPhysicsObject } from "../scenes/models/iobject";
+import SConf from "../configs/staticconf";
 //import { Gui } from "../factory/appfactory"
 
 export class Light extends THREE.DirectionalLight implements IViewer {
-    constructor(canvas: Canvas, private player: IPhysicsObject) {
+    constructor(canvas: Canvas) {
         super(0xffffff, 2)
-        this.position.set(this.player.Position.x + 7, 500, this.player.Position.z + 30)
-        this.target.position.set(this.player.Position.x, 3, this.player.Position.z)
+        //const pos = this.player.Position
+        const pos = SConf.StartPosition
+        this.position.set(pos.x + 7, 500, pos.z + 30)
+        this.target.position.set(pos.x, 3, pos.z)
         this.castShadow = true
         this.shadow.radius = 800
         this.shadow.mapSize.width = 4096
@@ -34,9 +37,9 @@ export class Light extends THREE.DirectionalLight implements IViewer {
     }
 
     update() {
-        this.target.position.set(this.player.Position.x, 3, this.player.Position.z)
+        //this.target.position.set(this.player.Position.x, 3, this.player.Position.z)
         return
-        this.position.set(this.player.Position.x - 2, 8, this.player.Position.z + 2)
-        this.target.position.set(this.player.Position.x, 3, this.player.Position.z)
+        //this.position.set(this.player.Position.x - 2, 8, this.player.Position.z + 2)
+        //this.target.position.set(this.player.Position.x, 3, this.player.Position.z)
     }
 }

@@ -1,4 +1,5 @@
 import { SigninTxId } from "./models/tx";
+import { BlockStore } from "./store";
 
 export type HonUser = {
     Email: string,
@@ -13,7 +14,7 @@ export class Session {
     m_user: HonUser;
     m_signinFlag: boolean;
 
-    public constructor() {
+    public constructor(private blockStore: BlockStore) {
         this.m_user = { Email: "", Nickname: "", Password: "" };
         this.m_signinFlag = false;
     }
@@ -66,6 +67,7 @@ export class Session {
                 if ("email" in ret) {
                     this.SignIn({ Email: ret.email, Nickname: ret.id, Password: user.Password });
                     this.drawHtmlLoginUi()
+                    this.blockStore.FetchModels(window.MasterAddr, ret.email)
                 }
             })
 

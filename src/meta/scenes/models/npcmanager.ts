@@ -17,10 +17,6 @@ export class NpcManager implements IModelReload {
     private helper2: Npc
     private owner: Npc
 
-    private modelPath = {
-        [Char.Male]: "assets/male/male.gltf",
-        [Char.Female]: "assets/female/female.gltf",
-    }
     private ownerModel = Char.Male
     get Helper() { return this.helper }
     get Owner() { return this.owner }
@@ -113,27 +109,36 @@ export class NpcManager implements IModelReload {
         })
     }
     async CreateOwner(info: UserInfo) {
-        this.owner.Init(info.name)
-        this.owner.Position = info.position
+        if (info.model != this.ownerModel) {
+            console.log(info)
+            this.game.remove(this.owner.Meshs)
+            this.ownerModel = info.model
+            await this.owner.Loader(1, info.position, this.ownerModel, info.name)
+            this.game.add(this.owner.Meshs)
+        } else {
+            this.owner.Init(info.name)
+            this.owner.Position = info.position
+        }
         this.owner.Visible = true
     }
     async NpcLoader() {
         console.log("loading")
         return await Promise.all([
-            this.helper.Loader(1, new Vec3(-1, 5, 6), this.modelPath[Char.Male], "Adam"),
-            this.helper2.Loader(1, new Vec3(1, 5, 6), this.modelPath[Char.Female], "Eve"),
-            this.owner.Loader(1, new Vec3(10, 5, 15), this.modelPath[this.ownerModel], "unknown")
+            this.helper.Loader(1, new Vec3(-1, 5, 6), Char.Male, "Adam"),
+            this.helper2.Loader(1, new Vec3(1, 5, 6), Char.Female, "Eve"),
+            this.owner.Loader(1, new Vec3(10, 5, 15), this.ownerModel, "unknown")
         ])
     }
     async Reload(): Promise<void> {
         const loadPos = this.store.Owner
-        const pos = (loadPos == undefined) ?
-            new Vec3(10, 5, 15) : new Vec3(loadPos.x, loadPos.y, loadPos.z)
-        console.log(pos, this.store.Name)
-        await this.CreateOwner({
+        const info = {
             name: this.store.Name,
-            position: pos
-        })
+            position: (loadPos == undefined) ?
+                new Vec3(10, 5, 15) : new Vec3(loadPos.x, loadPos.y, loadPos.z),
+            model: (this.store.OwnerModel == undefined) ? Char.Male : this.store.OwnerModel,
+        }
+        
+        await this.CreateOwner(info)
     }
     InitScene() {
         this.game.add(

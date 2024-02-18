@@ -1,4 +1,5 @@
 import App from "./meta/app";
+import { Char } from "./meta/scenes/models/npcmanager";
 import { MetaTxId } from "./models/tx";
 import { Session } from "./session";
 import { BlockStore } from "./store";
@@ -24,6 +25,12 @@ export class EditHome {
     div = document.getElementById("brickmode") as HTMLDivElement
     fun = document.getElementById("funituremode") as HTMLDivElement
     wea = document.getElementById("weaponmode") as HTMLDivElement
+
+    male = document.getElementById("change-male") as HTMLDivElement
+    female = document.getElementById("change-female") as HTMLDivElement
+
+    alarm = document.getElementById("alarm-msg") as HTMLDivElement
+    alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
 
     public constructor(private blockStore: BlockStore
         , private session: Session, private meta: App) {
@@ -66,11 +73,15 @@ export class EditHome {
                     models: models,
                     time: time,
                 }, user.Email)
+                this.alarm.style.display = "none"
             })
     }
 
     public MenuEvent(email: string) {
         this.sav.onclick = () => {
+            this.alarm.style.display = "block"
+            this.alarmText.innerHTML = "저장 중입니다."
+
             const models = this.meta.ModelStore()
             this.RequestNewMeta(models)
         }
@@ -123,6 +134,12 @@ export class EditHome {
                 this.mode = EditMode.EditMode
             }
             this.UpdateMenu()
+        }
+        this.male.onclick = () => {
+            this.meta.ChangeCharactor(Char.Male)
+        }
+        this.female.onclick = () => {
+            this.meta.ChangeCharactor(Char.Female)
         }
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {

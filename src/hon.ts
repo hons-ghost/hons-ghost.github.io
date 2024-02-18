@@ -151,7 +151,7 @@ export class Hon {
     public CheckReplyForm ( ): boolean {
         if(!this.session.CheckLogin()) {
             const div = document.getElementById("replyform") as HTMLDivElement
-            div.innerHTML = "<b>login</b>"
+            div.innerHTML = "<b>login</b>을 해야 답글을 남길 수 있습니다."
             return false
         }
         return true

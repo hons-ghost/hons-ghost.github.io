@@ -16,7 +16,7 @@ import App from "./meta/app";
 import { EditHome } from "./edithome";
 
 const blockStore = new BlockStore();
-const session = new Session();
+const session = new Session(blockStore);
 
 interface IPage {
     Run(str: string): boolean; 

@@ -5,6 +5,7 @@ import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
 import { Vec3 } from "cannon-es";
+import { Char } from "./scenes/models/npcmanager";
 
 enum AppMode {
     Long,
@@ -79,6 +80,7 @@ export default class App {
         const goright = document.getElementById("goright") as HTMLDivElement
         const godown = document.getElementById("godown") as HTMLDivElement
         const jump = document.getElementById("joypad_button1") as HTMLDivElement
+        const action1 = document.getElementById("joypad_button2") as HTMLDivElement
         goup.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyUp) }
         goup.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyUp) }
         goleft.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyLeft) }
@@ -90,6 +92,8 @@ export default class App {
         jump.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeySpace) }
         jump.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeySpace) }
 
+        action1.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyAction1) }
+        action1.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyAction1) }
         this.initFlag = true
     }
 
@@ -105,6 +109,10 @@ export default class App {
             this.render()
         })
     }
+    ChangeCharactor(model: Char) {
+        this.factory.ModelStore.ChangeCharactor(model)
+    }
+
     BrickMode() {
         this.modeMap[this.currentMode](EventFlag.End)
         this.modeMap[AppMode.Brick](EventFlag.Start)
@@ -149,11 +157,11 @@ export default class App {
     ModelStore() {
         return this.store.StoreModels()
     }
-    ModelLoad(models: string, name: string) {
-        this.store.LoadModels(models, name)
+    ModelLoad(models: string, name: string, playerModel: string | undefined) {
+        this.store.LoadModels(models, name, playerModel)
     }
-    ModelLoadEmpty(name: string) {
-        this.store.LoadModelsEmpty(name)
+    ModelLoadEmpty(name: string, playerModel: string | undefined) {
+        this.store.LoadModelsEmpty(name, playerModel)
     }
 
     resize() {

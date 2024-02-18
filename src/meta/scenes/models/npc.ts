@@ -6,6 +6,8 @@ import { Gui } from "../../factory/appfactory";
 import { IViewer } from "./iviewer";
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand } from "../../event/keycommand";
+import SConf from "../../configs/staticconf";
+import { Char } from "./npcmanager";
 
 export class Npc implements IViewer {
     mixer?: THREE.AnimationMixer
@@ -17,6 +19,8 @@ export class Npc implements IViewer {
     jumpClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
 
+    private model: Char = Char.Male
+
     private controllerEnable: boolean = false
     private text: FloatingName = new FloatingName("Welcome")
     private meshs: THREE.Group = new THREE.Group
@@ -24,6 +28,7 @@ export class Npc implements IViewer {
 
     vFlag = true
 
+    get Model() { return this.model }
     set ControllerEnable(flag: boolean) { this.controllerEnable = flag }
     get ControllerEnable(): boolean { return this.controllerEnable }
     get Size(): THREE.Vector3 { return this.size }
@@ -64,7 +69,9 @@ export class Npc implements IViewer {
         this.text.position.y += 0.5
     }
 
-    async Loader(scale: number, position: CANNON.Vec3, path: string, text: string) {
+    async Loader(scale: number, position: CANNON.Vec3, model: Char, text: string) {
+        this.model = model
+        const path = SConf.ModelPath[model]
         return new Promise((resolve) => {
             this.loader.Load.load(path, (gltf) => {
                 this.meshs = gltf.scene

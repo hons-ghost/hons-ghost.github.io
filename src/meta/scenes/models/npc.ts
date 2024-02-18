@@ -42,7 +42,6 @@ export class Npc implements IViewer {
 
     set Visible(flag: boolean) {
         if (this.vFlag == flag) return
-        console.log(flag)
         this.meshs.traverse(child => {
             if (child instanceof THREE.Mesh) {
                 child.visible = flag

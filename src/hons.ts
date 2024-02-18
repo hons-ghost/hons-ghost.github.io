@@ -61,6 +61,7 @@ export class Hons {
                             imageElement.src = imageUrl
                             imageElement.className = 'profile-sm';
                             const container = document.getElementById(uniqId) as HTMLSpanElement
+                            if(container == null) return
                             container.innerHTML = ''
                             container.appendChild(imageElement)
                         })

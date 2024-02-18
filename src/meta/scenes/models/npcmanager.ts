@@ -95,7 +95,6 @@ export class NpcManager implements IModelReload {
             }
         })
         this.eventCtrl.RegisterLongModeEvent((e: EventFlag) => {
-            console.log(e)
             switch (e) {
                 case EventFlag.Start:
                     this.helper.Visible = true
@@ -110,7 +109,6 @@ export class NpcManager implements IModelReload {
     }
     async CreateOwner(info: UserInfo) {
         if (info.model != this.ownerModel) {
-            console.log(info)
             this.game.remove(this.owner.Meshs)
             this.ownerModel = info.model
             await this.owner.Loader(1, info.position, this.ownerModel, info.name)
@@ -122,7 +120,6 @@ export class NpcManager implements IModelReload {
         this.owner.Visible = true
     }
     async NpcLoader() {
-        console.log("loading")
         return await Promise.all([
             this.helper.Loader(1, new Vec3(-1, 5, 6), Char.Male, "Adam"),
             this.helper2.Loader(1, new Vec3(1, 5, 6), Char.Female, "Eve"),

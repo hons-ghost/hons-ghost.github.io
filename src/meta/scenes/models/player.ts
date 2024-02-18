@@ -49,10 +49,10 @@ export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
     jumpClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
 
-    visibleFlag: boolean = true
-    private model: Char = Char.Male
+    private visibleFlag: boolean = true
+    private playerModel: Char = Char.Male
 
-    set Model(model: Char) { this.model = model }
+    set Model(model: Char) { this.playerModel = model }
     get Body() { return this.body }
     get Position(): CANNON.Vec3 { return new CANNON.Vec3(
         this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
@@ -61,6 +61,7 @@ export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
  
     set Visible(flag: boolean) {
         if (this.visibleFlag == flag) return
+
         this.meshs.traverse(child => {
             if (child instanceof THREE.Mesh) {
                 child.visible = flag
@@ -87,7 +88,6 @@ export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
                     this.Init()
                     this.body.ControllerEnable = true
                     this.Visible = true
-                    console.log(this.visibleFlag)
                     break
                 case EventFlag.End:
                     this.body.ControllerEnable = false
@@ -104,24 +104,19 @@ export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
     }
 
     async Reload(): Promise<void> {
-        this.game.remove(this.Meshs)
-        const pos = SConf.StartPosition
         const model = this.store.PlayerModel
-        if (this.model == model) {
+        
+        if (this.playerModel == model) {
             return 
         }
-        console.log(this)
-        console.log(this.visibleFlag)
+        const pos = SConf.StartPosition
+        this.game.remove(this.Meshs)
         await this.Loader(1, new CANNON.Vec3(pos.x, pos.y, pos.z), model)
-        console.log(this)
-        console.log(this.visibleFlag)
         this.game.add(this.Meshs)
-        this.Visible = false
-        this.model = model
     }
 
     async Loader(scale: number, position: CANNON.Vec3, model: Char) {
-        this.model = model
+        this.playerModel = model
         const path = SConf.ModelPath[model]
         return new Promise((resolve) => {
             this.loader.Load.load(path, (gltf) => {

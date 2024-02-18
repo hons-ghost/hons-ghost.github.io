@@ -62,7 +62,7 @@ export class Signup {
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
             <a class="handcursor" href="http://ghostwebservice.com/?pageid=txdetail&txid=${encodeURIComponent(SignupTxId)}">
-                link click
+                gLambda Code 보기
             </a> `;
         const btn = document.getElementById("signupBtn") as HTMLButtonElement
         btn.onclick = () => this.RequestSignup();

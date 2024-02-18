@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { ICtrlObject, IPhysicsObject } from "./iobject";
-import { EventController } from "../../event/eventctrl";
+import { EventController, EventFlag } from "../../event/eventctrl";
 import { Loader } from "../../common/loader";
 import { Gui } from "../../factory/appfactory"
 import { PhysicsPlayer } from "./playerctrl";
@@ -68,25 +68,18 @@ export class Player implements ICtrlObject, IPhysicsObject {
         this.meshs = new THREE.Group
         this.body = new PhysicsPlayer(new CANNON.Vec3(0, 0, 0), this.eventCtrl)
 
-        this.eventCtrl.RegisterBrickModeEvent(() => {
-            this.body.ControllerEnable = false
-        })
-        this.eventCtrl.RegisterEditModeEvent(() => {
-            this.body.ControllerEnable = false
-            this.Visible = false
-        })
-        this.eventCtrl.RegisterPlayModeEvent(() => {
-            this.Init()
-            this.body.ControllerEnable = true
-            this.Visible = true
-        })
-        this.eventCtrl.RegisterCloseModeEvent(() => {
-            this.body.ControllerEnable = false
-            this.Visible = false
-        })
-        this.eventCtrl.RegisterLongModeEvent(() => {
-            this.body.ControllerEnable = false
-            this.Visible = false
+        this.eventCtrl.RegisterPlayModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.Init()
+                    this.body.ControllerEnable = true
+                    this.Visible = true
+                    break
+                case EventFlag.End:
+                    this.body.ControllerEnable = false
+                    this.Visible = false
+                    break
+            }
         })
     }
 
@@ -115,6 +108,7 @@ export class Player implements ICtrlObject, IPhysicsObject {
                 this.jumpClip = gltf.animations[2]
                 this.punchingClip = gltf.animations[3]
                 this.changeAnimate(this.idleClip)
+                this.Visible = false
   
                 resolve(gltf.scene)
             })

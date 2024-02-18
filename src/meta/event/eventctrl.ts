@@ -4,6 +4,11 @@ import SConf from "../configs/staticconf";
 import { UserInfo } from "../common/param";
 import { Vec3 } from "cannon-es";
 
+export enum EventFlag {
+    Start,
+    End
+}
+
 export class EventController {
     eventEmitter: EventEmitter.EventEmitter
     constructor() {
@@ -26,50 +31,50 @@ export class EventController {
         this.eventEmitter.on("keyup", callback)
     }
     // game mode
-    OnBrickModeEvent(pos: Vec3) {
-        this.eventEmitter.emit(SConf.BrickMode, pos)
+    OnBrickModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.BrickMode, e)
     }
     RegisterBrickModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.BrickMode, callback)
     }
-    OnEditModeEvent() {
-        this.eventEmitter.emit(SConf.EditMode)
+    OnEditModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.EditMode, e)
     }
     RegisterEditModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.EditMode, callback)
     }
-    OnPlayModeEvent() {
-        this.eventEmitter.emit(SConf.PlayMode)
+    OnPlayModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.PlayMode, e)
     }
     RegisterPlayModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.PlayMode, callback)
     }
-    OnCloseModeEvent() {
-        this.eventEmitter.emit(SConf.CloseMode)
+    OnCloseModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.CloseMode, e)
     }
     RegisterCloseModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.CloseMode, callback)
     }
-    OnLongModeEvent() {
-        this.eventEmitter.emit(SConf.LongMode)
+    OnLongModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.LongMode, e)
     }
     RegisterLongModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.LongMode, callback)
     }
-    OnWeaponModeEvent() {
-        this.eventEmitter.emit(SConf.WeaponMode)
+    OnWeaponModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.WeaponMode, e)
     }
     RegisterWeaponModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.WeaponMode, callback)
     }
-    OnLocatModeEvent() {
-        this.eventEmitter.emit(SConf.LocatMode)
+    OnLocatModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.LocatMode, e)
     }
     RegisterLocatModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.LocatMode, callback)
     }
-    OnFunitureModeEvent() {
-        this.eventEmitter.emit(SConf.FunitureMode)
+    OnFunitureModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.FunitureMode, e)
     }
     RegisterFunitureModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.FunitureMode, callback)

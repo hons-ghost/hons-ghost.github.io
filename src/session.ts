@@ -26,7 +26,7 @@ export class Session {
         formData.append("key", email)
         formData.append("email", email)
         formData.append("password", password)
-        fetch(addr, {
+        return fetch(addr, {
             method: "POST",
             cache: "no-cache",
             headers: {},
@@ -46,27 +46,23 @@ export class Session {
             */
             const seInfo = document.getElementById("sessioninfo") as HTMLUListElement;
             seInfo.innerHTML = `
-                <li class="nav-item ">
                 <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', true, '&email=${this.m_user.Email}')"> ${this.m_user.Nickname} &nbsp; </a>  
-                </li>
-                <li class="nav-item ">
-                <a href="javascript:void(0)" id="logout"> Logout </a> 
-                </li>
             `;
+            /*
             const logout = document.getElementById("logout") as HTMLAnchorElement
             logout.onclick =  () => {
                 this.SignOut()
                 // window.ClickLoadPage("hons", true)
-                location.reload()
 
             }
+            */
         }
     }
-    public DrawHtmlSessionInfo() {
+    public async DrawHtmlSessionInfo() {
         const str = sessionStorage.getItem(jsSessionKey)
         if (str != null && this.m_signinFlag == false) {
             const user: HonUser = JSON.parse(str)
-            this.RequestSignIn(user.Email, user.Password, (ret: any) => {
+            await this.RequestSignIn(user.Email, user.Password, (ret: any) => {
                 if ("email" in ret) {
                     this.SignIn({ Email: ret.email, Nickname: ret.id, Password: user.Password });
                     this.drawHtmlLoginUi()
@@ -87,6 +83,7 @@ export class Session {
         this.m_user = emptyUser;
         this.m_signinFlag = false;
         sessionStorage.removeItem(jsSessionKey)
+        location.reload()
     }
 
     public CheckLogin(): boolean {

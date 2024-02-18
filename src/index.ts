@@ -23,7 +23,7 @@ interface IPage {
     Release(): void;
 }
 
-type FuncMap = { [key: string]: IPage };
+type FuncMap = { [key: string]: Function };
 type UrlMap = { [key: string]: string; };
 declare global {
     interface Window {
@@ -37,24 +37,25 @@ declare global {
 }
 
 const meta = new App()
-const hons = new Hons(blockStore, session, meta);
 const ipc = new Socket
 const router = new Router(ipc)
 const newHon = new NewHon(blockStore, session, ipc)
 const profile = new Profile(blockStore, session, ipc)
 
+let CurrentPage: IPage
 const funcMap: FuncMap = {
-    "signin": new Signin(blockStore, session),
-    "signup": new Signup(blockStore, session),
-    "hon": new Hon(blockStore, session),
-    "hons": hons,
-    "hondetail": new HonDetail(blockStore,session, meta),
-    "newhon": newHon,
-    "uploadhon": new UploadHon(blockStore, session),
-    "profile": profile,
-    "main": new Main(blockStore, session),
-    "edithome": new EditHome(blockStore, session, meta),
+    "signin": () => new Signin(blockStore, session),
+    "signup": () => new Signup(blockStore, session),
+    "hon": () => new Hon(blockStore, session),
+    "hons": () => new Hons(blockStore, session, meta),
+    "hondetail": () => new HonDetail(blockStore,session, meta),
+    "newhon": () => newHon,
+    "uploadhon": () => new UploadHon(blockStore, session),
+    "profile": () => profile,
+    "main": () => new Main(blockStore, session),
+    "edithome": () => new EditHome(blockStore, session, meta),
 };
+
 router.RegisterClient("newhon", newHon)
 router.RegisterClient("profile", profile)
 
@@ -80,9 +81,9 @@ const getPageIdParam = () => {
 }
 
 let beforPage: string;
-window.ClickLoadPage = (key: string, fromEvent: boolean, ...args: string[]) => {
+window.ClickLoadPage = async (key: string, fromEvent: boolean, ...args: string[]) => {
     //if (getPageIdParam() == key) return;
-    session.DrawHtmlSessionInfo();
+    await session.DrawHtmlSessionInfo();
 
     const url = urlToFileMap[key];
     const state = { 
@@ -101,14 +102,14 @@ window.ClickLoadPage = (key: string, fromEvent: boolean, ...args: string[]) => {
         .then(response => { return response.text(); })
         .then(data => { (document.querySelector("contents") as HTMLDivElement).innerHTML = data; })
         .then(() => {
-            const beforePageObj = funcMap[backUpBeforPage];
+            const beforePageObj = CurrentPage
             if (beforePageObj != undefined) {
                 beforePageObj.Release();
             }
 
-            const pageObj = funcMap[key];
-            if (pageObj != undefined) {
-                pageObj.Run(window.MasterAddr);
+            CurrentPage = funcMap[key]();
+            if (CurrentPage != undefined) {
+                CurrentPage.Run(window.MasterAddr);
             }
         });
     if (fromEvent) {
@@ -116,12 +117,14 @@ window.ClickLoadPage = (key: string, fromEvent: boolean, ...args: string[]) => {
     }
     console.log(fromEvent)
 };
-let expendFlag = false;
+//let expendFlag = false;
 window.NavExpended = () => {
+    /*
     let view = (expendFlag == false) ? "block" : "none";
     (document.querySelector("#navbarNav") as HTMLDivElement).style.display = view;
     (document.querySelector("#navbarNavRight") as HTMLDivElement).style.display = view;
     expendFlag = !expendFlag;
+    */
 };
 
 window.onpopstate = () => {
@@ -149,8 +152,8 @@ const includeHTML = (id: string, filename: string) => {
         .then(data => { (document.querySelector(id) as HTMLDivElement).innerHTML = data; }));
 }
 
-const includeContentHTML = (master: string) => {
-    session.DrawHtmlSessionInfo();
+const includeContentHTML = async (master: string) => {
+    await session.DrawHtmlSessionInfo();
     const key = getPageIdParam();
     const filename = urlToFileMap[key];
     const backUpBeforPage = beforPage;
@@ -160,14 +163,14 @@ const includeContentHTML = (master: string) => {
         .then(response => { return response.text(); })
         .then(data => { (document.querySelector("contents") as HTMLDivElement).innerHTML = data; })
         .then(() => {
-            const beforePageObj = funcMap[backUpBeforPage];
+            const beforePageObj = CurrentPage
             if (beforePageObj != undefined) {
                 beforePageObj.Release();
             }
 
-            const pageObj = funcMap[key];
-            if (pageObj != undefined) {
-                pageObj.Run(master);
+            CurrentPage = funcMap[key]();
+            if (CurrentPage != undefined) {
+                CurrentPage.Run(window.MasterAddr);
             }
         });
 }

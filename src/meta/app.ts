@@ -1,25 +1,45 @@
-import { Vec3 } from "math/Vec3";
 import { Canvas } from "./common/canvas";
-import { EventController } from "./event/eventctrl";
+import { EventController, EventFlag } from "./event/eventctrl";
 import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "./event/keycommand";
 import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
+import { Vec3 } from "cannon-es";
+
+enum AppMode {
+    Long,
+    Close,
+    Play,
+    Edit,
+    Brick,
+    Locate,
+    Weapon,
+    Funiture,
+}
 
 
 export default class App {
-    factory: AppFactory
+    factory = new AppFactory()
     canvas: Canvas
     currentScene: IScene
     eventCtrl: EventController
     store: ModelStore
-    initFlag: boolean
+    initFlag: boolean = false
+    currentMode = AppMode.Long
+    modeMap = {
+        [AppMode.Long]: (e: EventFlag) => { this.eventCtrl.OnLongModeEvent(e)},
+        [AppMode.Close]: (e: EventFlag) => { this.eventCtrl.OnCloseModeEvent(e)},
+        [AppMode.Play]: (e: EventFlag) => { this.eventCtrl.OnPlayModeEvent(e)},
+        [AppMode.Edit]: (e: EventFlag) => { this.eventCtrl.OnEditModeEvent(e)},
+        [AppMode.Brick]: (e: EventFlag) => { this.eventCtrl.OnBrickModeEvent(e) },
+        [AppMode.Locate]: (e: EventFlag) => { this.eventCtrl.OnLocatModeEvent(e)},
+        [AppMode.Weapon]: (e: EventFlag) => { this.eventCtrl.OnWeaponModeEvent(e)},
+        [AppMode.Funiture]: (e: EventFlag) => { this.eventCtrl.OnFunitureModeEvent(e)},
+    }
     constructor() {
-        this.factory = new AppFactory()
         this.canvas = this.factory.Canvas
         this.currentScene = this.factory.Scene
         this.eventCtrl = this.factory.EventCtrl
-        this.initFlag = false
         this.store = this.factory.ModelStore
     }
 
@@ -86,28 +106,45 @@ export default class App {
         })
     }
     BrickMode() {
-        this.eventCtrl.OnBrickModeEvent(this.factory.Player.Position)
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Brick](EventFlag.Start)
+        this.currentMode = AppMode.Brick
+        //this.eventCtrl.OnBrickModeEvent(this.factory.Player.Position)
     }
     EditMode() {
-        this.eventCtrl.OnEditModeEvent()
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Edit](EventFlag.Start)
+        this.currentMode = AppMode.Edit
     }
     PlayMode() {
-        this.eventCtrl.OnPlayModeEvent()
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Play](EventFlag.Start)
+        this.currentMode = AppMode.Play
     }
     LocatMode() {
-        this.eventCtrl.OnLocatModeEvent()
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Locate](EventFlag.Start)
+        this.currentMode = AppMode.Locate
     }
     WeaponMode() {
-        this.eventCtrl.OnWeaponModeEvent()
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Weapon](EventFlag.Start)
+        this.currentMode = AppMode.Weapon
     }
     FunitureMode() {
-        this.eventCtrl.OnFunitureModeEvent()
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Funiture](EventFlag.Start)
+        this.currentMode = AppMode.Funiture
     }
     async CloseUp() {
-        this.eventCtrl.OnCloseModeEvent()
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Close](EventFlag.Start)
+        this.currentMode = AppMode.Close
     }
     LongShot() {
-        this.eventCtrl.OnLongModeEvent()
+        this.modeMap[this.currentMode](EventFlag.End)
+        this.modeMap[AppMode.Long](EventFlag.Start)
+        this.currentMode = AppMode.Long
     }
     ModelStore() {
         return this.store.StoreModels()

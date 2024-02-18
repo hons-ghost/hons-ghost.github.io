@@ -37,6 +37,7 @@ export class Npc implements IViewer {
 
     set Visible(flag: boolean) {
         if (this.vFlag == flag) return
+        console.log(flag)
         this.meshs.traverse(child => {
             if (child instanceof THREE.Mesh) {
                 child.visible = flag
@@ -90,6 +91,7 @@ export class Npc implements IViewer {
                 this.size = box.getSize(new THREE.Vector3)
                 this.size.x = Math.ceil(this.size.x)
                 this.size.z = Math.ceil(this.size.z)
+                this.Visible = false
                 /*
                 Gui.add(this.text.scale, 'x', -10, 10, 1).listen()
                 Gui.add(this.text.scale, 'y', -10, 10, 1).listen()

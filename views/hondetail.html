@@ -34,25 +34,65 @@
 
                     <div class="twPc-divUser">
                         <div class="container">
-                            <div class="row">
-                                <div  class="twPc-divName cols p-0" id="nickname"></div>
+                            <div class="row pt-1">
+                                <div class="col">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="twPc-divName cols p-0" id="nickname"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <span id="email"> </span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <a class="handcursor" onclick='ClickLoadPage("newhon", false)'>
+                                                    <span class="material-symbols-outlined">
+                                                        edit_square
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto text-end pe-0">
+                                    <span class="popmenu-wrap handcursor">
+                                        <span class="_tooltip-wrap" style="width:100%;">
+                                            <span id="menuBtn" class="material-symbols-outlined select-disable">
+                                                more_vert
+                                            </span>
+                                            <div id="popmenu" class="popmenu border rounded bg-white text-start"
+                                                style="top:25px;right:0px;width: 170px;">
+                                                <a class="handcursor" id="edithome">
+                                                    <span class="material-symbols-outlined">
+                                                        real_estate_agent
+                                                    </span>
+                                                    내 공간 꾸미기
+                                                </a><br>
+                                                <a href="#" onclick="ClickLoadPage('profile', false)">
+                                                    <span class="material-symbols-outlined">
+                                                        person_edit
+                                                    </span>
+                                                    프로필 사진 변경
+                                                </a><br>
+                                                <a href="#" id="pop_logout">
+                                                    <span class="material-symbols-outlined">
+                                                        logout
+                                                    </span>
+                                                    로그아웃
+                                                </a>
+                                            </div>
+                                            <div class="_tooltip-down" style="top:40px;left:-75px;width:150px;">
+                                                내 공간을 꾸미고 프로필 사진도 변경해보세요!
+                                            </div>
+                                        </span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <span id="email"> </span><br>
-                        <a class="handcursor" id="edithome">
-                        <span class="material-symbols-outlined">
-                            real_estate_agent
-                        </span>
-                        </a>
-                        <a class="handcursor" onclick='ClickLoadPage("newhon", false)'>
-                            <span class="material-symbols-outlined">
-                                edit_square
-                            </span>
-                        </a>
-                        <span><a href="#" onclick="ClickLoadPage('profile', false)">
-                                <span class="material-symbols-outlined">
-                                    person_edit
-                                </span> </a></span>
                     </div>
 
                     <div class="twPc-divStats">

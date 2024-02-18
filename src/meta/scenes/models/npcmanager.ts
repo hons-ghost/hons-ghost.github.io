@@ -1,18 +1,27 @@
 import { Canvas } from "../../common/canvas"
 import { Loader } from "../../common/loader"
-import { EventController } from "../../event/eventctrl"
+import { EventController, EventFlag } from "../../event/eventctrl"
 import { Npc } from "./npc"
 import { Game } from "../game"
 import { UserInfo } from "../../common/param"
 import { Vec3 } from "cannon-es"
 import { IModelReload, ModelStore } from "../../common/modelstore"
 
+export enum Char{
+    Male,
+    Female
+}
 
 export class NpcManager implements IModelReload {
     private helper: Npc
     private helper2: Npc
     private owner: Npc
 
+    private modelPath = {
+        [Char.Male]: "assets/male/male.gltf",
+        [Char.Female]: "assets/female/female.gltf",
+    }
+    private ownerModel = Char.Male
     get Helper() { return this.helper }
     get Owner() { return this.owner }
 
@@ -33,39 +42,74 @@ export class NpcManager implements IModelReload {
         this.canvas.RegisterViewer(this.helper2)
         this.canvas.RegisterViewer(this.owner)
 
-        this.eventCtrl.RegisterBrickModeEvent(() => {
-            this.helper.Visible = false
-            this.helper2.Visible = false
-            this.owner.Visible = true
-            this.owner.ControllerEnable = false
+        this.eventCtrl.RegisterBrickModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.owner.Visible = true
+                    this.owner.ControllerEnable = false
+                    break
+                case EventFlag.End:
+                    this.owner.Visible = false
+                    break
+            }
         })
-        this.eventCtrl.RegisterEditModeEvent(() => {
-            this.helper.Visible = false
-            this.helper2.Visible = false
-            this.owner.Visible = true
-            this.owner.ControllerEnable = false
+        this.eventCtrl.RegisterEditModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.owner.Visible = true
+                    this.owner.ControllerEnable = false
+                    break
+                case EventFlag.End:
+                    this.owner.Visible = false
+                    break
+            }
         })
-        this.eventCtrl.RegisterLocatModeEvent(() => {
-            this.helper.Visible = false
-            this.helper2.Visible = false
-            this.owner.Visible = true
-            this.owner.ControllerEnable = true
+        this.eventCtrl.RegisterLocatModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.owner.Visible = true
+                    this.owner.ControllerEnable = true
+                    break
+                case EventFlag.End:
+                    this.owner.Visible = false
+                    this.owner.ControllerEnable = false
+                    break
+            }
         })
-        this.eventCtrl.RegisterPlayModeEvent(() => {
-            this.helper.Visible = false
-            this.helper2.Visible = false
-            this.owner.Visible = true
-            this.owner.ControllerEnable = false
+        this.eventCtrl.RegisterPlayModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.owner.Visible = true
+                    this.owner.ControllerEnable = false
+                    break
+                case EventFlag.End:
+                    this.owner.Visible = false
+                    break
+            }
         })
-        this.eventCtrl.RegisterCloseModeEvent(() => {
-            this.helper.Visible = false
-            this.helper2.Visible = false
-            this.owner.Visible = true
+        this.eventCtrl.RegisterCloseModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.owner.Visible = true
+                    this.owner.ControllerEnable = false
+                    break
+                case EventFlag.End:
+                    this.owner.Visible = false
+                    break
+            }
         })
-        this.eventCtrl.RegisterLongModeEvent(() => {
-            this.helper.Visible = true
-            this.helper2.Visible = true
-            this.owner.Visible = false
+        this.eventCtrl.RegisterLongModeEvent((e: EventFlag) => {
+            console.log(e)
+            switch (e) {
+                case EventFlag.Start:
+                    this.helper.Visible = true
+                    this.helper2.Visible = true
+                    break
+                case EventFlag.End:
+                    this.helper.Visible = false
+                    this.helper2.Visible = false
+                    break
+            }
         })
     }
     async CreateOwner(info: UserInfo) {
@@ -74,10 +118,11 @@ export class NpcManager implements IModelReload {
         this.owner.Visible = true
     }
     async NpcLoader() {
+        console.log("loading")
         return await Promise.all([
-            this.helper.Loader(1, new Vec3(-1, 5, 6), "assets/male/male.gltf", "Adam"),
-            this.helper2.Loader(1, new Vec3(1, 5, 6), "assets/male/male.gltf", "Eve"),
-            this.owner.Loader(1, new Vec3(10, 5, 15), "assets/male/male.gltf", "unknown")
+            this.helper.Loader(1, new Vec3(-1, 5, 6), this.modelPath[Char.Male], "Adam"),
+            this.helper2.Loader(1, new Vec3(1, 5, 6), this.modelPath[Char.Female], "Eve"),
+            this.owner.Loader(1, new Vec3(10, 5, 15), this.modelPath[this.ownerModel], "unknown")
         ])
     }
     async Reload(): Promise<void> {

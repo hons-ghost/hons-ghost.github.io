@@ -126,7 +126,7 @@ export class Hon {
         fetch(addr + key)
             .then((response) => response.json())
             .then((result) => this.drawHtmlHon(result, key, "reply"))
-
+            .then(() => this.warningMsg(""))
     }
     /* reply feedlink */
     public RequestHonsReplys(key: string) {
@@ -140,10 +140,11 @@ export class Hon {
                 if (result.result.constructor == Array) {
                     const container = document.getElementById(key + "-cnt") as HTMLElement
                     container.innerHTML = result.result.length
-
                     result.result.forEach((key: any) => {
                         this.RequestHonReply(key)
                     });
+                } else {
+                    this.warningMsg("")
                 }
             })
     }

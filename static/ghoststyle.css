@@ -318,6 +318,30 @@ display: inline-block;
 	margin-left: -10px;
 	margin-top: -10px;
 }
+._tooltip-left {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    display: block;
+    animation: fadeout 1s linear 3s;
+    animation-fill-mode: forwards;
+}
+
+._tooltip-left:after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 0;
+	border: 10px solid transparent;
+    border-right-color: rgba(0, 0, 0, 0.5);
+	border-top: 20;
+	margin-left: -20px;
+	margin-top: -10px;
+}
 @keyframes fadeout {
     from {
         opacity: 1;
@@ -333,6 +357,39 @@ display: inline-block;
 #editmenu {
     max-width: 64px;
 	position: absolute;
-	top: 65;
+	top: 70;
     left: 10;
+}
+
+.popmenu-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.popmenu {
+    position: absolute;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.first-menu {
+    position:relative;
+    display: inline-block;
+}
+
+.second-menu {
+    position: absolute;
+    display: none;
+	left: 50px;
+    top:-10px
+}
+.alarm-msg {
+    position: absolute;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

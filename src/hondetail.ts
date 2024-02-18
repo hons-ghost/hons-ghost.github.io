@@ -3,19 +3,21 @@ import { HonUser, Session } from "./session";
 import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx";
 import { HonEntry, ProfileEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
+import { gsap } from "gsap"
 import App from "./meta/app";
 import { Vec3 } from "cannon-es";
 
 
 export class HonDetail {
-    m_masterAddr: string
-    m_session: Session
-    targetHonEmail: string
+    m_masterAddr: string = ""
+    targetHonEmail: string = ""
     profileVisible = true
+
+    alarm = document.getElementById("alarm-msg") as HTMLDivElement
+    alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
+
     public constructor(private blockStore: BlockStore
         , private session: Session, private meta: App) {
-        this.targetHonEmail = this.m_masterAddr = "";
-        this.m_session = session;
     }
     drawHtml(ret: any) {
         const honUser :HonUser = {
@@ -129,8 +131,8 @@ export class HonDetail {
         const followBtn = document.getElementById("followBtn") as HTMLButtonElement
         followBtn.onclick = () => {
             const targetKey = this.targetHonEmail
-            const user = this.m_session.GetHonUser();
-            if (!this.m_session.CheckLogin() || 
+            const user = this.session.GetHonUser();
+            if (!this.session.CheckLogin() || 
                 user.Email == targetKey) return
             
             const formData = new FormData()
@@ -211,7 +213,6 @@ export class HonDetail {
         const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
         const menuGui = document.getElementById("menu-gui") as HTMLDivElement
-        console.log(this.profileVisible)
         if (this.profileVisible) {
             wrapper.style.display = "none"
             footer.style.display = "none"
@@ -243,15 +244,22 @@ export class HonDetail {
 
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
+
         this.meta.init().then(() => {
+            this.alarm.style.display = "block"
+            this.alarmText.innerHTML = "이동중입니다."
+
             this.blockStore.FetchModels(this.m_masterAddr, email)
                 .then((result) => {
+                    console.log(result)
                     this.meta.ModelLoad(result.models, result.id)
+                    this.alarm.style.display = "none"
                 })
                 .then(() => {
                     this.meta.CloseUp()
                 })
                 .catch(() => {
+                    this.alarm.style.display = "none"
                     this.meta.ModelLoadEmpty(email)
                     this.meta.CloseUp()
                 })
@@ -261,18 +269,38 @@ export class HonDetail {
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
     }
+    popupVisible = false
+    public PopupMenu() {
+        const btn = document.getElementById("menuBtn") as HTMLSpanElement
+        const pop = document.getElementById("popmenu") as HTMLDivElement
+        btn.onclick = () => {
+            if (this.popupVisible) {
+                pop.style.display = "none"
+                this.popupVisible = false
+            } else {
+                pop.style.display = "block"
+                this.popupVisible = true
+            }
+        }
+        const logout = document.getElementById("pop_logout") as HTMLAnchorElement
+        logout.onclick = () => {
+            this.session.SignOut()
+        }
+    }
 
     public Run(masterAddr: string): boolean {
         this.m_masterAddr = masterAddr;
         const email = this.getParam();
         if(email == null) return false;
         this.targetHonEmail = email
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth'})
         this.requestUserInfo(email)
         this.RequestHons(email);
         this.drawHtmlEditHome(email)
         this.Follow()
         this.GetFollowerList()
         this.CanvasRenderer(email)
+        this.PopupMenu()
 
         return true;
     }

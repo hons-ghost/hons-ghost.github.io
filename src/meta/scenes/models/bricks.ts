@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
 import { Gui } from "../../factory/appfactory"
-import { EventController } from "../../event/eventctrl";
+import { EventController, EventFlag } from "../../event/eventctrl";
 import { Brick } from "./brick";
 import { BrickGuide } from "./brickguide";
 import { Brick2 } from "./brick2";
@@ -48,35 +48,18 @@ export class Bricks implements IModelReload{
                 exist = this.bricks2.some((brick) => brick.Position.almostEquals(bg.Position))
             }
         })
-        this.eventCtrl.RegisterLocatModeEvent(() => {
+        this.eventCtrl.RegisterBrickModeEvent((e: EventFlag) => {
             if (this.brickGuide == undefined) return
-            this.brickGuide.ControllerEnable = false
-            this.brickGuide.Visible = false
-        })
-        this.eventCtrl.RegisterBrickModeEvent(() => {
-            if (this.brickGuide == undefined) return
-            this.brickGuide.ControllerEnable = true
-            this.brickGuide.Visible = true
-        })
-        this.eventCtrl.RegisterEditModeEvent(() => {
-            if (this.brickGuide == undefined) return
-            this.brickGuide.ControllerEnable = false
-            this.brickGuide.Visible = false
-        })
-        this.eventCtrl.RegisterPlayModeEvent(() => {
-            if (this.brickGuide == undefined) return
-            this.brickGuide.ControllerEnable = false
-            this.brickGuide.Visible = false
-        })
-        this.eventCtrl.RegisterCloseModeEvent(() => {
-            if (this.brickGuide == undefined) return
-            this.brickGuide.ControllerEnable = false
-            this.brickGuide.Visible = false
-        })
-        this.eventCtrl.RegisterLongModeEvent(() => {
-            if (this.brickGuide == undefined) return
-            this.brickGuide.ControllerEnable = false
-            this.brickGuide.Visible = false
+            switch(e) {
+                case EventFlag.Start:
+                    this.brickGuide.ControllerEnable = true
+                    this.brickGuide.Visible = true
+                    break
+                case EventFlag.End:
+                    this.brickGuide.ControllerEnable = false
+                    this.brickGuide.Visible = false
+                    break
+            }
         })
     }
     CreateBrickEvent() {

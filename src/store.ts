@@ -53,7 +53,7 @@ export class BlockStore {
             .then((response) => response.json())
             .then((hon: HonEntry) => {
                 this.hons.set(key, hon)
-                //console.log(hon, "result" in hon)
+                console.log(this.hons.size)
                 return hon
             })
     }
@@ -69,6 +69,7 @@ export class BlockStore {
             .then((response) => response.json())
             .then((profile: ProfileEntry) => {
                 this.profiles.set(email, profile)
+                console.log(this.profiles.size, "file: ", profile.file.length)
                 return profile
             })
     }

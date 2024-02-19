@@ -296,7 +296,7 @@ export class HonDetail {
         const email = this.getParam();
         if(email == null) return false;
         this.targetHonEmail = email
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth'})
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto'})
         this.requestUserInfo(email)
         this.RequestHons(email);
         this.drawHtmlEditHome(email)

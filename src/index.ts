@@ -28,7 +28,6 @@ type UrlMap = { [key: string]: string; };
 declare global {
     interface Window {
         ClickLoadPage: (key: string, from: boolean, ...arg: string[]) => void;
-        NavExpended: () => void;
         MasterAddr: string;
         MasterWsAddr: string;
         MasterNode: GhostWebUser;
@@ -42,7 +41,7 @@ const router = new Router(ipc)
 const newHon = new NewHon(blockStore, session, ipc)
 const profile = new Profile(blockStore, session, ipc)
 
-let CurrentPage: IPage
+let CurrentPage: IPage | null
 const funcMap: FuncMap = {
     "signin": () => new Signin(blockStore, session),
     "signup": () => new Signup(blockStore, session),
@@ -100,7 +99,10 @@ window.ClickLoadPage = async (key: string, fromEvent: boolean, ...args: string[]
     history.pushState(state, "login", "./?pageid=" + key + args);
     fetch(url)
         .then(response => { return response.text(); })
-        .then(data => { (document.querySelector("contents") as HTMLDivElement).innerHTML = data; })
+        .then(data => { 
+            CurrentPage = null;
+            (document.querySelector("contents") as HTMLDivElement).innerHTML = data; 
+        })
         .then(() => {
             const beforePageObj = CurrentPage
             if (beforePageObj != undefined) {
@@ -112,23 +114,9 @@ window.ClickLoadPage = async (key: string, fromEvent: boolean, ...args: string[]
                 CurrentPage.Run(window.MasterAddr);
             }
         });
-    if (fromEvent) {
-        window.NavExpended();
-    }
-    console.log(fromEvent)
-};
-//let expendFlag = false;
-window.NavExpended = () => {
-    /*
-    let view = (expendFlag == false) ? "block" : "none";
-    (document.querySelector("#navbarNav") as HTMLDivElement).style.display = view;
-    (document.querySelector("#navbarNavRight") as HTMLDivElement).style.display = view;
-    expendFlag = !expendFlag;
-    */
 };
 
 window.onpopstate = () => {
-    //window.ClickLoadPage(event.state['key'], event.state['fromEvent'], event.state['args'])
     includeContentHTML(window.MasterAddr);
 };
 
@@ -161,7 +149,10 @@ const includeContentHTML = async (master: string) => {
     router.Activate(key)
     fetch(filename)
         .then(response => { return response.text(); })
-        .then(data => { (document.querySelector("contents") as HTMLDivElement).innerHTML = data; })
+        .then(data => { 
+            CurrentPage = null;
+            (document.querySelector("contents") as HTMLDivElement).innerHTML = data; 
+        })
         .then(() => {
             const beforePageObj = CurrentPage
             if (beforePageObj != undefined) {
@@ -175,23 +166,6 @@ const includeContentHTML = async (master: string) => {
         });
 }
 
-const tag = document.getElementById("contents");
-if (tag != null) {
-    if (location.protocol != 'http:') {
-        tag.innerHTML = errmsg(` https 를 지원하지 않습니다.`, 
-            `링크를 클릭해주세요. <a href="http://hons.ghostwebservice.com"> <strong class="me-auto">hons.ghostwebservice.com</strong> </a> `);
-    } else {
-        addEventListener("load", () =>
-            fetch("http://lb.ghostnetroot.com:58083/nodes")
-                .then((response) => response.json())
-                .then(parseResponse)
-                .then(loadNodesHtml)
-                .then((url) => includeContentHTML(url))
-                .catch(() => {
-                    tag.innerHTML = errmsg(` Network Down`, ` 사용가능한 Node가 존재하지 않습니다.`);
-                }));
-    }
-}
 
 function errmsg(title: string, content: string): string {
     return `
@@ -216,3 +190,21 @@ function errmsg(title: string, content: string): string {
 
 includeHTML("header", "navbar.html");
 includeHTML("footer", "foot.html");
+
+const tag = document.getElementById("contents");
+if (tag != null) {
+    if (location.protocol != 'http:') {
+        tag.innerHTML = errmsg(` https 를 지원하지 않습니다.`, 
+            `링크를 클릭해주세요. <a href="http://hons.ghostwebservice.com"> <strong class="me-auto">hons.ghostwebservice.com</strong> </a> `);
+    } else {
+        addEventListener("load", () =>
+            fetch("http://lb.ghostnetroot.com:58083/nodes")
+                .then((response) => response.json())
+                .then(parseResponse)
+                .then(loadNodesHtml)
+                .then((url) => includeContentHTML(url))
+                .catch(() => {
+                    tag.innerHTML = errmsg(` Network Down`, ` 사용가능한 Node가 존재하지 않습니다.`);
+                }));
+    }
+}

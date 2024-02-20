@@ -1,20 +1,11 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
+import { GhostModel } from "./ghostmodel";
 
-export class Mushroom {
-    get Position(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
-    set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
-
-
-    meshs: THREE.Group
-    get Meshs() { return this.meshs }
-
-
+export class Mushroom extends GhostModel {
     constructor(private loader: Loader) {
-        this.meshs = new THREE.Group
+        super()
     }
     set Visible(flag: boolean) {
         this.meshs.traverse(child => {
@@ -27,20 +18,15 @@ export class Mushroom {
     async Init() {
     }
 
-    async Loader(scale: number, position: CANNON.Vec3, type:number) {
-        return new Promise((resolve) => {
-            this.loader.Load.load("assets/custom_island/mushroom" + type + ".glb", (gltf) => {
-                this.meshs = gltf.scene
-                this.meshs.scale.set(scale, scale, scale)
-                this.meshs.position.set(position.x, position.y, position.z)
-                this.meshs.castShadow = true
-                this.meshs.receiveShadow = true
-                this.meshs.traverse(child => { 
-                    child.castShadow = true 
-                    child.receiveShadow = true
-                })
-                resolve(gltf.scene)
-            })
+    async MassLoader(meshs:THREE.Group, scale: number, position: CANNON.Vec3) {
+        this.meshs = meshs.clone()
+        this.meshs.scale.set(scale, scale, scale)
+        this.meshs.position.set(position.x, position.y, position.z)
+        this.meshs.castShadow = true
+        this.meshs.receiveShadow = true
+        this.meshs.traverse(child => {
+            child.castShadow = true
+            child.receiveShadow = true
         })
     }
 }

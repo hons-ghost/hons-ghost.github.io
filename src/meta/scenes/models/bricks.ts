@@ -12,6 +12,7 @@ import { IModelReload, ModelStore } from "../../common/modelstore";
 export class Bricks implements IModelReload{
     bricks: Brick[]
     bricks2: Brick2[]
+    instancedBlock?: THREE.InstancedMesh
     brickGuide: BrickGuide | undefined
     private brickSize: THREE.Vector3 = new THREE.Vector3(2, 2, 2)
 
@@ -25,7 +26,7 @@ export class Bricks implements IModelReload{
     ) {
         this.bricks = []
         this.bricks2 = []
-        store.RegisterBricks(this.bricks2, this)
+        store.RegisterBricks(this)
         
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if (this.brickGuide == undefined) return
@@ -41,11 +42,14 @@ export class Bricks implements IModelReload{
                 this.brickGuide.position.z += position.z * this.brickSize.z
                 
             }
-            const bg = this.brickGuide
-            let exist = this.bricks2.some((brick) => brick.Position.almostEquals(bg.Position))
+            const bgPos = this.brickGuide.Position
+            const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
+            let exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             while (exist) {
                 this.brickGuide.position.y += this.brickSize.y
-                exist = this.bricks2.some((brick) => brick.Position.almostEquals(bg.Position))
+                const bgPos = this.brickGuide.Position
+                const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
+                exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             }
         })
         this.eventCtrl.RegisterBrickModeEvent((e: EventFlag) => {
@@ -62,15 +66,20 @@ export class Bricks implements IModelReload{
             }
         })
     }
+    VEqual(v1: THREE.Vector3, v2: THREE.Vector3) :boolean {
+        return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z 
+    }
     CreateBrickEvent() {
         if (this.brickGuide == undefined) return
 
-        const bg = this.brickGuide
-        if (this.bricks2.some((brick) => brick.Position.almostEquals(bg.Position))) return
+        const bgPos = this.brickGuide.Position
+        const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
+        const exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
+        if (exist) return
         
         const b = new Brick2(this.brickGuide.position, this.brickSize)
         console.log(this.brickGuide.position, b.position)
-        this.bricks2.push(b)
+        this.store.Bricks.push(b.position)
         this.scene.add(b)
         /*
         const b = await this.Loader(0.01, new CANNON.Vec3(
@@ -94,24 +103,35 @@ export class Bricks implements IModelReload{
     async Init() { }
 
     Reload(): void {
-        const bricksPos = this.store.Bricks
-        bricksPos.forEach((pos, i) => {
-            let b: Brick2
-            if(this.bricks2.length > i) {
-                b = this.bricks2[i]
-                b.position.set(pos.x, pos.y, pos.z)
-            } else {
-                b = new Brick2(pos, this.brickSize)
-                this.bricks2.push(b)
-                this.scene.add(b)
-            }
-        })
-        for (let i = this.bricks2.length; i > bricksPos.length; i--) {
-            // delete bricks
-            const b = this.bricks2.pop()
-            if (b != undefined)
-                this.scene.remove(b)
+        if (this.instancedBlock != undefined) {
+            this.scene.remove(this.instancedBlock)
+            this.instancedBlock = undefined
         }
+
+        const bricksPos = this.store.Bricks
+        if(bricksPos.length == 0) {
+            return
+        }
+        const geometry = new THREE.BoxGeometry(
+            this.brickSize.x, 
+            this.brickSize.y, 
+            this.brickSize.z, 
+        )
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0xD9AB61,
+        })
+        this.instancedBlock = new THREE.InstancedMesh(
+            geometry, material, bricksPos.length
+        )
+        this.instancedBlock.castShadow = true
+        const matrix = new THREE.Matrix4()
+        const q = new THREE.Quaternion()
+        const scale = new THREE.Vector3(1, 1, 1)
+        bricksPos.forEach((pos, i) => {
+            matrix.compose(pos, q, scale)
+            this.instancedBlock?.setMatrixAt(i, matrix)
+        })
+        this.scene.add(this.instancedBlock)
     }
 
     /*

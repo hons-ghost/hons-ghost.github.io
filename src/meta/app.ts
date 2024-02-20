@@ -60,7 +60,7 @@ export default class App {
             }
             switch(e.key) {
                 case ' ':this.eventCtrl.OnKeyDownEvent(new KeySpace);break;
-                case "1": this.eventCtrl.OnKeyDownEvent(new KeyAction1);break;
+                case "Control": this.eventCtrl.OnKeyDownEvent(new KeyAction1);break;
             }
         })
         window.addEventListener("keyup", (e) => {
@@ -72,7 +72,7 @@ export default class App {
                 case "Space": this.eventCtrl.OnKeyUpEvent(new KeySpace); break;
             }
             switch(e.key) {
-                case "1": this.eventCtrl.OnKeyUpEvent(new KeyAction1);break;
+                case "Control": this.eventCtrl.OnKeyUpEvent(new KeyAction1);break;
             }
         })
         const goup = document.getElementById("goup") as HTMLDivElement

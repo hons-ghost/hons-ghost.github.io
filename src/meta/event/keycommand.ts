@@ -11,6 +11,7 @@ export enum KeyType {
     Action3,
     Action4,
     Action5,
+    Count,
 }
 
 export interface IKeyCommand {

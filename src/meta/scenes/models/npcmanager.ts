@@ -121,8 +121,8 @@ export class NpcManager implements IModelReload {
     }
     async NpcLoader() {
         return await Promise.all([
-            this.helper.Loader(1, new Vec3(-1, 5, 6), Char.Male, "Adam"),
-            this.helper2.Loader(1, new Vec3(1, 5, 6), Char.Female, "Eve"),
+            this.helper.Loader(1, new Vec3(-1, 4.7, 6), Char.Male, "Adam"),
+            this.helper2.Loader(1, new Vec3(1, 4.7, 6), Char.Female, "Eve"),
             this.owner.Loader(1, new Vec3(10, 5, 15), this.ownerModel, "unknown")
         ])
     }

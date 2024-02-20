@@ -254,7 +254,6 @@ export class HonDetail {
             const myModel = this.blockStore.GetModel(this.session.UserId)
             this.blockStore.FetchModels(this.m_masterAddr, email)
                 .then((result) => {
-                    console.log(result)
                     this.meta.ModelLoad(result.models, result.id, myModel?.models)
                     this.alarm.style.display = "none"
                 })

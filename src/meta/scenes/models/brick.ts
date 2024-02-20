@@ -2,35 +2,17 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
 import { Gui } from "../../factory/appfactory"
+import { GhostModel } from "./ghostmodel";
 
-export class Brick {
-    get Position(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
-    set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
-    get Size(): THREE.Vector3 { return this.size }
-
-
-    size: THREE.Vector3
-    meshs: THREE.Group
-    get Meshs() { return this.meshs }
-
-
+export class Brick extends GhostModel{
     constructor(private loader: Loader)
     {
+        super()
         this.meshs = new THREE.Group
         this.size = new THREE.Vector3()
     }
 
-    set Visible(flag: boolean) {
-        this.meshs.traverse(child => {
-            if (child instanceof THREE.Mesh) {
-                child.visible = flag
-            }
-        })
-    }
-
-    async Init() { }
+        async Init() { }
 
     resize(width: number, height: number): void { }
 

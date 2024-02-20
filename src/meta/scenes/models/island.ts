@@ -3,32 +3,18 @@ import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
 import { ICtrlObject, IPhysicsObject } from "./iobject";
 import { EventController } from "../../event/eventctrl";
+import { GhostModel } from "./ghostmodel";
 //import { Gui } from "../../factory/appfactory";
 
-export class Island implements IPhysicsObject {
+export class Island extends GhostModel implements IPhysicsObject {
     body: PhysicsIsland
-    get Body() { return this.body }
-    get Position(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
-    set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y + this.physioffset, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
-
-
-    meshs: THREE.Group
-    get Meshs() { return this.meshs }
-
     physioffset = 88.5
 
+    get Body() { return this.body }
+
     constructor(private loader: Loader) {
-        this.meshs = new THREE.Group
+        super()
         this.body = new PhysicsIsland()
-    }
-    set Visible(flag: boolean) {
-        this.meshs.traverse(child => {
-            if (child instanceof THREE.Mesh) {
-                child.visible = flag
-            }
-        })
     }
 
     async Init() {

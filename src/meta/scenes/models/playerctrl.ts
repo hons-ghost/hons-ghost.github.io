@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
@@ -85,14 +86,34 @@ export class PhysicsPlayer extends CANNON.Body {
         }
         this.quaternion.setFromEuler(0, this.ry, 0)
     }
+    idleType = ActionType.IdleAction
     getState(): ActionType {
-        if (this.moveDirection.y > 0 || !this.canJump) return ActionType.JumpAction
-        else if (this.moveDirection.x || this.moveDirection.z) return ActionType.RunAction
-        else if (this.keyType == KeyType.Action1)
+        /*
+        if (this.moveDirection.y && !this.canJump) {
+            this.idleType = ActionType.IdleAction
+            return ActionType.JumpAction
+        } else if (this.moveDirection.x || this.moveDirection.z) {
+            this.idleType = ActionType.IdleAction
+            return ActionType.RunAction
+        }
+        */
+        if (this.keyState[KeyType.Action0] || !this.canJump) {
+            this.idleType = ActionType.IdleAction
+            return ActionType.JumpAction
+        }
+        if (this.keyState[KeyType.Up] || this.keyState[KeyType.Down]
+            || this.keyState[KeyType.Left] || this.keyState[KeyType.Right]) {
+            this.idleType = ActionType.IdleAction
+            return ActionType.RunAction
+        }
+        if (this.keyState[KeyType.Action1]) {
+            this.idleType = ActionType.FightAction
             return ActionType.PunchAction
-        else
-            return ActionType.IdleAction
+        }
+        return this.idleType
     }
+    keyState = new Array<boolean>(KeyType.Count)
+    keytimeout?:NodeJS.Timeout
     updateDownKey() {
         let cmd = this.keyDownQueue.shift()
         if (cmd == undefined) {
@@ -100,6 +121,15 @@ export class PhysicsPlayer extends CANNON.Body {
             cmd = this.none
             return
         }
+        this.keyState[cmd.Type] = true
+        if(cmd.Type == KeyType.Action1) {
+            if(this.keytimeout != undefined) clearTimeout(this.keytimeout)
+
+            this.keytimeout = setTimeout(() => {
+                this.keyState[KeyType.Action1] = false
+            }, 2000)
+        }
+
         this.keyType = cmd.Type
         const position = cmd.ExecuteKeyDown()
         if (position.x != 0) { this.moveDirection.x = position.x }
@@ -112,6 +142,10 @@ export class PhysicsPlayer extends CANNON.Body {
             this.keyType = KeyType.None
             cmd = this.none
             return
+        }
+
+        if(cmd.Type != KeyType.Action1) {
+            this.keyState[cmd.Type] = false
         }
         this.keyType = cmd.Type
         const position = cmd.ExecuteKeyUp()

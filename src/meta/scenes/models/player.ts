@@ -9,12 +9,15 @@ import SConf from "../../configs/staticconf";
 import { Char } from "./npcmanager";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { Game } from "../game";
+import { GhostModel } from "./ghostmodel";
 
 export enum ActionType {
     IdleAction,
     RunAction,
     JumpAction,
     PunchAction,
+    FightAction,
+    DanceAction,
 }
 const solidify = (mesh: THREE.Mesh) => {
     const THICKNESS = 0.02
@@ -37,9 +40,7 @@ const solidify = (mesh: THREE.Mesh) => {
     //scene.add(outline)
 }
 
-export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
-    private body: PhysicsPlayer
-    private meshs: THREE.Group
+export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, IModelReload {
     mixer?: THREE.AnimationMixer
     currentAni?: THREE.AnimationAction
     currentClip?: THREE.AnimationClip
@@ -48,35 +49,23 @@ export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
     runClip?: THREE.AnimationClip
     jumpClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
+    fightIdleClip?: THREE.AnimationClip
+    danceClip?: THREE.AnimationClip
 
+    private body: PhysicsPlayer
     private visibleFlag: boolean = true
     private playerModel: Char = Char.Male
 
     set Model(model: Char) { this.playerModel = model }
     get Body() { return this.body }
-    get Position(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
-    set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
  
-    set Visible(flag: boolean) {
-        if (this.visibleFlag == flag) return
-
-        this.meshs.traverse(child => {
-            if (child instanceof THREE.Mesh) {
-                child.visible = flag
-            }
-        })
-        this.visibleFlag = flag
-    }   
-    get Meshs() { return this.meshs }
-
     constructor(
         private loader: Loader, 
         private eventCtrl: EventController,
         private store: ModelStore,
         private game: Game
     ) {
+        super()
         this.meshs = new THREE.Group
         this.body = new PhysicsPlayer(new CANNON.Vec3(0, 0, 0), this.eventCtrl)
 
@@ -136,9 +125,13 @@ export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
                 this.runClip = gltf.animations[1]
                 this.jumpClip = gltf.animations[2]
                 this.punchingClip = gltf.animations[3]
+                this.fightIdleClip = gltf.animations[4]
+                this.danceClip = gltf.animations[5]
                 this.changeAnimate(this.idleClip)
-                this.Visible = false
   
+                this.BoxHelper()
+
+                this.Visible = false
                 resolve(gltf.scene)
             })
         })
@@ -179,6 +172,9 @@ export class Player implements ICtrlObject, IPhysicsObject, IModelReload {
                 break
             case ActionType.PunchAction:
                 this.changeAnimate(this.punchingClip)
+                break
+            case ActionType.FightAction:
+                this.changeAnimate(this.fightIdleClip)
                 break
         }
         this.mixer?.update(this.clock.getDelta())

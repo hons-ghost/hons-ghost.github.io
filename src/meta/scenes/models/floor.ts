@@ -1,19 +1,16 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { IObject, IPhysicsObject } from "./iobject";
+import { GhostModel2 } from "./ghostmodel";
 //import { Gui } from "../../factory/appfactory"
 
 
-export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
+export class Floor extends GhostModel2 implements IObject, IPhysicsObject {
     body: PhysicsFloor
     get Body() {
         return this.body
     }
-    get Position(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.position.x, this.position.y, this.position.z) }
-    set Position(v: CANNON.Vec3) { this.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.quaternion.set(q.x, q.y, q.z, q.w) }
-    get Meshs() { return this }
+
     constructor(width: number, height: number, depth: number, position: CANNON.Vec3) {
         const geometry = new THREE.CylinderGeometry(width, height, depth, 8)
         const material = new THREE.MeshStandardMaterial({ 
@@ -23,9 +20,6 @@ export class Floor extends THREE.Mesh implements IObject, IPhysicsObject {
         super(geometry, material)
         this.body = new PhysicsFloor(width, height, depth, 8, position)
         this.receiveShadow = true
-    }
-    set Visible(flag: boolean) {
-        this.visible = flag
     }
     PostStep(): void { }
     

@@ -1,4 +1,3 @@
-import { Brick2 } from "../scenes/models/brick2";
 import { Npc } from "../scenes/models/npc";
 import { Char } from "../scenes/models/npcmanager";
 import { Player } from "../scenes/models/player";
@@ -15,7 +14,6 @@ export interface IModelReload {
 
 export class ModelStore {
     private mgrs: IModelReload[] = []
-    private bricks: Brick2[] = []
     private owner: Npc | undefined
     private player: Player | undefined
     private playerModel: Char = Char.Male
@@ -28,8 +26,7 @@ export class ModelStore {
     get PlayerModel() { return this.playerModel }
     get Name() {return this.name}
 
-    RegisterBricks(bricks: Brick2[], mgr: IModelReload) {
-        this.bricks = bricks
+    RegisterBricks(mgr: IModelReload) {
         this.mgrs.push(mgr)
     }
     RegisterOwner(owner: Npc, mgr: IModelReload) {
@@ -48,9 +45,6 @@ export class ModelStore {
     }
 
     StoreModels() {
-        this.bricks.forEach((brick) => {
-            this.data.bricks.push(brick.position)
-        })
         this.data.owner = this.owner?.Meshs.position
         this.data.ownerModel = this.owner?.Model
 

@@ -63,11 +63,11 @@ export class Session {
         const str = sessionStorage.getItem(jsSessionKey)
         if (str != null && this.m_signinFlag == false) {
             const user: HonUser = JSON.parse(str)
-            await this.RequestSignIn(user.Email, user.Password, (ret: any) => {
+            await this.RequestSignIn(user.Email, user.Password, async (ret: any) => {
                 if ("email" in ret) {
                     this.SignIn({ Email: ret.email, Nickname: ret.id, Password: user.Password });
                     this.drawHtmlLoginUi()
-                    this.blockStore.FetchModels(window.MasterAddr, ret.email)
+                    await this.blockStore.FetchModels(window.MasterAddr, ret.email)
                 }
             })
 

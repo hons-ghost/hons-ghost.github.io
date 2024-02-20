@@ -1,29 +1,12 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../common/loader";
+import { GhostModel } from "./ghostmodel";
 //import { Gui } from "../../factory/appfactory";
 
-export class Portal {
-    get Position(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
-    set Position(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
-
-
-    meshs: THREE.Group
-    get Meshs() { return this.meshs }
-
-
+export class Portal extends GhostModel {
     constructor(private loader: Loader) {
-        this.meshs = new THREE.Group
-
-    }
-    set Visible(flag: boolean) {
-        this.meshs.traverse(child => {
-            if (child instanceof THREE.Mesh) {
-                child.visible = flag
-            }
-        })
+        super()
     }
 
     async Init() {
@@ -41,7 +24,7 @@ export class Portal {
                     child.castShadow = true 
                     child.receiveShadow = true
                 })
-
+                this.BoxHelper()
                 /*
                 Gui.add(this.meshs.rotation, 'x', -1, 1, 0.01).listen()
                 Gui.add(this.meshs.rotation, 'y', -1, 1, 0.01).listen()

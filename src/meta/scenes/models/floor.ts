@@ -10,7 +10,11 @@ export class Floor extends GhostModel2 implements IObject, IPhysicsObject {
     get Body() {
         return this.body
     }
-
+    get BoxPos() {
+        const v = this.CannonPos
+        const s = this.Size
+        return new THREE.Vector3(v.x, v.y, v.z)
+    }
     constructor(width: number, height: number, depth: number, position: CANNON.Vec3) {
         const geometry = new THREE.CylinderGeometry(width, height, depth, 8)
         const material = new THREE.MeshStandardMaterial({ 
@@ -24,7 +28,7 @@ export class Floor extends GhostModel2 implements IObject, IPhysicsObject {
     PostStep(): void { }
     
     UpdatePhysics(): void {
-        this.Position = this.body.position
+        this.CannonPos = this.body.position
         this.Quaternion = this.body.quaternion
     }
 }

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
-import { Loader } from "../../common/loader";
+import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
 import { Gui } from "../../factory/appfactory";
 import { IViewer } from "./iviewer";
@@ -19,6 +19,8 @@ export class Npc extends GhostModel implements IViewer {
     runClip?: THREE.AnimationClip
     jumpClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
+    fightIdleClip?: THREE.AnimationClip
+    danceClip?: THREE.AnimationClip
 
     private model: Char = Char.Male
 
@@ -38,8 +40,8 @@ export class Npc extends GhostModel implements IViewer {
             if (!this.controllerEnable) return
             const position = keyCommand.ExecuteKeyDown()
 
-            this.meshs.position.x += position.x * this.size.x
-            this.meshs.position.z += position.z * this.size.z
+            this.meshs.position.x += position.x * this.Size.x
+            this.meshs.position.z += position.z * this.Size.z
         })
     }
 
@@ -74,9 +76,9 @@ export class Npc extends GhostModel implements IViewer {
                 this.runClip = gltf.animations[1]
                 this.jumpClip = gltf.animations[2]
                 this.punchingClip = gltf.animations[3]
+                this.fightIdleClip = gltf.animations[4]
+                this.danceClip = gltf.animations[5]
                 this.changeAnimate(this.idleClip)
-
-                this.BoxHelper()
 
                 this.Visible = false
                 /*

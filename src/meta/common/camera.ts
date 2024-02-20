@@ -59,7 +59,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     if (this.owner == undefined) return
 
                     this.target = this.owner.Meshs
-                    this.focusAt(this.owner.Position)
+                    this.focusAt(this.owner.CannonPos)
                     break
             }
         })
@@ -68,7 +68,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                 case EventFlag.Start:
                     this.viewMode = ViewMode.Target
                     this.controls.enabled = false
-                    this.target = this.brick.GetBrickGuide(this.npcs.Owner.Position)
+                    this.target = this.brick.GetBrickGuide(this.npcs.Owner.CannonPos)
                     if (this.animate != undefined) this.animate.kill()
 
                     this.focusAt(this.target.position)
@@ -85,7 +85,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     this.owner = this.npcs.Owner
                     if (this.owner == undefined) return
                     this.target = this.owner.Meshs
-                    this.focusAt(this.owner.Position)
+                    this.focusAt(this.owner.CannonPos)
                     break
             }
         })
@@ -99,7 +99,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
                     this.rotation.x = -Math.PI / 4
 
-                    const position = this.player.Position
+                    const position = this.player.CannonPos
 
                     this.animate = gsap.to(this.position, {
                         x: position.x, z: position.z + 13,
@@ -122,7 +122,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     this.owner = this.npcs.Owner
                     if (this.owner == undefined) return
                     if (this.animate != undefined) this.animate.kill()
-                    this.focusAt(this.owner.Position)
+                    this.focusAt(this.owner.CannonPos)
                     break
             }
         })
@@ -135,7 +135,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     console.log(this.position)
 
                     const h = this.npcs.Helper
-                    const position = h.Position
+                    const position = h.CannonPos
                     this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
                     this.rotation.x = -Math.PI / 4
                     this.position.set(this.longPos.x, this.longPos.y, this.longPos.z)
@@ -186,7 +186,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     break;
                 }
             case ViewMode.Close: {
-                    const target = this.owner?.Position
+                    const target = this.owner?.CannonPos
                     if (target == undefined) return
                     this.rotation.x = -Math.PI / 4
                     this.position.set(
@@ -201,7 +201,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
             case ViewMode.Play:break;
             case ViewMode.PlayDone:
                 //this.lookAt(position.x, position.y, position.z)
-                const position = this.player.Position
+                const position = this.player.CannonPos
                 this.rotation.x = -Math.PI / 4
                 this.position.set(
                     position.x + this.shortPos.x, 

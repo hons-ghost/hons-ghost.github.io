@@ -28,8 +28,8 @@ export class BrickGuide extends GhostModel2 {
     }
 
     Init(pos: CANNON.Vec3) { 
-        const x = pos.x - pos.x % this.size.x
-        const z = pos.z - pos.z % this.size.z
+        const x = pos.x - pos.x % this.Size.x
+        const z = pos.z - pos.z % this.Size.z
         this.position.set(x, 3, z)
     }
 }

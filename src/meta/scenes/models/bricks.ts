@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
-import { Loader } from "../../common/loader";
+import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { Brick } from "./brick";
@@ -8,6 +8,7 @@ import { BrickGuide } from "./brickguide";
 import { Brick2 } from "./brick2";
 import { IKeyCommand } from "../../event/keycommand";
 import { IModelReload, ModelStore } from "../../common/modelstore";
+import { GPhysics } from "../../common/gphysics";
 
 export class Bricks implements IModelReload{
     bricks: Brick[]
@@ -22,7 +23,8 @@ export class Bricks implements IModelReload{
         private loader: Loader,
         private scene: THREE.Scene,
         private eventCtrl: EventController,
-        private store: ModelStore
+        private store: ModelStore,
+        private physics: GPhysics
     ) {
         this.bricks = []
         this.bricks2 = []
@@ -42,12 +44,12 @@ export class Bricks implements IModelReload{
                 this.brickGuide.position.z += position.z * this.brickSize.z
                 
             }
-            const bgPos = this.brickGuide.Position
+            const bgPos = this.brickGuide.CannonPos
             const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
             let exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             while (exist) {
                 this.brickGuide.position.y += this.brickSize.y
-                const bgPos = this.brickGuide.Position
+                const bgPos = this.brickGuide.CannonPos
                 const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
                 exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             }
@@ -72,7 +74,7 @@ export class Bricks implements IModelReload{
     CreateBrickEvent() {
         if (this.brickGuide == undefined) return
 
-        const bgPos = this.brickGuide.Position
+        const bgPos = this.brickGuide.CannonPos
         const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
         const exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
         if (exist) return
@@ -130,6 +132,7 @@ export class Bricks implements IModelReload{
         bricksPos.forEach((pos, i) => {
             matrix.compose(pos, q, scale)
             this.instancedBlock?.setMatrixAt(i, matrix)
+            this.physics.addBuilding(pos, this.brickSize)
         })
         this.scene.add(this.instancedBlock)
     }

@@ -24,7 +24,12 @@ export class Physics extends CANNON.World {
         this.keyCtrlModels.push(...models)
     }
     add(...models: IPhysicsObject[]) {
-        models.forEach((model) => this.addBody(model.Body))
+        models.forEach((model) => {
+            if(model.Body == undefined)
+                console.log("Error!!")
+            else
+                this.addBody(model.Body)
+        })
         this.models = models
     }
     update() {
@@ -39,6 +44,7 @@ export class Physics extends CANNON.World {
     }
     dispose() {
         this.models.forEach((model) => {
+            if(model.Body != undefined)
                 this.removeBody(model.Body)
         })
     }

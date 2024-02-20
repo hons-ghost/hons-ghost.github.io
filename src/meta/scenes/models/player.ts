@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { ICtrlObject, IPhysicsObject } from "./iobject";
 import { EventController, EventFlag } from "../../event/eventctrl";
-import { Loader } from "../../common/loader";
+import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
 import { PhysicsPlayer } from "./playerctrl";
 import SConf from "../../configs/staticconf";
@@ -53,9 +53,12 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
     danceClip?: THREE.AnimationClip
 
     private body: PhysicsPlayer
-    private visibleFlag: boolean = true
     private playerModel: Char = Char.Male
 
+    get BoxPos() {
+        const pos = this.CannonPos
+        return new THREE.Vector3(pos.x, pos.y, pos.z)
+    }
     set Model(model: Char) { this.playerModel = model }
     get Body() { return this.body }
  
@@ -104,6 +107,14 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
         this.game.add(this.Meshs)
     }
 
+    MakeSize() {
+        const bbox = new THREE.Box3().setFromObject(this.meshs)
+        this.size = bbox.getSize(new THREE.Vector3)
+        this.size.x = Math.ceil(this.size.x)
+        this.size.z = Math.ceil(this.size.z)
+        this.size.y *= 4
+    }
+
     async Loader(scale: number, position: CANNON.Vec3, model: Char) {
         this.playerModel = model
         const path = SConf.ModelPath[model]
@@ -128,8 +139,8 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
                 this.fightIdleClip = gltf.animations[4]
                 this.danceClip = gltf.animations[5]
                 this.changeAnimate(this.idleClip)
-  
-                this.BoxHelper()
+
+                this.MakeSize()
 
                 this.Visible = false
                 resolve(gltf.scene)
@@ -181,7 +192,7 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
         this.body?.PostStep()
     }
     UpdatePhysics(): void {
-        this.Position = this.body.position
+        this.CannonPos = this.body.position
         this.Quaternion = this.body.quaternion
     }
 }

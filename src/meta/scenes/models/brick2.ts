@@ -18,8 +18,8 @@ export class Brick2 extends GhostModel2 {
     }
 
     Init(pos: THREE.Vector3) { 
-        const x = pos.x - pos.x % this.size.x
-        const z = pos.z - pos.z % this.size.z
+        const x = pos.x - pos.x % this.Size.x
+        const z = pos.z - pos.z % this.Size.z
         this.position.set(x, pos.y, z)
     }
 }

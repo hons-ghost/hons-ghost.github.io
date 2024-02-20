@@ -6,9 +6,12 @@ export interface IObject {
 }
 
 export interface IPhysicsObject {
-    get Body(): CANNON.Body
-    get Position(): CANNON.Vec3
-    set Position(v: CANNON.Vec3)
+    get Size() : THREE.Vector3
+    get BoxPos() : THREE.Vector3
+    get Box(): THREE.Box3
+    get Body(): CANNON.Body | undefined
+    get CannonPos(): CANNON.Vec3
+    set CannonPos(v: CANNON.Vec3)
     set Quaternion(v: CANNON.Quaternion)
     set Visible(flag: boolean)
     UpdatePhysics(): void

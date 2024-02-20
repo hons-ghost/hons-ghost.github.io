@@ -1,11 +1,13 @@
+import * as THREE from "three";
 import { Canvas } from "../../common/canvas"
-import { Loader } from "../../common/loader"
+import { Loader } from "../../loader/loader"
 import { EventController, EventFlag } from "../../event/eventctrl"
 import { Npc } from "./npc"
 import { Game } from "../game"
 import { UserInfo } from "../../common/param"
 import { Vec3 } from "cannon-es"
 import { IModelReload, ModelStore } from "../../common/modelstore"
+import { GPhysics } from "../../common/gphysics";
 
 export enum Char{
     Male,
@@ -26,7 +28,7 @@ export class NpcManager implements IModelReload {
         private eventCtrl: EventController,
         private game: Game,
         private canvas: Canvas,
-        private store: ModelStore
+        private store: ModelStore 
     ) {
         this.helper = new Npc(this.loader, this.eventCtrl)
         this.helper2 = new Npc(this.loader, this.eventCtrl)
@@ -115,7 +117,7 @@ export class NpcManager implements IModelReload {
             this.game.add(this.owner.Meshs)
         } else {
             this.owner.Init(info.name)
-            this.owner.Position = info.position
+            this.owner.CannonPos = info.position
         }
         this.owner.Visible = true
     }

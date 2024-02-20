@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
-import { Loader } from "../../common/loader";
+import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
 //import { Gui } from "../../factory/appfactory";
 
@@ -24,7 +24,6 @@ export class Portal extends GhostModel {
                     child.castShadow = true 
                     child.receiveShadow = true
                 })
-                this.BoxHelper()
                 /*
                 Gui.add(this.meshs.rotation, 'x', -1, 1, 0.01).listen()
                 Gui.add(this.meshs.rotation, 'y', -1, 1, 0.01).listen()

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
-import { Loader } from "../../common/loader";
+import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
 import { GhostModel } from "./ghostmodel";
 

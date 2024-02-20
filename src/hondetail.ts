@@ -13,6 +13,7 @@ export class HonDetail {
     m_masterAddr: string = ""
     targetHonEmail: string = ""
     profileVisible = true
+    fullscreen = false
 
     alarm = document.getElementById("alarm-msg") as HTMLDivElement
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
@@ -237,9 +238,23 @@ export class HonDetail {
             this.VisibleUi() 
             this.meta.PlayMode()
         }
+        const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
+        fullscreen.onclick = () => {
+            if(document.fullscreenElement) {
+                document.exitFullscreen()
+                fullscreen.innerText = "fullscreen"
+            } else {
+                document.documentElement.requestFullscreen()
+                fullscreen.innerText = "fullscreen_exit"
+            }
+        }
 
         const getback = document.getElementById("returnSns") as HTMLSpanElement
         getback.onclick = () => { 
+            if(document.fullscreenElement) {
+                document.exitFullscreen()
+                fullscreen.innerText = "fullscreen"
+            }
             this.VisibleUi() 
             this.meta.CloseUp()
         }

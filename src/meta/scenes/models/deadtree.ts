@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
-import { Loader } from "../../common/loader";
+import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
 
 export class DeadTree extends GhostModel {
@@ -30,7 +30,5 @@ export class DeadTree extends GhostModel {
             child.receiveShadow = true
         })
         this.meshs.rotateY(x)
-
-        this.BoxHelper()
     }
 }

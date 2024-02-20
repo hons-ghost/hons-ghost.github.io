@@ -6,6 +6,7 @@ import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
 import { Vec3 } from "cannon-es";
 import { Char } from "./scenes/models/npcmanager";
+import { GPhysics } from "./common/gphysics";
 
 enum AppMode {
     Long,
@@ -22,6 +23,7 @@ enum AppMode {
 export default class App {
     factory = new AppFactory()
     canvas: Canvas
+    physic: GPhysics
     currentScene: IScene
     eventCtrl: EventController
     store: ModelStore
@@ -42,6 +44,7 @@ export default class App {
         this.currentScene = this.factory.Scene
         this.eventCtrl = this.factory.EventCtrl
         this.store = this.factory.ModelStore
+        this.physic = this.factory.Physics
     }
 
     async init() {
@@ -102,10 +105,12 @@ export default class App {
     }
 
     render() {
-        this.currentScene.play()
-        this.canvas.update()
-        //this.factory.phydebugger.update()
-        window.requestAnimationFrame(() => {
+        window.requestAnimationFrame((t) => {
+            this.currentScene.play()
+            this.canvas.update()
+            this.physic.update()
+            //this.factory.phydebugger.update()
+
             this.render()
         })
     }

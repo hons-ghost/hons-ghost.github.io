@@ -143,6 +143,7 @@ export class EditHome {
         }
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {
+            this.VisibleUi()
             window.ClickLoadPage("hondetail", false, "&email=" + email)
         }
     }

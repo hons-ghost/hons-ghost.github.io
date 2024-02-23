@@ -8,9 +8,6 @@ footer {
     */
     width: 100%;
 }
-body {
-    margin-top: 50px;
-}
 .main-view {
     position: relative;
 }
@@ -44,7 +41,6 @@ a, a:hover, a:focus {
 }
 header {
     display: flex;
-    position: fixed;
     z-index: 2;
     top: 0;
     left: 0;

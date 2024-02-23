@@ -18,6 +18,15 @@ export class DeadtreeFab extends AssetModel implements IAsset {
             })
         })
     }
+    
+    GetBox(mesh: THREE.Group) {
+        if (this.meshs == undefined) this.meshs = mesh
+        const s = this.GetSize(mesh)
+        const p = this.GetBoxPos(mesh)
+        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+        box.position.set(p.x, p.y, p.z)
+        return new THREE.Box3().setFromObject(box)
+    }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         const bbox = new THREE.Box3().setFromObject(mesh)
         this.size = bbox.getSize(new THREE.Vector3)

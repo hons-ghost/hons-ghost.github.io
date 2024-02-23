@@ -28,6 +28,15 @@ export class FemaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Dance0, gltf.animations[5])
         })
     }
+    
+    GetBox(mesh: THREE.Group) {
+        if (this.meshs == undefined) this.meshs = mesh
+        const s = this.GetSize(mesh)
+        const p = this.GetBoxPos(mesh)
+        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+        box.position.set(p.x, p.y, p.z)
+        return new THREE.Box3().setFromObject(box)
+    }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         if (this.meshs == undefined) this.meshs = mesh
         const bbox = new THREE.Box3().setFromObject(this.meshs)

@@ -34,6 +34,10 @@ export class TestFab extends AssetModel implements IAsset {
             })
         })
     }
+    GetBox(mesh: THREE.Group) {
+        if (this.meshs == undefined) this.meshs = mesh
+        return new THREE.Box3().setFromObject(this.meshs)
+    }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         const bbox = new THREE.Box3().setFromObject(mesh)
         this.size = bbox.getSize(new THREE.Vector3)

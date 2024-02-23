@@ -28,6 +28,7 @@ export enum ModelType {
 export interface IAsset {
     get Id(): Char
     GetAnimationClip(id: Ani): THREE.AnimationClip | undefined 
+    GetBox(mesh: THREE.Group): THREE.Box3
     GetBoxPos(mesh: THREE.Group): THREE.Vector3
     GetSize(mesh: THREE.Group): THREE.Vector3
     CloneModel(): Promise<THREE.Group>

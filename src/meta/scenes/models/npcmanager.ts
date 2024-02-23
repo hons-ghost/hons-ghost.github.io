@@ -27,10 +27,11 @@ export class NpcManager implements IModelReload {
         private game: Game,
         private canvas: Canvas,
         private store: ModelStore,
+        private gphysic: GPhysics,
     ) {
-        this.helper = new Npc(this.loader, this.eventCtrl, this.loader.MaleAsset)
-        this.helper2 = new Npc(this.loader, this.eventCtrl, this.loader.FemaleAsset)
-        this.owner = new Npc(this.loader, this.eventCtrl, this.loader.MaleAsset)
+        this.helper = new Npc(loader, eventCtrl, gphysic, loader.MaleAsset)
+        this.helper2 = new Npc(loader, eventCtrl, gphysic, loader.FemaleAsset)
+        this.owner = new Npc(loader, eventCtrl, gphysic, loader.MaleAsset)
 
         this.store.RegisterOwner(this.owner, this)
 

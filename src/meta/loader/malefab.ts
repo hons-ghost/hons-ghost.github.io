@@ -30,8 +30,14 @@ export class MaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Dance0, gltf.animations[5])
         })
     }
+    GetBox(mesh: THREE.Group) {
+        if (this.meshs == undefined) this.meshs = mesh
+        // Don't Use this.meshs
+        return new THREE.Box3().setFromObject(mesh)
+    }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         if (this.meshs == undefined) this.meshs = mesh
+        // Don't Use mesh
 
         const bbox = new THREE.Box3().setFromObject(this.meshs)
         this.size = bbox.getSize(new THREE.Vector3)
@@ -42,6 +48,7 @@ export class MaleFab extends AssetModel implements IAsset {
         return this.size 
     }
     GetBoxPos(mesh: THREE.Group) {
+        // Don't Use this.meshs
         const v = mesh.position
         return new THREE.Vector3(v.x, v.y, v.z)
     }

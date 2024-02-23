@@ -137,6 +137,7 @@ export class Hons {
 
     public VisibleUi() {
         const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
+        const header = document.getElementById("navibar") as HTMLDivElement
         const footer = document.getElementById("footer") as HTMLDivElement
         const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
@@ -144,6 +145,7 @@ export class Hons {
         if (this.profileVisible) {
             wrapper.style.display = "none"
             footer.style.display = "none"
+            header.style.display = "none"
             controller.style.display = "block"
             controllerBtn.style.display = "block"
             menuGui.style.display = "block"
@@ -151,6 +153,7 @@ export class Hons {
         } else {
             wrapper.style.display = "block"
             footer.style.display = "block"
+            header.style.display = "block"
             controller.style.display = "none"
             controllerBtn.style.display = "none"
             menuGui.style.display = "none"

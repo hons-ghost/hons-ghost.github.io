@@ -79,7 +79,7 @@ export class AppFactory {
 
         this.player = new Player(this.loader, this.eventCtrl, this.store, this.game)
         this.brick = new Bricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
-        this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store)
+        this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)

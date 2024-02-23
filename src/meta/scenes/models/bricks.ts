@@ -44,6 +44,14 @@ export class Bricks implements IModelReload{
                 this.brickGuide.position.z += position.z * this.brickSize.z
                 
             }
+            /*
+            let box = this.brickGuide.Box
+            while(this.physics.CheckBox(this.brickGuide.position, box)){
+                this.brickGuide.position.y += 1
+                box = this.brickGuide.Box
+            }
+            console.log(this.brickGuide.position)
+            */
             const bgPos = this.brickGuide.CannonPos
             const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
             let exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
@@ -82,6 +90,7 @@ export class Bricks implements IModelReload{
         const b = new Brick2(this.brickGuide.position, this.brickSize)
         console.log(this.brickGuide.position, b.position)
         this.store.Bricks.push(b.position)
+        this.physics.addBuilding(b.position, this.brickSize)
         this.scene.add(b)
         /*
         const b = await this.Loader(0.01, new CANNON.Vec3(
@@ -93,6 +102,10 @@ export class Bricks implements IModelReload{
     }
 
     GetBrickGuide(pos: CANNON.Vec3) {
+        pos.x = Math.ceil(pos.x)
+        pos.y = Math.ceil(pos.y)
+        pos.z = Math.ceil(pos.z)
+        console.log(pos)
         if (this.brickGuide == undefined) {
             this.brickGuide = new BrickGuide(pos, this.Size, this.eventCtrl)
             this.scene.add(this.brickGuide)

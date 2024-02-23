@@ -12,7 +12,6 @@ export class Floor extends GhostModel2 implements IObject, IPhysicsObject {
     }
     get BoxPos() {
         const v = this.CannonPos
-        const s = this.Size
         return new THREE.Vector3(v.x, v.y, v.z)
     }
     constructor(width: number, height: number, depth: number, position: CANNON.Vec3) {

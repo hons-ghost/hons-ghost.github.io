@@ -7,16 +7,12 @@ type MovingBox = {
 }
 export type PhysicBox = {
     pos: THREE.Vector3,
-    size: THREE.Vector3
-
     box: THREE.Box3
-    viewBox: THREE.LineSegments | undefined
 }
 
 export class GPhysics {
     boxs: MovingBox[] = []
-    player?: THREE.LineSegments
-    playerBox?: THREE.Box3
+    player?: IPhysicsObject
 
     pboxs = new Map<string, PhysicBox[]>()
 
@@ -29,7 +25,8 @@ export class GPhysics {
         const box = new THREE.LineSegments(wireframe)
         //this.scene.add(box)
 
-        this.player = box
+        console.log(model.Box)
+        this.player = model
         this.boxs.push({ model: model, box: box })
     }
 
@@ -56,9 +53,7 @@ export class GPhysics {
             //this.scene.add(box)
             this.addBoxs({
                 pos: p,
-                size: model.Size,
                 box: new THREE.Box3().setFromObject(box),
-                viewBox: box
             })
         })
     }
@@ -72,17 +67,18 @@ export class GPhysics {
 
         this.addBoxs({ 
             pos: pos, 
-            size: size, 
             box: new THREE.Box3().setFromObject(box),
-            viewBox: box 
         })
     }
+    optx = 30
+    opty = 50
+    optz = 30
     addBoxs(box: PhysicBox) {
         const p = box.pos
 
-        const x = Math.ceil(p.x / 10)
-        const y = Math.ceil(p.y / 10)
-        const z = Math.ceil(p.z / 10)
+        const x = Math.ceil(p.x / this.optx)
+        const y = Math.ceil(p.y / this.opty)
+        const z = Math.ceil(p.z / this.optz)
         const key = x + "." + y + "." + z
         const boxs = this.pboxs.get(key)
         if (boxs == undefined) {
@@ -92,27 +88,50 @@ export class GPhysics {
             boxs.push(box)
         }
     }
-    check(): boolean {
-        if ( this.player == undefined) return false
-        const pos = this.player.position
+    Check(obj: IPhysicsObject): boolean {
+        const pos = obj.BoxPos
 
-        const x = Math.ceil(pos.x / 10)
-        const y = Math.ceil(pos.y / 10)
-        const z = Math.ceil(pos.z / 10)
+        const x = Math.ceil(pos.x / this.optx)
+        const y = Math.ceil(pos.y / this.opty)
+        const z = Math.ceil(pos.z / this.optz)
         const key = x + "." + y + "." + z
         const boxs = this.pboxs.get(key)
 
         if (boxs == undefined) return false
-        this.playerBox = new THREE.Box3().setFromObject(this.player)
+        const objBox = obj.Box
         const ret = boxs.some(box => {
-            if (this.playerBox?.intersectsBox(box.box)) {
-                console.log("Collision!!!!", key)
+            if (objBox.intersectsBox(box.box)) {
+                //console.log("Collision!!!!", key)
                 return true
             }
             return false
         });
+        /*
         if (!ret)
             console.log("empty!!!!", key)
+        */
+        return ret
+    }
+    CheckBox(pos: THREE.Vector3, box: THREE.Box3) {
+        const x = Math.ceil(pos.x / this.optx)
+        const y = Math.ceil(pos.y / this.opty)
+        const z = Math.ceil(pos.z / this.optz)
+        const key = x + "." + y + "." + z
+        const boxs = this.pboxs.get(key)
+
+        if (boxs == undefined) return false
+        const objBox = box
+        const ret = boxs.some(box => {
+            if (objBox.intersectsBox(box.box)) {
+                //console.log("Collision!!!!", key)
+                return true
+            }
+            return false
+        });
+        /*
+        if (!ret)
+            console.log("empty!!!!", key)
+        */
         return ret
     }
 
@@ -123,6 +142,7 @@ export class GPhysics {
                 phy.box.position.set(v.x, v.y, v.z)
             }
         })
-        this.check()
+        if ( this.player == undefined) return 
+        this.Check(this.player)
     }
 }

@@ -9,6 +9,7 @@ import { IKeyCommand } from "../../event/keycommand";
 import { GhostModel } from "./ghostmodel";
 import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
+import { GPhysics } from "../../common/physics/gphysics";
 
 export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     mixer?: THREE.AnimationMixer
@@ -33,7 +34,12 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     set ControllerEnable(flag: boolean) { this.controllerEnable = flag }
     get ControllerEnable(): boolean { return this.controllerEnable }
 
-    constructor(private loader: Loader, private eventCtrl: EventController, asset: IAsset) {
+    constructor(
+        private loader: Loader, 
+        private eventCtrl: EventController, 
+        private gphysic: GPhysics,
+        asset: IAsset
+    ) {
         super(asset)
         this.text = new FloatingName("Welcome")
 
@@ -41,8 +47,16 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
             if (!this.controllerEnable) return
             const position = keyCommand.ExecuteKeyDown()
 
-            this.meshs.position.x += position.x * this.Size.x
-            this.meshs.position.z += position.z * this.Size.z
+            const vx =  position.x * 1
+            const vz = position.z * 1
+
+            this.meshs.position.x += vx
+            this.meshs.position.y = 4.7
+            this.meshs.position.z += vz
+
+            while (this.gphysic.Check(this)) {
+                this.meshs.position.y += 1
+            }
         })
     }
 

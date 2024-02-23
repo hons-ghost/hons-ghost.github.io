@@ -42,7 +42,7 @@ export class GhostModel {
         this.vFlag = flag
     }
     get Box() {
-        return new THREE.Box3().setFromObject(this.meshs)
+        return this.asset.GetBox(this.meshs)
     }
     constructor(protected asset: IAsset) {}
 }

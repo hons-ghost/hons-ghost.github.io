@@ -1,5 +1,5 @@
+import { Char } from "../loader/assetmodel";
 import { Npc } from "../scenes/models/npc";
-import { Char } from "../scenes/models/npcmanager";
 import { Player } from "../scenes/models/player";
 
 type StoreData = {
@@ -9,7 +9,7 @@ type StoreData = {
 }
 
 export interface IModelReload {
-    Reload(): void
+    Reload(): Promise<void>
 }
 
 export class ModelStore {
@@ -52,7 +52,7 @@ export class ModelStore {
         console.log(json)
         return json
     }
-    LoadModelsEmpty(name: string, playerModel: string | undefined)  {
+    async LoadModelsEmpty(name: string, playerModel: string | undefined)  {
         if (playerModel != undefined) {
             const playerData = JSON.parse(playerModel)
             this.playerModel = playerData.ownerModel
@@ -62,20 +62,24 @@ export class ModelStore {
         this.data.owner = undefined
         this.data.ownerModel = Char.Male
 
-        this.mgrs.forEach(async (mgr) => {
-            await mgr.Reload()
-        })
+        await Promise.all([
+            this.mgrs.forEach(async (mgr) => {
+                await mgr.Reload()
+            })
+        ])
     }
 
-    LoadModels(data: string, name: string, playerModel: string | undefined)  {
+    async LoadModels(data: string, name: string, playerModel: string | undefined) {
         if (playerModel != undefined) {
             const playerData = JSON.parse(playerModel)
             this.playerModel = playerData.ownerModel
         }
         this.name = name
         this.data = JSON.parse(data)
-        this.mgrs.forEach(async (mgr) => {
-            await mgr.Reload()
-        })
+        await Promise.all([
+            this.mgrs.forEach(async (mgr) => {
+                await mgr.Reload()
+            })
+        ])
     }
 }

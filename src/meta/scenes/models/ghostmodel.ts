@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Npc } from "./npc";
 import { FloatingName } from "../../common/floatingtxt";
+import { IAsset } from "../../loader/assetmodel";
 
 
 export class GhostModel {
@@ -18,13 +19,7 @@ export class GhostModel {
     set CannonPos(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
     set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
     get Size(): THREE.Vector3 {
-        if(this.size != undefined) return this.size
-
-        const bbox = new THREE.Box3().setFromObject(this.meshs)
-        this.size = bbox.getSize(new THREE.Vector3)
-        this.size.x = Math.ceil(this.size.x)
-        this.size.z = Math.ceil(this.size.z)
-        return this.size 
+        return this.asset.GetSize(this.meshs)
     }
     get Meshs() { return this.meshs }
     get Helper(): THREE.BoxHelper {
@@ -36,17 +31,20 @@ export class GhostModel {
 
     set Visible(flag: boolean) {
         if (this.vFlag == flag) return
+        this.meshs.visible = flag
         this.meshs.traverse(child => {
             if (child instanceof THREE.Mesh) {
                 child.visible = flag
             }
         })
         if (this.text != undefined) this.text.visible = flag
+        
         this.vFlag = flag
     }
     get Box() {
         return new THREE.Box3().setFromObject(this.meshs)
     }
+    constructor(protected asset: IAsset) {}
 }
 
 export class GhostModel2 extends THREE.Mesh {

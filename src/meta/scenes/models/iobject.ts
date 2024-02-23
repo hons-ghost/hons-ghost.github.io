@@ -16,6 +16,10 @@ export interface IPhysicsObject {
     set Visible(flag: boolean)
     UpdatePhysics(): void
 }
+export interface IBuildingObject {
+    get Size() : THREE.Vector3
+    get BoxPos() : THREE.Vector3
+}
 
 export interface ICtrlObject {
     PostStep(): void

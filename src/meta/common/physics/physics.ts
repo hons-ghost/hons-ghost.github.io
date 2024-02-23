@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
-import { ICtrlObject, IObject, IPhysicsObject } from "../scenes/models/iobject";
+import { ICtrlObject, IObject, IPhysicsObject } from "../../scenes/models/iobject";
 
 export class Physics extends CANNON.World {
     clock = new THREE.Clock()

@@ -5,8 +5,8 @@ import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
 import { Vec3 } from "cannon-es";
-import { Char } from "./scenes/models/npcmanager";
-import { GPhysics } from "./common/gphysics";
+import { GPhysics } from "./common/physics/gphysics";
+import { Char } from "./loader/assetmodel";
 
 enum AppMode {
     Long,
@@ -162,11 +162,11 @@ export default class App {
     ModelStore() {
         return this.store.StoreModels()
     }
-    ModelLoad(models: string, name: string, playerModel: string | undefined) {
-        this.store.LoadModels(models, name, playerModel)
+    async ModelLoad(models: string, name: string, playerModel: string | undefined) {
+        await this.store.LoadModels(models, name, playerModel)
     }
-    ModelLoadEmpty(name: string, playerModel: string | undefined) {
-        this.store.LoadModelsEmpty(name, playerModel)
+    async ModelLoadEmpty(name: string, playerModel: string | undefined) {
+        await this.store.LoadModelsEmpty(name, playerModel)
     }
 
     resize() {

@@ -1,5 +1,5 @@
 import App from "./meta/app";
-import { Char } from "./meta/scenes/models/npcmanager";
+import { Char } from "./meta/loader/assetmodel";
 import { MetaTxId } from "./models/tx";
 import { Session } from "./session";
 import { BlockStore } from "./store";

@@ -3,11 +3,11 @@ import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
 import { GhostModel } from "./ghostmodel";
+import { IAsset } from "../../loader/assetmodel";
 
 export class Brick extends GhostModel{
-    constructor(private loader: Loader)
-    {
-        super()
+    constructor(private loader: Loader, asset: IAsset) {
+        super(asset)
         this.meshs = new THREE.Group
         this.size = new THREE.Vector3()
     }

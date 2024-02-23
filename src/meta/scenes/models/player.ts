@@ -6,10 +6,10 @@ import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
 import { PhysicsPlayer } from "./playerctrl";
 import SConf from "../../configs/staticconf";
-import { Char } from "./npcmanager";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { Game } from "../game";
 import { GhostModel } from "./ghostmodel";
+import { Ani, Char, IAsset } from "../../loader/assetmodel";
 
 export enum ActionType {
     IdleAction,
@@ -56,8 +56,7 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
     private playerModel: Char = Char.Male
 
     get BoxPos() {
-        const pos = this.CannonPos
-        return new THREE.Vector3(pos.x, pos.y, pos.z)
+        return this.asset.GetBoxPos(this.meshs)
     }
     set Model(model: Char) { this.playerModel = model }
     get Body() { return this.body }
@@ -68,7 +67,7 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
         private store: ModelStore,
         private game: Game
     ) {
-        super()
+        super(loader.MaleAsset)
         this.meshs = new THREE.Group
         this.body = new PhysicsPlayer(new CANNON.Vec3(0, 0, 0), this.eventCtrl)
 
@@ -103,49 +102,32 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
         }
         const pos = SConf.StartPosition
         this.game.remove(this.Meshs)
-        await this.Loader(1, new CANNON.Vec3(pos.x, pos.y, pos.z), model)
+        await this.Loader(this.loader.GetAssets(model), 
+            new CANNON.Vec3(pos.x, pos.y, pos.z), "player")
         this.game.add(this.Meshs)
     }
 
-    MakeSize() {
-        const bbox = new THREE.Box3().setFromObject(this.meshs)
-        this.size = bbox.getSize(new THREE.Vector3)
-        this.size.x = Math.ceil(this.size.x)
-        this.size.z = Math.ceil(this.size.z)
-        this.size.y *= 4
-    }
+    async Loader(asset: IAsset, position: CANNON.Vec3, name: string) {
+        this.playerModel = asset.Id
+        this.asset = asset
+        const [meshs, exist] = await asset.UniqModel(name)
+        this.meshs = meshs
+        this.meshs.position.set(position.x, position.y, position.z)
 
-    async Loader(scale: number, position: CANNON.Vec3, model: Char) {
-        this.playerModel = model
-        const path = SConf.ModelPath[model]
-        return new Promise((resolve) => {
-            this.loader.Load.load(path, (gltf) => {
-                this.meshs = gltf.scene
-                this.meshs.scale.set(scale, scale, scale)
-                this.meshs.position.set(position.x, position.y, position.z)
-                this.meshs.castShadow = true
-                this.meshs.receiveShadow = false
-                this.meshs.traverse(child => { 
-                    child.castShadow = true 
-                    child.receiveShadow = false
-                })
-                this.body.velocity.set(0, 0 ,0)
-                this.body.position = position
-                this.mixer = new THREE.AnimationMixer(gltf.scene)
-                this.idleClip = gltf.animations[0]
-                this.runClip = gltf.animations[1]
-                this.jumpClip = gltf.animations[2]
-                this.punchingClip = gltf.animations[3]
-                this.fightIdleClip = gltf.animations[4]
-                this.danceClip = gltf.animations[5]
-                this.changeAnimate(this.idleClip)
+        this.body.velocity.set(0, 0, 0)
+        this.body.position = position
 
-                this.MakeSize()
+        this.mixer = this.asset.GetMixer(name)
+        this.idleClip = this.asset.GetAnimationClip(Ani.Idle)
+        this.runClip = this.asset.GetAnimationClip(Ani.Run)
+        this.jumpClip = this.asset.GetAnimationClip(Ani.Jump)
+        this.punchingClip = this.asset.GetAnimationClip(Ani.Punch)
+        this.fightIdleClip = this.asset.GetAnimationClip(Ani.FightIdle)
+        this.danceClip = this.asset.GetAnimationClip(Ani.Dance0)
+        this.changeAnimate(this.idleClip)
 
-                this.Visible = false
-                resolve(gltf.scene)
-            })
-        })
+
+        this.Visible = false
     }
     changeAnimate(animate: THREE.AnimationClip | undefined) {
         if (animate == undefined || this.currentClip == animate) return

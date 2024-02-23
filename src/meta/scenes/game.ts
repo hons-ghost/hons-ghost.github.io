@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Physics } from "../common/physics";
+import { Physics } from "../common/physics/physics";
 import { IObject } from "./models/iobject";
 import { IScene } from "./models/iviewer";
 import { Light } from "../common/light";

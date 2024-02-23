@@ -1,6 +1,6 @@
 import { Vec3 } from "cannon-es";
 import { Game } from "../scenes/game";
-import { Physics } from "../common/physics";
+import { Physics } from "../common/physics/physics";
 import { Floor } from "../scenes/models/floor";
 import { Canvas } from "../common/canvas";
 import { Camera } from "../common/camera";
@@ -18,10 +18,10 @@ import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
 import { Bricks } from "../scenes/models/bricks";
-import { Char, NpcManager } from "../scenes/models/npcmanager";
+import { NpcManager } from "../scenes/models/npcmanager";
 import { ModelStore } from "../common/modelstore";
 import SConf from "../configs/staticconf";
-import { GPhysics } from "../common/gphysics";
+import { GPhysics } from "../common/physics/gphysics";
 
 export const Gui = new GUI()
 Gui.hide()
@@ -67,7 +67,7 @@ export class AppFactory {
     constructor() {
         this.worldSize = 300
         this.floor = new Floor(this.worldSize, this.worldSize, 5, new Vec3(0, 0, 0))
-        this.portal = new Portal(this.loader)
+        this.portal = new Portal(this.loader, this.loader.PortalAsset)
         this.trees = []
         this.mushrooms = []
         this.deadtrees = []
@@ -99,81 +99,73 @@ export class AppFactory {
         }
     }
     async MassMushroomLoader(type: number) {
-        await new Promise((resolve) => {
-            this.loader.Load.load("assets/custom_island/mushroom" + type + ".glb", (gltf) => {
-                for (let i = 0; i < 50; i++) {
-                    const pos = new Vec3(
-                        (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                        2.2,
-                        (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                    )
-                    const scale = math.rand_int(5, 9)
-                    const mushroom = new Mushroom(this.loader)
-                    mushroom.MassLoader(gltf.scene, scale, pos)
-                    this.mushrooms.push(mushroom)
-                }
-                resolve(gltf.scene)
-            })
-        })
+        const mushasset = (type == 1) ? this.loader.Mushroom1Asset : this.loader.Mushroom2Asset
+        const meshs = await mushasset.CloneModel()
+
+        for (let i = 0; i < 50; i++) {
+            const pos = new Vec3(
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                2.2,
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+            )
+            const scale = math.rand_int(5, 9)
+            const mushroom = new Mushroom(this.loader, mushasset)
+            mushroom.MassLoader(meshs, scale, pos)
+            this.mushrooms.push(mushroom)
+        }
     }
     async MassDeadTreeLoader() {
-        await new Promise((resolve) => {
-            this.loader.Load.load("assets/custom_island/tree2.glb", (gltf) => {
-                for (let i = 0; i < 50; i++) {
-                    const pos = new Vec3(
-                        (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                        math.rand_int(1.5, 3),
-                        (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                    )
-                    if (pos.z > 0 && pos.z < 7) pos.z += 7
-                    const type = math.rand_int(0, 2)
-                    const scale = math.rand_int(5, 9)
-                    const tree = new DeadTree(this.loader)
-                    tree.MassLoader(gltf.scene, scale, pos, type)
-                    this.deadtrees.push(tree)
-                }
-                resolve(gltf.scene)
-            })
-        })
+        const meshs = await this.loader.DeadTreeAsset.CloneModel()
+        for (let i = 0; i < 50; i++) {
+            const pos = new Vec3(
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                math.rand_int(1.5, 3),
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+            )
+            if (pos.z > 0 && pos.z < 7) pos.z += 7
+            const type = math.rand_int(0, 2)
+            const scale = math.rand_int(5, 9)
+            const tree = new DeadTree(this.loader, this.loader.DeadTreeAsset)
+            tree.MassLoader(meshs, scale, pos, type)
+            this.deadtrees.push(tree)
+        }
     }
     async MassTreeLoad() {
-        await new Promise((resolve) => {
-            this.loader.Load.load("assets/custom_island/tree.glb", (gltf) => {
-                for (let i = 0; i < 100; i++) {
-                    const pos = new Vec3(
-                        (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                        2,
-                        (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                    )
-                    if (pos.z > 0 && pos.z < 50 && pos.x > -50 && pos.x < 50) {
-                        pos.x += 50
-                        pos.z += 50
-                    }
-                    const scale = math.rand_int(5, 9)
-                    const tree = new Tree(this.loader)
-                    tree.MassLoad(gltf.scene, scale, pos)
-                    this.trees.push(tree)
-                }
-                resolve(gltf.scene)
-            })
-        })
+        for (let i = 0; i < 100; i++) {
+            const pos = new Vec3(
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                2,
+                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+            )
+            if (pos.z > 0 && pos.z < 50 && pos.x > -50 && pos.x < 50) {
+                pos.x += 50
+                pos.z += 50
+            }
+            const scale = math.rand_int(5, 9)
+            const tree = new Tree(this.loader, this.loader.TreeAsset)
+            tree.MassLoad(scale, pos)
+            this.trees.push(tree)
+        }
     }
 
     async GltfLoad() {
         const ret = await Promise.all([
-            this.player.Loader(1, new Vec3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z), Char.Male),
-            this.portal.Loader(2.5, new Vec3(5, 4.6, -4)),
+            this.player.Loader(this.loader.MaleAsset,
+                new Vec3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z),
+                "player"),
+            this.portal.Loader(new Vec3(5, 4.6, -4)),
             this.MassTreeLoad(),
             this.MassMushroomLoader(1),
             this.MassMushroomLoader(2),
             this.MassDeadTreeLoader(),
             this.npcs.NpcLoader(),
-        ])
-        this.physics.RegisterKeyControl(this.player)
-        this.physics.add(this.player, this.floor, ...this.trees)
-        this.gphysics.add(this.player)
-        this.gphysics.addMeshBuilding(this.floor, ...this.trees)
-        return ret
+        ]).then(() => {
+            this.physics.RegisterKeyControl(this.player)
+            this.physics.add(this.player, this.floor)
+            this.gphysics.addPlayer(this.player)
+            this.gphysics.add(this.npcs.Owner)
+            this.gphysics.addMeshBuilding(this.floor, ...this.trees)
+        })
     }
     InitScene() {
         this.game.add(

@@ -2,18 +2,12 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
+import { IAsset } from "../../loader/assetmodel";
 
 export class DeadTree extends GhostModel {
-    constructor(private loader: Loader) {
-        super()
+    constructor(private loader: Loader, asset: IAsset) {
+        super(asset)
         this.meshs = new THREE.Group
-    }
-    set Visible(flag: boolean) {
-        this.meshs.traverse(child => {
-            if (child instanceof THREE.Mesh) {
-                child.visible = flag
-            }
-        })
     }
 
     async Init() {

@@ -1,5 +1,5 @@
 import { Vec3 } from "cannon-es"
-import { Char } from "../scenes/models/npcmanager"
+import { Char } from "../loader/assetmodel"
 
 export type UserInfo = {
     name: string,

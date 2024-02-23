@@ -1,29 +1,26 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
-import { IPhysicsObject } from "./iobject";
+import { IBuildingObject, IPhysicsObject } from "./iobject";
 //import { Gui } from "../../factory/appfactory";
 import { math } from "../../../libs/math";
 import { GhostModel } from "./ghostmodel";
+import { IAsset } from "../../loader/assetmodel";
 
-export class Tree extends GhostModel implements IPhysicsObject {
-    body?: PhysicsTree
-    get Body() { return this.body }
-
-    constructor(private loader: Loader) {
-        super()
+export class Tree extends GhostModel implements IBuildingObject {
+    constructor(private loader: Loader, asset: IAsset) {
+        super(asset)
     }
 
     async Init() {
     }
 
     get BoxPos() {
-        const v = this.CannonPos
-        const s = this.Size
-        return new THREE.Vector3(v.x, v.y + s.y / 2, v.z)
+        return this.asset.GetBoxPos(this.meshs)
     }
-    MassLoad(meshs: THREE.Group, scale: number, position: CANNON.Vec3) {
-        this.meshs = meshs.clone()
+    async MassLoad(scale: number, position: CANNON.Vec3) {
+        const meshs = await this.loader.TreeAsset.CloneModel()
+        this.meshs = meshs
         /*
         if(this.meshs instanceof THREE.Mesh) {
             this.meshs.material = this.meshs.material.clone()
@@ -38,8 +35,6 @@ export class Tree extends GhostModel implements IPhysicsObject {
             child.receiveShadow = true
         })
 
-        this.body = new PhysicsTree(new CANNON.Vec3(this.Size.x, this.Size.y, this.Size.z))
-        this.body.position = position
     }
 
     async Loader(scale: number, position: CANNON.Vec3) {
@@ -55,25 +50,9 @@ export class Tree extends GhostModel implements IPhysicsObject {
                     child.receiveShadow = true
                 })
 
-                this.body = new PhysicsTree(new CANNON.Vec3(this.Size.x, this.Size.y, this.Size.z))
-                this.body.position = position
 
                 resolve(gltf.scene)
             })
         })
-    }
-    UpdatePhysics(): void {
-        if(this.body == undefined) return
-
-        this.CannonPos = this.body.position
-        this.Quaternion = this.body.quaternion
-    }
-}
-class PhysicsTree extends CANNON.Body {
-    name = "tree"
-    constructor(size: CANNON.Vec3) {
-        const shape = new CANNON.Box(size)
-        const material = new CANNON.Material({ friction: 100, restitution: 1 })
-        super({ shape, material, mass: 0, position: new CANNON.Vec3(0, 0, 0)})
     }
 }

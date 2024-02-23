@@ -7,12 +7,10 @@ import { Game } from "../game"
 import { UserInfo } from "../../common/param"
 import { Vec3 } from "cannon-es"
 import { IModelReload, ModelStore } from "../../common/modelstore"
-import { GPhysics } from "../../common/gphysics";
+import { GPhysics } from "../../common/physics/gphysics";
+import { Char, IAsset } from "../../loader/assetmodel";
 
-export enum Char{
-    Male,
-    Female
-}
+
 
 export class NpcManager implements IModelReload {
     private helper: Npc
@@ -28,11 +26,11 @@ export class NpcManager implements IModelReload {
         private eventCtrl: EventController,
         private game: Game,
         private canvas: Canvas,
-        private store: ModelStore 
+        private store: ModelStore,
     ) {
-        this.helper = new Npc(this.loader, this.eventCtrl)
-        this.helper2 = new Npc(this.loader, this.eventCtrl)
-        this.owner = new Npc(this.loader, this.eventCtrl)
+        this.helper = new Npc(this.loader, this.eventCtrl, this.loader.MaleAsset)
+        this.helper2 = new Npc(this.loader, this.eventCtrl, this.loader.FemaleAsset)
+        this.owner = new Npc(this.loader, this.eventCtrl, this.loader.MaleAsset)
 
         this.store.RegisterOwner(this.owner, this)
 
@@ -113,7 +111,7 @@ export class NpcManager implements IModelReload {
         if (info.model != this.ownerModel) {
             this.game.remove(this.owner.Meshs)
             this.ownerModel = info.model
-            await this.owner.Loader(1, info.position, this.ownerModel, info.name)
+            await this.owner.Loader(this.loader.GetAssets(this.ownerModel), info.position, info.name)
             this.game.add(this.owner.Meshs)
         } else {
             this.owner.Init(info.name)
@@ -123,9 +121,9 @@ export class NpcManager implements IModelReload {
     }
     async NpcLoader() {
         return await Promise.all([
-            this.helper.Loader(1, new Vec3(-1, 4.7, 6), Char.Male, "Adam"),
-            this.helper2.Loader(1, new Vec3(1, 4.7, 6), Char.Female, "Eve"),
-            this.owner.Loader(1, new Vec3(10, 5, 15), this.ownerModel, "unknown")
+            this.helper.Loader(this.loader.MaleAsset, new Vec3(-1, 4.7, 6), "Adam"),
+            this.helper2.Loader(this.loader.FemaleAsset, new Vec3(1, 4.7, 6), "Eve"),
+            this.owner.Loader(this.loader.GetAssets(this.ownerModel), new Vec3(10, 5, 15), "unknown")
         ])
     }
     async Reload(): Promise<void> {

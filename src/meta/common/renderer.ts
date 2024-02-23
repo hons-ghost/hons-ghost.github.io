@@ -2,8 +2,10 @@ import * as THREE from "three";
 import { Camera } from "./camera";
 import { Canvas } from "./canvas";
 import { IViewer } from "../scenes/models/iviewer";
+import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect"
 
 export class Renderer extends THREE.WebGLRenderer implements IViewer{
+    effect: OutlineEffect = new OutlineEffect(this)
 
     constructor(private camera: Camera, private scene: THREE.Scene, private canvas: Canvas) {
         super({ alpha: true, antialias: true, canvas: canvas.Canvas })
@@ -15,6 +17,7 @@ export class Renderer extends THREE.WebGLRenderer implements IViewer{
         this.shadowMap.enabled = true
         this.shadowMap.type = THREE.PCFSoftShadowMap
         canvas.RegisterViewer(this)
+        
     }
 
     setScene(scene: THREE.Scene) {
@@ -28,5 +31,6 @@ export class Renderer extends THREE.WebGLRenderer implements IViewer{
 
     update() {
         this.render(this.scene, this.camera)
+        //this.effect.render(this.scene, this.camera)
     }
 }

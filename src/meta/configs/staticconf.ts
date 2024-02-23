@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { Char } from "../scenes/models/npcmanager"
+import { Char } from "../loader/assetmodel"
 
 export default class SConf {
     public static BrickMode = Symbol("brickmode")

@@ -8,7 +8,7 @@ import { BrickGuide } from "./brickguide";
 import { Brick2 } from "./brick2";
 import { IKeyCommand } from "../../event/keycommand";
 import { IModelReload, ModelStore } from "../../common/modelstore";
-import { GPhysics } from "../../common/gphysics";
+import { GPhysics } from "../../common/physics/gphysics";
 
 export class Bricks implements IModelReload{
     bricks: Brick[]
@@ -104,7 +104,7 @@ export class Bricks implements IModelReload{
     }
     async Init() { }
 
-    Reload(): void {
+    async Reload(): Promise<void> {
         if (this.instancedBlock != undefined) {
             this.scene.remove(this.instancedBlock)
             this.instancedBlock = undefined
@@ -120,7 +120,8 @@ export class Bricks implements IModelReload{
             this.brickSize.z, 
         )
         const material = new THREE.MeshStandardMaterial({ 
-            color: 0xD9AB61,
+            //color: 0xD9AB61,
+            color: 0xFFFFFF,
         })
         this.instancedBlock = new THREE.InstancedMesh(
             geometry, material, bricksPos.length

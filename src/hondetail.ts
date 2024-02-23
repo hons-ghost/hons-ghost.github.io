@@ -5,8 +5,6 @@ import { HonEntry, ProfileEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import { gsap } from "gsap"
 import App from "./meta/app";
-import { Vec3 } from "cannon-es";
-import { Char } from "./meta/scenes/models/npcmanager";
 
 
 export class HonDetail {
@@ -268,16 +266,16 @@ export class HonDetail {
 
             const myModel = this.blockStore.GetModel(this.session.UserId)
             this.blockStore.FetchModels(this.m_masterAddr, email)
-                .then((result) => {
-                    this.meta.ModelLoad(result.models, result.id, myModel?.models)
+                .then(async (result) => {
+                    await this.meta.ModelLoad(result.models, result.id, myModel?.models)
                     this.alarm.style.display = "none"
                 })
                 .then(() => {
                     this.meta.CloseUp()
                 })
-                .catch(() => {
+                .catch(async () => {
                     this.alarm.style.display = "none"
-                    this.meta.ModelLoadEmpty(email, myModel?.models)
+                    await this.meta.ModelLoadEmpty(email, myModel?.models)
                     this.meta.CloseUp()
                 })
         })

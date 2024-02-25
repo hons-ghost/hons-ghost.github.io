@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
@@ -13,9 +12,9 @@ export class Portal extends GhostModel {
     async Init() {
     }
 
-    async Loader(position: CANNON.Vec3) {
+    async Loader(position: THREE.Vector3) {
         this.meshs = await this.asset.CloneModel()
-        this.meshs.position.set(position.x, position.y, position.z)
+        this.meshs.position.copy(position)
         this.meshs.castShadow = true
         this.meshs.receiveShadow = true
         this.meshs.traverse(child => {

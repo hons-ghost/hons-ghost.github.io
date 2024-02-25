@@ -10,7 +10,7 @@ export class Game extends THREE.Scene implements IScene {
     meshs: THREE.Mesh[]
     objs: IObject[]
 
-    constructor(private physics: Physics, light: Light, ...objs: IObject[]) {
+    constructor(light: Light, ...objs: IObject[]) {
         super()
         const abmbient = new THREE.AmbientLight(0xffffff, 0.3)
         const hemispherelight = new THREE.HemisphereLight(0xffffff, 0x333333)
@@ -26,7 +26,6 @@ export class Game extends THREE.Scene implements IScene {
     }
 
     play() {
-        this.physics.update()
     }
 
     dispose() {

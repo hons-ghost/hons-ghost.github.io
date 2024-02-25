@@ -1,6 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
-import { Npc } from "./npc";
 import { FloatingName } from "../../common/floatingtxt";
 import { IAsset } from "../../loader/assetmodel";
 
@@ -8,16 +6,18 @@ import { IAsset } from "../../loader/assetmodel";
 export class GhostModel {
     meshs = new THREE.Group
     vFlag = true
+    protected velocity = 0
 
     size?: THREE.Vector3
     helper?: THREE.BoxHelper
 
     protected text?: FloatingName
 
-    get CannonPos(): CANNON.Vec3 { return new CANNON.Vec3(
-        this.meshs.position.x, this.meshs.position.y, this.meshs.position.z) }
-    set CannonPos(v: CANNON.Vec3) { this.meshs.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.meshs.quaternion.set(q.x, q.y, q.z, q.w) }
+    get Velocity() {return this.velocity}
+    set Velocity(n: number) { this.velocity = n }
+    get CannonPos(): THREE.Vector3 { return this.meshs.position }
+    set CannonPos(v: THREE.Vector3) { this.meshs.position.copy(v) }
+    set Quaternion(q: THREE.Quaternion) { this.meshs.quaternion.copy(q) }
     get Size(): THREE.Vector3 {
         return this.asset.GetSize(this.meshs)
     }
@@ -29,6 +29,7 @@ export class GhostModel {
         )
     }
 
+    get Visible() { return this.vFlag }
     set Visible(flag: boolean) {
         if (this.vFlag == flag) return
         this.meshs.visible = flag
@@ -48,15 +49,17 @@ export class GhostModel {
 }
 
 export class GhostModel2 extends THREE.Mesh {
-    size?: THREE.Vector3
+    protected size?: THREE.Vector3
+    protected velocity = 0
+
+    get Velocity() {return this.velocity}
+    set Velocity(n: number) { this.velocity = n }
     get Box() {
         return new THREE.Box3().setFromObject(this)
     }
-    get CannonPos(): CANNON.Vec3 {
-        return new CANNON.Vec3(
-        this.position.x, this.position.y, this.position.z) }
-    set CannonPos(v: CANNON.Vec3) { this.position.set(v.x, v.y, v.z) }
-    set Quaternion(q: CANNON.Quaternion) { this.quaternion.set(q.x, q.y, q.z, q.w) }
+    get CannonPos(): THREE.Vector3 { return this.position}
+    set CannonPos(v: THREE.Vector3) { this.position.copy(v) }
+    set Quaternion(q: THREE.Quaternion) { this.quaternion.copy(q) }
     get Meshs() { return this }
     get Size() {
         if(this.size != undefined) return this.size

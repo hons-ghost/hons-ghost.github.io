@@ -1,10 +1,8 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 import { ICtrlObject, IPhysicsObject } from "./iobject";
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
-import { PhysicsPlayer } from "./playerctrl";
 import SConf from "../../configs/staticconf";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { Game } from "../game";
@@ -40,7 +38,7 @@ const solidify = (mesh: THREE.Mesh) => {
     //scene.add(outline)
 }
 
-export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, IModelReload {
+export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     mixer?: THREE.AnimationMixer
     currentAni?: THREE.AnimationAction
     currentClip?: THREE.AnimationClip
@@ -52,14 +50,12 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
     fightIdleClip?: THREE.AnimationClip
     danceClip?: THREE.AnimationClip
 
-    private body: PhysicsPlayer
     private playerModel: Char = Char.Male
 
     get BoxPos() {
         return this.asset.GetBoxPos(this.meshs)
     }
     set Model(model: Char) { this.playerModel = model }
-    get Body() { return this.body }
  
     constructor(
         private loader: Loader, 
@@ -69,7 +65,6 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
     ) {
         super(loader.MaleAsset)
         this.meshs = new THREE.Group
-        this.body = new PhysicsPlayer(new CANNON.Vec3(0, 0, 0), this.eventCtrl)
 
         this.store.RegisterPlayer(this, this)
 
@@ -77,11 +72,9 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
             switch (e) {
                 case EventFlag.Start:
                     this.Init()
-                    this.body.ControllerEnable = true
                     this.Visible = true
                     break
                 case EventFlag.End:
-                    this.body.ControllerEnable = false
                     this.Visible = false
                     break
             }
@@ -90,8 +83,7 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
 
     Init() {
         const pos = SConf.StartPosition
-        this.meshs.position.set(pos.x, pos.y, pos.z)
-        this.body.position.set(pos.x, pos.y, pos.z)
+        this.meshs.position.copy(pos)
     }
 
     async Reload(): Promise<void> {
@@ -102,20 +94,16 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
         }
         const pos = SConf.StartPosition
         this.game.remove(this.Meshs)
-        await this.Loader(this.loader.GetAssets(model), 
-            new CANNON.Vec3(pos.x, pos.y, pos.z), "player")
+        await this.Loader(this.loader.GetAssets(model), pos, "player")
         this.game.add(this.Meshs)
     }
 
-    async Loader(asset: IAsset, position: CANNON.Vec3, name: string) {
+    async Loader(asset: IAsset, position: THREE.Vector3, name: string) {
         this.playerModel = asset.Id
         this.asset = asset
         const [meshs, exist] = await asset.UniqModel(name)
         this.meshs = meshs
         this.meshs.position.set(position.x, position.y, position.z)
-
-        this.body.velocity.set(0, 0, 0)
-        this.body.position = position
 
         this.mixer = this.asset.GetMixer(name)
         this.idleClip = this.asset.GetAnimationClip(Ani.Idle)
@@ -152,8 +140,8 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
 
     clock = new THREE.Clock()
 
-    PostStep(): void {
-        switch(this.body.getState()) {
+    ChangeAction(action: ActionType) {
+        switch(action) {
             case ActionType.IdleAction:
                 this.changeAnimate(this.idleClip)
                 break
@@ -170,11 +158,9 @@ export class Player extends GhostModel implements ICtrlObject, IPhysicsObject, I
                 this.changeAnimate(this.fightIdleClip)
                 break
         }
-        this.mixer?.update(this.clock.getDelta())
-        this.body?.PostStep()
     }
-    UpdatePhysics(): void {
-        this.CannonPos = this.body.position
-        this.Quaternion = this.body.quaternion
+
+    Update() {
+        this.mixer?.update(this.clock.getDelta())
     }
 }

@@ -8,7 +8,6 @@ import { Npc } from "../scenes/models/npc";
 import { NpcManager } from "../scenes/models/npcmanager";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { Bricks } from "../scenes/models/bricks";
-import { Vec3 } from "cannon-es";
 import { Gui } from "../factory/appfactory"
 
 enum ViewMode {
@@ -163,12 +162,12 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         this.aspect = width / height
         this.updateProjectionMatrix()
     }
-    focusAt(position: Vec3 | THREE.Vector3) {
-        this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
+    focusAt(position: THREE.Vector3) {
+        this.rotation.copy(this.bakRotation)
         this.rotation.x = -Math.PI / 4
 
-        this.position.set(position.x, position.y, position.z)
-        this.lookAt(position.x, position.y, position.z)
+        this.position.copy(position)
+        this.lookAt(position)
         this.shortPos.set(0, 13, 13)
     }
 

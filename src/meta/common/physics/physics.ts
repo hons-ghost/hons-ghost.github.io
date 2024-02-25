@@ -25,10 +25,6 @@ export class Physics extends CANNON.World {
     }
     add(...models: IPhysicsObject[]) {
         models.forEach((model) => {
-            if(model.Body == undefined)
-                console.log("Error!!")
-            else
-                this.addBody(model.Body)
         })
         this.models = models
     }
@@ -36,16 +32,16 @@ export class Physics extends CANNON.World {
         const deltaTime = this.clock.getDelta()
         this.step(1 / 60, deltaTime)
 
+        /*
         this.models.forEach((model) => {
             if (model.Body) {
                 model.UpdatePhysics()
             }
         })
+        */
     }
     dispose() {
         this.models.forEach((model) => {
-            if(model.Body != undefined)
-                this.removeBody(model.Body)
         })
     }
 }

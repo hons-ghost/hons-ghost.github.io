@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 import { Gui } from "../../factory/appfactory"
 import { GhostModel2 } from "./ghostmodel";
 
@@ -13,6 +12,7 @@ export class Brick2 extends GhostModel2 {
         })
         super(geometry, material)
         this.castShadow = true
+        this.receiveShadow = true
         this.size = size
 
         this.Init(pos)

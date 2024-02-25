@@ -1,8 +1,6 @@
 import * as EventEmitter from "eventemitter3";
 import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
-import { UserInfo } from "../common/param";
-import { Vec3 } from "cannon-es";
 
 export enum EventFlag {
     Start,

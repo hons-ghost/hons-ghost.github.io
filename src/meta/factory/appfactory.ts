@@ -1,6 +1,5 @@
-import { Vec3 } from "cannon-es";
+import * as THREE from "three";
 import { Game } from "../scenes/game";
-import { Physics } from "../common/physics/physics";
 import { Floor } from "../scenes/models/floor";
 import { Canvas } from "../common/canvas";
 import { Camera } from "../common/camera";
@@ -10,7 +9,6 @@ import { Light } from "../common/light";
 import { EventController } from "../event/eventctrl";
 import { Player as Player } from "../scenes/models/player";
 import { Loader } from "../loader/loader";
-import CannonDebugger from "cannon-es-debugger"
 import { GUI } from "lil-gui"
 import { Tree } from "../scenes/models/tree";
 import { math } from "../../libs/math";
@@ -22,6 +20,7 @@ import { NpcManager } from "../scenes/models/npcmanager";
 import { ModelStore } from "../common/modelstore";
 import SConf from "../configs/staticconf";
 import { GPhysics } from "../common/physics/gphysics";
+import { PlayerPhysic } from "../common/physics/playerphy";
 
 export const Gui = new GUI()
 Gui.hide()
@@ -29,7 +28,6 @@ Gui.hide()
 export class AppFactory {
     phydebugger: any
 
-    private physics = new Physics()
     private eventCtrl = new EventController()
     private canvas = new Canvas()
     private loader = new Loader()
@@ -42,6 +40,8 @@ export class AppFactory {
     private floor: Floor
     private portal: Portal
     private npcs: NpcManager
+
+    private playerPhy : PlayerPhysic
     
     private trees: Tree[]
     private deadtrees: DeadTree[]
@@ -66,18 +66,18 @@ export class AppFactory {
 
     constructor() {
         this.worldSize = 300
-        this.floor = new Floor(this.worldSize, this.worldSize, 5, new Vec3(0, 0, 0))
+        this.floor = new Floor(this.worldSize, this.worldSize, 5, new THREE.Vector3(0, 0, 0))
         this.portal = new Portal(this.loader, this.loader.PortalAsset)
         this.trees = []
         this.mushrooms = []
         this.deadtrees = []
 
         this.light = new Light(this.canvas)
-        this.game = new Game(this.physics, this.light)
-        this.phydebugger = CannonDebugger(this.game, this.physics)
+        this.game = new Game(this.light)
         this.gphysics = new GPhysics(this.game)
 
         this.player = new Player(this.loader, this.eventCtrl, this.store, this.game)
+        this.playerPhy = new PlayerPhysic(this.player, this.gphysics, this.eventCtrl)
         this.brick = new Bricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
 
@@ -102,8 +102,9 @@ export class AppFactory {
         const mushasset = (type == 1) ? this.loader.Mushroom1Asset : this.loader.Mushroom2Asset
         const meshs = await mushasset.CloneModel()
 
+        const pos = new THREE.Vector3()
         for (let i = 0; i < 50; i++) {
-            const pos = new Vec3(
+            pos.set(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
                 2.2,
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
@@ -116,8 +117,9 @@ export class AppFactory {
     }
     async MassDeadTreeLoader() {
         const meshs = await this.loader.DeadTreeAsset.CloneModel()
+        const pos = new THREE.Vector3()
         for (let i = 0; i < 50; i++) {
-            const pos = new Vec3(
+            pos.set(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
                 math.rand_int(1.5, 3),
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
@@ -131,8 +133,10 @@ export class AppFactory {
         }
     }
     async MassTreeLoad() {
+        const meshs = await this.loader.TreeAsset.CloneModel()
+        const pos = new THREE.Vector3()
         for (let i = 0; i < 100; i++) {
-            const pos = new Vec3(
+            pos.set(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
                 2,
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
@@ -143,7 +147,7 @@ export class AppFactory {
             }
             const scale = math.rand_int(5, 9)
             const tree = new Tree(this.loader, this.loader.TreeAsset)
-            tree.MassLoad(scale, pos)
+            tree.MassLoad(meshs, scale, pos)
             this.trees.push(tree)
         }
     }
@@ -151,20 +155,19 @@ export class AppFactory {
     async GltfLoad() {
         const ret = await Promise.all([
             this.player.Loader(this.loader.MaleAsset,
-                new Vec3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z),
+                new THREE.Vector3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z),
                 "player"),
-            this.portal.Loader(new Vec3(5, 4.6, -4)),
+            this.portal.Loader(new THREE.Vector3(5, 4.6, -4)),
             this.MassTreeLoad(),
             this.MassMushroomLoader(1),
             this.MassMushroomLoader(2),
             this.MassDeadTreeLoader(),
             this.npcs.NpcLoader(),
         ]).then(() => {
-            this.physics.RegisterKeyControl(this.player)
-            this.physics.add(this.player, this.floor)
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)
-            this.gphysics.addMeshBuilding(this.floor, ...this.trees)
+            this.gphysics.addLand(this.floor)
+            this.gphysics.addMeshBuilding(...this.trees)
         })
     }
     InitScene() {

@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
 import { EventController, EventFlag } from "../../event/eventctrl";
@@ -52,13 +51,12 @@ export class Bricks implements IModelReload{
             }
             console.log(this.brickGuide.position)
             */
-            const bgPos = this.brickGuide.CannonPos
-            const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
+            const v = new THREE.Vector3().copy(this.brickGuide.CannonPos)
             let exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             while (exist) {
                 this.brickGuide.position.y += this.brickSize.y
                 const bgPos = this.brickGuide.CannonPos
-                const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
+                const v = new THREE.Vector3().copy(this.brickGuide.CannonPos)
                 exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             }
         })
@@ -101,7 +99,7 @@ export class Bricks implements IModelReload{
         b.Visible = true
     }
 
-    GetBrickGuide(pos: CANNON.Vec3) {
+    GetBrickGuide(pos: THREE.Vector3) {
         pos.x = Math.ceil(pos.x)
         pos.y = Math.ceil(pos.y)
         pos.z = Math.ceil(pos.z)
@@ -140,6 +138,7 @@ export class Bricks implements IModelReload{
             geometry, material, bricksPos.length
         )
         this.instancedBlock.castShadow = true
+        this.instancedBlock.receiveShadow = true
         const matrix = new THREE.Matrix4()
         const q = new THREE.Quaternion()
         const scale = new THREE.Vector3(1, 1, 1)

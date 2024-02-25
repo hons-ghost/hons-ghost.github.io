@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
 import { Gui } from "../../factory/appfactory";
@@ -67,7 +66,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
         this.text.position.y += 0.5
     }
 
-    async Loader(asset: IAsset, position: CANNON.Vec3, text: string) {
+    async Loader(asset: IAsset, position: THREE.Vector3, text: string) {
         this.asset = asset
 
         const [meshs, exist] = await asset.UniqModel(text)

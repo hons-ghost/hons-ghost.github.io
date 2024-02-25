@@ -1,20 +1,20 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 
 export interface IObject {
     get Meshs(): THREE.Mesh
 }
 
 export interface IPhysicsObject {
+    get Velocity(): number
+    set Velocity(n: number)
     get Size() : THREE.Vector3
     get BoxPos() : THREE.Vector3
     get Box(): THREE.Box3
-    get Body(): CANNON.Body | undefined
-    get CannonPos(): CANNON.Vec3
-    set CannonPos(v: CANNON.Vec3)
-    set Quaternion(v: CANNON.Quaternion)
+    get CannonPos(): THREE.Vector3
+    set CannonPos(v: THREE.Vector3)
+    set Quaternion(v: THREE.Quaternion)
     set Visible(flag: boolean)
-    UpdatePhysics(): void
+    get Meshs(): THREE.Group | THREE.Mesh
 }
 export interface IBuildingObject {
     get Size() : THREE.Vector3

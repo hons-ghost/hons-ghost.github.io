@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
 import { Gui } from "../../factory/appfactory"
 import { GhostModel } from "./ghostmodel";
@@ -20,7 +19,7 @@ export class Brick extends GhostModel{
         
     }
 
-    async Loader(scale: number, position: CANNON.Vec3) {
+    async Loader(scale: number, position: THREE.Vector3) {
         return new Promise((resolve) => {
             this.loader.Load.load("assets/brick/mario_brick_block.glb", (gltf) => {
                 this.meshs = gltf.scene

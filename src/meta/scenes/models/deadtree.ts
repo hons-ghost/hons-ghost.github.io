@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import * as CANNON from "cannon-es"
 import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
@@ -13,7 +12,7 @@ export class DeadTree extends GhostModel {
     async Init() {
     }
 
-    MassLoader(meshs: THREE.Group, scale: number, position: CANNON.Vec3, x: number) {
+    MassLoader(meshs: THREE.Group, scale: number, position: THREE.Vector3, x: number) {
         this.meshs = meshs.clone()
         this.meshs.scale.set(scale, scale, scale)
         this.meshs.position.set(position.x, position.y, position.z)

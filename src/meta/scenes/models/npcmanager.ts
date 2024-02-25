@@ -5,7 +5,6 @@ import { EventController, EventFlag } from "../../event/eventctrl"
 import { Npc } from "./npc"
 import { Game } from "../game"
 import { UserInfo } from "../../common/param"
-import { Vec3 } from "cannon-es"
 import { IModelReload, ModelStore } from "../../common/modelstore"
 import { GPhysics } from "../../common/physics/gphysics";
 import { Char, IAsset } from "../../loader/assetmodel";
@@ -122,9 +121,9 @@ export class NpcManager implements IModelReload {
     }
     async NpcLoader() {
         return await Promise.all([
-            this.helper.Loader(this.loader.MaleAsset, new Vec3(-1, 4.7, 6), "Adam"),
-            this.helper2.Loader(this.loader.FemaleAsset, new Vec3(1, 4.7, 6), "Eve"),
-            this.owner.Loader(this.loader.GetAssets(this.ownerModel), new Vec3(10, 5, 15), "unknown")
+            this.helper.Loader(this.loader.MaleAsset, new THREE.Vector3(-1, 4.7, 6), "Adam"),
+            this.helper2.Loader(this.loader.FemaleAsset, new THREE.Vector3(1, 4.7, 6), "Eve"),
+            this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 5, 15), "unknown")
         ])
     }
     async Reload(): Promise<void> {
@@ -132,7 +131,7 @@ export class NpcManager implements IModelReload {
         const info = {
             name: this.store.Name,
             position: (loadPos == undefined) ?
-                new Vec3(10, 5, 15) : new Vec3(loadPos.x, loadPos.y, loadPos.z),
+                new THREE.Vector3(10, 5, 15) : new THREE.Vector3().copy(loadPos),
             model: (this.store.OwnerModel == undefined) ? Char.Male : this.store.OwnerModel,
         }
         

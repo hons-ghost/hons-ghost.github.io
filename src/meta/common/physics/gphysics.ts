@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { IBuildingObject, IPhysicsObject } from "../../scenes/models/iobject";
 
+export interface IGPhysic {
+    update(delta: number): void
+}
 type MovingBox = {
     model: IPhysicsObject,
     box: THREE.LineSegments | undefined
@@ -13,10 +16,15 @@ export type PhysicBox = {
 export class GPhysics {
     boxs: MovingBox[] = []
     player?: IPhysicsObject
+    landPos = new THREE.Vector3()
 
+    objs: IGPhysic[] = []
     pboxs = new Map<string, PhysicBox[]>()
 
-    constructor(private scene: THREE.Scene) {
+    constructor(private scene: THREE.Scene) {}
+
+    Register(obj: IGPhysic) {
+        this.objs.push(obj)
     }
 
     addPlayer(model: IPhysicsObject) {
@@ -70,16 +78,23 @@ export class GPhysics {
             box: new THREE.Box3().setFromObject(box),
         })
     }
-    optx = 30
-    opty = 50
-    optz = 30
+    addLand(obj: IPhysicsObject) {
+        this.landPos.y = obj.BoxPos.y + obj.Size.y - 0.3
+        console.log("Land: " + this.landPos)
+    }
+    optx = 40
+    opty = 40
+    optz = 40
+    makeHash(pos: THREE.Vector3) {
+        const x = Math.ceil(Math.ceil(pos.x)/ this.optx)
+        const y = Math.ceil(Math.ceil(pos.y)/ this.opty)
+        const z = Math.ceil(Math.ceil(pos.z)/ this.optz)
+        return x + "." + y + "." + z
+    }
     addBoxs(box: PhysicBox) {
         const p = box.pos
 
-        const x = Math.ceil(p.x / this.optx)
-        const y = Math.ceil(p.y / this.opty)
-        const z = Math.ceil(p.z / this.optz)
-        const key = x + "." + y + "." + z
+        const key = this.makeHash(p)
         const boxs = this.pboxs.get(key)
         if (boxs == undefined) {
             this.pboxs.set(key, [box])
@@ -91,32 +106,28 @@ export class GPhysics {
     Check(obj: IPhysicsObject): boolean {
         const pos = obj.BoxPos
 
-        const x = Math.ceil(pos.x / this.optx)
-        const y = Math.ceil(pos.y / this.opty)
-        const z = Math.ceil(pos.z / this.optz)
-        const key = x + "." + y + "." + z
+        if (pos.y < this.landPos.y) return true
+
+        const key = this.makeHash(pos)
         const boxs = this.pboxs.get(key)
 
         if (boxs == undefined) return false
         const objBox = obj.Box
         const ret = boxs.some(box => {
             if (objBox.intersectsBox(box.box)) {
-                //console.log("Collision!!!!", key)
+                console.log("Collision!!!!", key)
                 return true
             }
             return false
         });
-        /*
+        
         if (!ret)
             console.log("empty!!!!", key)
-        */
+        
         return ret
     }
     CheckBox(pos: THREE.Vector3, box: THREE.Box3) {
-        const x = Math.ceil(pos.x / this.optx)
-        const y = Math.ceil(pos.y / this.opty)
-        const z = Math.ceil(pos.z / this.optz)
-        const key = x + "." + y + "." + z
+        const key = this.makeHash(pos)
         const boxs = this.pboxs.get(key)
 
         if (boxs == undefined) return false
@@ -134,15 +145,34 @@ export class GPhysics {
         */
         return ret
     }
+    checkGravity(delta: number) {
+        if (this.player == undefined) return
+        if (this.player.Velocity != 0) {
+            const movY = this.player.Velocity * delta
+            this.player.Meshs.position.y -= movY
+            if(this.Check(this.player)) {
+                this.player.Meshs.position.y += movY
+                this.player.Velocity = 0
+            }
+            this.player.Velocity -= 9.8 * 2 * delta
+            console.log(this.player.Velocity)
+        }
+    }
 
+    clock = new THREE.Clock()
     update() {
+        const delta = this.clock.getDelta()
+        this.objs.forEach(obj => {
+            obj.update(delta)
+        })
         this.boxs.forEach((phy) => {
             const v = phy.model.BoxPos
             if(phy.box != undefined) {
-                phy.box.position.set(v.x, v.y, v.z)
+                phy.box.position.copy(v)
             }
         })
-        if ( this.player == undefined) return 
-        this.Check(this.player)
+        //this.checkGravity(delta)
+        //if ( this.player == undefined) return 
+        //this.Check(this.player)
     }
 }

@@ -4,7 +4,6 @@ import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "./event
 import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
-import { Vec3 } from "cannon-es";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
 

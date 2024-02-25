@@ -10,6 +10,8 @@ export default class SConf {
     public static FunitureMode = Symbol("funimode")
     public static CloseMode = Symbol("closemode")
     public static LongMode = Symbol("longmode")
+    public static PortalMode = Symbol("portalmode")
+    public static LegoMode = Symbol("legomode")
 
     public static StartPosition = new Vector3(0, 5, 6)
 

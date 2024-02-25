@@ -38,19 +38,21 @@ export class Bricks implements IModelReload{
             if (position.y > 0) {
                 this.CreateBrickEvent()
             } else {
-                this.brickGuide.position.x += position.x * this.brickSize.x
+                this.brickGuide.position.x += position.x// * this.brickSize.x
                 this.brickGuide.position.y = 3
-                this.brickGuide.position.z += position.z * this.brickSize.z
+                this.brickGuide.position.z += position.z// * this.brickSize.z
                 
             }
-            /*
             let box = this.brickGuide.Box
             while(this.physics.CheckBox(this.brickGuide.position, box)){
                 this.brickGuide.position.y += 1
                 box = this.brickGuide.Box
             }
-            console.log(this.brickGuide.position)
-            */
+
+            this.brickGuide.position.y = Math.round(this.brickGuide.position.y)
+            console.log("size", this.brickSize, this.brickGuide.position)
+
+            /*
             const v = new THREE.Vector3().copy(this.brickGuide.CannonPos)
             let exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             while (exist) {
@@ -59,6 +61,7 @@ export class Bricks implements IModelReload{
                 const v = new THREE.Vector3().copy(this.brickGuide.CannonPos)
                 exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
             }
+            */
         })
         this.eventCtrl.RegisterBrickModeEvent((e: EventFlag) => {
             if (this.brickGuide == undefined) return
@@ -80,16 +83,24 @@ export class Bricks implements IModelReload{
     CreateBrickEvent() {
         if (this.brickGuide == undefined) return
 
+        /*
         const bgPos = this.brickGuide.CannonPos
         const v = new THREE.Vector3(bgPos.x, bgPos.y, bgPos.z)
         const exist = this.store.Bricks.some((pos) => this.VEqual(pos, v))
         if (exist) return
-        
+        let box = this.brickGuide.Box
+        if (this.physics.CheckBox(this.brickGuide.position, box)) return           
+        */
+
         const b = new Brick2(this.brickGuide.position, this.brickSize)
-        console.log(this.brickGuide.position, b.position)
         this.store.Bricks.push(b.position)
-        this.physics.addBuilding(b.position, this.brickSize)
         this.scene.add(b)
+
+        const subV = new THREE.Vector3(0.1, 0.1, 0.1)
+        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
+
+        console.log(this.brickGuide.position, b.position)
+        this.physics.addBuilding(b.position, size)
         /*
         const b = await this.Loader(0.01, new CANNON.Vec3(
             e.position.x, 
@@ -142,10 +153,12 @@ export class Bricks implements IModelReload{
         const matrix = new THREE.Matrix4()
         const q = new THREE.Quaternion()
         const scale = new THREE.Vector3(1, 1, 1)
+        const subV = new THREE.Vector3(0.1, 0.1, 0.1)
+        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
         bricksPos.forEach((pos, i) => {
             matrix.compose(pos, q, scale)
             this.instancedBlock?.setMatrixAt(i, matrix)
-            this.physics.addBuilding(pos, this.brickSize)
+            this.physics.addBuilding(pos, size)
         })
         this.scene.add(this.instancedBlock)
     }

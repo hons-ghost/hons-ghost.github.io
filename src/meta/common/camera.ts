@@ -9,6 +9,7 @@ import { NpcManager } from "../scenes/models/npcmanager";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { Bricks } from "../scenes/models/bricks";
 import { Gui } from "../factory/appfactory"
+import { Portal } from "../scenes/models/portal";
 
 enum ViewMode {
     Close,
@@ -33,6 +34,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         private player: IPhysicsObject,
         private npcs: NpcManager,
         private brick: Bricks,
+        private portal: Portal,
         private eventCtrl: EventController
     ) {
         super(75, canvas.Width / canvas.Height, 0.1, 500)
@@ -49,6 +51,17 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         Gui.add(this.position, 'y', 0, 100, 1).listen()
         Gui.add(this.position, 'z', 0, 100, 1).listen()
         */
+        this.eventCtrl.RegisterPortalModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.viewMode = ViewMode.Target
+                    this.controls.enabled = false
+
+                    this.target = this.portal.Meshs
+                    this.focusAt(this.portal.CannonPos)
+                    break
+            }
+        })
         this.eventCtrl.RegisterLocatModeEvent((e: EventFlag) => {
             switch (e) {
                 case EventFlag.Start:

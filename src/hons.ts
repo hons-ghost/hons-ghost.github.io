@@ -3,7 +3,7 @@ import { Session } from "./session";
 import { HonReplyLinkTxId, HonTxId, HonsTxId } from "./models/tx";
 import { HonEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
-import App from "./meta/app";
+import App, { AppMode } from "./meta/app";
 
 
 export class Hons {
@@ -164,7 +164,7 @@ export class Hons {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init().then(() => {
-            this.meta.LongShot()
+            this.meta.ModeChange(AppMode.Long)
         })
         this.meta.render()
 

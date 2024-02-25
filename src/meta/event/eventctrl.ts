@@ -77,4 +77,16 @@ export class EventController {
     RegisterFunitureModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.FunitureMode, callback)
     }
+    OnPortalModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.PortalMode, e)
+    }
+    RegisterPortalModeEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on(SConf.PortalMode, callback)
+    }
+    OnLegoModeEvent(e: EventFlag) {
+        this.eventEmitter.emit(SConf.LegoMode, e)
+    }
+    RegisterLegoModeEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on(SConf.LegoMode, callback)
+    }
 }

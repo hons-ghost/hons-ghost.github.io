@@ -233,7 +233,7 @@ export class JumpState implements IPlayerAction {
             this.playerPhy.IdleSt.Init()
             return this.playerPhy.IdleSt
         }
-        this.velocity_y -= 9.8 * 2 *delta
+        this.velocity_y -= 9.8 * 3 *delta
 
         return this
     }

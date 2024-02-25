@@ -4,7 +4,7 @@ import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, 
 import { HonEntry, ProfileEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import { gsap } from "gsap"
-import App from "./meta/app";
+import App, { AppMode } from "./meta/app";
 
 
 export class HonDetail {
@@ -237,7 +237,7 @@ export class HonDetail {
         const play = document.getElementById("playBtn") as HTMLButtonElement
         play.onclick = () => { 
             this.VisibleUi() 
-            this.meta.PlayMode()
+            this.meta.ModeChange(AppMode.Play)
         }
         const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
         fullscreen.onclick = () => {
@@ -257,7 +257,7 @@ export class HonDetail {
                 fullscreen.innerText = "fullscreen"
             }
             this.VisibleUi() 
-            this.meta.CloseUp()
+            this.meta.ModeChange(AppMode.Close)
         }
 
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
@@ -274,12 +274,12 @@ export class HonDetail {
                     this.alarm.style.display = "none"
                 })
                 .then(() => {
-                    this.meta.CloseUp()
+                    this.meta.ModeChange(AppMode.Close)
                 })
                 .catch(async () => {
                     this.alarm.style.display = "none"
                     await this.meta.ModelLoadEmpty(email, myModel?.models)
-                    this.meta.CloseUp()
+                    this.meta.ModeChange(AppMode.Close)
                 })
         })
         this.meta.render()

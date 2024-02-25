@@ -67,7 +67,6 @@ export class AppFactory {
     constructor() {
         this.worldSize = 300
         this.floor = new Floor(this.worldSize, this.worldSize, 5, new THREE.Vector3(0, 0, 0))
-        this.portal = new Portal(this.loader, this.loader.PortalAsset)
         this.trees = []
         this.mushrooms = []
         this.deadtrees = []
@@ -76,12 +75,14 @@ export class AppFactory {
         this.game = new Game(this.light)
         this.gphysics = new GPhysics(this.game)
 
+        this.portal = new Portal(this.loader, this.loader.PortalAsset, this.eventCtrl, this.gphysics)
+
         this.player = new Player(this.loader, this.eventCtrl, this.store, this.game)
         this.playerPhy = new PlayerPhysic(this.player, this.gphysics, this.eventCtrl)
         this.brick = new Bricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
 
-        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.eventCtrl)
+        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.portal, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.currentScene = this.game
 

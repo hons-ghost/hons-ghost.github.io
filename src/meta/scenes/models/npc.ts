@@ -25,10 +25,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     private controllerEnable: boolean = false
 
     vFlag = true
-    get BoxPos() {
-        return this.asset.GetBoxPos(this.meshs)
-    }
-    get Body() { return undefined }
+    get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
     get Model() { return this.asset.Id }
     set ControllerEnable(flag: boolean) { this.controllerEnable = flag }
     get ControllerEnable(): boolean { return this.controllerEnable }
@@ -54,7 +51,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
             this.meshs.position.z += vz
 
             while (this.gphysic.Check(this)) {
-                this.meshs.position.y += 1
+                this.meshs.position.y += 0.2
             }
         })
     }

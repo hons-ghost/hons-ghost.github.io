@@ -7,15 +7,18 @@ import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
 
-enum AppMode {
+export enum AppMode {
     Long,
     Close,
     Play,
     Edit,
     Brick,
     Locate,
+    Face,
     Weapon,
     Funiture,
+    Portal,
+    Lego
 }
 
 
@@ -35,8 +38,11 @@ export default class App {
         [AppMode.Edit]: (e: EventFlag) => { this.eventCtrl.OnEditModeEvent(e)},
         [AppMode.Brick]: (e: EventFlag) => { this.eventCtrl.OnBrickModeEvent(e) },
         [AppMode.Locate]: (e: EventFlag) => { this.eventCtrl.OnLocatModeEvent(e)},
+        [AppMode.Face]: (e: EventFlag) => { this.eventCtrl.OnLocatModeEvent(e)},
         [AppMode.Weapon]: (e: EventFlag) => { this.eventCtrl.OnWeaponModeEvent(e)},
         [AppMode.Funiture]: (e: EventFlag) => { this.eventCtrl.OnFunitureModeEvent(e)},
+        [AppMode.Portal]: (e: EventFlag) => { this.eventCtrl.OnPortalModeEvent(e)},
+        [AppMode.Lego]: (e: EventFlag) => { this.eventCtrl.OnLegoModeEvent(e)},
     }
     constructor() {
         this.canvas = this.factory.Canvas
@@ -117,47 +123,12 @@ export default class App {
         this.factory.ModelStore.ChangeCharactor(model)
     }
 
-    BrickMode() {
+    ModeChange(mode: AppMode) {
         this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Brick](EventFlag.Start)
-        this.currentMode = AppMode.Brick
-        //this.eventCtrl.OnBrickModeEvent(this.factory.Player.Position)
+        this.modeMap[mode](EventFlag.Start)
+        this.currentMode = mode
     }
-    EditMode() {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Edit](EventFlag.Start)
-        this.currentMode = AppMode.Edit
-    }
-    PlayMode() {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Play](EventFlag.Start)
-        this.currentMode = AppMode.Play
-    }
-    LocatMode() {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Locate](EventFlag.Start)
-        this.currentMode = AppMode.Locate
-    }
-    WeaponMode() {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Weapon](EventFlag.Start)
-        this.currentMode = AppMode.Weapon
-    }
-    FunitureMode() {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Funiture](EventFlag.Start)
-        this.currentMode = AppMode.Funiture
-    }
-    async CloseUp() {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Close](EventFlag.Start)
-        this.currentMode = AppMode.Close
-    }
-    LongShot() {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[AppMode.Long](EventFlag.Start)
-        this.currentMode = AppMode.Long
-    }
+
     ModelStore() {
         return this.store.StoreModels()
     }

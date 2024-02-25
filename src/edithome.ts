@@ -1,21 +1,12 @@
-import App from "./meta/app";
+import App, { AppMode } from "./meta/app";
 import { Char } from "./meta/loader/assetmodel";
 import { MetaTxId } from "./models/tx";
 import { Session } from "./session";
 import { BlockStore } from "./store";
 
-enum EditMode {
-    LocatMode,
-    FaceMode,
-    BrickMode,
-    WeaponMode,
-    FunitureMode,
-    EditMode
-}
-
 export class EditHome {
     m_masterAddr = ""
-    mode = EditMode.EditMode
+    mode = AppMode.Edit
     profileVisible = true
 
     sav = document.getElementById("save") as HTMLDivElement
@@ -24,6 +15,7 @@ export class EditHome {
     avr2 = document.getElementById("avatar-second") as HTMLDivElement
     div = document.getElementById("brickmode") as HTMLDivElement
     fun = document.getElementById("funituremode") as HTMLDivElement
+    fun2 = document.getElementById("funiture-second") as HTMLDivElement
     wea = document.getElementById("weaponmode") as HTMLDivElement
 
     male = document.getElementById("change-male") as HTMLDivElement
@@ -32,16 +24,19 @@ export class EditHome {
     alarm = document.getElementById("alarm-msg") as HTMLDivElement
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
 
+    gate = document.getElementById("gate") as HTMLDivElement
+
     public constructor(private blockStore: BlockStore
         , private session: Session, private meta: App) {
     }
     public UpdateMenu() {
-        this.loc.style.backgroundColor = (this.mode == EditMode.LocatMode) ? "silver" : "transparent"
-        this.avr.style.backgroundColor = (this.mode == EditMode.FaceMode) ? "silver" : "transparent"
-        this.avr2.style.display = (this.mode == EditMode.FaceMode) ? "block" : "none"
-        this.div.style.backgroundColor = (this.mode == EditMode.BrickMode) ? "silver" : "transparent"
-        this.fun.style.backgroundColor = (this.mode == EditMode.FunitureMode) ? "silver" : "transparent"
-        this.wea.style.backgroundColor = (this.mode == EditMode.WeaponMode) ? "silver" : "transparent"
+        this.loc.style.backgroundColor = (this.mode == AppMode.Locate) ? "silver" : "transparent"
+        this.avr.style.backgroundColor = (this.mode == AppMode.Face) ? "silver" : "transparent"
+        this.avr2.style.display = (this.mode == AppMode.Face) ? "block" : "none"
+        this.div.style.backgroundColor = (this.mode == AppMode.Brick) ? "silver" : "transparent"
+        this.fun.style.backgroundColor = (this.mode == AppMode.Funiture) ? "silver" : "transparent"
+        this.fun2.style.display = (this.mode == AppMode.Funiture) ? "block" : "none"
+        this.wea.style.backgroundColor = (this.mode == AppMode.Weapon) ? "silver" : "transparent"
     }
     public RequestNewMeta(models: string) {
         const masterAddr = this.m_masterAddr;
@@ -86,53 +81,28 @@ export class EditHome {
             this.RequestNewMeta(models)
         }
         this.div.onclick = () => {
-            if (this.mode != EditMode.BrickMode) {
-                this.meta.BrickMode()
-                this.mode = EditMode.BrickMode
-            } else {
-                this.meta.EditMode()
-                this.mode = EditMode.EditMode
-            }
+            this.mode = (this.mode != AppMode.Brick) ? AppMode.Brick : AppMode.Edit
+            this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         this.loc.onclick = () => {
-            if (this.mode != EditMode.LocatMode) {
-                this.meta.LocatMode()
-                this.mode = EditMode.LocatMode
-            } else {
-                this.meta.EditMode()
-                this.mode = EditMode.EditMode
-            }
+            this.mode = (this.mode != AppMode.Locate) ? AppMode.Locate : AppMode.Edit
+            this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         this.avr.onclick = () => {
-            if (this.mode != EditMode.FaceMode) {
-                this.meta.LocatMode()
-                this.mode = EditMode.FaceMode
-            } else {
-                this.meta.EditMode()
-                this.mode = EditMode.EditMode
-            }
+            this.mode = (this.mode != AppMode.Face) ? AppMode.Face : AppMode.Edit
+            this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         this.fun.onclick = () => {
-            if (this.mode != EditMode.FunitureMode) {
-                this.meta.FunitureMode()
-                this.mode = EditMode.FunitureMode
-            } else {
-                this.meta.EditMode()
-                this.mode = EditMode.EditMode
-            }
+            this.mode = (this.mode != AppMode.Funiture) ? AppMode.Funiture : AppMode.Edit
+            this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         this.wea.onclick = () => {
-            if (this.mode != EditMode.WeaponMode) {
-                this.meta.WeaponMode()
-                this.mode = EditMode.WeaponMode
-            } else {
-                this.meta.EditMode()
-                this.mode = EditMode.EditMode
-            }
+            this.mode = (this.mode != AppMode.Weapon) ? AppMode.Weapon : AppMode.Edit
+            this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         this.male.onclick = () => {
@@ -140,6 +110,12 @@ export class EditHome {
         }
         this.female.onclick = () => {
             this.meta.ChangeCharactor(Char.Female)
+        }
+
+        this.gate.onclick = () => {
+            this.mode = (this.mode != AppMode.Portal) ? AppMode.Portal : AppMode.Edit
+            this.meta.ModeChange(this.mode)
+            this.UpdateMenu()
         }
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {
@@ -173,7 +149,7 @@ export class EditHome {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init().then(() => {
-            this.meta.EditMode()
+            this.meta.ModeChange(AppMode.Edit)
         })
         this.meta.render()
     }

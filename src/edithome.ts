@@ -3,6 +3,7 @@ import { Char } from "./meta/loader/assetmodel";
 import { MetaTxId } from "./models/tx";
 import { Session } from "./session";
 import { BlockStore } from "./store";
+import ColorPicker from "@thednp/color-picker";
 
 export class EditHome {
     m_masterAddr = ""
@@ -25,6 +26,17 @@ export class EditHome {
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
 
     gate = document.getElementById("gate") as HTMLDivElement
+    rect = document.getElementById("rect") as HTMLDivElement
+    roun = document.getElementById("rounded_corner") as HTMLDivElement
+    x_up = document.getElementById("x_up") as HTMLDivElement
+    x_down = document.getElementById("x_down") as HTMLDivElement
+    x_value = document.getElementById("x_value") as HTMLDivElement
+    y_up = document.getElementById("y_up") as HTMLDivElement
+    y_down = document.getElementById("y_down") as HTMLDivElement
+    y_value = document.getElementById("y_value") as HTMLDivElement
+    z_up = document.getElementById("z_up") as HTMLDivElement
+    z_down = document.getElementById("z_down") as HTMLDivElement
+    z_value = document.getElementById("z_value") as HTMLDivElement
 
     public constructor(private blockStore: BlockStore
         , private session: Session, private meta: App) {
@@ -160,6 +172,8 @@ export class EditHome {
         return email;
     }
     loadHelper() {
+        const myPicker = new ColorPicker("#myPicker")
+
         fetch("views/edithelp.html")
             .then(response => { return response.text(); })
             .then((res) => {

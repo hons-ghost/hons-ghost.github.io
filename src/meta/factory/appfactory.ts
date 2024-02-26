@@ -15,8 +15,8 @@ import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
-import { Bricks } from "../scenes/models/bricks";
-import { NpcManager } from "../scenes/models/npcmanager";
+import { Bricks } from "../scenes/bricks";
+import { NpcManager } from "../scenes/npcmanager";
 import { ModelStore } from "../common/modelstore";
 import SConf from "../configs/staticconf";
 import { GPhysics } from "../common/physics/gphysics";
@@ -158,7 +158,7 @@ export class AppFactory {
             this.player.Loader(this.loader.MaleAsset,
                 new THREE.Vector3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z),
                 "player"),
-            this.portal.Loader(new THREE.Vector3(5, 4.6, -4)),
+            this.portal.Loader(SConf.DefaultPortalPosition),
             this.MassTreeLoad(),
             this.MassMushroomLoader(1),
             this.MassMushroomLoader(2),

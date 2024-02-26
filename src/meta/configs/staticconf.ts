@@ -14,6 +14,7 @@ export default class SConf {
     public static LegoMode = Symbol("legomode")
 
     public static StartPosition = new Vector3(0, 5, 6)
+    public static DefaultPortalPosition = new Vector3(5, 4.6, -4)
 
     public static ModelPath = {
         [Char.Male]: "assets/male/male.gltf",

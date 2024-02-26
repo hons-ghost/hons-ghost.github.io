@@ -5,9 +5,9 @@ import { IPhysicsObject } from "../scenes/models/iobject";
 import { Canvas } from "./canvas";
 import { OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import { Npc } from "../scenes/models/npc";
-import { NpcManager } from "../scenes/models/npcmanager";
+import { NpcManager } from "../scenes/npcmanager";
 import { EventController, EventFlag } from "../event/eventctrl";
-import { Bricks } from "../scenes/models/bricks";
+import { Bricks } from "../scenes/bricks";
 import { Gui } from "../factory/appfactory"
 import { Portal } from "../scenes/models/portal";
 

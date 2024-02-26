@@ -4,11 +4,11 @@ import { GhostModel2 } from "./ghostmodel";
 
 
 export class Brick2 extends GhostModel2 {
-    constructor(pos: THREE.Vector3, size: THREE.Vector3) {
+    constructor(pos: THREE.Vector3, size: THREE.Vector3, color: THREE.Color) {
         const geometry = new THREE.BoxGeometry(size.x, size.y, size.z)
         const material = new THREE.MeshStandardMaterial({ 
             //color: 0xD9AB61,
-            color: 0xffffff,
+            color: color,
         })
         super(geometry, material)
         this.castShadow = true

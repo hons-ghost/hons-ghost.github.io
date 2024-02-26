@@ -1,11 +1,27 @@
+import SConf from "../configs/staticconf";
 import { Char } from "../loader/assetmodel";
+import { BrickType } from "../scenes/legos";
 import { Npc } from "../scenes/models/npc";
 import { Player } from "../scenes/models/player";
 
+type Lego = {
+    position: THREE.Vector3
+    size: THREE.Vector3
+    color: THREE.Color
+    type: BrickType
+}
+
+type Brick = {
+    position: THREE.Vector3
+    color: THREE.Color
+}
+
 type StoreData = {
-    bricks: THREE.Vector3[]
+    bricks: Brick[]
+    legos: Lego[]
     owner: THREE.Vector3 | undefined
     ownerModel: Char | undefined
+    portal: THREE.Vector3 | undefined
 }
 
 export interface IModelReload {
@@ -17,7 +33,13 @@ export class ModelStore {
     private owner: Npc | undefined
     private player: Player | undefined
     private playerModel: Char = Char.Male
-    private data: StoreData = { bricks: [], owner: undefined, ownerModel: Char.Male}
+    private data: StoreData = { 
+        bricks: [], 
+        legos: [], 
+        owner: undefined, 
+        ownerModel: Char.Male, 
+        portal: undefined,
+    }
     private name: string = "unknown"
 
     get Bricks() { return this.data.bricks }
@@ -61,6 +83,7 @@ export class ModelStore {
         this.data.bricks.length = 0
         this.data.owner = undefined
         this.data.ownerModel = Char.Male
+        this.data.portal = SConf.DefaultPortalPosition
 
         await Promise.all([
             this.mgrs.forEach(async (mgr) => {

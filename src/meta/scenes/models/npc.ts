@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
-import { Gui } from "../../factory/appfactory";
 import { IViewer } from "./iviewer";
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand } from "../../event/keycommand";

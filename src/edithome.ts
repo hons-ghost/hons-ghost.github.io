@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import App, { AppMode } from "./meta/app";
 import { Char } from "./meta/loader/assetmodel";
 import { MetaTxId } from "./models/tx";
@@ -9,6 +10,8 @@ export class EditHome {
     m_masterAddr = ""
     mode = AppMode.Edit
     profileVisible = true
+    brickSize = new THREE.Vector3(2, 2, 2)
+    brickRotate = new THREE.Vector3()
 
     sav = document.getElementById("save") as HTMLDivElement
     loc = document.getElementById("locatmode") as HTMLDivElement
@@ -26,6 +29,9 @@ export class EditHome {
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
 
     gate = document.getElementById("gate") as HTMLDivElement
+    lego = document.getElementById("apart") as HTMLDivElement
+    brickctrl = document.getElementById("brickctrl") as HTMLDivElement
+
     rect = document.getElementById("rect") as HTMLDivElement
     roun = document.getElementById("rounded_corner") as HTMLDivElement
     x_up = document.getElementById("x_up") as HTMLDivElement
@@ -37,9 +43,43 @@ export class EditHome {
     z_up = document.getElementById("z_up") as HTMLDivElement
     z_down = document.getElementById("z_down") as HTMLDivElement
     z_value = document.getElementById("z_value") as HTMLDivElement
+    colorPick = document.getElementById("myPicker") as HTMLInputElement
 
-    public constructor(private blockStore: BlockStore
-        , private session: Session, private meta: App) {
+    y_rotation = document.getElementById("y_rotation") as HTMLDivElement
+    x_rotation = document.getElementById("x_rotation") as HTMLDivElement
+    constructor(
+        private blockStore: BlockStore,
+        private session: Session, 
+        private meta: App
+    ) {
+        this.x_up.onclick = () => this.ChangeBrickSize("x", 1)
+        this.x_down.onclick = () => this.ChangeBrickSize("x", -1)
+        this.y_up.onclick = () => this.ChangeBrickSize("y", 1)
+        this.y_down.onclick = () => this.ChangeBrickSize("y", -1)
+        this.z_up.onclick = () => this.ChangeBrickSize("z", 1)
+        this.z_down.onclick = () => this.ChangeBrickSize("z", -1)
+        this.y_rotation.onclick = () => this.ChangeRotation(0, 90, 0)
+        this.x_rotation.onclick = () => this.ChangeRotation(90, 0, 0)
+        this.colorPick.onchange = () => this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+        this.UpdateBrickUI()
+    }
+    ChangeBrickSize(xyz: string, value: number) {
+        switch(xyz) {
+            case "x": this.brickSize.x += value; break;
+            case "y": this.brickSize.y += value; break;
+            case "z": this.brickSize.z += value; break;
+        }
+        this.UpdateBrickUI()
+        this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+    }
+    ChangeRotation(x: number, y: number, z: number) {
+        this.brickRotate.set(x, y, z)
+        this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+    }
+    UpdateBrickUI() {
+        this.x_value.innerText = this.brickSize.x.toString()
+        this.y_value.innerText = this.brickSize.y.toString()
+        this.z_value.innerText = this.brickSize.z.toString()
     }
     public UpdateMenu() {
         this.loc.style.backgroundColor = (this.mode == AppMode.Locate) ? "silver" : "transparent"
@@ -49,6 +89,7 @@ export class EditHome {
         this.fun.style.backgroundColor = (this.mode == AppMode.Funiture) ? "silver" : "transparent"
         this.fun2.style.display = (this.mode == AppMode.Funiture) ? "block" : "none"
         this.wea.style.backgroundColor = (this.mode == AppMode.Weapon) ? "silver" : "transparent"
+        this.brickctrl.style.display = (this.mode == AppMode.Lego) ? "block" : "none"
     }
     public RequestNewMeta(models: string) {
         const masterAddr = this.m_masterAddr;
@@ -129,6 +170,13 @@ export class EditHome {
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
+        this.lego.onclick = () => {
+            this.mode = (this.mode != AppMode.Lego) ? AppMode.Lego : AppMode.Edit
+            this.meta.ModeChange(this.mode)
+            this.UpdateMenu()
+            this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+        }
+
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {
             this.VisibleUi()

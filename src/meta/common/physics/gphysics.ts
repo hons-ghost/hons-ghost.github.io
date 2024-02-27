@@ -67,11 +67,12 @@ export class GPhysics {
     }
     addBuilding(pos: THREE.Vector3, size: THREE.Vector3) {
         // for debugggin
-        const geometry = new THREE.BoxGeometry(size.x, size.y, size.z)
+        const geometry = new THREE.BoxGeometry(1, 1, 1)
         const wireframe = new THREE.WireframeGeometry(geometry)
         const box = new THREE.LineSegments(wireframe)
-        box.position.set(pos.x, pos.y, pos.z)
-        //this.scene.add(box)
+        box.position.copy(pos)
+        box.scale.copy(size)
+        this.scene.add(box)
 
         this.addBoxs({ 
             pos: pos, 

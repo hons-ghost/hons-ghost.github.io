@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { ICtrlObject, IPhysicsObject } from "./iobject";
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { Loader } from "../../loader/loader";
-import { Gui } from "../../factory/appfactory"
 import SConf from "../../configs/staticconf";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { Game } from "../game";

@@ -7,6 +7,7 @@ import { Player } from "../scenes/models/player";
 type Lego = {
     position: THREE.Vector3
     size: THREE.Vector3
+    quaternion: THREE.Quaternion
     color: THREE.Color
     type: BrickType
 }
@@ -42,6 +43,7 @@ export class ModelStore {
     }
     private name: string = "unknown"
 
+    get Legos() { return this.data.legos }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
     get OwnerModel() { return this.data.ownerModel }

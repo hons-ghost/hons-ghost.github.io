@@ -1,11 +1,12 @@
 import { Canvas } from "./common/canvas";
 import { EventController, EventFlag } from "./event/eventctrl";
-import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "./event/keycommand";
+import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeySystem0, KeyUp } from "./event/keycommand";
 import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
+import { Vec3 } from "math/Vec3";
 
 export enum AppMode {
     Long,
@@ -55,6 +56,10 @@ export default class App {
     async init() {
         if (this.initFlag) return
 
+        if (window.location.hostname != "hons.ghostwebservice.com") {
+            //this.eventCtrl.OnKeyDownEvent(new KeySystem0)
+        }
+
         await this.factory.GltfLoad()
         this.factory.InitScene()
 
@@ -67,6 +72,7 @@ export default class App {
                 case "ArrowRight": this.eventCtrl.OnKeyDownEvent(new KeyRight); break;
             }
             switch(e.key) {
+                case '0':this.eventCtrl.OnKeyDownEvent(new KeySystem0);break;
                 case ' ':this.eventCtrl.OnKeyDownEvent(new KeySpace);break;
                 case "Control": this.eventCtrl.OnKeyDownEvent(new KeyAction1);break;
             }
@@ -121,6 +127,9 @@ export default class App {
     }
     ChangeCharactor(model: Char) {
         this.factory.ModelStore.ChangeCharactor(model)
+    }
+    ChangeBrickInfo(v: THREE.Vector3, r: THREE.Vector3, color: string) {
+        this.eventCtrl.OnChangeBrickInfo(v, r, color)
     }
 
     ModeChange(mode: AppMode) {

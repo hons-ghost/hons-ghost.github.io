@@ -1,4 +1,4 @@
-<div id="brickctrl" class="brickctrl container border rounded p-2 m-1 bg-white">
+<div id="brickctrl" class="brickctrl border rounded p-2 m-1 bg-white">
     <div class="row">
         <div class="col p-2 text-center handcursor">
             <span class="material-symbols-outlined" id="rect">
@@ -51,10 +51,10 @@
                 refresh
             </span>
         </div>
-        <div class="col p-2 text-center handcursor color-picker">
-            <input id="myPicker" name="myPicker" data-function="color-picker"
-            data-format="hex" data-color-presets="red.green.blue" class="color-preview"
-            value="#069"
+        <div class="col text-center handcursor color-picker">
+            <input type="text" id="myPicker" name="myPicker" data-function="color-picker"
+            data-format="hex" data-color-presets='{"hue": 0, "hueSteps":12, "lightSteps":10, "saturation":85}' autocomplete="off" spellcehck="false"
+            class="color-preview btn-appearance" value="#ffffff">
         </div>
     </div>
 </div>

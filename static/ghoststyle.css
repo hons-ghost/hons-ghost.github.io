@@ -393,7 +393,7 @@ display: inline-block;
 .brickctrl {
     position: absolute;
     display: none;
-    top: 30%;
+    top: 5px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 0);
 }

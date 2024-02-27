@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
-import { Gui } from "../../factory/appfactory"
 import { GhostModel } from "./ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 

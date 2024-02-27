@@ -1,11 +1,10 @@
 import * as THREE from "three";
-import { Gui } from "../../factory/appfactory"
 import { GhostModel2 } from "./ghostmodel";
 
 
 export class Brick2 extends GhostModel2 {
     constructor(pos: THREE.Vector3, size: THREE.Vector3, color: THREE.Color) {
-        const geometry = new THREE.BoxGeometry(size.x, size.y, size.z)
+        const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             //color: 0xD9AB61,
             color: color,
@@ -14,6 +13,7 @@ export class Brick2 extends GhostModel2 {
         this.castShadow = true
         this.receiveShadow = true
         this.size = size
+        this.scale.copy(size)
 
         this.Init(pos)
     }

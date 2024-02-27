@@ -11,6 +11,7 @@ export enum KeyType {
     Action3,
     Action4,
     Action5,
+    System0,
     Count,
 }
 
@@ -88,5 +89,15 @@ export class KeyRight implements IKeyCommand{
 
     ExecuteKeyDown(): THREE.Vector3 {
         return new THREE.Vector3(1, 0, 0)
+    }
+}
+export class KeySystem0 implements IKeyCommand{
+    get Type() { return KeyType.Right }
+    ExecuteKeyUp(): THREE.Vector3 {
+        return new THREE.Vector3()
+    }
+
+    ExecuteKeyDown(): THREE.Vector3 {
+        return new THREE.Vector3()
     }
 }

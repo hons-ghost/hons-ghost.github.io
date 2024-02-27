@@ -9,21 +9,20 @@ import { Light } from "../common/light";
 import { EventController } from "../event/eventctrl";
 import { Player as Player } from "../scenes/models/player";
 import { Loader } from "../loader/loader";
-import { GUI } from "lil-gui"
 import { Tree } from "../scenes/models/tree";
 import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
-import { Bricks } from "../scenes/bricks";
+import { EventBricks } from "../scenes/eventbricks";
 import { NpcManager } from "../scenes/npcmanager";
 import { ModelStore } from "../common/modelstore";
 import SConf from "../configs/staticconf";
 import { GPhysics } from "../common/physics/gphysics";
 import { PlayerPhysic } from "../common/physics/playerphy";
+import { Helper } from "../common/helper";
+import { Legos } from "../scenes/legos";
 
-export const Gui = new GUI()
-Gui.hide()
 
 export class AppFactory {
     phydebugger: any
@@ -52,9 +51,12 @@ export class AppFactory {
     private light: Light
     private renderer: Renderer
     private worldSize: number
-    private brick: Bricks
+    private brick: EventBricks
+    private legos: Legos
 
     private currentScene: IScene
+
+    public Helper: Helper
 
     get PhysicDebugger(): any { return this.PhysicDebugger }
     get Physics() { return this.gphysics }
@@ -79,10 +81,11 @@ export class AppFactory {
 
         this.player = new Player(this.loader, this.eventCtrl, this.store, this.game)
         this.playerPhy = new PlayerPhysic(this.player, this.gphysics, this.eventCtrl)
-        this.brick = new Bricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
+        this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
+        this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
 
-        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.portal, this.eventCtrl)
+        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.currentScene = this.game
 
@@ -98,6 +101,10 @@ export class AppFactory {
         this.loader.LoadingManager.onLoad = () => {
             progressBarContainer.style.display ='none'
         }
+        this.Helper = new Helper(
+            this.game, this.player, this.npcs, this.portal,
+            this.eventCtrl
+        )
     }
     async MassMushroomLoader(type: number) {
         const mushasset = (type == 1) ? this.loader.Mushroom1Asset : this.loader.Mushroom2Asset

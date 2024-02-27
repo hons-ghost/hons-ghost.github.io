@@ -1,47 +1,37 @@
 import * as THREE from "three";
+import { Loader } from "../loader/loader";
+import { EventController, EventFlag } from "../event/eventctrl";
+import { Brick } from "./models/brick";
+import { BrickGuide } from "./models/brickguide";
+import { Brick2 } from "./models/brick2";
+import { IKeyCommand } from "../event/keycommand";
 import { IModelReload, ModelStore } from "../common/modelstore";
 import { GPhysics } from "../common/physics/gphysics";
-import { EventController, EventFlag } from "../event/eventctrl";
-import { IKeyCommand } from "../event/keycommand";
-import { Brick2 } from "./models/brick2";
-import { BrickGuide } from "./models/brickguide";
 import { Bricks } from "./bricks";
 
-export enum BrickType {
-    Rectangle,
-    RoundCorner,
-}
-
-export class Legos extends Bricks implements IModelReload {
-    bricks2: Brick2[] = []
-
+export class EventBricks extends Bricks implements IModelReload{
+    bricks: Brick[]
+    bricks2: Brick2[]
 
     get Size(): THREE.Vector3 { return this.brickSize }
 
-
     constructor(
+        private loader: Loader,
         scene: THREE.Scene,
         eventCtrl: EventController,
         store: ModelStore,
         physics: GPhysics
     ) {
         super(scene, eventCtrl, store, physics)
+        this.brickSize.set(2, 2, 2)
+
         store.RegisterBricks(this)
 
-        eventCtrl.RegisterBrickInfo((size: THREE.Vector3, rotate: THREE.Vector3, color: string) => {
+        this.bricks = []
+        this.bricks2 = []
+        this.eventCtrl.RegisterBrickModeEvent((e: EventFlag) => {
             if (this.brickGuide == undefined) return
-
-            this.brickSize.copy(size)
-            this.brickGuide.Meshs.scale.copy(size)
-            this.brickGuide.Meshs.rotateX(THREE.MathUtils.degToRad(rotate.x))
-            this.brickGuide.Meshs.rotateY(THREE.MathUtils.degToRad(rotate.y))
-            this.brickGuide.Meshs.rotateZ(THREE.MathUtils.degToRad(rotate.z))
-            this.brickColor.set(color)
-        })
-
-        this.eventCtrl.RegisterLegoModeEvent((e: EventFlag) => {
-            if (this.brickGuide == undefined) return
-            switch(e) {
+            switch (e) {
                 case EventFlag.Start:
                     this.brickGuide.ControllerEnable = true
                     this.brickGuide.Visible = true
@@ -53,10 +43,7 @@ export class Legos extends Bricks implements IModelReload {
             }
         })
     }
-
-    ChangeGuide() {
-        
-    }
+    async Init() { }
 
     async Reload(): Promise<void> {
         if (this.instancedBlock != undefined) {
@@ -64,14 +51,14 @@ export class Legos extends Bricks implements IModelReload {
             this.instancedBlock = undefined
         }
 
-        const userBricks = this.store.Legos
+        const userBricks = this.store.Bricks
         if(userBricks.length == 0) {
             return
         }
         const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             //color: 0xD9AB61,
-            color: this.brickColor,
+            color: 0xffffff,
         })
         this.instancedBlock = new THREE.InstancedMesh(
             geometry, material, userBricks.length
@@ -79,17 +66,30 @@ export class Legos extends Bricks implements IModelReload {
         this.instancedBlock.castShadow = true
         this.instancedBlock.receiveShadow = true
         const matrix = new THREE.Matrix4()
+        const q = new THREE.Quaternion()
+        const scale = new THREE.Vector3(2, 2, 2)
         const subV = new THREE.Vector3(0.1, 0.1, 0.1)
-        const collidingBoxSize = new THREE.Vector3()
-
+        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
         userBricks.forEach((brick, i) => {
-            matrix.compose(brick.position, brick.quaternion, brick.size)
+            matrix.compose(brick.position, q, scale)
             this.instancedBlock?.setMatrixAt(i, matrix)
             this.instancedBlock?.setColorAt(i, brick.color)
-
-            collidingBoxSize.copy(this.brickSize).sub(subV)
-            this.physics.addBuilding(brick.position, collidingBoxSize)
+            this.physics.addBuilding(brick.position, size)
         })
         this.scene.add(this.instancedBlock)
     }
+
+    /*
+    async Loader(scale: number, v: CANNON.Vec3): Promise<Brick> {
+        const b = new Brick(this.loader)
+        await b.Loader(scale, v).then(() => {
+            this.brickSize = b.Size
+            this.bricks.push(b)
+            if (this.bricks.length > 1) {
+                this.scene.add(b.Meshs)
+            }
+        })
+        return b
+    }
+    */
 }

@@ -18,6 +18,7 @@ export class NpcManager implements IModelReload {
 
     private ownerModel = Char.Male
     get Helper() { return this.helper }
+    get Helper2() { return this.helper2 }
     get Owner() { return this.owner }
 
     constructor(

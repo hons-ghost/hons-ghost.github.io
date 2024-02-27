@@ -28,7 +28,18 @@ export class EventController {
     RegisterKeyUpEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on("keyup", callback)
     }
-    // game mode
+
+
+    // Send Event
+    OnChangeBrickInfo(v: THREE.Vector3, r: THREE.Vector3, color: string) { 
+        this.eventEmitter.emit("bsize", v, r, color)
+    }
+    RegisterBrickInfo(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("bsize", callback)
+    }
+
+
+    // GAME MODe
     OnBrickModeEvent(e: EventFlag) {
         this.eventEmitter.emit(SConf.BrickMode, e)
     }

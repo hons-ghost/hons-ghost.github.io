@@ -7,9 +7,9 @@ import { OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import { Npc } from "../scenes/models/npc";
 import { NpcManager } from "../scenes/npcmanager";
 import { EventController, EventFlag } from "../event/eventctrl";
-import { Bricks } from "../scenes/bricks";
-import { Gui } from "../factory/appfactory"
+import { EventBricks } from "../scenes/eventbricks";
 import { Portal } from "../scenes/models/portal";
+import { Legos } from "../scenes/legos";
 
 enum ViewMode {
     Close,
@@ -33,7 +33,8 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         canvas: Canvas,
         private player: IPhysicsObject,
         private npcs: NpcManager,
-        private brick: Bricks,
+        private brick: EventBricks,
+        private legos: Legos,
         private portal: Portal,
         private eventCtrl: EventController
     ) {
@@ -72,6 +73,18 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
 
                     this.target = this.owner.Meshs
                     this.focusAt(this.owner.CannonPos)
+                    break
+            }
+        })
+        this.eventCtrl.RegisterLegoModeEvent((e: EventFlag) => {
+            switch (e) {
+                case EventFlag.Start:
+                    this.viewMode = ViewMode.Target
+                    this.controls.enabled = false
+                    this.target = this.legos.GetBrickGuide(this.npcs.Owner.CannonPos)
+                    if (this.animate != undefined) this.animate.kill()
+
+                    this.focusAt(this.target.position)
                     break
             }
         })

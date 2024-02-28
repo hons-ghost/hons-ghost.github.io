@@ -35,13 +35,35 @@ export class EventBricks extends Bricks implements IModelReload{
                 case EventFlag.Start:
                     this.brickGuide.ControllerEnable = true
                     this.brickGuide.Visible = true
+                    this.brickfield.visible = true
+                    this.CheckCollision()
                     break
                 case EventFlag.End:
                     this.brickGuide.ControllerEnable = false
                     this.brickGuide.Visible = false
+                    this.brickfield.visible = false
                     break
             }
         })
+        this.checkEx = () => {
+            if(!this.brickGuide) return
+
+            const bfp = new THREE.Vector3().copy(this.brickfield.position)
+            bfp.x -= this.fieldWidth / 2
+            bfp.z -= this.fieldHeight / 2
+            const p = new THREE.Vector3().copy(this.brickGuide.position)
+            const s = this.brickGuide.scale
+            p.x -= s.x / 2
+            p.z -= s.z / 2
+            console.log(p, s, bfp)
+            if (
+                p.x >= bfp.x && p.x + s.x <= bfp.x + this.fieldWidth &&
+                p.z >= bfp.z && p.z + s.z <= bfp.z + this.fieldHeight){
+                this.brickGuide.Creation = false
+            } else {
+                this.brickGuide.Creation = true
+            }
+        }
     }
     async Init() { }
 

@@ -7,6 +7,7 @@ import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
 import { Vec3 } from "math/Vec3";
+import { BrickOption } from "./scenes/bricks";
 
 export enum AppMode {
     Long,
@@ -56,9 +57,6 @@ export default class App {
     async init() {
         if (this.initFlag) return
 
-        if (window.location.hostname != "hons.ghostwebservice.com") {
-            //this.eventCtrl.OnKeyDownEvent(new KeySystem0)
-        }
 
         await this.factory.GltfLoad()
         this.factory.InitScene()
@@ -71,10 +69,14 @@ export default class App {
                 case "ArrowLeft": this.eventCtrl.OnKeyDownEvent(new KeyLeft); break;
                 case "ArrowRight": this.eventCtrl.OnKeyDownEvent(new KeyRight); break;
             }
-            switch(e.key) {
-                case '0':this.eventCtrl.OnKeyDownEvent(new KeySystem0);break;
-                case ' ':this.eventCtrl.OnKeyDownEvent(new KeySpace);break;
-                case "Control": this.eventCtrl.OnKeyDownEvent(new KeyAction1);break;
+            switch (e.key) {
+                case '0':
+                    if (window.location.hostname != "hons.ghostwebservice.com") {
+                        this.eventCtrl.OnKeyDownEvent(new KeySystem0);
+                    }
+                    break;
+                case ' ': this.eventCtrl.OnKeyDownEvent(new KeySpace); break;
+                case "Control": this.eventCtrl.OnKeyDownEvent(new KeyAction1); break;
             }
         })
         window.addEventListener("keyup", (e) => {
@@ -85,8 +87,8 @@ export default class App {
                 case "ArrowRight": this.eventCtrl.OnKeyUpEvent(new KeyRight); break;
                 case "Space": this.eventCtrl.OnKeyUpEvent(new KeySpace); break;
             }
-            switch(e.key) {
-                case "Control": this.eventCtrl.OnKeyUpEvent(new KeyAction1);break;
+            switch (e.key) {
+                case "Control": this.eventCtrl.OnKeyUpEvent(new KeyAction1); break;
             }
         })
         const goup = document.getElementById("goup") as HTMLDivElement
@@ -109,6 +111,10 @@ export default class App {
         action1.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyAction1) }
         action1.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyAction1) }
         this.initFlag = true
+
+        if (window.location.hostname != "hons.ghostwebservice.com") {
+            this.eventCtrl.OnKeyDownEvent(new KeySystem0)
+        }
     }
 
     despose() {
@@ -117,19 +123,21 @@ export default class App {
 
     render() {
         window.requestAnimationFrame((t) => {
+            this.factory.Helper?.CheckStateBegin()
             this.currentScene.play()
             this.canvas.update()
             this.physic.update()
             //this.factory.phydebugger.update()
 
+            this.factory.Helper?.CheckStateEnd()
             this.render()
         })
     }
     ChangeCharactor(model: Char) {
         this.factory.ModelStore.ChangeCharactor(model)
     }
-    ChangeBrickInfo(v: THREE.Vector3, r: THREE.Vector3, color: string) {
-        this.eventCtrl.OnChangeBrickInfo(v, r, color)
+    ChangeBrickInfo(opt: BrickOption) {
+        this.eventCtrl.OnChangeBrickInfo(opt)
     }
 
     ModeChange(mode: AppMode) {

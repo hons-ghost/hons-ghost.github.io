@@ -5,12 +5,22 @@ import { GhostModel2 } from "./ghostmodel";
 
 
 export class BrickGuide extends GhostModel2 {
+    get Creation() { return this.creationFlag }
+    set Creation(flag: boolean) {
+        if (flag) {
+            (this.material as THREE.MeshBasicMaterial).color.setHex(0x00ff00)
+        } else {
+            (this.material as THREE.MeshBasicMaterial).color.setHex(0xff0000)
+        }
+        this.creationFlag = flag
+    }
     private contollerEnable: boolean = true
+    private creationFlag = false
 
     set ControllerEnable(flag: boolean) { this.contollerEnable = flag }
     get ControllerEnable(): boolean { return this.contollerEnable }
 
-    constructor(pos: THREE.Vector3, size: THREE.Vector3) {
+    constructor(pos: THREE.Vector3, size: THREE.Vector3, field?: THREE.Mesh) {
         const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             color: new THREE.Color(0, 255, 0),

@@ -1,6 +1,7 @@
 import * as EventEmitter from "eventemitter3";
 import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
+import { BrickOption } from "../scenes/bricks";
 
 export enum EventFlag {
     Start,
@@ -31,8 +32,8 @@ export class EventController {
 
 
     // Send Event
-    OnChangeBrickInfo(v: THREE.Vector3, r: THREE.Vector3, color: string) { 
-        this.eventEmitter.emit("bsize", v, r, color)
+    OnChangeBrickInfo(opt: BrickOption) { 
+        this.eventEmitter.emit("bsize", opt)
     }
     RegisterBrickInfo(callback: (...e: any[]) => void) {
         this.eventEmitter.on("bsize", callback)

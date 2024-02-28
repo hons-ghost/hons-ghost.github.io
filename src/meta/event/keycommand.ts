@@ -92,7 +92,7 @@ export class KeyRight implements IKeyCommand{
     }
 }
 export class KeySystem0 implements IKeyCommand{
-    get Type() { return KeyType.Right }
+    get Type() { return KeyType.System0 }
     ExecuteKeyUp(): THREE.Vector3 {
         return new THREE.Vector3()
     }

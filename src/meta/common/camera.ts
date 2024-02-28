@@ -81,7 +81,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                 case EventFlag.Start:
                     this.viewMode = ViewMode.Target
                     this.controls.enabled = false
-                    this.target = this.legos.GetBrickGuide(this.npcs.Owner.CannonPos)
+                    this.target = this.legos.GetBrickGuide()
                     if (this.animate != undefined) this.animate.kill()
 
                     this.focusAt(this.target.position)

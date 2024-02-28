@@ -10,7 +10,7 @@ export class EditHome {
     m_masterAddr = ""
     mode = AppMode.Edit
     profileVisible = true
-    brickSize = new THREE.Vector3(2, 2, 2)
+    brickSize = new THREE.Vector3(3, 3, 1)
     brickRotate = new THREE.Vector3()
 
     sav = document.getElementById("save") as HTMLDivElement
@@ -30,6 +30,7 @@ export class EditHome {
 
     gate = document.getElementById("gate") as HTMLDivElement
     lego = document.getElementById("apart") as HTMLDivElement
+    brickReset = document.getElementById("reset-brick") as HTMLDivElement
     brickctrl = document.getElementById("brickctrl") as HTMLDivElement
 
     rect = document.getElementById("rect") as HTMLDivElement
@@ -47,20 +48,27 @@ export class EditHome {
 
     y_rotation = document.getElementById("y_rotation") as HTMLDivElement
     x_rotation = document.getElementById("x_rotation") as HTMLDivElement
+
+    myPicker = new ColorPicker("#myPicker")
+    color: string = "#fff"
     constructor(
         private blockStore: BlockStore,
         private session: Session, 
         private meta: App
     ) {
-        this.x_up.onclick = () => this.ChangeBrickSize("x", 1)
-        this.x_down.onclick = () => this.ChangeBrickSize("x", -1)
+        this.x_up.onclick = () => this.ChangeBrickSize("x", 2)
+        this.x_down.onclick = () => this.ChangeBrickSize("x", -2)
         this.y_up.onclick = () => this.ChangeBrickSize("y", 1)
         this.y_down.onclick = () => this.ChangeBrickSize("y", -1)
-        this.z_up.onclick = () => this.ChangeBrickSize("z", 1)
-        this.z_down.onclick = () => this.ChangeBrickSize("z", -1)
+        this.z_up.onclick = () => this.ChangeBrickSize("z", 2)
+        this.z_down.onclick = () => this.ChangeBrickSize("z", -2)
         this.y_rotation.onclick = () => this.ChangeRotation(0, 90, 0)
         this.x_rotation.onclick = () => this.ChangeRotation(90, 0, 0)
-        this.colorPick.onchange = () => this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+        this.myPicker.pointerMove = () => {
+            if (this.colorPick.value == this.color) return
+            this.color = this.colorPick.value
+            this.meta.ChangeBrickInfo({ color: this.colorPick.value })
+        }
         this.UpdateBrickUI()
     }
     ChangeBrickSize(xyz: string, value: number) {
@@ -70,11 +78,11 @@ export class EditHome {
             case "z": this.brickSize.z += value; break;
         }
         this.UpdateBrickUI()
-        this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+        this.meta.ChangeBrickInfo({ v: this.brickSize })
     }
     ChangeRotation(x: number, y: number, z: number) {
         this.brickRotate.set(x, y, z)
-        this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+        this.meta.ChangeBrickInfo({ r: this.brickRotate })
     }
     UpdateBrickUI() {
         this.x_value.innerText = this.brickSize.x.toString()
@@ -174,8 +182,11 @@ export class EditHome {
             this.mode = (this.mode != AppMode.Lego) ? AppMode.Lego : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
-            this.meta.ChangeBrickInfo(this.brickSize, this.brickRotate, this.colorPick.value)
+            this.meta.ChangeBrickInfo({
+                v: this.brickSize, r: this.brickRotate, color: this.colorPick.value
+            })
         }
+        this.brickReset.onclick = () => this.meta.ChangeBrickInfo({ clear: true })
 
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {
@@ -220,7 +231,6 @@ export class EditHome {
         return email;
     }
     loadHelper() {
-        const myPicker = new ColorPicker("#myPicker")
 
         fetch("views/edithelp.html")
             .then(response => { return response.text(); })

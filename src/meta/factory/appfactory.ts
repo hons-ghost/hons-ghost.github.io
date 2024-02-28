@@ -56,7 +56,7 @@ export class AppFactory {
 
     private currentScene: IScene
 
-    public Helper: Helper
+    public Helper?: Helper
 
     get PhysicDebugger(): any { return this.PhysicDebugger }
     get Physics() { return this.gphysics }
@@ -101,10 +101,7 @@ export class AppFactory {
         this.loader.LoadingManager.onLoad = () => {
             progressBarContainer.style.display ='none'
         }
-        this.Helper = new Helper(
-            this.game, this.player, this.npcs, this.portal,
-            this.eventCtrl
-        )
+        
     }
     async MassMushroomLoader(type: number) {
         const mushasset = (type == 1) ? this.loader.Mushroom1Asset : this.loader.Mushroom2Asset
@@ -194,6 +191,12 @@ export class AppFactory {
             this.game.add(mushroom.Meshs)
         })
         this.npcs.InitScene()
+
+        this.Helper = new Helper(
+            this.game, this.player, this.npcs, this.portal, this.floor,
+            this.legos,
+            this.gphysics, this.eventCtrl
+        )
     }
     Despose() {
         this.game.dispose()

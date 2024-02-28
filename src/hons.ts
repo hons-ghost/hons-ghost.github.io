@@ -139,14 +139,13 @@ export class Hons {
         const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
         const header = document.getElementById("navibar") as HTMLDivElement
         const footer = document.getElementById("footer") as HTMLDivElement
-        const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
         const menuGui = document.getElementById("menu-gui") as HTMLDivElement
         if (this.profileVisible) {
             wrapper.style.display = "none"
             footer.style.display = "none"
             header.style.display = "none"
-            controller.style.display = "block"
+            this.meta.ChangeUiEvent(true)
             controllerBtn.style.display = "block"
             menuGui.style.display = "block"
             this.profileVisible = false
@@ -154,7 +153,7 @@ export class Hons {
             wrapper.style.display = "block"
             footer.style.display = "block"
             header.style.display = "block"
-            controller.style.display = "none"
+            this.meta.ChangeUiEvent(false)
             controllerBtn.style.display = "none"
             menuGui.style.display = "none"
             this.profileVisible = true

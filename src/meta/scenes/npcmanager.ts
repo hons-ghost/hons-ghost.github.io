@@ -8,6 +8,7 @@ import { UserInfo } from "../common/param"
 import { IModelReload, ModelStore } from "../common/modelstore"
 import { GPhysics } from "../common/physics/gphysics";
 import { Char, IAsset } from "../loader/assetmodel";
+import SConf from "../configs/staticconf";
 
 
 
@@ -121,9 +122,10 @@ export class NpcManager implements IModelReload {
         this.owner.Visible = true
     }
     async NpcLoader() {
+        const p = SConf.DefaultPortalPosition
         return await Promise.all([
-            this.helper.Loader(this.loader.MaleAsset, new THREE.Vector3(-1, 4.7, 6), "Adam"),
-            this.helper2.Loader(this.loader.FemaleAsset, new THREE.Vector3(1, 4.7, 6), "Eve"),
+            this.helper.Loader(this.loader.MaleAsset, new THREE.Vector3(p.x - 6, 4.7, p.z + 10), "Adam"),
+            this.helper2.Loader(this.loader.FemaleAsset, new THREE.Vector3(p.x - 4, 4.7, p.z + 10), "Eve"),
             this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 5, 15), "unknown")
         ])
     }

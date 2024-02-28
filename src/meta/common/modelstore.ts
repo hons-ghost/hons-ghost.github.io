@@ -1,15 +1,15 @@
 import SConf from "../configs/staticconf";
 import { Char } from "../loader/assetmodel";
-import { BrickType } from "../scenes/legos";
+import { BrickShapeType } from "../scenes/legos";
 import { Npc } from "../scenes/models/npc";
 import { Player } from "../scenes/models/player";
 
 type Lego = {
     position: THREE.Vector3
     size: THREE.Vector3
-    quaternion: THREE.Quaternion
+    rotation: THREE.Euler
     color: THREE.Color
-    type: BrickType
+    type: BrickShapeType
 }
 
 type Brick = {
@@ -43,7 +43,7 @@ export class ModelStore {
     }
     private name: string = "unknown"
 
-    get Legos() { return this.data.legos }
+    get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
     get OwnerModel() { return this.data.ownerModel }

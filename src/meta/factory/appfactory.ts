@@ -22,6 +22,7 @@ import { GPhysics } from "../common/physics/gphysics";
 import { PlayerPhysic } from "../common/physics/playerphy";
 import { Helper } from "../common/helper";
 import { Legos } from "../scenes/legos";
+import { Input } from "../common/input";
 
 
 export class AppFactory {
@@ -32,6 +33,7 @@ export class AppFactory {
     private loader = new Loader()
     private store = new ModelStore()
 
+    private input: Input
     private game: Game
     private gphysics: GPhysics
 
@@ -73,13 +75,14 @@ export class AppFactory {
         this.mushrooms = []
         this.deadtrees = []
 
+        this.input = new Input(this.eventCtrl)
         this.light = new Light(this.canvas)
         this.game = new Game(this.light)
         this.gphysics = new GPhysics(this.game)
 
         this.portal = new Portal(this.loader, this.loader.PortalAsset, this.eventCtrl, this.gphysics)
 
-        this.player = new Player(this.loader, this.eventCtrl, this.store, this.game)
+        this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
         this.playerPhy = new PlayerPhysic(this.player, this.gphysics, this.eventCtrl)
         this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
@@ -195,7 +198,7 @@ export class AppFactory {
         this.Helper = new Helper(
             this.game, this.player, this.npcs, this.portal, this.floor,
             this.legos,
-            this.gphysics, this.eventCtrl
+            this.camera, this.gphysics, this.eventCtrl
         )
     }
     Despose() {

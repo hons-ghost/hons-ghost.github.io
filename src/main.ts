@@ -110,8 +110,6 @@ export class Main {
         canvas.style.display = "none"
         const progress = document.getElementById("progress-bar-container") as HTMLDivElement
         progress.style.display = "none"
-        const joypad = document.getElementById("joypad") as HTMLDivElement
-        joypad.style.display = "none"
         const joypad_buttons = document.getElementById("joypad_buttons") as HTMLDivElement
         joypad_buttons.style.display = "none"
     }

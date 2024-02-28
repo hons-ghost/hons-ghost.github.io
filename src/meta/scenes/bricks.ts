@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { BrickGuide } from "./models/brickguide";
+import * as nipplejs from 'nipplejs'
+import { BrickGuide, BrickGuideType } from "./models/brickguide";
 import { Brick2 } from "./models/brick2";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { ModelStore } from "../common/modelstore";
@@ -17,6 +18,7 @@ export class Bricks {
     brickGuide: BrickGuide | undefined
     brickfield: THREE.Mesh
     instancedBlock?: THREE.InstancedMesh
+    protected brickType = BrickGuideType.Event
     protected brickSize: THREE.Vector3 = new THREE.Vector3(1, 1, 1)
     protected brickColor: THREE.Color = new THREE.Color(0xFFFFFF)
     protected fieldWidth = 18
@@ -31,22 +33,27 @@ export class Bricks {
         protected physics: GPhysics
     ) {
         
-        eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
-            if (this.brickGuide == undefined) return
-            if (!this.brickGuide.ControllerEnable) return
-
-            const position = keyCommand.ExecuteKeyDown()
-            console.log("Guide Pos", this.brickGuide.position)
-
-            if (position.y > 0) {
-                this.CreateBrickEvent()
-            } else {
-                this.brickGuide.position.x += position.x// * this.brickSize.x
-                //this.brickGuide.position.y = 3
-                this.brickGuide.position.z += position.z// * this.brickSize.z
-                
+        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+        if (this.brickGuide == undefined) return
+        if (!this.brickGuide.ControllerEnable) return
+            if (e.type == "move") {
+                const p = new THREE.Vector3()
+                switch (data.direction.angle) {
+                    case "up": p.z = -1; break;
+                    case "down": p.z = 1; break;
+                    case "right": p.x = 1; break;
+                    case "left": p.x = -1; break;
+                }
+                this.moveEvent(p)
             }
-            this.CheckCollision()
+        })
+
+
+        eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
+        if (this.brickGuide == undefined) return
+        if (!this.brickGuide.ControllerEnable) return
+            const position = keyCommand.ExecuteKeyDown()
+            this.moveEvent(position)
         })
         
         this.brickfield = new THREE.Mesh(
@@ -63,6 +70,21 @@ export class Bricks {
         this.scene.add(this.brickfield)
 
     }
+    moveEvent(v: THREE.Vector3) {
+        if (this.brickGuide == undefined) return
+
+        const vx = (v.x > 0) ? 1 : (v.x < 0) ? - 1 : 0
+        const vz = (v.z > 0) ? 1 : (v.z < 0) ? - 1 : 0 
+        if (v.y > 0) {
+            this.CreateBrickEvent()
+        } else {
+            this.brickGuide.position.x += vx// * this.brickSize.x
+            //this.brickGuide.position.y = 3
+            this.brickGuide.position.z += vz// * this.brickSize.z
+
+        }
+        this.CheckCollision()
+    }
 
     VEqual(v1: THREE.Vector3, v2: THREE.Vector3) :boolean {
         return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z 
@@ -72,13 +94,23 @@ export class Bricks {
 
         const b = new Brick2(this.brickGuide.position, this.brickSize, this.brickColor)
         b.rotation.copy(this.brickGuide.Meshs.rotation)
-        this.store.Bricks.push({position: b.position, color: this.brickColor})
+        if (this.brickType == BrickGuideType.Lego) {
+            this.store.Legos.push({ 
+                position: b.position, 
+                size: new THREE.Vector3().copy(this.brickSize),
+                rotation: b.rotation,
+                color: (b.Meshs.material as THREE.MeshStandardMaterial).color,
+                type: this.brickGuide.ShapeType,
+            })
+        } else {
+            this.store.Bricks.push({ position: b.position, color: this.brickColor })
+        }
         this.scene.add(b)
 
         const subV = new THREE.Vector3(0.1, 0.1, 0.1)
         const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
 
-        console.log(this.brickGuide.position, b.position, b.matrix)
+        console.log(this.brickGuide.position, size, this.brickSize)
         this.physics.addBuilding(b.position, size, b.rotation)
 
         b.Visible = true
@@ -91,7 +123,7 @@ export class Bricks {
         pos.z = Math.ceil(pos.z)
         console.log(pos)
         if (this.brickGuide == undefined) {
-            this.brickGuide = new BrickGuide(pos, this.brickSize)
+            this.brickGuide = new BrickGuide(pos, this.brickSize, this.brickType)
             this.scene.add(this.brickGuide)
             this.brickfield.visible = true
         } else {

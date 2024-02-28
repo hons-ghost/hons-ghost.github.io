@@ -10,6 +10,7 @@ import { Portal } from "../scenes/models/portal";
 import { Floor } from "../scenes/models/floor";
 import { GPhysics } from "./physics/gphysics";
 import { Legos } from "../scenes/legos";
+import { Camera } from "./camera";
 
 
 
@@ -27,20 +28,27 @@ export class Helper {
         private portal: Portal,
         private floor: Floor,
         private legos: Legos,
+        private camera: Camera,
         private physics: GPhysics,
         private eventCtrl: EventController
     ) {
         this.gui.hide()
+        this.gui.close()
         this.CreateMeshGui(player.meshs, "Player")
         this.CreateMeshGui(npcs.Owner.Meshs, "Owner")
         this.CreateMeshGui(npcs.Helper.Meshs, "Helper1")
         this.CreateMeshGui(npcs.Helper2.Meshs, "Helper2")
         this.CreateMeshGui(portal.Meshs, "Portal")
+
+        const cp = this.CreateMeshGui(camera, "Camera")
+        cp.add(camera, "debugMode").listen()
+
         const bp = this.CreateMeshGui(legos.brickfield, "Brick Field")
         bp.add(legos.brickfield, 'visible').listen().name("visible")
 
-        const fp = this.gui.addFolder("floor")
-        fp.add(floor, 'visible').listen().name("visible")
+        const ffp = this.gui.addFolder("floor")
+        ffp.add(floor, 'visible').listen().name("visible")
+
 
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if (keyCommand.Type == KeyType.System0) {
@@ -85,20 +93,16 @@ export class Helper {
         }
     }
 
-    CreateMeshGui(meshs: THREE.Group | THREE.Mesh, name: string) {
+    CreateVectorGui(f: GUI, v: THREE.Vector3 | THREE.Euler, name: string) {
+        f.add(v, "x", -100, 100, 0.1).listen().name(name + "X")
+        f.add(v, "y", -100, 100, 0.1).listen().name(name + "Y")
+        f.add(v, "z", -100, 100, 0.1).listen().name(name + "Z")
+    }
+    CreateMeshGui(meshs: THREE.Group | THREE.Mesh | Camera, name: string) {
         const fp = this.gui.addFolder(name)
-        fp.add(meshs.position, 'x', -300, 300, 0.1).listen().name("PosX")
-        fp.add(meshs.position, 'y', -300, 300, 0.1).listen().name("PosY")
-        fp.add(meshs.position, 'z', -300, 300, 0.1).listen().name("PosZ")
-
-        fp.add(meshs.rotation, 'x', -300, 300, 0.1).listen().name("RotX")
-        fp.add(meshs.rotation, 'y', -300, 300, 0.1).listen().name("RotY")
-        fp.add(meshs.rotation, 'z', -300, 300, 0.1).listen().name("RotZ")
-
-        fp.add(meshs.scale, 'x', -300, 300, 0.1).listen().name("ScaleX")
-        fp.add(meshs.scale, 'y', -300, 300, 0.1).listen().name("ScaleY")
-        fp.add(meshs.scale, 'z', -300, 300, 0.1).listen().name("ScaleZ")
-
+        this.CreateVectorGui(fp, meshs.position, "Pos")
+        this.CreateVectorGui(fp, meshs.rotation, "Rot")
+        this.CreateVectorGui(fp, meshs.scale, "Scale")
         fp.close()
         return fp
     }

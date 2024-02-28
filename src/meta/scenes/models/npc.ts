@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import nipplejs from 'nipplejs'
 import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
 import { IViewer } from "./iviewer";
@@ -38,23 +39,46 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
         super(asset)
         this.text = new FloatingName("Welcome")
 
+        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+            if (!this.controllerEnable) return
+            if (e.type == "move") {
+                const p = new THREE.Vector3()
+                switch (data.direction.angle) {
+                    case "up": p.z = -1; break;
+                    case "down": p.z = 1; break;
+                    case "right": p.x = 1; break;
+                    case "left": p.x = -1; break;
+                }
+                this.moveEvent(p)
+            }
+        })
+
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if (!this.controllerEnable) return
             const position = keyCommand.ExecuteKeyDown()
+            this.moveEvent(position)
 
-            const vx =  position.x * 1
-            const vz = position.z * 1
-
-            this.meshs.position.x += vx
-            this.meshs.position.y = 4.7
-            this.meshs.position.z += vz
-
-            while (this.gphysic.Check(this)) {
-                this.meshs.position.y += 0.2
-            }
         })
     }
+    moveEvent(v: THREE.Vector3) {
+        const vx = (v.x > 0) ? 1 : (v.x < 0) ? - 1 : 0
+        const vz = (v.z > 0) ? 1 : (v.z < 0) ? - 1 : 0
 
+        this.meshs.position.x += vx
+        //this.meshs.position.y = 4.7
+        this.meshs.position.z += vz
+
+        if (this.gphysic.Check(this)) {
+            do {
+                this.meshs.position.y += 0.2
+            } while (this.gphysic.Check(this))
+        } else {
+            do {
+                this.meshs.position.y -= 0.2
+            } while (!this.gphysic.Check(this) && this.meshs.position.y >= 4.7)
+            this.meshs.position.y += 0.2
+        }
+    }
 
     async Init(text: string) {
         if(this.text == undefined) return

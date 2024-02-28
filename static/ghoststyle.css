@@ -230,12 +230,6 @@ header {
     top: 60;
     font-size: large;
 }
-#joypad {
-    display: none;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-}
 #joypad_buttons {
     display: none;
     position: absolute;

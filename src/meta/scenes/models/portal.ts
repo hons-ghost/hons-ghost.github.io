@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import nipplejs from 'nipplejs'
 import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
@@ -19,24 +20,25 @@ export class Portal extends GhostModel implements IPhysicsObject {
         private gphysic: GPhysics
     ) {
         super(asset)
+
+        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+            if(!this.controllerEnable) return
+            if (e.type == "move") {
+                const p = new THREE.Vector3()
+                switch (data.direction.angle) {
+                    case "up": p.z = -1; break;
+                    case "down": p.z = 1; break;
+                    case "right": p.x = 1; break;
+                    case "left": p.x = -1; break;
+                }
+                this.moveEvent(p)
+            }
+        })
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if(!this.controllerEnable) return
 
             const position = keyCommand.ExecuteKeyDown()
-
-            const vx =  position.x * this.Size.x
-            const vz = position.z * this.Size.z
-
-            console.log(position, vx, vz, this.meshs.position)
-
-            this.meshs.position.x += vx
-            this.meshs.position.y = 4.7
-            this.meshs.position.z += vz
-            if (this.gphysic.Check(this)) {
-                this.meshs.position.x -= vx
-                this.meshs.position.z -= vz
-            }
-            console.log(this.meshs.position)
+            this.moveEvent(position)
         })
         eventCtrl.RegisterPortalModeEvent((e: EventFlag) => {
             switch (e) {
@@ -48,6 +50,20 @@ export class Portal extends GhostModel implements IPhysicsObject {
                     break
             }
         })
+    }
+    moveEvent(v: THREE.Vector3) {
+        const vx = v.x * this.Size.x / 2
+        const vz = v.z * this.Size.z / 2
+
+
+        this.meshs.position.x += vx
+        this.meshs.position.y = 4.7
+        this.meshs.position.z += vz
+        if (this.gphysic.Check(this)) {
+            this.meshs.position.x -= vx
+            this.meshs.position.z -= vz
+        }
+        console.log(this.meshs.position)
     }
 
     async Init() {

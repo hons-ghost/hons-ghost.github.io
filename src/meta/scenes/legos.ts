@@ -4,10 +4,10 @@ import { GPhysics } from "../common/physics/gphysics";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { IKeyCommand } from "../event/keycommand";
 import { Brick2 } from "./models/brick2";
-import { BrickGuide } from "./models/brickguide";
+import { BrickGuide, BrickGuideType } from "./models/brickguide";
 import { BrickOption, Bricks } from "./bricks";
 
-export enum BrickType {
+export enum BrickShapeType {
     Rectangle,
     RoundCorner,
 }
@@ -16,9 +16,8 @@ export class Legos extends Bricks implements IModelReload {
     bricks2: Brick2[] = []
 
     subV = new THREE.Vector3(0.1, 0.1, 0.1)
-    brickGeometry = new THREE.BoxGeometry(1, 1, 1)
 
-    get Size(): THREE.Vector3 { return this.brickSize }
+    get Size(): THREE.Vector3 { return (this.brickGuide) ? this.brickGuide.Size : this.brickSize }
 
     constructor(
         scene: THREE.Scene,
@@ -28,6 +27,7 @@ export class Legos extends Bricks implements IModelReload {
     ) {
         super(scene, eventCtrl, store, physics)
         store.RegisterBricks(this)
+        this.brickType = BrickGuideType.Lego
 
         eventCtrl.RegisterBrickInfo((opt: BrickOption) => {
             console.log(opt)
@@ -88,7 +88,7 @@ export class Legos extends Bricks implements IModelReload {
             bfp.x -= this.fieldWidth / 2
             bfp.z -= this.fieldHeight / 2
             const p = new THREE.Vector3().copy(this.brickGuide.position)
-            const s = this.brickGuide.scale
+            const s = this.brickGuide.Size // rotatio 이 적용된 형상
             p.x -= s.x / 2
             p.z -= s.z / 2
             if (
@@ -108,6 +108,7 @@ export class Legos extends Bricks implements IModelReload {
     async Reload(): Promise<void> {
         if (this.instancedBlock != undefined) {
             this.scene.remove(this.instancedBlock)
+            this.instancedBlock.dispose()
             this.instancedBlock = undefined
         }
 
@@ -115,26 +116,31 @@ export class Legos extends Bricks implements IModelReload {
         if(!userBricks?.length) {
             return
         }
+        const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             //color: 0xD9AB61,
-            color: this.brickColor,
+            color: 0xffffff,
         })
         this.instancedBlock = new THREE.InstancedMesh(
-            this.brickGeometry, material, userBricks.length
+            geometry, material, userBricks.length
         )
         this.instancedBlock.castShadow = true
         this.instancedBlock.receiveShadow = true
         const matrix = new THREE.Matrix4()
         const collidingBoxSize = new THREE.Vector3()
+        const q = new THREE.Quaternion()
 
         userBricks.forEach((brick, i) => {
-            matrix.compose(brick.position, brick.quaternion, brick.size)
+            console.log(brick)
+            q.setFromEuler(brick.rotation)
+            matrix.compose(brick.position, q, brick.size)
+            this.instancedBlock?.setColorAt(i, new THREE.Color(brick.color))
             this.instancedBlock?.setMatrixAt(i, matrix)
-            this.instancedBlock?.setColorAt(i, brick.color)
 
-            collidingBoxSize.copy(this.brickSize).sub(this.subV)
-            this.physics.addBuilding(brick.position, collidingBoxSize)
+            collidingBoxSize.copy(brick.size).sub(this.subV)
+            this.physics.addBuilding(brick.position, collidingBoxSize, brick.rotation)
         })
+        console.log(this.instancedBlock)
         this.scene.add(this.instancedBlock)
     }
 }

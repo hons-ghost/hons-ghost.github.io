@@ -18,10 +18,11 @@ class State {
     ) { }
 
     CheckRun() {
-        if (this.playerPhy.KeyState[KeyType.Up] ||
+        if (this.playerPhy.moveDirection.x || this.playerPhy.moveDirection.y
+            /*this.playerPhy.KeyState[KeyType.Up] ||
             this.playerPhy.KeyState[KeyType.Down] ||
             this.playerPhy.KeyState[KeyType.Left] ||
-            this.playerPhy.KeyState[KeyType.Right]) {
+            this.playerPhy.KeyState[KeyType.Right]*/) {
             this.playerPhy.RunSt.Init()
             return this.playerPhy.RunSt
         }

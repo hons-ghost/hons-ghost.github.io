@@ -91,20 +91,8 @@ export default class App {
                 case "Control": this.eventCtrl.OnKeyUpEvent(new KeyAction1); break;
             }
         })
-        const goup = document.getElementById("goup") as HTMLDivElement
-        const goleft = document.getElementById("goleft") as HTMLDivElement
-        const goright = document.getElementById("goright") as HTMLDivElement
-        const godown = document.getElementById("godown") as HTMLDivElement
         const jump = document.getElementById("joypad_button1") as HTMLDivElement
         const action1 = document.getElementById("joypad_button2") as HTMLDivElement
-        goup.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyUp) }
-        goup.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyUp) }
-        goleft.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyLeft) }
-        goleft.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyLeft) }
-        goright.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyRight) }
-        goright.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyRight) }
-        godown.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyDown) }
-        godown.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyDown) }
         jump.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeySpace) }
         jump.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeySpace) }
 
@@ -138,6 +126,9 @@ export default class App {
     }
     ChangeBrickInfo(opt: BrickOption) {
         this.eventCtrl.OnChangeBrickInfo(opt)
+    }
+    ChangeUiEvent(visible: boolean) {
+        this.eventCtrl.OnChangeUiEvent(visible)
     }
 
     ModeChange(mode: AppMode) {

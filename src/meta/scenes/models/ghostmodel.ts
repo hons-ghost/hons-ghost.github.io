@@ -62,7 +62,6 @@ export class GhostModel2 extends THREE.Mesh {
     set Quaternion(q: THREE.Quaternion) { this.quaternion.copy(q) }
     get Meshs() { return this }
     get Size() {
-        if(this.size != undefined) return this.size
         const bbox = new THREE.Box3().setFromObject(this)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)

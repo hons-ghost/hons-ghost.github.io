@@ -1,4 +1,5 @@
 import * as EventEmitter from "eventemitter3";
+import nipplejs from 'nipplejs'
 import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
 import { BrickOption } from "../scenes/bricks";
@@ -30,6 +31,22 @@ export class EventController {
         this.eventEmitter.on("keyup", callback)
     }
 
+    OnInputEvent(e: nipplejs.EventData, data:nipplejs.JoystickOutputData) {
+        this.eventEmitter.emit("input", e, data)
+    }
+
+    RegisterInputEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("input", callback)
+    }
+
+    // UI
+    OnChangeUiEvent(visible: boolean) {
+        this.eventEmitter.emit("ui", visible)
+    }
+
+    RegisterUiEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("ui", callback)
+    }
 
     // Send Event
     OnChangeBrickInfo(opt: BrickOption) { 

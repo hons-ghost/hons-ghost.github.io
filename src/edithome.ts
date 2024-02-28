@@ -58,8 +58,8 @@ export class EditHome {
     ) {
         this.x_up.onclick = () => this.ChangeBrickSize("x", 2)
         this.x_down.onclick = () => this.ChangeBrickSize("x", -2)
-        this.y_up.onclick = () => this.ChangeBrickSize("y", 1)
-        this.y_down.onclick = () => this.ChangeBrickSize("y", -1)
+        this.y_up.onclick = () => this.ChangeBrickSize("y", 2)
+        this.y_down.onclick = () => this.ChangeBrickSize("y", -2)
         this.z_up.onclick = () => this.ChangeBrickSize("z", 2)
         this.z_down.onclick = () => this.ChangeBrickSize("z", -2)
         this.y_rotation.onclick = () => this.ChangeRotation(0, 90, 0)
@@ -196,7 +196,6 @@ export class EditHome {
     }
 
     public VisibleUi() {
-        const controller = document.getElementById("joypad") as HTMLDivElement
         const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
         const footer = document.getElementById("footer") as HTMLDivElement
         const header = document.getElementById("navibar") as HTMLDivElement
@@ -204,13 +203,13 @@ export class EditHome {
         if (this.profileVisible) {
             footer.style.display = "none"
             header.style.display = "none"
-            controller.style.display = "block"
+            this.meta.ChangeUiEvent(true)
             controllerBtn.style.display = "block"
             this.profileVisible = false
         } else {
             footer.style.display = "block"
             header.style.display = "block"
-            controller.style.display = "none"
+            this.meta.ChangeUiEvent(false)
             controllerBtn.style.display = "none"
             this.profileVisible = true
         }

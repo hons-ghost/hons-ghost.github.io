@@ -7,6 +7,7 @@ import { IModelReload, ModelStore } from "../../common/modelstore";
 import { Game } from "../game";
 import { GhostModel } from "./ghostmodel";
 import { Ani, Char, IAsset } from "../../loader/assetmodel";
+import { Portal } from "./portal";
 
 export enum ActionType {
     IdleAction,
@@ -59,6 +60,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     constructor(
         private loader: Loader, 
         private eventCtrl: EventController,
+        private portal: Portal,
         private store: ModelStore,
         private game: Game
     ) {
@@ -81,7 +83,10 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     }
 
     Init() {
-        const pos = SConf.StartPosition
+        const pos = new THREE.Vector3().copy(this.portal.CannonPos)
+        pos.x -= 4
+        pos.y = this.meshs.position.y
+        pos.z += 4
         this.meshs.position.copy(pos)
     }
 

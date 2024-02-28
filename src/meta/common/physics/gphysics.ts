@@ -108,17 +108,17 @@ export class GPhysics {
         this.landPos.y = obj.BoxPos.y + obj.Size.y - 0.3
         console.log("Land: " + this.landPos)
     }
-    optx = 4
-    opty = 4
-    optz = 4
+    optx = 10
+    opty = 10
+    optz = 10
     makeHash(pos: THREE.Vector3, size: THREE.Vector3) {
-        const sx = Math.ceil(Math.ceil(pos.x)/ this.optx)
-        const sy = Math.ceil(Math.ceil(pos.y)/ this.opty)
-        const sz = Math.ceil(Math.ceil(pos.z)/ this.optz)
+        const sx = Math.floor(Math.floor(pos.x)/ this.optx)
+        const sy = Math.floor(Math.floor(pos.y)/ this.opty)
+        const sz = Math.floor(Math.floor(pos.z)/ this.optz)
 
-        const ex = Math.ceil(Math.ceil(pos.x + size.x)/ this.optx)
-        const ey = Math.ceil(Math.ceil(pos.y + size.y)/ this.opty)
-        const ez = Math.ceil(Math.ceil(pos.z + size.z)/ this.optz)
+        const ex = Math.ceil(Math.ceil(pos.x + size.x) / this.optx)
+        const ey = Math.ceil(Math.ceil(pos.y + size.y) / this.opty)
+        const ez = Math.ceil(Math.ceil(pos.z + size.z) / this.optz)
         const ret: string[] = []
         for (let x = sx; x <= ex; x++)
             for (let y = sy; y <= ey; y++)
@@ -154,15 +154,17 @@ export class GPhysics {
             const objBox = obj.Box
             return boxs.some(box => {
                 if (objBox.intersectsBox(box.box)) {
-                    console.log("Collision!!!!", pos, obj.Size, key)
+                    //console.log("Collision!!!!", pos, obj.Size, key)
                     return true
                 }
                 return false
             });
         })
         
+        /*
         if (!ret)
-            console.log("empty!!!!", pos, obj.Size, keys)
+            console.log("empty!!!!", keys)
+        */
         
         return ret
     }

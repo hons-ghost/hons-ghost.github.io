@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import nipplejs from 'nipplejs'
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
 import { IPhysicsObject } from "../../scenes/models/iobject";
@@ -9,8 +10,10 @@ import { AttackIdleState, AttackState, IPlayerAction, IdleState, JumpState, RunS
 export class PlayerPhysic implements IGPhysic {
     keyDownQueue: IKeyCommand[] = []
     keyUpQueue: IKeyCommand[] = []
+    inputVQueue: THREE.Vector3[] = []
 
-    contollerEnable :boolean = true
+    contollerEnable = true
+    inputMode = false
     moveDirection = new THREE.Vector3()
 
     keyType: KeyType = KeyType.None
@@ -21,6 +24,7 @@ export class PlayerPhysic implements IGPhysic {
     RunSt = new RunState(this, this.player, this.gphysic)
     JumpSt = new JumpState(this, this.player, this.gphysic)
     currentState: IPlayerAction = this.IdleSt
+
 
     constructor(
         private player: Player,
@@ -38,11 +42,38 @@ export class PlayerPhysic implements IGPhysic {
             this.keyUpQueue.push(keyCommand)
         })
 
+        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+            if (!this.contollerEnable) return
+            if (e.type == "move") {
+                this.inputVQueue.push(new THREE.Vector3(data.vector.x, 0, -data.vector.y))
+                this.inputMode = true
+            } else {
+                this.inputMode = false
+                this.reset()
+            }
+        })
+
+    }
+    updateInputVector() {
+        const cmd = this.inputVQueue.shift()
+        if (cmd == undefined) {
+            return
+        }
+        this.moveDirection.x = cmd.x
+        this.moveDirection.z = cmd.z
+    }
+    reset() {
+        this.moveDirection.x = 0
+        this.moveDirection.z = 0
     }
 
     update(delta: number) {
-        this.updateDownKey()
-        this.updateUpKey()
+        if (this.inputMode) {
+            this.updateInputVector()
+        } else {
+            this.updateDownKey()
+            this.updateUpKey()
+        }
 
         if(!this.player.Visible) return
 

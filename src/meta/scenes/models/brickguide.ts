@@ -2,9 +2,16 @@ import * as THREE from "three";
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand } from "../../event/keycommand";
 import { GhostModel2 } from "./ghostmodel";
+import { BrickShapeType } from "../legos";
 
+export enum BrickGuideType {
+    Lego,
+    Event
+}
 
 export class BrickGuide extends GhostModel2 {
+    ShapeType = BrickShapeType.Rectangle
+
     get Creation() { return this.creationFlag }
     set Creation(flag: boolean) {
         if (flag) {
@@ -20,7 +27,7 @@ export class BrickGuide extends GhostModel2 {
     set ControllerEnable(flag: boolean) { this.contollerEnable = flag }
     get ControllerEnable(): boolean { return this.contollerEnable }
 
-    constructor(pos: THREE.Vector3, size: THREE.Vector3, field?: THREE.Mesh) {
+    constructor(pos: THREE.Vector3, size: THREE.Vector3, type: BrickGuideType, field?: THREE.Mesh) {
         const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             color: new THREE.Color(0, 255, 0),

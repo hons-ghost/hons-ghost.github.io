@@ -1,15 +1,36 @@
 import * as THREE from "three";
-import nipplejs from 'nipplejs'
 import { EventController } from '../event/eventctrl'
+import { Joystick } from "./joystic";
 
 export class Input {
-    dom = document.createElement("div")
-    joystick: nipplejs.JoystickManager
+    //dom = document.createElement("div")
+    //joystick: nipplejs.JoystickManager
     realV = new THREE.Vector3()
     virtualV = new THREE.Vector3()
     zeroV = new THREE.Vector3()
 
+    joystick = new Joystick({
+        event: (type: string, direction: string, x: number, y: number) => {
+            const p = this.virtualV.copy(this.zeroV)
+            switch (direction) {
+                case "w": p.z = -1; break;
+                case "x": p.z = 1; break;
+                case "d": p.x = 1; break;
+                case "a": p.x = -1; break;
+            }
+            this.realV.set(x, 0, y)
+            this.eventCtrl.OnInputEvent({ type: type }, this.realV, this.virtualV)
+        }
+    })
     constructor(private eventCtrl: EventController) {
+        eventCtrl.RegisterUiEvent((visible) => {
+            if(visible) {
+                this.joystick.Show()
+            } else {
+                this.joystick.Hide()
+            }
+        })
+        /*
         this.dom.setAttribute("id", "zone_joystick")
         document.body.appendChild(this.dom)
         this.joystick = nipplejs.create({
@@ -43,5 +64,6 @@ export class Input {
 
         })
         this.dom.style.display = "none"
+        */
     }
 }

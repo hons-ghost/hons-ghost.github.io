@@ -1,13 +1,12 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
 import { IBuildingObject, IPhysicsObject } from "./iobject";
-//import { Gui } from "../../factory/appfactory";
-import { math } from "../../../libs/math";
 import { GhostModel } from "./ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
+import { GPhysics } from "../../common/physics/gphysics";
 
 export class Tree extends GhostModel implements IBuildingObject {
-    constructor(private loader: Loader, asset: IAsset) {
+    constructor(private loader: Loader, asset: IAsset, private gphysics: GPhysics) {
         super(asset)
     }
 
@@ -32,6 +31,7 @@ export class Tree extends GhostModel implements IBuildingObject {
             child.castShadow = true
             child.receiveShadow = true
         })
+        this.gphysics.addMeshBuilding(this)
     }
 
     async Loader(scale: number, position: THREE.Vector3) {

@@ -5,6 +5,7 @@ import { EventController, EventFlag } from "../event/eventctrl";
 import { ModelStore } from "../common/modelstore";
 import { GPhysics } from "../common/physics/gphysics";
 import { IKeyCommand } from "../event/keycommand";
+import { IBuildingObject } from "./models/iobject";
 
 export type BrickOption = {
     v?: THREE.Vector3, 
@@ -12,12 +13,25 @@ export type BrickOption = {
     color?: string
     clear?: boolean
 }
+export class EventBrick implements IBuildingObject {
+    brick?: Brick2
+    get Size() { return this.size }
+    get BoxPos() {return this.position}
+    set Key(k: string) { this.key = k }
+    get Key() { return this.key }
+
+    key = ""
+    constructor(private size: THREE.Vector3, private position: THREE.Vector3) {
+    }
+}
 
 export class Bricks {
     brickGuide: BrickGuide | undefined
     brickfield: THREE.Mesh
     instancedBlock?: THREE.InstancedMesh
     bricks2: Brick2[] = []
+    eventbricks: EventBrick[] = []
+    deleteMode = false
 
     protected brickType = BrickGuideType.Event
     protected brickSize: THREE.Vector3 = new THREE.Vector3(1, 1, 1)
@@ -73,7 +87,8 @@ export class Bricks {
         const vx = (v.x > 0) ? 1 : (v.x < 0) ? - 1 : 0
         const vz = (v.z > 0) ? 1 : (v.z < 0) ? - 1 : 0 
         if (v.y > 0) {
-            this.CreateBrickEvent()
+            if(this.deleteMode) this.DeleteBrick()
+            else this.CreateBrickEvent()
         } else {
             this.brickGuide.position.x += vx// * this.brickSize.x
             //this.brickGuide.position.y = 3
@@ -82,6 +97,40 @@ export class Bricks {
         }
         this.CheckCollision()
     }
+
+    GetCollisionBox(): [IBuildingObject | undefined, string[]] {
+        if (this.brickGuide == undefined) return [undefined, [""]]
+        this.brickGuide.position.y -= 1
+        const box = this.brickGuide.Box
+        const [target, key] = this.physics.GetCollisionBox(this.brickGuide.position, box)
+        this.brickGuide.position.y += 1
+        return [target?.model, key]
+    }
+
+    DeleteBrick() {
+        const [target, keys] = this.GetCollisionBox()
+        if (target == undefined) return
+        this.physics.DeleteBox(keys, target)
+        const b = target as Brick2
+        if(b != undefined){
+            this.scene.remove(b)
+            b.Dispose()
+            this.DeleteLegos(b)
+        } else {
+            throw "error"
+        }
+    }
+    DeleteLegos(b: Brick2) {
+        const l = this.store.Legos
+        for (let i = 0; i < l.length; i++) {
+            if (this.VEqual(l[i].position, b.position)) {
+                console.log("delete lego stroe", l[i])
+                l.splice(i, 1)
+                i--
+            }
+        }
+    }
+
 
     VEqual(v1: THREE.Vector3, v2: THREE.Vector3) :boolean {
         return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z 
@@ -109,7 +158,11 @@ export class Bricks {
         const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
 
         console.log(this.brickGuide.position, size, this.brickSize)
-        this.physics.addBuilding(b.position, size, b.rotation)
+
+        const eventbrick = new EventBrick(this.brickSize, b.position)
+        eventbrick.brick = b
+        this.eventbricks.push(eventbrick)
+        this.physics.addBuilding(eventbrick, b.position, size, b.rotation)
 
         b.Visible = true
     }
@@ -117,11 +170,14 @@ export class Bricks {
     ClearBlock() {
         this.bricks2.forEach((b) => {
             this.scene.remove(b);
-            b.geometry.dispose();
-            (b.material as THREE.Material).dispose();
+            b.Dispose()
         })
+        this.bricks2.length = 0
+
         if (this.instancedBlock != undefined) {
             this.scene.remove(this.instancedBlock)
+            this.instancedBlock.geometry.dispose();
+            (this.instancedBlock.material as THREE.MeshStandardMaterial).dispose()
             this.instancedBlock.dispose()
             this.instancedBlock = undefined
         }
@@ -132,7 +188,6 @@ export class Bricks {
         pos.x = Math.ceil(pos.x)
         pos.y = Math.ceil(pos.y)
         pos.z = Math.ceil(pos.z)
-        console.log(pos)
         if (this.brickGuide == undefined) {
             this.brickGuide = new BrickGuide(pos, this.brickSize, this.brickType)
             this.scene.add(this.brickGuide)
@@ -166,5 +221,8 @@ export class Bricks {
         }
         this.brickGuide.position.y = Math.round(this.brickGuide.position.y)
         if (this.checkEx) this.checkEx()
+    }
+    ClearEventBrick() {
+        this.eventbricks.length = 0
     }
 }

@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import nipplejs from 'nipplejs'
 import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
@@ -8,6 +7,7 @@ import { IKeyCommand } from "../../event/keycommand";
 import { GPhysics } from "../../common/physics/gphysics";
 import { IPhysicsObject } from "./iobject";
 import { AppMode } from "../../app";
+import { ModelStore } from "../../common/modelstore";
 //import { Gui } from "../../factory/appfactory";
 
 export class Portal extends GhostModel implements IPhysicsObject {
@@ -19,6 +19,7 @@ export class Portal extends GhostModel implements IPhysicsObject {
     constructor(
         private loader: Loader, 
         asset: IAsset, 
+        private store: ModelStore,
         private eventCtrl: EventController, 
         private gphysic: GPhysics
     ) {

@@ -31,8 +31,8 @@ export class AppFactory {
     private eventCtrl = new EventController()
     private canvas = new Canvas()
     private loader = new Loader()
-    private store = new ModelStore()
 
+    private store: ModelStore
     private input: Input
     private game: Game
     private gphysics: GPhysics
@@ -75,12 +75,13 @@ export class AppFactory {
         this.mushrooms = []
         this.deadtrees = []
 
+        this.store = new ModelStore(this.eventCtrl)
         this.input = new Input(this.eventCtrl)
         this.light = new Light(this.canvas)
         this.game = new Game(this.light)
-        this.gphysics = new GPhysics(this.game)
+        this.gphysics = new GPhysics(this.game, this.eventCtrl)
 
-        this.portal = new Portal(this.loader, this.loader.PortalAsset, this.eventCtrl, this.gphysics)
+        this.portal = new Portal(this.loader, this.loader.PortalAsset, this.store, this.eventCtrl, this.gphysics)
 
         this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
         this.playerPhy = new PlayerPhysic(this.player, this.gphysics, this.eventCtrl)
@@ -154,7 +155,7 @@ export class AppFactory {
                 pos.z += 50
             }
             const scale = math.rand_int(5, 9)
-            const tree = new Tree(this.loader, this.loader.TreeAsset)
+            const tree = new Tree(this.loader, this.loader.TreeAsset, this.gphysics)
             tree.MassLoad(meshs, scale, pos)
             this.trees.push(tree)
         }
@@ -175,7 +176,6 @@ export class AppFactory {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)
             this.gphysics.addLand(this.floor)
-            this.gphysics.addMeshBuilding(...this.trees)
         })
     }
     InitScene() {

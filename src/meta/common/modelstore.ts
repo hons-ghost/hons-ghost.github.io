@@ -1,4 +1,5 @@
 import SConf from "../configs/staticconf";
+import { EventController } from "../event/eventctrl";
 import { Char } from "../loader/assetmodel";
 import { BrickShapeType } from "../scenes/legos";
 import { Npc } from "../scenes/models/npc";
@@ -49,8 +50,17 @@ export class ModelStore {
     get OwnerModel() { return this.data.ownerModel }
     get PlayerModel() { return this.playerModel }
     get Name() {return this.name}
+    constructor(private eventCtrl: EventController) {
+        this.eventCtrl.RegisterReloadEvent(async () => {
+            await Promise.all([
+                this.mgrs.forEach(async (mgr) => {
+                await mgr.Reload()
+            })
+        ])
+        })
+    }
 
-    RegisterBricks(mgr: IModelReload) {
+    RegisterStore(mgr: IModelReload) {
         this.mgrs.push(mgr)
     }
     RegisterOwner(owner: Npc, mgr: IModelReload) {
@@ -82,6 +92,7 @@ export class ModelStore {
             this.playerModel = playerData.ownerModel
         }
         this.name = name
+        this.data.legos.length = 0
         this.data.bricks.length = 0
         this.data.owner = undefined
         this.data.ownerModel = Char.Male

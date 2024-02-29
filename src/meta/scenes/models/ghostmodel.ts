@@ -31,7 +31,7 @@ export class GhostModel {
 
     get Visible() { return this.vFlag }
     set Visible(flag: boolean) {
-        if (this.vFlag == flag) return
+        if (this.vFlag == flag && this.meshs.visible == flag) return
         this.meshs.visible = flag
         this.meshs.traverse(child => {
             if (child instanceof THREE.Mesh) {

@@ -230,11 +230,17 @@ header {
     top: 60;
     font-size: large;
 }
+#zone_joystick {
+    display: none;
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+}
 #joypad_buttons {
     display: none;
     position: absolute;
-    right: 0;
-    bottom: 0;
+    right: 10px;
+    bottom: 10px;
 }
 .joypad_arrow {
 display: inline-block;

@@ -44,15 +44,15 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         super(75, canvas.Width / canvas.Height, 0.1, 500)
         canvas.RegisterViewer(this)
         this.controls = new OrbitControls(this, canvas.Canvas)
-        this.longPos = new THREE.Vector3(16, 44, 79)
+        this.longPos = new THREE.Vector3(16, 24, 79)
         this.shortPos = new THREE.Vector3(0, 0, 0)
-        this.bakRotation = new THREE.Euler().copy(this.rotation.set(-0.27, 0.11, 0.03))
+        this.bakRotation = new THREE.Euler().copy(this.rotation.set(-0.27, 0.0, 0.03))
         console.log(this.rotation)
         
         this.viewMode = ViewMode.Long
         this.position.set(this.longPos.x, this.longPos.y, this.longPos.z)
 
-        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, orbit: string) => {
+        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, orbit: any[]) => {
             switch(mode) {
                 case AppMode.Portal:
                     if (e == EventFlag.Start) {
@@ -74,6 +74,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         this.focusAt(this.owner.CannonPos)
                     }
                     break;
+                case AppMode.LegoDelete:
                 case AppMode.Lego:
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
@@ -140,14 +141,14 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     }
                     break;
                 case AppMode.Long:
-                    if(orbit) {
+                    if(orbit && orbit[0]) {
                         this.controls.enabled = true
+                    } else {
+                        this.controls.enabled = false
                     }
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Long
-                        this.controls.enabled = false
                         if (this.animate != undefined) this.animate.kill()
-                        console.log(this.position)
 
                         const h = this.npcs.Helper
                         this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
@@ -162,7 +163,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         })
                         */
                         this.animate = gsap.to(this.longPos, {
-                            x: 16, y: 8, z: 41,
+                            x: 16, y: 6.5, z: 36,
                             duration: 4, ease: "power1.inOut", onUpdate: () => {
                                 this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
                                 this.position.set(this.longPos.x, this.longPos.y,

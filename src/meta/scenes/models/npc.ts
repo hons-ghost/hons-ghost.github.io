@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import nipplejs from 'nipplejs'
 import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
 import { IViewer } from "./iviewer";

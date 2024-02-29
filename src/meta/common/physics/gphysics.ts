@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { IBuildingObject, IPhysicsObject } from "../../scenes/models/iobject";
+import { EventController } from "../../event/eventctrl";
 
 export interface IGPhysic {
     update(delta: number): void
@@ -10,11 +11,12 @@ type MovingBox = {
 }
 export type PhysicBox = {
     pos: THREE.Vector3,
-    box: THREE.Box3
+    box: THREE.Box3,
+    model: IBuildingObject
 }
 
 export class GPhysics {
-    boxs: MovingBox[] = []
+    movingBoxs: MovingBox[] = []
     player?: IPhysicsObject
     landPos = new THREE.Vector3()
 
@@ -22,35 +24,43 @@ export class GPhysics {
     pboxs = new Map<string, PhysicBox[]>()
 
     debugBox: THREE.LineSegments[] = []
-    debugFlag = false
 
-    constructor(private scene: THREE.Scene) {}
+    constructor(private scene: THREE.Scene, private eventCtrl: EventController) {
+        eventCtrl.RegisterSceneClearEvent(() => {
+            this.PBoxDispose()
+        })
+    }
 
     Register(obj: IGPhysic) {
         this.objs.push(obj)
     }
 
-    DebugMode() {
-        if(this.debugFlag) {
-            this.boxs.forEach((box) => {
+    DebugMode(flag: boolean) {
+        if(flag) {
+            this.movingBoxs.forEach((box) => {
                 if (!box.box) return
                 this.scene.remove(box.box)
             })
             this.debugBox.forEach((box) => {
                 this.scene.remove(box)
             })
-            this.debugFlag = false
         } else {
-            this.boxs.forEach((box) => {
+            this.movingBoxs.forEach((box) => {
                 if (!box.box) return
                 this.scene.add(box.box)
             })
             this.debugBox.forEach((box) => {
                 this.scene.add(box)
             })
-
-            this.debugFlag = true
         }
+    }
+
+    PBoxDispose() {
+        this.pboxs.clear()
+        this.debugBox.forEach((box) => {
+            this.scene.remove(box)
+        })
+        this.debugBox.length = 0
     }
 
     addPlayer(model: IPhysicsObject) {
@@ -59,7 +69,7 @@ export class GPhysics {
         const box = new THREE.LineSegments(wireframe)
 
         this.player = model
-        this.boxs.push({ model: model, box: box })
+        this.movingBoxs.push({ model: model, box: box })
     }
 
     add(...models: IPhysicsObject[]) {
@@ -69,7 +79,7 @@ export class GPhysics {
             const wireframe = new THREE.WireframeGeometry(geometry)
             const box = new THREE.LineSegments(wireframe)
 
-            this.boxs.push({ model: model, box: box })
+            this.movingBoxs.push({ model: model, box: box })
         })
     }
     addMeshBuilding(...models: IBuildingObject[]) {
@@ -85,10 +95,11 @@ export class GPhysics {
             this.addBoxs({
                 pos: p,
                 box: new THREE.Box3().setFromObject(box),
+                model: model,
             })
         })
     }
-    addBuilding(pos: THREE.Vector3, size: THREE.Vector3, rotation?: THREE.Euler) {
+    addBuilding(model: IBuildingObject, pos: THREE.Vector3, size: THREE.Vector3, rotation?: THREE.Euler) {
         // for debugggin
         const geometry = new THREE.BoxGeometry(1, 1, 1)
         const wireframe = new THREE.WireframeGeometry(geometry)
@@ -102,6 +113,7 @@ export class GPhysics {
         this.addBoxs({ 
             pos: pos, 
             box: new THREE.Box3().setFromObject(box),
+            model: model
         })
     }
     addLand(obj: IPhysicsObject) {
@@ -154,18 +166,12 @@ export class GPhysics {
             const objBox = obj.Box
             return boxs.some(box => {
                 if (objBox.intersectsBox(box.box)) {
-                    //console.log("Collision!!!!", pos, obj.Size, key)
+                    //console.log("Collision!!!!", objBox, box.box, key)
                     return true
                 }
                 return false
             });
         })
-        
-        /*
-        if (!ret)
-            console.log("empty!!!!", keys)
-        */
-        
         return ret
     }
     CheckBox(pos: THREE.Vector3, box: THREE.Box3) {
@@ -183,11 +189,38 @@ export class GPhysics {
                 return false
             });
         })
-        /*
-        if (!ret)
-            console.log("empty!!!!", key)
-        */
         return ret
+    }
+    DeleteBox(keys: string[], b: IBuildingObject) {
+        keys.forEach((key) => {
+            const boxs = this.pboxs.get(key)
+            if (boxs == undefined) return false
+            for (let i = 0; i < boxs.length; i++) {
+                if (boxs[i].model == b) {
+                    boxs.splice(i, 1)
+                    i--
+                }
+            }
+        })
+    }
+    GetCollisionBox(pos: THREE.Vector3, box: THREE.Box3): [PhysicBox | undefined, string[]]{
+        const keys = this.makeHash(pos, box.getSize(new THREE.Vector3))
+        let retObj: PhysicBox | undefined
+        const retKey: string[] = []
+        keys.some((key) => {
+            const boxs = this.pboxs.get(key)
+            if (boxs == undefined) return false
+
+            const objBox = box
+            boxs.some(box => {
+                if (objBox.intersectsBox(box.box)) {
+                    //console.log("Collision!!!!", key)
+                    retObj = box
+                    retKey.push(key)
+                }
+            });
+        })
+        return [retObj, retKey]
     }
     checkGravity(delta: number) {
         if (this.player == undefined) return
@@ -209,7 +242,7 @@ export class GPhysics {
         this.objs.forEach(obj => {
             obj.update(delta)
         })
-        this.boxs.forEach((phy) => {
+        this.movingBoxs.forEach((phy) => {
             const v = phy.model.BoxPos
             if(phy.box != undefined) {
                 phy.box.position.copy(v)

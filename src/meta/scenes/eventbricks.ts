@@ -7,11 +7,14 @@ import { Brick2 } from "./models/brick2";
 import { IKeyCommand } from "../event/keycommand";
 import { IModelReload, ModelStore } from "../common/modelstore";
 import { GPhysics } from "../common/physics/gphysics";
-import { Bricks } from "./bricks";
+import { Bricks, EventBrick } from "./bricks";
 import App, { AppMode } from "../app";
+import { IBuildingObject } from "./models/iobject";
+
+
 
 export class EventBricks extends Bricks implements IModelReload{
-    bricks: Brick[]
+    bricks: Brick[] = []
 
     get Size(): THREE.Vector3 { return this.brickSize }
 
@@ -26,9 +29,8 @@ export class EventBricks extends Bricks implements IModelReload{
         this.brickType = BrickGuideType.Event
         this.brickSize.set(3, 3, 3)
 
-        store.RegisterBricks(this)
+        store.RegisterStore(this)
 
-        this.bricks = []
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Brick) return
 
@@ -71,6 +73,7 @@ export class EventBricks extends Bricks implements IModelReload{
 
     async Reload(): Promise<void> {
         this.ClearBlock()
+        this.ClearEventBrick()
 
         const userBricks = this.store.Bricks
         if(userBricks.length == 0) {
@@ -93,7 +96,9 @@ export class EventBricks extends Bricks implements IModelReload{
         userBricks.forEach((brick, i) => {
             matrix.compose(brick.position, q, this.brickSize)
             this.instancedBlock?.setMatrixAt(i, matrix)
-            this.physics.addBuilding(brick.position, size)
+            const eventbrick = new EventBrick(this.brickSize, brick.position)
+            this.eventbricks.push(eventbrick)
+            this.physics.addBuilding(eventbrick, brick.position, size)
         })
         this.scene.add(this.instancedBlock)
     }

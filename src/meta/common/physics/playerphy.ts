@@ -1,8 +1,6 @@
 import * as THREE from "three";
-import nipplejs from 'nipplejs'
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
-import { IPhysicsObject } from "../../scenes/models/iobject";
 import { GPhysics, IGPhysic } from "./gphysics";
 import { ActionType, Player } from "../../scenes/models/player";
 import { AttackIdleState, AttackState, IPlayerAction, IdleState, JumpState, RunState } from "./playerstate";

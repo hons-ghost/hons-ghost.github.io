@@ -23,7 +23,11 @@ export class TreeFab extends AssetModel {
         const p = this.GetBoxPos(mesh)
         const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
         box.position.set(p.x, p.y, p.z)
-        return new THREE.Box3().setFromObject(box)
+        const ret =  new THREE.Box3().setFromObject(box)
+        box.geometry.dispose()
+        box.material.dispose()
+
+        return ret
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         const bbox = new THREE.Box3().setFromObject(mesh)

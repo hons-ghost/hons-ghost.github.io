@@ -5,8 +5,9 @@ import { EventController, EventFlag } from "../event/eventctrl";
 import { IKeyCommand } from "../event/keycommand";
 import { Brick2 } from "./models/brick2";
 import { BrickGuide, BrickGuideType } from "./models/brickguide";
-import { BrickOption, Bricks } from "./bricks";
+import { BrickOption, Bricks, EventBrick } from "./bricks";
 import { AppMode } from "../app";
+import { IBuildingObject } from "./models/iobject";
 
 export enum BrickShapeType {
     Rectangle,
@@ -14,7 +15,6 @@ export enum BrickShapeType {
 }
 
 export class Legos extends Bricks implements IModelReload {
-
     subV = new THREE.Vector3(0.1, 0.1, 0.1)
 
     get Size(): THREE.Vector3 { return (this.brickGuide) ? this.brickGuide.Size : this.brickSize }
@@ -26,7 +26,7 @@ export class Legos extends Bricks implements IModelReload {
         physics: GPhysics
     ) {
         super(scene, eventCtrl, store, physics)
-        store.RegisterBricks(this)
+        store.RegisterStore(this)
         this.brickType = BrickGuideType.Lego
 
         eventCtrl.RegisterBrickInfo((opt: BrickOption) => {
@@ -65,20 +65,32 @@ export class Legos extends Bricks implements IModelReload {
         })
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
-            if (mode != AppMode.Lego, this.brickGuide == undefined) return
-            switch(e) {
-                case EventFlag.Start:
-                    this.brickGuide.ControllerEnable = true
-                    this.brickGuide.Visible = true
-                    this.brickGuide.position.copy(this.brickfield.position)
-                    this.brickfield.visible = true
-                    this.CheckCollision()
-                    break
-                case EventFlag.End:
-                    this.brickGuide.ControllerEnable = false
-                    this.brickGuide.Visible = false
-                    this.brickfield.visible = false
-                    break
+            this.deleteMode = (mode == AppMode.LegoDelete)
+            console.log(this.deleteMode)
+
+            if (mode == AppMode.Lego || mode == AppMode.LegoDelete) {
+                if (this.brickGuide == undefined) {
+                    this.brickGuide = this.GetBrickGuide()
+                }
+                switch (e) {
+                    case EventFlag.Start:
+                        this.brickGuide.ControllerEnable = true
+                        this.brickGuide.Visible = true
+                        this.brickGuide.position.copy(this.brickfield.position)
+                        this.brickfield.visible = true
+                        this.physics.PBoxDispose()
+                        this.eventCtrl.OnSceneReloadEvent()
+                        this.EditMode()
+                        this.CheckCollision()
+                        break
+                    case EventFlag.End:
+                        this.brickGuide.ControllerEnable = false
+                        this.brickGuide.Visible = false
+                        this.brickfield.visible = false
+                        this.physics.PBoxDispose()
+                        this.eventCtrl.OnSceneReloadEvent()
+                        break
+                }
             }
         })
         this.checkEx = () => {
@@ -104,24 +116,50 @@ export class Legos extends Bricks implements IModelReload {
     ChangeGuide() {
         
     }
-
-    async Reload(): Promise<void> {
+    EditMode() {
         this.ClearBlock()
 
         const userBricks = this.store.Legos
-        if(!userBricks?.length) {
-            return
-        }
+        const subV = new THREE.Vector3(0.1, 0.1, 0.1)
+        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
+
+        const collidingBoxSize = new THREE.Vector3()
+        userBricks.forEach((brick) => {
+            const b = new Brick2(brick.position, brick.size, brick.color)
+            b.rotation.copy(brick.rotation)
+            this.scene.add(b)
+            this.bricks2.push(b)
+            collidingBoxSize.copy(brick.size).sub(this.subV)
+            this.physics.addBuilding(b, brick.position, collidingBoxSize, b.rotation)
+        })
+    }
+    CreateInstacedMesh(length: number) {
         const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             //color: 0xD9AB61,
             color: 0xffffff,
         })
         this.instancedBlock = new THREE.InstancedMesh(
-            geometry, material, userBricks.length
+            geometry, material, length
         )
         this.instancedBlock.castShadow = true
         this.instancedBlock.receiveShadow = true
+        return this.instancedBlock
+    }
+    async Reload(): Promise<void> {
+        this.ClearBlock()
+        this.ClearEventBrick()
+
+        const userBricks = this.store.Legos
+        if(!userBricks?.length) {
+            return
+        }
+        if (this.deleteMode) {
+            this.EditMode()
+            return
+        }
+        console.log("reload ", userBricks.length)
+        this.instancedBlock = this.CreateInstacedMesh(userBricks.length)
         const matrix = new THREE.Matrix4()
         const collidingBoxSize = new THREE.Vector3()
         const q = new THREE.Quaternion()
@@ -134,9 +172,10 @@ export class Legos extends Bricks implements IModelReload {
             this.instancedBlock?.setMatrixAt(i, matrix)
 
             collidingBoxSize.copy(brick.size).sub(this.subV)
-            this.physics.addBuilding(brick.position, collidingBoxSize, brick.rotation)
+            const eventbrick = new EventBrick(this.brickSize, brick.position)
+            this.eventbricks.push(eventbrick)
+            this.physics.addBuilding(eventbrick, brick.position, collidingBoxSize, brick.rotation)
         })
-        console.log(this.instancedBlock)
         this.scene.add(this.instancedBlock)
     }
 }

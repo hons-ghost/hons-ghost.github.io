@@ -1,4 +1,8 @@
 
+export type JoystickManager = {
+	event: (...e: any[]) => void
+}
+
 export class Joystick {
 	joy = document.createElement("canvas")
 	ctx = this.joy.getContext("2d");
@@ -13,25 +17,32 @@ export class Joystick {
 	moveMax = 40;
 	msgPrev = "s";
 	msg = "s";
+	color = "rgb(255, 255, 255)"
 
-	constructor() {
+	constructor(private options: JoystickManager) {
+        this.joy.setAttribute("id", "zone_joystick")
+        //this.joy.setAttribute("class", "zone_joystick")
 		document.body.appendChild(this.joy)
 
 		this.joy.width = 200;
 		this.joy.height = 200;
 
 		this.joy.ontouchstart = (e) => {
+			e.preventDefault()
 			this.start(e.touches[0].clientX, e.touches[0].clientY)
 		}
 		this.joy.ontouchmove = (e) => {
+			e.preventDefault()
 			if (this.onTouch) {
 				this.move(e.touches[0].clientX, e.touches[0].clientY)
 			}
 		}
 		this.joy.ontouchend = (e) => {
+			e.preventDefault()
 			this.end()
 		}
 		this.joy.onmousedown = (e) => {
+			console.log(e)
 			this.start(e.clientX, e.clientY)
 		}
 		this.joy.onmousemove = (e) => {
@@ -47,7 +58,13 @@ export class Joystick {
 		this.ctx.globalAlpha = 0.5
 
 		this.clearBackground();
-		this.drawCircle(100, 100, 50, "rgb(255,000,051)");
+		this.drawCircle(100, 100, 50, this.color);
+	}
+	Hide() {
+		this.joy.style.display = "none"
+	}
+	Show() {
+		this.joy.style.display = "block"
 	}
 	send(msg: string) {
 		console.log(this.msg);
@@ -57,7 +74,7 @@ export class Joystick {
 		if (this.ctx == undefined) return
 		this.ctx.clearRect(0, 0, this.joy.width, this.joy.height);
 		this.ctx.beginPath();
-		this.ctx.strokeStyle = "rgb(153,000,051)";
+		this.ctx.strokeStyle = this.color
 		this.ctx.arc(100, 100, 90, 0, 2 * Math.PI);
 		this.ctx.stroke();
 	}
@@ -85,13 +102,14 @@ export class Joystick {
 		else if (this.moveY < -this.moveMax) this.moveY = -this.moveMax;
 
 		this.clearBackground();
-		this.drawCircle(100 + this.moveX, 100 + this.moveY, 50, "rgb(255,000,051)");
+		this.drawCircle(100 + this.moveX, 100 + this.moveY, 50, this.color);
 
 		if (this.moveX >= 40) this.msg = "d";
 		else if (this.moveX <= -40) this.msg = "a";
 		else if (this.moveY <= -40) this.msg = "w";
 		else if (this.moveY >= 40) this.msg = "x";
 
+		this.options.event("move", this.msg, this.moveX / this.moveMax, this.moveY / this.moveMax)
 		if (this.msg != this.msgPrev) {
 			this.send(this.msg);
 			this.msgPrev = this.msg;
@@ -99,10 +117,11 @@ export class Joystick {
 	}
 	end() {
 		this.clearBackground();
-		this.drawCircle(100, 100, 50, "rgb(255,000,051)");
+		this.drawCircle(100, 100, 50, this.color);
 		this.msg = "s";
 		this.msgPrev = "s";
 		this.onTouch = false;
 		this.send(this.msg);
+		this.options.event("end", this.msg, this.moveX, this.moveY)
 	}
 }

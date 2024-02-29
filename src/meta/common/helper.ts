@@ -66,7 +66,7 @@ export class Helper {
             document.body.removeChild(this.stats.dom)
             this.gui.hide()
             this.debugMode = false
-            this.physics.DebugMode()
+            this.physics.DebugMode(true)
             console.log("Debugging mode Off")
         } else {
             this.scene.add(
@@ -78,7 +78,7 @@ export class Helper {
 
             this.gui.show()
             this.debugMode = true
-            this.physics.DebugMode()
+            this.physics.DebugMode(false)
             console.log("Debugging mode On")
         }
     }
@@ -103,6 +103,7 @@ export class Helper {
         this.CreateVectorGui(fp, meshs.position, "Pos")
         this.CreateVectorGui(fp, meshs.rotation, "Rot")
         this.CreateVectorGui(fp, meshs.scale, "Scale")
+        fp.add(meshs, "visible").listen().name("Visible")
         fp.close()
         return fp
     }

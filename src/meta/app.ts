@@ -20,7 +20,8 @@ export enum AppMode {
     Weapon,
     Funiture,
     Portal,
-    Lego
+    Lego,
+    LegoDelete,
 }
 
 
@@ -143,9 +144,11 @@ export default class App {
         return this.store.StoreModels()
     }
     async ModelLoad(models: string, name: string, playerModel: string | undefined) {
+        this.eventCtrl.OnSceneClearEvent()
         await this.store.LoadModels(models, name, playerModel)
     }
     async ModelLoadEmpty(name: string, playerModel: string | undefined) {
+        this.eventCtrl.OnSceneClearEvent()
         await this.store.LoadModelsEmpty(name, playerModel)
     }
 

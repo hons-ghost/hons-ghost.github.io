@@ -18,7 +18,7 @@ class State {
     ) { }
 
     CheckRun() {
-        if (this.playerPhy.moveDirection.x || this.playerPhy.moveDirection.y
+        if (this.playerPhy.moveDirection.x || this.playerPhy.moveDirection.z
             /*this.playerPhy.KeyState[KeyType.Up] ||
             this.playerPhy.KeyState[KeyType.Down] ||
             this.playerPhy.KeyState[KeyType.Left] ||

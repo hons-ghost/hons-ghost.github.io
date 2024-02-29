@@ -1,5 +1,4 @@
 import * as EventEmitter from "eventemitter3";
-import nipplejs from 'nipplejs'
 import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
 import { BrickOption } from "../scenes/bricks";
@@ -57,10 +56,24 @@ export class EventController {
         this.eventEmitter.on("bsize", callback)
     }
 
+    // Scene Reload
+    OnSceneClearEvent() { 
+        this.eventEmitter.emit("clear")
+    }
+    RegisterSceneClearEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("clear", callback)
+    }
+    OnSceneReloadEvent() { 
+        this.eventEmitter.emit("reload")
+    }
+    RegisterReloadEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("reload", callback)
+    }
+
 
     // GAME MODE
     OnAppModeEvent(mode: AppMode, e: EventFlag, ...arg: any[]) {
-        this.eventEmitter.emit(SConf.AppMode, mode, e, arg)
+        this.eventEmitter.emit(SConf.AppMode, mode, e, ...arg)
     }
     RegisterAppModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.AppMode, callback)

@@ -30,6 +30,7 @@ export class EditHome {
 
     gate = document.getElementById("gate") as HTMLDivElement
     lego = document.getElementById("apart") as HTMLDivElement
+    eraser = document.getElementById("eraser") as HTMLDivElement
     brickReset = document.getElementById("reset-brick") as HTMLDivElement
     brickctrl = document.getElementById("brickctrl") as HTMLDivElement
 
@@ -185,6 +186,11 @@ export class EditHome {
             this.meta.ChangeBrickInfo({
                 v: this.brickSize, r: this.brickRotate, color: this.colorPick.value
             })
+        }
+        this.eraser.onclick = () => {
+            this.mode = (this.mode != AppMode.LegoDelete) ? AppMode.LegoDelete : AppMode.Edit
+            this.meta.ModeChange(this.mode)
+            this.UpdateMenu()
         }
         this.brickReset.onclick = () => this.meta.ChangeBrickInfo({ clear: true })
 

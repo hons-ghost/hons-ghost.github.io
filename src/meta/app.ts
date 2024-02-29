@@ -33,6 +33,7 @@ export default class App {
     store: ModelStore
     initFlag: boolean = false
     currentMode = AppMode.Long
+    /*
     modeMap = {
         [AppMode.Long]: (e: EventFlag) => { this.eventCtrl.OnLongModeEvent(e)},
         [AppMode.Close]: (e: EventFlag) => { this.eventCtrl.OnCloseModeEvent(e)},
@@ -46,6 +47,7 @@ export default class App {
         [AppMode.Portal]: (e: EventFlag) => { this.eventCtrl.OnPortalModeEvent(e)},
         [AppMode.Lego]: (e: EventFlag) => { this.eventCtrl.OnLegoModeEvent(e)},
     }
+    */
     constructor() {
         this.canvas = this.factory.Canvas
         this.currentScene = this.factory.Scene
@@ -131,9 +133,9 @@ export default class App {
         this.eventCtrl.OnChangeUiEvent(visible)
     }
 
-    ModeChange(mode: AppMode) {
-        this.modeMap[this.currentMode](EventFlag.End)
-        this.modeMap[mode](EventFlag.Start)
+    ModeChange(mode: AppMode, ...arg: any[]) {
+        this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.End)
+        this.eventCtrl.OnAppModeEvent(mode, EventFlag.Start, arg)
         this.currentMode = mode
     }
 

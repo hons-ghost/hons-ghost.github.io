@@ -146,6 +146,7 @@ export class Hons {
             footer.style.display = "none"
             header.style.display = "none"
             this.meta.ChangeUiEvent(true)
+            this.meta.ModeChange(AppMode.Long, true)
             controllerBtn.style.display = "block"
             menuGui.style.display = "block"
             this.profileVisible = false
@@ -154,6 +155,7 @@ export class Hons {
             footer.style.display = "block"
             header.style.display = "block"
             this.meta.ChangeUiEvent(false)
+            this.meta.ModeChange(AppMode.Long, false)
             controllerBtn.style.display = "none"
             menuGui.style.display = "none"
             this.profileVisible = true
@@ -163,7 +165,7 @@ export class Hons {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init().then(() => {
-            this.meta.ModeChange(AppMode.Long)
+            this.meta.ModeChange(AppMode.Long, false)
         })
         this.meta.render()
 

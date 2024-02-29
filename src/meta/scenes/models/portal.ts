@@ -7,10 +7,13 @@ import { EventController, EventFlag } from "../../event/eventctrl";
 import { IKeyCommand } from "../../event/keycommand";
 import { GPhysics } from "../../common/physics/gphysics";
 import { IPhysicsObject } from "./iobject";
+import { AppMode } from "../../app";
 //import { Gui } from "../../factory/appfactory";
 
 export class Portal extends GhostModel implements IPhysicsObject {
     controllerEnable = false
+    movePos = new THREE.Vector3()
+
     get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
 
     constructor(
@@ -21,17 +24,12 @@ export class Portal extends GhostModel implements IPhysicsObject {
     ) {
         super(asset)
 
-        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
             if(!this.controllerEnable) return
             if (e.type == "move") {
-                const p = new THREE.Vector3()
-                switch (data.direction.angle) {
-                    case "up": p.z = -1; break;
-                    case "down": p.z = 1; break;
-                    case "right": p.x = 1; break;
-                    case "left": p.x = -1; break;
-                }
-                this.moveEvent(p)
+                this.movePos.copy(vir)
+            } else if (e.type == "end") {
+                this.moveEvent(this.movePos)
             }
         })
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
@@ -40,7 +38,8 @@ export class Portal extends GhostModel implements IPhysicsObject {
             const position = keyCommand.ExecuteKeyDown()
             this.moveEvent(position)
         })
-        eventCtrl.RegisterPortalModeEvent((e: EventFlag) => {
+        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Portal) return
             switch (e) {
                 case EventFlag.Start:
                     this.controllerEnable = true

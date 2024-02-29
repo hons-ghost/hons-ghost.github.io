@@ -42,10 +42,10 @@ export class PlayerPhysic implements IGPhysic {
             this.keyUpQueue.push(keyCommand)
         })
 
-        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
             if (!this.contollerEnable) return
             if (e.type == "move") {
-                this.inputVQueue.push(new THREE.Vector3(data.vector.x, 0, -data.vector.y))
+                this.inputVQueue.push(new THREE.Vector3().copy(real))
                 this.inputMode = true
             } else {
                 this.inputMode = false

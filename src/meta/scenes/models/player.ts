@@ -8,6 +8,7 @@ import { Game } from "../game";
 import { GhostModel } from "./ghostmodel";
 import { Ani, Char, IAsset } from "../../loader/assetmodel";
 import { Portal } from "./portal";
+import { AppMode } from "../../app";
 
 export enum ActionType {
     IdleAction,
@@ -69,7 +70,11 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
 
         this.store.RegisterPlayer(this, this)
 
-        this.eventCtrl.RegisterPlayModeEvent((e: EventFlag) => {
+        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Play)  {
+                this.Visible = false
+                return
+            }
             switch (e) {
                 case EventFlag.Start:
                     this.Init()

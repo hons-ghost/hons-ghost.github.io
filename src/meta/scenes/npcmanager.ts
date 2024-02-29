@@ -9,6 +9,7 @@ import { IModelReload, ModelStore } from "../common/modelstore"
 import { GPhysics } from "../common/physics/gphysics";
 import { Char, IAsset } from "../loader/assetmodel";
 import SConf from "../configs/staticconf";
+import { AppMode } from "../app";
 
 
 
@@ -40,71 +41,46 @@ export class NpcManager implements IModelReload {
         this.canvas.RegisterViewer(this.helper2)
         this.canvas.RegisterViewer(this.owner)
 
-        this.eventCtrl.RegisterBrickModeEvent((e: EventFlag) => {
-            switch (e) {
-                case EventFlag.Start:
-                    this.owner.Visible = true
-                    this.owner.ControllerEnable = false
-                    break
-                case EventFlag.End:
-                    this.owner.Visible = false
-                    break
-            }
-        })
-        this.eventCtrl.RegisterEditModeEvent((e: EventFlag) => {
-            switch (e) {
-                case EventFlag.Start:
-                    this.owner.Visible = true
-                    this.owner.ControllerEnable = false
-                    break
-                case EventFlag.End:
-                    this.owner.Visible = false
-                    break
-            }
-        })
-        this.eventCtrl.RegisterLocatModeEvent((e: EventFlag) => {
-            switch (e) {
-                case EventFlag.Start:
-                    this.owner.Visible = true
-                    this.owner.ControllerEnable = true
-                    break
-                case EventFlag.End:
-                    this.owner.Visible = false
-                    this.owner.ControllerEnable = false
-                    break
-            }
-        })
-        this.eventCtrl.RegisterPlayModeEvent((e: EventFlag) => {
-            switch (e) {
-                case EventFlag.Start:
-                    this.owner.Visible = true
-                    this.owner.ControllerEnable = false
-                    break
-                case EventFlag.End:
-                    this.owner.Visible = false
-                    break
-            }
-        })
-        this.eventCtrl.RegisterCloseModeEvent((e: EventFlag) => {
-            switch (e) {
-                case EventFlag.Start:
-                    this.owner.Visible = true
-                    this.owner.ControllerEnable = false
-                    break
-                case EventFlag.End:
-                    this.owner.Visible = false
-                    break
-            }
-        })
-        this.eventCtrl.RegisterLongModeEvent((e: EventFlag) => {
-            switch (e) {
-                case EventFlag.Start:
-                    this.helper.Visible = true
-                    this.helper2.Visible = true
-                    break
-                case EventFlag.End:
-                    this.helper.Visible = false
-                    this.helper2.Visible = false
+        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            switch(mode) {
+                case AppMode.Play:
+                case AppMode.Brick:
+                case AppMode.Edit:
+                case AppMode.Close:
+                    switch (e) {
+                        case EventFlag.Start:
+                            this.owner.Visible = true
+                            this.owner.ControllerEnable = false
+                            break
+                        case EventFlag.End:
+                            this.owner.Visible = false
+                            break
+                    }
+                    break;
+                case AppMode.Locate:
+                    switch (e) {
+                        case EventFlag.Start:
+                            this.owner.Visible = true
+                            this.owner.ControllerEnable = true
+                            break
+                        case EventFlag.End:
+                            this.owner.Visible = false
+                            this.owner.ControllerEnable = false
+                            break
+                    }
+                    break;
+                case AppMode.Long:
+                    switch (e) {
+                        case EventFlag.Start:
+                            this.owner.Visible = false
+                            this.helper.Visible = true
+                            this.helper2.Visible = true
+                            break
+                        case EventFlag.End:
+                            this.helper.Visible = false
+                            this.helper2.Visible = false
+                            break
+                    }
                     break
             }
         })

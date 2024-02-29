@@ -2,6 +2,7 @@ import { Vector3 } from "three"
 import { Char } from "../loader/assetmodel"
 
 export default class SConf {
+    public static AppMode = Symbol("appmode")
     public static BrickMode = Symbol("brickmode")
     public static EditMode = Symbol("editmode")
     public static PlayMode = Symbol("playmode")

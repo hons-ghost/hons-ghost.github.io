@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import * as nipplejs from 'nipplejs'
 import { BrickGuide, BrickGuideType } from "./models/brickguide";
 import { Brick2 } from "./models/brick2";
 import { EventController, EventFlag } from "../event/eventctrl";
@@ -18,9 +17,12 @@ export class Bricks {
     brickGuide: BrickGuide | undefined
     brickfield: THREE.Mesh
     instancedBlock?: THREE.InstancedMesh
+    bricks2: Brick2[] = []
+
     protected brickType = BrickGuideType.Event
     protected brickSize: THREE.Vector3 = new THREE.Vector3(1, 1, 1)
     protected brickColor: THREE.Color = new THREE.Color(0xFFFFFF)
+    protected movePos = new THREE.Vector3()
     protected fieldWidth = 18
     protected fieldHeight = 24
 
@@ -33,18 +35,13 @@ export class Bricks {
         protected physics: GPhysics
     ) {
         
-        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
         if (this.brickGuide == undefined) return
         if (!this.brickGuide.ControllerEnable) return
             if (e.type == "move") {
-                const p = new THREE.Vector3()
-                switch (data.direction.angle) {
-                    case "up": p.z = -1; break;
-                    case "down": p.z = 1; break;
-                    case "right": p.x = 1; break;
-                    case "left": p.x = -1; break;
-                }
-                this.moveEvent(p)
+                this.movePos.copy(vir)
+            } else if (e.type == "end") {
+                this.moveEvent(this.movePos)
             }
         })
 
@@ -106,6 +103,7 @@ export class Bricks {
             this.store.Bricks.push({ position: b.position, color: this.brickColor })
         }
         this.scene.add(b)
+        this.bricks2.push(b)
 
         const subV = new THREE.Vector3(0.1, 0.1, 0.1)
         const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
@@ -114,6 +112,19 @@ export class Bricks {
         this.physics.addBuilding(b.position, size, b.rotation)
 
         b.Visible = true
+    }
+
+    ClearBlock() {
+        this.bricks2.forEach((b) => {
+            this.scene.remove(b);
+            b.geometry.dispose();
+            (b.material as THREE.Material).dispose();
+        })
+        if (this.instancedBlock != undefined) {
+            this.scene.remove(this.instancedBlock)
+            this.instancedBlock.dispose()
+            this.instancedBlock = undefined
+        }
     }
 
     GetBrickGuide(pos?: THREE.Vector3) {

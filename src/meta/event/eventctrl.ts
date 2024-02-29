@@ -3,6 +3,7 @@ import nipplejs from 'nipplejs'
 import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
 import { BrickOption } from "../scenes/bricks";
+import { AppMode } from "../app";
 
 export enum EventFlag {
     Start,
@@ -31,8 +32,8 @@ export class EventController {
         this.eventEmitter.on("keyup", callback)
     }
 
-    OnInputEvent(e: nipplejs.EventData, data:nipplejs.JoystickOutputData) {
-        this.eventEmitter.emit("input", e, data)
+    OnInputEvent(e: any, realV: THREE.Vector3, virtualV: THREE.Vector3) {
+        this.eventEmitter.emit("input", e, realV, virtualV)
     }
 
     RegisterInputEvent(callback: (...e: any[]) => void) {
@@ -57,7 +58,14 @@ export class EventController {
     }
 
 
-    // GAME MODe
+    // GAME MODE
+    OnAppModeEvent(mode: AppMode, e: EventFlag, ...arg: any[]) {
+        this.eventEmitter.emit(SConf.AppMode, mode, e, arg)
+    }
+    RegisterAppModeEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on(SConf.AppMode, callback)
+    }
+    /*
     OnBrickModeEvent(e: EventFlag) {
         this.eventEmitter.emit(SConf.BrickMode, e)
     }
@@ -118,4 +126,5 @@ export class EventController {
     RegisterLegoModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.LegoMode, callback)
     }
+    */
 }

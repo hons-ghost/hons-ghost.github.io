@@ -8,10 +8,10 @@ import { IKeyCommand } from "../event/keycommand";
 import { IModelReload, ModelStore } from "../common/modelstore";
 import { GPhysics } from "../common/physics/gphysics";
 import { Bricks } from "./bricks";
+import App, { AppMode } from "../app";
 
 export class EventBricks extends Bricks implements IModelReload{
     bricks: Brick[]
-    bricks2: Brick2[]
 
     get Size(): THREE.Vector3 { return this.brickSize }
 
@@ -29,8 +29,9 @@ export class EventBricks extends Bricks implements IModelReload{
         store.RegisterBricks(this)
 
         this.bricks = []
-        this.bricks2 = []
-        this.eventCtrl.RegisterBrickModeEvent((e: EventFlag) => {
+        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Brick) return
+
             if (this.brickGuide == undefined) return
             switch (e) {
                 case EventFlag.Start:
@@ -69,10 +70,7 @@ export class EventBricks extends Bricks implements IModelReload{
     async Init() { }
 
     async Reload(): Promise<void> {
-        if (this.instancedBlock != undefined) {
-            this.scene.remove(this.instancedBlock)
-            this.instancedBlock = undefined
-        }
+        this.ClearBlock()
 
         const userBricks = this.store.Bricks
         if(userBricks.length == 0) {
@@ -99,18 +97,4 @@ export class EventBricks extends Bricks implements IModelReload{
         })
         this.scene.add(this.instancedBlock)
     }
-
-    /*
-    async Loader(scale: number, v: CANNON.Vec3): Promise<Brick> {
-        const b = new Brick(this.loader)
-        await b.Loader(scale, v).then(() => {
-            this.brickSize = b.Size
-            this.bricks.push(b)
-            if (this.bricks.length > 1) {
-                this.scene.add(b.Meshs)
-            }
-        })
-        return b
-    }
-    */
 }

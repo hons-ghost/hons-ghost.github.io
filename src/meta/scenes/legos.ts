@@ -6,6 +6,7 @@ import { IKeyCommand } from "../event/keycommand";
 import { Brick2 } from "./models/brick2";
 import { BrickGuide, BrickGuideType } from "./models/brickguide";
 import { BrickOption, Bricks } from "./bricks";
+import { AppMode } from "../app";
 
 export enum BrickShapeType {
     Rectangle,
@@ -13,7 +14,6 @@ export enum BrickShapeType {
 }
 
 export class Legos extends Bricks implements IModelReload {
-    bricks2: Brick2[] = []
 
     subV = new THREE.Vector3(0.1, 0.1, 0.1)
 
@@ -64,8 +64,8 @@ export class Legos extends Bricks implements IModelReload {
             this.CheckCollision()
         })
 
-        this.eventCtrl.RegisterLegoModeEvent((e: EventFlag) => {
-            if (this.brickGuide == undefined) return
+        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if (mode != AppMode.Lego, this.brickGuide == undefined) return
             switch(e) {
                 case EventFlag.Start:
                     this.brickGuide.ControllerEnable = true
@@ -106,11 +106,7 @@ export class Legos extends Bricks implements IModelReload {
     }
 
     async Reload(): Promise<void> {
-        if (this.instancedBlock != undefined) {
-            this.scene.remove(this.instancedBlock)
-            this.instancedBlock.dispose()
-            this.instancedBlock = undefined
-        }
+        this.ClearBlock()
 
         const userBricks = this.store.Legos
         if(!userBricks?.length) {

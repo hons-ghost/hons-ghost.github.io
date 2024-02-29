@@ -24,6 +24,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
 
     private controllerEnable: boolean = false
 
+    movePos = new THREE.Vector3()
     vFlag = true
     get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
     get Model() { return this.asset.Id }
@@ -39,17 +40,12 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
         super(asset)
         this.text = new FloatingName("Welcome")
 
-        eventCtrl.RegisterInputEvent((e: nipplejs.EventData, data: nipplejs.JoystickOutputData) => { 
+        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
             if (!this.controllerEnable) return
             if (e.type == "move") {
-                const p = new THREE.Vector3()
-                switch (data.direction.angle) {
-                    case "up": p.z = -1; break;
-                    case "down": p.z = 1; break;
-                    case "right": p.x = 1; break;
-                    case "left": p.x = -1; break;
-                }
-                this.moveEvent(p)
+                this.movePos.copy(vir)
+            } else if (e.type == "end") {
+                this.moveEvent(this.movePos)
             }
         })
 

@@ -3,6 +3,7 @@ import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
 import { BrickOption } from "../scenes/bricks";
 import { AppMode } from "../app";
+import { IPhysicsObject } from "../scenes/models/iobject";
 
 export enum EventFlag {
     Start,
@@ -37,6 +38,14 @@ export class EventController {
 
     RegisterInputEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on("input", callback)
+    }
+    // Change Controll Object
+    OnChangeCtrlObjEvent(obj?: IPhysicsObject) {
+        this.eventEmitter.emit("ctrlobj", obj)
+    }
+
+    RegisterChangeCtrlObjEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("ctrlobj", callback)
     }
 
     // UI

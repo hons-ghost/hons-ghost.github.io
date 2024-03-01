@@ -1,9 +1,7 @@
 import * as THREE from "three";
-import { Physics } from "../common/physics/physics";
 import { IObject } from "./models/iobject";
 import { IScene } from "./models/iviewer";
 import { Light } from "../common/light";
-import { Camera } from "../common/camera";
 
 export class Game extends THREE.Scene implements IScene {
     models: THREE.Mesh[]

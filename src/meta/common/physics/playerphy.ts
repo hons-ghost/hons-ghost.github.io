@@ -63,15 +63,13 @@ export class PlayerPhysic implements IGPhysic {
     reset() {
         this.moveDirection.x = 0
         this.moveDirection.z = 0
+        this.inputVQueue.length = 0
     }
 
     update(delta: number) {
-        if (this.inputMode) {
             this.updateInputVector()
-        } else {
             this.updateDownKey()
             this.updateUpKey()
-        }
 
         if(!this.player.Visible) return
 

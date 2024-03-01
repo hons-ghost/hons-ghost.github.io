@@ -3,13 +3,14 @@ import { EventController } from "../../event/eventctrl";
 import { IKeyCommand } from "../../event/keycommand";
 import { GhostModel2 } from "./ghostmodel";
 import { BrickShapeType } from "../legos";
+import { IPhysicsObject } from "./iobject";
 
 export enum BrickGuideType {
     Lego,
     Event
 }
 
-export class BrickGuide extends GhostModel2 {
+export class BrickGuide extends GhostModel2 implements IPhysicsObject{
     ShapeType = BrickShapeType.Rectangle
 
     get Creation() { return this.creationFlag }
@@ -23,6 +24,8 @@ export class BrickGuide extends GhostModel2 {
     }
     private contollerEnable: boolean = true
     private creationFlag = false
+
+    get BoxPos() { return this.position }
 
     set ControllerEnable(flag: boolean) { this.contollerEnable = flag }
     get ControllerEnable(): boolean { return this.contollerEnable }

@@ -11,15 +11,19 @@ import { Floor } from "../scenes/models/floor";
 import { GPhysics } from "./physics/gphysics";
 import { Legos } from "../scenes/legos";
 import { Camera } from "./camera";
+import { RayViwer } from "./raycaster";
+import { IViewer } from "../scenes/models/iviewer";
+import { Canvas } from "./canvas";
 
 
 
-export class Helper {
+export class Helper implements IViewer {
     gui = new GUI()
     debugMode = false
     axesHelper: THREE.AxesHelper = new THREE.AxesHelper(300)
     gridHelper: THREE.GridHelper = new THREE.GridHelper(300)
     stats = new Stats()
+    arrowHelper: THREE.ArrowHelper
 
     constructor(
         private scene: Game,
@@ -29,7 +33,9 @@ export class Helper {
         private floor: Floor,
         private legos: Legos,
         private camera: Camera,
+        private rayViewer: RayViwer,
         private physics: GPhysics,
+        private canvas: Canvas,
         private eventCtrl: EventController
     ) {
         this.gui.hide()
@@ -49,19 +55,27 @@ export class Helper {
         const ffp = this.gui.addFolder("floor")
         ffp.add(floor, 'visible').listen().name("visible")
 
+        this.arrowHelper = new THREE.ArrowHelper(rayViewer.ray.direction, rayViewer.ray.origin, 300, 0x00ff00)
 
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if (keyCommand.Type == KeyType.System0) {
                 this.On()
             }
         })
+        canvas.RegisterViewer(this)
+    }
+    resize(width: number, height: number): void { }
+    update(): void {
+        this.arrowHelper.position.copy(this.rayViewer.ray.origin)
+        this.arrowHelper.setDirection(this.rayViewer.ray.direction)
     }
 
     On() {
         if (this.debugMode) {
             this.scene.remove(
                 this.axesHelper,
-                this.gridHelper
+                this.gridHelper,
+                this.arrowHelper,
             )
             document.body.removeChild(this.stats.dom)
             this.gui.hide()
@@ -71,7 +85,8 @@ export class Helper {
         } else {
             this.scene.add(
                 this.axesHelper,
-                this.gridHelper
+                this.gridHelper,
+                this.arrowHelper,
             )
             document.body.appendChild(this.stats.dom)
             this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -84,12 +99,12 @@ export class Helper {
     }
     CheckStateBegin() {
         if (this.debugMode) {
-            this.stats.begin()
+            //this.stats.begin()
         }
     }
     CheckStateEnd() {
         if (this.debugMode) {
-            this.stats.end()
+            this.stats.update()
         }
     }
 

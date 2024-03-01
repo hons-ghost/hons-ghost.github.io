@@ -40,6 +40,7 @@ export class EventBricks extends Bricks implements IModelReload{
                     this.brickGuide.ControllerEnable = true
                     this.brickGuide.Visible = true
                     this.brickfield.visible = true
+                    this.eventCtrl.OnChangeCtrlObjEvent(this.brickGuide)
                     this.CheckCollision()
                     break
                 case EventFlag.End:
@@ -71,6 +72,37 @@ export class EventBricks extends Bricks implements IModelReload{
     }
     async Init() { }
 
+    EditMode() {
+        this.ClearBlock()
+
+        const userBricks = this.store.Legos
+        const subV = new THREE.Vector3(0.1, 0.1, 0.1)
+        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
+
+        const collidingBoxSize = new THREE.Vector3()
+        userBricks.forEach((brick) => {
+            const b = new Brick2(brick.position, brick.size, brick.color)
+            b.rotation.copy(brick.rotation)
+            this.scene.add(b)
+            this.bricks2.push(b)
+            collidingBoxSize.copy(brick.size).sub(this.subV)
+            this.physics.addBuilding(b, brick.position, collidingBoxSize, b.rotation)
+        })
+    }
+    CreateInstacedMesh(length: number) {
+        const geometry = new THREE.BoxGeometry(1, 1, 1)
+        const material = new THREE.MeshStandardMaterial({ 
+            //color: 0xD9AB61,
+            color: 0xffffff,
+            transparent: true,
+        })
+        this.instancedBlock = new THREE.InstancedMesh(
+            geometry, material, length
+        )
+        this.instancedBlock.castShadow = true
+        this.instancedBlock.receiveShadow = true
+        return this.instancedBlock
+    }
     async Reload(): Promise<void> {
         this.ClearBlock()
         this.ClearEventBrick()
@@ -79,20 +111,16 @@ export class EventBricks extends Bricks implements IModelReload{
         if(userBricks.length == 0) {
             return
         }
-        const geometry = new THREE.BoxGeometry(1, 1, 1)
-        const material = new THREE.MeshStandardMaterial({ 
-            //color: 0xD9AB61,
-            color: 0xffffff,
-        })
-        this.instancedBlock = new THREE.InstancedMesh(
-            geometry, material, userBricks.length
-        )
-        this.instancedBlock.castShadow = true
-        this.instancedBlock.receiveShadow = true
+        if (this.deleteMode) {
+            this.EditMode()
+            return
+        }
+        this.instancedBlock = this.CreateInstacedMesh(userBricks.length)
+
         const matrix = new THREE.Matrix4()
         const q = new THREE.Quaternion()
-        const subV = new THREE.Vector3(0.1, 0.1, 0.1)
-        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
+        const size = new THREE.Vector3().copy(this.brickSize).sub(this.subV)
+
         userBricks.forEach((brick, i) => {
             matrix.compose(brick.position, q, this.brickSize)
             this.instancedBlock?.setMatrixAt(i, matrix)

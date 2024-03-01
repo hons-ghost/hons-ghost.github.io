@@ -22,7 +22,8 @@ import { GPhysics } from "../common/physics/gphysics";
 import { PlayerPhysic } from "../common/physics/playerphy";
 import { Helper } from "../common/helper";
 import { Legos } from "../scenes/legos";
-import { Input } from "../common/input";
+import { Input } from "../common/inputs/input";
+import { RayViwer } from "../common/raycaster";
 
 
 export class AppFactory {
@@ -55,6 +56,7 @@ export class AppFactory {
     private worldSize: number
     private brick: EventBricks
     private legos: Legos
+    private rayViewer: RayViwer
 
     private currentScene: IScene
 
@@ -90,6 +92,7 @@ export class AppFactory {
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
+        this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.currentScene = this.game
 
@@ -197,8 +200,8 @@ export class AppFactory {
 
         this.Helper = new Helper(
             this.game, this.player, this.npcs, this.portal, this.floor,
-            this.legos,
-            this.camera, this.gphysics, this.eventCtrl
+            this.legos, this.camera, this.rayViewer, this.gphysics, 
+            this.canvas, this.eventCtrl
         )
     }
     Despose() {

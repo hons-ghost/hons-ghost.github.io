@@ -77,6 +77,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
             }
             switch (e) {
                 case EventFlag.Start:
+                    this.eventCtrl.OnChangeCtrlObjEvent(this)
                     this.Init()
                     this.Visible = true
                     break

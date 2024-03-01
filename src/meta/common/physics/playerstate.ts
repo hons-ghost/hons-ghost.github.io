@@ -115,7 +115,6 @@ export class IdleState extends State implements IPlayerAction {
         this.Init()
     }
     Init(): void {
-        console.log("Idle Init!")
         this.player.ChangeAction(ActionType.IdleAction)
     }
     Uninit(): void {
@@ -143,7 +142,6 @@ export class RunState extends State implements IPlayerAction {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
-        console.log("Run Init!")
         this.player.ChangeAction(ActionType.RunAction)
     }
     Uninit(): void {

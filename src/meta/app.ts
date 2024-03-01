@@ -6,7 +6,6 @@ import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
-import { Vec3 } from "math/Vec3";
 import { BrickOption } from "./scenes/bricks";
 
 export enum AppMode {
@@ -94,13 +93,6 @@ export default class App {
                 case "Control": this.eventCtrl.OnKeyUpEvent(new KeyAction1); break;
             }
         })
-        const jump = document.getElementById("joypad_button1") as HTMLDivElement
-        const action1 = document.getElementById("joypad_button2") as HTMLDivElement
-        jump.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeySpace) }
-        jump.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeySpace) }
-
-        action1.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyAction1) }
-        action1.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyAction1) }
         this.initFlag = true
 
         if (window.location.hostname != "hons.ghostwebservice.com") {

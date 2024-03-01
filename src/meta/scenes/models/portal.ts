@@ -7,10 +7,10 @@ import { IKeyCommand } from "../../event/keycommand";
 import { GPhysics } from "../../common/physics/gphysics";
 import { IPhysicsObject } from "./iobject";
 import { AppMode } from "../../app";
-import { ModelStore } from "../../common/modelstore";
+import { IModelReload, ModelStore } from "../../common/modelstore";
 //import { Gui } from "../../factory/appfactory";
 
-export class Portal extends GhostModel implements IPhysicsObject {
+export class Portal extends GhostModel implements IPhysicsObject, IModelReload {
     controllerEnable = false
     movePos = new THREE.Vector3()
 
@@ -24,6 +24,8 @@ export class Portal extends GhostModel implements IPhysicsObject {
         private gphysic: GPhysics
     ) {
         super(asset)
+
+        store.RegisterStore(this)
 
         eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
             if(!this.controllerEnable) return
@@ -63,10 +65,15 @@ export class Portal extends GhostModel implements IPhysicsObject {
             this.meshs.position.x -= vx
             this.meshs.position.z -= vz
         }
+        this.store.Portal = this.meshs.position
         console.log(this.meshs.position)
     }
 
-    async Init() {
+    async Reload(): Promise<void> {
+        const pos = this.store.Portal
+        if (pos != undefined) {
+            this.meshs.position.copy(pos)
+        }
     }
 
     async Loader(position: THREE.Vector3) {
@@ -78,13 +85,5 @@ export class Portal extends GhostModel implements IPhysicsObject {
             child.castShadow = true
             child.receiveShadow = true
         })
-        /*
-        Gui.add(this.meshs.rotation, 'x', -1, 1, 0.01).listen()
-        Gui.add(this.meshs.rotation, 'y', -1, 1, 0.01).listen()
-        Gui.add(this.meshs.rotation, 'z', -1, 1, 0.01).listen()
-        Gui.add(this.meshs.position, 'x', -50, 50, 0.1).listen()
-        Gui.add(this.meshs.position, 'y', -50, 50, 0.1).listen()
-        Gui.add(this.meshs.position, 'z', -50, 50, 0.1).listen()
-        */
     }
 }

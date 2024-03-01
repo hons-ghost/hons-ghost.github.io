@@ -14,6 +14,7 @@ export class Brick2 extends GhostModel2 {
         const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             //color: 0xD9AB61,
+            transparent: true,
             color: color,
         })
         super(geometry, material)

@@ -73,6 +73,10 @@ export class EditHome {
         this.UpdateBrickUI()
     }
     ChangeBrickSize(xyz: string, value: number) {
+        if (xyz == "x" && this.brickSize.x + value < 1) { return }
+        else if (xyz == "y" && this.brickSize.y + value < 1) { return }
+        else if (xyz == "z" && this.brickSize.z + value < 1) { return }
+
         switch(xyz) {
             case "x": this.brickSize.x += value; break;
             case "y": this.brickSize.y += value; break;

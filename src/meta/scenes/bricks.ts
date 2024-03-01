@@ -36,6 +36,7 @@ export class Bricks {
     protected brickType = BrickGuideType.Event
     protected brickSize: THREE.Vector3 = new THREE.Vector3(1, 1, 1)
     protected brickColor: THREE.Color = new THREE.Color(0xFFFFFF)
+    protected subV = new THREE.Vector3(0.1, 0.1, 0.1)
     protected movePos = new THREE.Vector3()
     protected fieldWidth = 18
     protected fieldHeight = 24
@@ -54,6 +55,7 @@ export class Bricks {
         if (!this.brickGuide.ControllerEnable) return
             if (e.type == "move") {
                 this.movePos.copy(vir)
+                this.moveEvent(this.movePos)
             } else if (e.type == "end") {
                 this.moveEvent(this.movePos)
             }

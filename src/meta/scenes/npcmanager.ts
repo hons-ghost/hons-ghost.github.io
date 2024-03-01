@@ -43,16 +43,18 @@ export class NpcManager implements IModelReload {
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             switch(mode) {
-                case AppMode.Play:
                 case AppMode.Brick:
                 case AppMode.Edit:
                 case AppMode.Close:
+                    this.eventCtrl.OnChangeCtrlObjEvent(this.owner)
+                case AppMode.Play:
                     switch (e) {
                         case EventFlag.Start:
                             this.owner.Visible = true
                             this.owner.ControllerEnable = false
                             break
                         case EventFlag.End:
+                            this.eventCtrl.OnChangeCtrlObjEvent()
                             this.owner.Visible = false
                             break
                     }
@@ -62,8 +64,10 @@ export class NpcManager implements IModelReload {
                         case EventFlag.Start:
                             this.owner.Visible = true
                             this.owner.ControllerEnable = true
+                            this.eventCtrl.OnChangeCtrlObjEvent(this.owner)
                             break
                         case EventFlag.End:
+                            this.eventCtrl.OnChangeCtrlObjEvent()
                             this.owner.Visible = false
                             this.owner.ControllerEnable = false
                             break

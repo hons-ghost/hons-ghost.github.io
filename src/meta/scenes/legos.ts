@@ -15,8 +15,6 @@ export enum BrickShapeType {
 }
 
 export class Legos extends Bricks implements IModelReload {
-    subV = new THREE.Vector3(0.1, 0.1, 0.1)
-
     get Size(): THREE.Vector3 { return (this.brickGuide) ? this.brickGuide.Size : this.brickSize }
 
     constructor(
@@ -30,19 +28,14 @@ export class Legos extends Bricks implements IModelReload {
         this.brickType = BrickGuideType.Lego
 
         eventCtrl.RegisterBrickInfo((opt: BrickOption) => {
-            console.log(opt)
             if (opt.clear) {
                 const legos = this.store.Legos
-                console.log(legos, this.store.Legos)
                 if (legos) {
                     legos.length = 0
-                    console.log(legos, this.store.Legos)
                 }
                 const userBricks = this.store.Bricks
-                console.log(userBricks, this.store.Bricks)
                 if (userBricks) {
                     userBricks.length = 0
-                    console.log(userBricks, this.store.Bricks)
                 }
             }
 
@@ -66,7 +59,6 @@ export class Legos extends Bricks implements IModelReload {
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             this.deleteMode = (mode == AppMode.LegoDelete)
-            console.log(this.deleteMode)
 
             if (mode == AppMode.Lego || mode == AppMode.LegoDelete) {
                 if (this.brickGuide == undefined) {
@@ -80,6 +72,7 @@ export class Legos extends Bricks implements IModelReload {
                         this.brickfield.visible = true
                         this.physics.PBoxDispose()
                         this.eventCtrl.OnSceneReloadEvent()
+                        this.eventCtrl.OnChangeCtrlObjEvent(this.brickGuide)
                         this.EditMode()
                         this.CheckCollision()
                         break
@@ -118,7 +111,9 @@ export class Legos extends Bricks implements IModelReload {
     }
     EditMode() {
         this.ClearBlock()
-
+        this.CreateBricks()
+    }
+    CreateBricks() {
         const userBricks = this.store.Legos
         const subV = new THREE.Vector3(0.1, 0.1, 0.1)
         const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
@@ -133,39 +128,27 @@ export class Legos extends Bricks implements IModelReload {
             this.physics.addBuilding(b, brick.position, collidingBoxSize, b.rotation)
         })
     }
-    CreateInstacedMesh(length: number) {
+    CreateInstacedMesh() {
+        const userBricks = this.store.Legos
+        if(!userBricks?.length) {
+            return
+        }
         const geometry = new THREE.BoxGeometry(1, 1, 1)
         const material = new THREE.MeshStandardMaterial({ 
             //color: 0xD9AB61,
             color: 0xffffff,
+            transparent: true,
         })
         this.instancedBlock = new THREE.InstancedMesh(
             geometry, material, length
         )
         this.instancedBlock.castShadow = true
         this.instancedBlock.receiveShadow = true
-        return this.instancedBlock
-    }
-    async Reload(): Promise<void> {
-        this.ClearBlock()
-        this.ClearEventBrick()
-
-        const userBricks = this.store.Legos
-        if(!userBricks?.length) {
-            return
-        }
-        if (this.deleteMode) {
-            this.EditMode()
-            return
-        }
-        console.log("reload ", userBricks.length)
-        this.instancedBlock = this.CreateInstacedMesh(userBricks.length)
         const matrix = new THREE.Matrix4()
         const collidingBoxSize = new THREE.Vector3()
         const q = new THREE.Quaternion()
 
         userBricks.forEach((brick, i) => {
-            console.log(brick)
             q.setFromEuler(brick.rotation)
             matrix.compose(brick.position, q, brick.size)
             this.instancedBlock?.setColorAt(i, new THREE.Color(brick.color))
@@ -177,5 +160,17 @@ export class Legos extends Bricks implements IModelReload {
             this.physics.addBuilding(eventbrick, brick.position, collidingBoxSize, brick.rotation)
         })
         this.scene.add(this.instancedBlock)
+    }
+    async Reload(): Promise<void> {
+        this.ClearBlock()
+        this.ClearEventBrick()
+
+        /*
+        if (this.deleteMode) {
+            return
+        }
+        */
+        this.CreateBricks()
+        //this.CreateInstacedMesh()
     }
 }

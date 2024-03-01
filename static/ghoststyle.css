@@ -239,7 +239,7 @@ header {
 #joypad_buttons {
     display: none;
     position: absolute;
-    right: 10px;
+    right: 5px;
     bottom: 10px;
 }
 .joypad_arrow {

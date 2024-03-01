@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import SConf from "../configs/staticconf";
 import { EventController } from "../event/eventctrl";
 import { Char } from "../loader/assetmodel";
@@ -44,6 +45,11 @@ export class ModelStore {
     }
     private name: string = "unknown"
 
+    set Portal(pos: THREE.Vector3) { 
+        this.data.portal = (this.data.portal == undefined) ? 
+            new THREE.Vector3().copy(pos) : this.data.portal.copy(pos)
+    }
+    get Portal(): THREE.Vector3 | undefined { return this.data.portal }
     get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
@@ -111,6 +117,7 @@ export class ModelStore {
             this.playerModel = playerData.ownerModel
         }
         this.name = name
+        console.log(data)
         this.data = JSON.parse(data)
         await Promise.all([
             this.mgrs.forEach(async (mgr) => {

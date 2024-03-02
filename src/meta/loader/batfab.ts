@@ -3,21 +3,21 @@ import { Loader } from "./loader";
 import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-export class GunFab extends AssetModel implements IAsset {
+export class BatFab extends AssetModel implements IAsset {
     gltf?:GLTF
 
     get Id() {return Char.Male}
 
     constructor(loader: Loader) { 
-        super(loader, ModelType.Gltf, "assets/weapon/gun.glb", async (gltf: GLTF) => {
+        super(loader, ModelType.Gltf, "assets/weapon/bat.glb", async (gltf: GLTF) => {
             this.gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
 
-            const scale = 0.05
+            const scale = 0.3
             this.meshs.scale.set(scale, scale, scale)
-            this.meshs.position.set(0.1, 0.8, -0.1)
-            this.meshs.rotation.set(3, -0.7, -1.8)
+            this.meshs.position.set(0.1, 0.2, -0.1)
+            this.meshs.rotation.set(3, -0.5, -1.8)
         })
     }
     box?: THREE.Mesh

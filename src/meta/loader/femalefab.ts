@@ -24,18 +24,19 @@ export class FemaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Idle, gltf.animations[3])
             this.clips.set(Ani.Run, gltf.animations[6])
             this.clips.set(Ani.Jump, gltf.animations[4])
-            this.clips.set(Ani.Punch, gltf.animations[11])
+            //this.clips.set(Ani.Punch, gltf.animations[11])
+            this.clips.set(Ani.Punch, gltf.animations[7])
             this.clips.set(Ani.FightIdle, gltf.animations[0])
             this.clips.set(Ani.Dance0, gltf.animations[1])
 
             const right = this.meshs.getObjectByName("mixamorigRightHand")
             await new Promise((resolve)=>{
-                this.loader.Load.load("assets/weapon/bat.glb", (gltf) => {
+                this.loader.Load.load("assets/weapon/gun.glb", (gltf) => {
                     const meshs = gltf.scene
-                    const scale = 0.3
+                    const scale = 0.05
                     meshs.scale.set(scale, scale, scale)
-                    meshs.position.set(0.1, 0.2, -0.1)
-                    meshs.rotation.set(3, -0.5, -1.8)
+                    meshs.position.set(0.2, 0.8, 0.2)
+                    meshs.rotation.set(3.5, -0.2, -2)
                     const fp = gui.addFolder("gun")
 
                     this.CreateVectorGui(fp, meshs.position, "Pos", 0.1)

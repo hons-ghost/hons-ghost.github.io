@@ -15,10 +15,11 @@ import { RayViwer } from "./raycaster";
 import { IViewer } from "../scenes/models/iviewer";
 import { Canvas } from "./canvas";
 
+export const gui = new GUI()
 
 
 export class Helper implements IViewer {
-    gui = new GUI()
+    gui = gui
     debugMode = false
     axesHelper: THREE.AxesHelper = new THREE.AxesHelper(300)
     gridHelper: THREE.GridHelper = new THREE.GridHelper(300)

@@ -10,7 +10,7 @@ export class MaleFab extends AssetModel implements IAsset {
     get Id() {return Char.Male}
 
     constructor(loader: Loader) { 
-        super(loader, ModelType.Gltf, "assets/male/male.gltf", (gltf: GLTF) => {
+        super(loader, ModelType.Gltf, "assets/male/male.gltf", async (gltf: GLTF) => {
             this.gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
@@ -30,8 +30,8 @@ export class MaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Dance0, gltf.animations[5])
         })
     }
-    box?: THREE.Mesh
 
+    box?: THREE.Mesh
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         // Don't Use this.meshs

@@ -46,7 +46,7 @@ export class AssetModel{
 
     get Mixer() { return this.mixer }
     constructor(
-        private loader: Loader, 
+        protected loader: Loader, 
         private loaderType: ModelType,
         private path: string, 
         private afterLoad: Function

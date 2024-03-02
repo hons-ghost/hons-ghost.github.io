@@ -67,7 +67,7 @@ export class Session {
                 if ("email" in ret) {
                     this.SignIn({ Email: ret.email, Nickname: ret.id, Password: user.Password });
                     this.drawHtmlLoginUi()
-                    await this.blockStore.FetchModels(window.MasterAddr, ret.email)
+                    await this.blockStore.FetchModel(window.MasterAddr, ret.email)
                 }
             })
 

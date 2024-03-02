@@ -135,13 +135,18 @@ export default class App {
     ModelStore() {
         return this.store.StoreModels()
     }
-    async ModelLoad(models: string, name: string, playerModel: string | undefined) {
+
+    async LoadModel(models: string, name: string, playerModel: string | undefined) {
         this.eventCtrl.OnSceneClearEvent()
         await this.store.LoadModels(models, name, playerModel)
     }
-    async ModelLoadEmpty(name: string, playerModel: string | undefined) {
+    async LoadModelEmpty(name: string, playerModel: string | undefined) {
         this.eventCtrl.OnSceneClearEvent()
         await this.store.LoadModelsEmpty(name, playerModel)
+    }
+    async LoadVillage(users: Map<string, string>, playerModel: string | undefined) {
+        this.eventCtrl.OnSceneClearEvent()
+        await this.store.LoadVillage(users, playerModel)
     }
 
     resize() {

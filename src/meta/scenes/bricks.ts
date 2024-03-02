@@ -6,6 +6,7 @@ import { ModelStore } from "../common/modelstore";
 import { GPhysics } from "../common/physics/gphysics";
 import { IKeyCommand } from "../event/keycommand";
 import { IBuildingObject } from "./models/iobject";
+import SConf from "../configs/staticconf";
 
 export type BrickOption = {
     v?: THREE.Vector3, 
@@ -38,8 +39,8 @@ export class Bricks {
     protected brickColor: THREE.Color = new THREE.Color(0xFFFFFF)
     protected subV = new THREE.Vector3(0.1, 0.1, 0.1)
     protected movePos = new THREE.Vector3()
-    protected fieldWidth = 18
-    protected fieldHeight = 24
+    protected fieldWidth = SConf.LegoFieldW
+    protected fieldHeight = SConf.LegoFieldH
 
     protected checkEx?: Function
 
@@ -170,6 +171,7 @@ export class Bricks {
     }
 
     ClearBlock() {
+        console.log("clear blocks", this.bricks2, this.bricks2.length)
         this.bricks2.forEach((b) => {
             this.scene.remove(b);
             b.Dispose()

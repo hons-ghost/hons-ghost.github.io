@@ -70,18 +70,22 @@ export class Legos extends Bricks implements IModelReload {
                         this.brickGuide.Visible = true
                         this.brickGuide.position.copy(this.brickfield.position)
                         this.brickfield.visible = true
-                        this.physics.PBoxDispose()
-                        this.eventCtrl.OnSceneReloadEvent()
+                        if (this.deleteMode) {
+                            this.brickGuide.scale.set(1, 1, 1)
+                            this.brickSize.set(1, 1, 1)
+                        }
                         this.eventCtrl.OnChangeCtrlObjEvent(this.brickGuide)
-                        this.EditMode()
                         this.CheckCollision()
                         break
                     case EventFlag.End:
+                        if (this.deleteMode) {
+                            this.EditMode()
+                            this.physics.PBoxDispose()
+                            this.eventCtrl.OnSceneReloadEvent()
+                        }
                         this.brickGuide.ControllerEnable = false
                         this.brickGuide.Visible = false
                         this.brickfield.visible = false
-                        this.physics.PBoxDispose()
-                        this.eventCtrl.OnSceneReloadEvent()
                         break
                 }
             }
@@ -114,6 +118,7 @@ export class Legos extends Bricks implements IModelReload {
         this.CreateBricks()
     }
     CreateBricks() {
+        console.log("create brick")
         const userBricks = this.store.Legos
         const subV = new THREE.Vector3(0.1, 0.1, 0.1)
         const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
@@ -129,6 +134,7 @@ export class Legos extends Bricks implements IModelReload {
         })
     }
     CreateInstacedMesh() {
+        console.log("create mesh")
         const userBricks = this.store.Legos
         if(!userBricks?.length) {
             return
@@ -140,7 +146,7 @@ export class Legos extends Bricks implements IModelReload {
             transparent: true,
         })
         this.instancedBlock = new THREE.InstancedMesh(
-            geometry, material, length
+            geometry, material, userBricks.length
         )
         this.instancedBlock.castShadow = true
         this.instancedBlock.receiveShadow = true
@@ -160,6 +166,11 @@ export class Legos extends Bricks implements IModelReload {
             this.physics.addBuilding(eventbrick, brick.position, collidingBoxSize, brick.rotation)
         })
         this.scene.add(this.instancedBlock)
+    }
+    async Massload(): Promise<void> {
+        this.ClearBlock()
+        this.ClearEventBrick()
+        this.CreateInstacedMesh()
     }
     async Reload(): Promise<void> {
         this.ClearBlock()

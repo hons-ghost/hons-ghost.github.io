@@ -103,6 +103,10 @@ export class EventBricks extends Bricks implements IModelReload{
         this.instancedBlock.receiveShadow = true
         return this.instancedBlock
     }
+    async Massload(): Promise<void> {
+        this.ClearBlock()
+        this.ClearEventBrick()
+    }
     async Reload(): Promise<void> {
         this.ClearBlock()
         this.ClearEventBrick()

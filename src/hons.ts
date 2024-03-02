@@ -146,7 +146,8 @@ export class Hons {
             footer.style.display = "none"
             header.style.display = "none"
             this.meta.ChangeUiEvent(true)
-            this.meta.ModeChange(AppMode.Long, true)
+            this.meta.ModeChange(AppMode.Play)
+            //this.meta.ModeChange(AppMode.Long, true)
             controllerBtn.style.display = "block"
             menuGui.style.display = "block"
             this.profileVisible = false
@@ -162,11 +163,19 @@ export class Hons {
         }
     }
     public CanvasRenderer() {
+        this.profileVisible = false
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
-        this.meta.init().then(() => {
-            this.meta.ModeChange(AppMode.Long, false)
-        })
+        this.meta.init()
+            .then(() => {
+                //this.meta.ModeChange(AppMode.Long, false)
+                this.VisibleUi()
+            })
+        const myModel = this.blockStore.GetModel(this.session.UserId)
+        this.blockStore.FetchModels(this.m_masterAddr)
+            .then(async (result) => {
+                await this.meta.LoadVillage(result, myModel?.models)
+            })
         this.meta.render()
 
         const play = document.getElementById("playBtn") as HTMLButtonElement
@@ -178,8 +187,6 @@ export class Hons {
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
 
-        this.profileVisible = false
-        this.VisibleUi()
     }
     
     public Run(masterAddr: string): boolean {

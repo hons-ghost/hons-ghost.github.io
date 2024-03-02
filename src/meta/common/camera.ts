@@ -119,7 +119,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         const position = this.player.CannonPos
 
                         this.animate = gsap.to(this.position, {
-                            x: position.x, z: position.z + 13,
+                            x: position.x, y: position.y + 13, z: position.z + 13,
                             duration: 2, ease: "power1.inOut",
                             onComplete: () => {
                                 this.position.set(position.x, position.y, position.z)

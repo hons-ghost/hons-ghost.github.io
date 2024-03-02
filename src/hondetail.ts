@@ -267,9 +267,9 @@ export class HonDetail {
             this.alarmText.innerHTML = "이동중입니다."
 
             const myModel = this.blockStore.GetModel(this.session.UserId)
-            this.blockStore.FetchModels(this.m_masterAddr, email)
+            this.blockStore.FetchModel(this.m_masterAddr, email)
                 .then(async (result) => {
-                    await this.meta.ModelLoad(result.models, result.id, myModel?.models)
+                    await this.meta.LoadModel(result.models, result.id, myModel?.models)
                     this.alarm.style.display = "none"
                 })
                 .then(() => {
@@ -277,7 +277,7 @@ export class HonDetail {
                 })
                 .catch(async () => {
                     this.alarm.style.display = "none"
-                    await this.meta.ModelLoadEmpty(email, myModel?.models)
+                    await this.meta.LoadModelEmpty(email, myModel?.models)
                     this.meta.ModeChange(AppMode.Close)
                 })
         })

@@ -29,6 +29,7 @@ type StoreData = {
 
 export interface IModelReload {
     Reload(): Promise<void>
+    Massload(): Promise<void>
 }
 
 export class ModelStore {
@@ -43,6 +44,8 @@ export class ModelStore {
         ownerModel: Char.Male, 
         portal: undefined,
     }
+    private owners = new Array<THREE.Vector3 | undefined>()
+    private ownerModels = new Array<Char | undefined>()
     private name: string = "unknown"
 
     set Portal(pos: THREE.Vector3) { 
@@ -89,7 +92,6 @@ export class ModelStore {
         this.data.ownerModel = this.owner?.Model
 
         const json = JSON.stringify(this.data)
-        console.log(json)
         return json
     }
     async LoadModelsEmpty(name: string, playerModel: string | undefined)  {
@@ -117,11 +119,39 @@ export class ModelStore {
             this.playerModel = playerData.ownerModel
         }
         this.name = name
-        console.log(data)
         this.data = JSON.parse(data)
         await Promise.all([
             this.mgrs.forEach(async (mgr) => {
                 await mgr.Reload()
+            })
+        ])
+    }
+    async LoadVillage(users: Map<string, string>, playerModel: string | undefined) {
+        if (playerModel != undefined) {
+            const playerData = JSON.parse(playerModel)
+            this.playerModel = playerData.ownerModel
+        }
+        let i = -1
+        this.data.legos.length = 0
+        this.owners.length = 0
+        this.ownerModels.length = 0
+        users.forEach((user, id) => {
+            i++
+            const data = JSON.parse(user) as StoreData
+            if(i == 0) {
+                this.data.legos.push(...data.legos)
+                return
+            }
+            data.legos.forEach((lego) => {
+                lego.position.x -= SConf.LegoFieldW * i
+            })
+            this.data.legos.push(...data.legos)
+            this.owners.push(data.owner)
+            this.ownerModels.push(data.ownerModel)
+        })
+        await Promise.all([
+            this.mgrs.forEach(async (mgr) => {
+                await mgr.Massload()
             })
         ])
     }

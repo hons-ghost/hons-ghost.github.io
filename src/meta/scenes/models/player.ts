@@ -96,6 +96,8 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.meshs.position.copy(pos)
     }
 
+    async Massload(): Promise<void> {
+    }
     async Reload(): Promise<void> {
         const model = this.store.PlayerModel
         

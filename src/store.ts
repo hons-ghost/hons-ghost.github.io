@@ -1,5 +1,5 @@
 import { HonEntry, ModelsEntry, ProfileEntry } from "./models/param";
-import { HonTxId } from "./models/tx";
+import { GlobalLoadListTx, GlobalLoadTx, HonTxId } from "./models/tx";
 
 const MaxUnsignedInt = ((1 << 31) >>> 0); // unsigned int max
 
@@ -24,14 +24,42 @@ export class BlockStore {
         }
         return undefined
     }
+    FetchModels(masterAddr: string): Promise<Map<string, string>>{
+        const addr = masterAddr + "/glambda?txid=" + 
+            encodeURIComponent(GlobalLoadListTx) + "&table=meta&start=0&count=20";
+        const data = new Map<string, string>()
 
-    FetchModels(masterAddr: string, key: string): Promise<ModelsEntry>{
+        return fetch(addr)
+            .then((response) => response.json())
+            .then((ret) => {
+                if ("json" in ret) {
+                    const keys = JSON.parse(ret.json as string);
+                    return keys;
+                }
+                throw ""
+            })
+            .then(async (keys: string[]) => {
+                const wait = []
+                const promise = keys.map(async (key) => {
+                    const w = await this.FetchModel(masterAddr, atob(key))
+                        .then((model: ModelsEntry) => {
+                            data.set(model.id, model.models)
+                        })
+                    wait.push(w)
+                })
+                return Promise.all(promise)
+            })
+            .then(() => data)
+            .catch(() => data)
+    }
+
+    FetchModel(masterAddr: string, key: string): Promise<ModelsEntry>{
         const model = this.models.get(key)
         if (model != undefined) {
             return Promise.resolve(model)
         }
         const addr = masterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=meta&key=" + key;
+            encodeURIComponent(GlobalLoadTx) + "&table=meta&key=" + key;
 
         return fetch(addr)
             .then((response) => response.json())

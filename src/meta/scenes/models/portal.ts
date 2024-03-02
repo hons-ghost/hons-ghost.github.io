@@ -8,6 +8,7 @@ import { GPhysics } from "../../common/physics/gphysics";
 import { IPhysicsObject } from "./iobject";
 import { AppMode } from "../../app";
 import { IModelReload, ModelStore } from "../../common/modelstore";
+import SConf from "../../configs/staticconf";
 //import { Gui } from "../../factory/appfactory";
 
 export class Portal extends GhostModel implements IPhysicsObject, IModelReload {
@@ -68,8 +69,14 @@ export class Portal extends GhostModel implements IPhysicsObject, IModelReload {
         this.store.Portal = this.meshs.position
         console.log(this.meshs.position)
     }
+    async Massload(): Promise<void> {
+        this.meshs.position.copy(SConf.DefaultPortalPosition)
+        
+    }
 
     async Reload(): Promise<void> {
+        this.meshs.position.copy(SConf.DefaultPortalPosition)
+
         const pos = this.store.Portal
         if (pos != undefined) {
             this.meshs.position.copy(pos)

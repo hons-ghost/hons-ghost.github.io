@@ -17,6 +17,9 @@ export default class SConf {
     public static StartPosition = new Vector3(0, 5, 6)
     public static DefaultPortalPosition = new Vector3(21, 4.6, 17)
 
+    public static LegoFieldW = 18
+    public static LegoFieldH = 24
+
     public static ModelPath = {
         [Char.Male]: "assets/male/male.gltf",
         [Char.Female]: "assets/female/female.gltf",

@@ -76,6 +76,7 @@ export class NpcManager implements IModelReload {
                 case AppMode.Long:
                     switch (e) {
                         case EventFlag.Start:
+                            this.eventCtrl.OnChangeCtrlObjEvent(this.helper)
                             this.owner.Visible = false
                             this.helper.Visible = true
                             this.helper2.Visible = true
@@ -109,7 +110,11 @@ export class NpcManager implements IModelReload {
             this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 5, 15), "unknown")
         ])
     }
+    async Massload(): Promise<void> {
+        this.game.remove(this.owner.Meshs)
+    }
     async Reload(): Promise<void> {
+        this.game.add(this.owner.Meshs)
         const loadPos = this.store.Owner
         const info = {
             name: this.store.Name,

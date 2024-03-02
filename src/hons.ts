@@ -181,8 +181,25 @@ export class Hons {
         const play = document.getElementById("playBtn") as HTMLButtonElement
         play.onclick = () => { this.VisibleUi() }
 
+        const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
+        fullscreen.onclick = () => {
+            if(document.fullscreenElement) {
+                document.exitFullscreen()
+                fullscreen.innerText = "fullscreen"
+            } else {
+                document.documentElement.requestFullscreen()
+                fullscreen.innerText = "fullscreen_exit"
+            }
+        }
+
         const getback = document.getElementById("returnSns") as HTMLSpanElement
-        getback.onclick = () => { this.VisibleUi() }
+        getback.onclick = () => { 
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+                fullscreen.innerText = "fullscreen"
+            }
+            this.VisibleUi() 
+        }
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"

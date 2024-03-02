@@ -16,6 +16,7 @@ import { IViewer } from "../scenes/models/iviewer";
 import { Canvas } from "./canvas";
 
 export const gui = new GUI()
+gui.hide()
 
 
 export class Helper implements IViewer {

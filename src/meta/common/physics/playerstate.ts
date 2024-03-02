@@ -103,7 +103,10 @@ export class MagicH2State extends State implements IPlayerAction {
     }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
-        if(d != undefined) return d
+        if(d != undefined) {
+            this.Uninit()
+            return d
+        }
 
         return this.next
     }
@@ -130,7 +133,10 @@ export class MagicH1State extends State implements IPlayerAction {
     }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
-        if(d != undefined) return d
+        if (d != undefined) {
+            this.Uninit()
+            return d
+        }
 
         return this.next
     }

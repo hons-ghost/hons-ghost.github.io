@@ -16,8 +16,8 @@ export class GunFab extends AssetModel implements IAsset {
 
             const scale = 0.05
             this.meshs.scale.set(scale, scale, scale)
-            this.meshs.position.set(0.1, 0.8, -0.1)
-            this.meshs.rotation.set(3, -0.7, -1.8)
+            this.meshs.position.set(0.2, 0.8, 0.2)
+            this.meshs.rotation.set(3, -0.1, -0.7)
         })
     }
     box?: THREE.Mesh

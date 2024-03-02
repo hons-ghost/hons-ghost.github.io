@@ -36,7 +36,7 @@ export class FemaleFab extends AssetModel implements IAsset {
                     const scale = 0.05
                     meshs.scale.set(scale, scale, scale)
                     meshs.position.set(0.2, 0.8, 0.2)
-                    meshs.rotation.set(3.5, -0.2, -2)
+                    meshs.rotation.set(3.5, -0.1, -1.6)
                     const fp = gui.addFolder("gun")
 
                     this.CreateVectorGui(fp, meshs.position, "Pos", 0.1)

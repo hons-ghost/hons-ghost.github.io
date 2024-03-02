@@ -21,23 +21,30 @@ export class FemaleFab extends AssetModel implements IAsset {
                 child.receiveShadow = true
             })
             this.mixer = new THREE.AnimationMixer(gltf.scene)
-            this.clips.set(Ani.Idle, gltf.animations[3])
-            this.clips.set(Ani.Run, gltf.animations[6])
-            this.clips.set(Ani.Jump, gltf.animations[4])
-            //this.clips.set(Ani.Punch, gltf.animations[11])
-            this.clips.set(Ani.Punch, gltf.animations[7])
-            this.clips.set(Ani.FightIdle, gltf.animations[0])
-            this.clips.set(Ani.Dance0, gltf.animations[1])
+            console.log(gltf.animations)
+            this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "Idle"))
+            this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Running"))
+            this.clips.set(Ani.Jump, gltf.animations.find((clip) => clip.name == "JumpingUp"))
+            this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "Sword"))
+            //this.clips.set(Ani.Punch, gltf.animations[7])
+            this.clips.set(Ani.FightIdle, gltf.animations.find((clip) => clip.name == "BouncingFightIdle"))
+            this.clips.set(Ani.Dying, gltf.animations.find((clip) => clip.name == "Dying"))
+            this.clips.set(Ani.Sword, gltf.animations.find((clip) => clip.name == "Sword"))
+            this.clips.set(Ani.Shooting, gltf.animations.find((clip) => clip.name == "Gunplay"))
+            this.clips.set(Ani.MagicH1, gltf.animations.find((clip) => clip.name == "1HMagic"))
+            this.clips.set(Ani.MagicH2, gltf.animations.find((clip) => clip.name == "2HMagic_1"))
 
             const right = this.meshs.getObjectByName("mixamorigRightHand")
             await new Promise((resolve)=>{
-                this.loader.Load.load("assets/weapon/gun.glb", (gltf) => {
+                this.loader.Load.load("assets/weapon/bat.glb", (gltf) => {
                     const meshs = gltf.scene
-                    const scale = 0.05
+
+                    const scale = 0.3
                     meshs.scale.set(scale, scale, scale)
-                    meshs.position.set(0.2, 0.8, 0.2)
-                    meshs.rotation.set(3.5, -0.1, -1.6)
-                    const fp = gui.addFolder("gun")
+                    meshs.position.set(0.1, 0.2, -0.1)
+                    meshs.rotation.set(3, -0.5, -1.8)
+                    const fp = gui.addFolder("bat")
+                    fp.close()
 
                     this.CreateVectorGui(fp, meshs.position, "Pos", 0.1)
                     this.CreateVectorGui(fp, meshs.rotation, "Rot", 0.1)

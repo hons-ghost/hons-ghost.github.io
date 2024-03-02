@@ -75,7 +75,7 @@ const getPageIdParam = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const pageid = urlParams.get("pageid");
     const key = (pageid == null) ? "main" : pageid;
-    if (beforPage == undefined) beforPage = key;
+    beforPage ??= key
     return key;
 }
 
@@ -155,14 +155,10 @@ const includeContentHTML = async (master: string) => {
         })
         .then(() => {
             const beforePageObj = CurrentPage
-            if (beforePageObj != undefined) {
-                beforePageObj.Release();
-            }
+            beforePageObj?.Release();
 
             CurrentPage = funcMap[key]();
-            if (CurrentPage != undefined) {
-                CurrentPage.Run(window.MasterAddr);
-            }
+            CurrentPage?.Run(window.MasterAddr);
         });
 }
 

@@ -9,6 +9,9 @@ import { MushroomFab } from "./mushroomfab";
 import { TreeFab } from "./treefab";
 import { PortalFab } from "./portalfab";
 import { TestFab } from "./testfab";
+import { ZombieFab } from "./zombiefab";
+import { BatFab } from "./batfab";
+import { GunFab } from "./gunfab";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -23,6 +26,9 @@ export class Loader {
     private deadtree = new DeadtreeFab(this)
     private portal = new PortalFab(this)
     private test = new TestFab(this)
+    private zombie = new ZombieFab(this)
+    private bat = new BatFab(this)
+    private gun = new GunFab(this)
 
     get MaleAsset(): IAsset { return this.male }
     get FemaleAsset(): IAsset { return this.female }
@@ -32,6 +38,9 @@ export class Loader {
     get TreeAsset(): IAsset { return this.tree }
     get DeadTreeAsset(): IAsset { return this.deadtree }
     get PortalAsset(): IAsset { return this.portal }
+    get ZombieAsset(): IAsset { return this.zombie }
+    get GunAsset(): IAsset { return this.gun }
+    get BatAsset(): IAsset { return this.bat }
     get Load(): GLTFLoader { return this.loader }
     get LoadingManager(): THREE.LoadingManager { return this.loadingManager }
     get FBXLoader(): FBXLoader { return this.fbxLoader}
@@ -50,6 +59,9 @@ export class Loader {
         this.assets.set(Char.Mushroom2, this.mushroom2)
         this.assets.set(Char.Portal, this.portal)
         this.assets.set(Char.Test, this.test)
+        this.assets.set(Char.Zombie, this.zombie)
+        this.assets.set(Char.Bat, this.bat)
+        this.assets.set(Char.Gun, this.gun)
     }
 
     GetAssets(id: Char): IAsset{

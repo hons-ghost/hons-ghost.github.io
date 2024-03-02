@@ -40,6 +40,46 @@ export class KeyAction1 implements IKeyCommand{
         return new THREE.Vector3(0, 0, 0)
     }
 }
+export class KeyAction2 implements IKeyCommand{
+    get Type() { return KeyType.Action2 }
+    ExecuteKeyUp(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+
+    ExecuteKeyDown(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+}
+export class KeyAction3 implements IKeyCommand{
+    get Type() { return KeyType.Action3 }
+    ExecuteKeyUp(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+
+    ExecuteKeyDown(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+}
+export class KeyAction4 implements IKeyCommand{
+    get Type() { return KeyType.Action4 }
+    ExecuteKeyUp(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+
+    ExecuteKeyDown(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+}
+export class KeyAction5 implements IKeyCommand{
+    get Type() { return KeyType.Action5 }
+    ExecuteKeyUp(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+
+    ExecuteKeyDown(): THREE.Vector3 {
+        return new THREE.Vector3(0, 0, 0)
+    }
+}
 export class KeySpace implements IKeyCommand{
     get Type() { return KeyType.Action0 }
     ExecuteKeyUp(): THREE.Vector3 {

@@ -3,7 +3,7 @@ import { EventController } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
 import { GPhysics, IGPhysic } from "./gphysics";
 import { ActionType, Player } from "../../scenes/models/player";
-import { AttackIdleState, AttackState, IPlayerAction, IdleState, JumpState, RunState } from "./playerstate";
+import { AttackIdleState, AttackState, IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
 
 export class PlayerPhysic implements IGPhysic {
     keyDownQueue: IKeyCommand[] = []
@@ -18,6 +18,8 @@ export class PlayerPhysic implements IGPhysic {
 
     IdleSt = new IdleState(this, this.player, this.gphysic)
     AttackSt = new AttackState(this, this.player, this.gphysic)
+    MagicH1St = new MagicH1State(this, this.player, this.gphysic)
+    MagicH2St = new MagicH2State(this, this.player, this.gphysic)
     AttackIdleSt = new AttackIdleState(this, this.player, this.gphysic)
     RunSt = new RunState(this, this.player, this.gphysic)
     JumpSt = new JumpState(this, this.player, this.gphysic)
@@ -67,14 +69,20 @@ export class PlayerPhysic implements IGPhysic {
     }
 
     update(delta: number) {
-            this.updateInputVector()
-            this.updateDownKey()
-            this.updateUpKey()
+        this.updateInputVector()
+        this.updateDownKey()
+        this.updateUpKey()
 
-        if(!this.player.Visible) return
+        if (!this.player.Visible) return
 
         this.currentState = this.currentState.Update(delta, this.moveDirection)
         this.player.Update()
+        this.actionReset()
+    }
+    actionReset() {
+        for(let i = KeyType.Action0; i < KeyType.Count; i++) {
+            this.KeyState[i] = false
+        }
     }
 
     KeyState = new Array<boolean>(KeyType.Count)

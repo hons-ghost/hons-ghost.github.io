@@ -236,10 +236,16 @@ header {
     left: 10px;
     bottom: 10px;
 }
+#joypad {
+    display: none;
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+}
 #joypad_buttons {
     display: none;
     position: absolute;
-    right: 5px;
+    right: 0px;
     bottom: 10px;
 }
 .joypad_arrow {

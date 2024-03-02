@@ -17,6 +17,23 @@ class State {
         protected gphysic: GPhysics
     ) { }
 
+    DefaultCheck(): IPlayerAction | undefined {
+        const checkRun = this.CheckRun()
+        if (checkRun != undefined) return checkRun
+
+        const checkAtt = this.CheckAttack()
+        if (checkAtt != undefined) return checkAtt
+
+        const checkJump = this.CheckJump()
+        if (checkJump != undefined) return checkJump
+
+        const checkMagic = this.CheckMagic()
+        if (checkMagic != undefined) return checkMagic
+
+        const checkMagic2 = this.CheckMagic2()
+        if (checkMagic2 != undefined) return checkMagic2
+    }
+
     CheckRun() {
         if (this.playerPhy.moveDirection.x || this.playerPhy.moveDirection.z
             /*this.playerPhy.KeyState[KeyType.Up] ||
@@ -31,6 +48,18 @@ class State {
         if (this.playerPhy.KeyState[KeyType.Action1]) {
             this.playerPhy.AttackSt.Init()
             return this.playerPhy.AttackSt
+        }
+    }
+    CheckMagic() {
+        if (this.playerPhy.KeyState[KeyType.Action2]) {
+            this.playerPhy.MagicH1St.Init()
+            return this.playerPhy.MagicH1St
+        }
+    }
+    CheckMagic2() {
+        if (this.playerPhy.KeyState[KeyType.Action3]) {
+            this.playerPhy.MagicH2St.Init()
+            return this.playerPhy.MagicH2St
         }
     }
     CheckJump() {
@@ -52,6 +81,60 @@ class State {
     }
 }
 
+export class MagicH2State extends State implements IPlayerAction {
+    keytimeout?:NodeJS.Timeout
+    next: IPlayerAction = this
+
+    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
+        super(playerPhy, player, gphysic)
+    }
+    Init(): void {
+        console.log("Magic2!!")
+        const duration = this.player.ChangeAction(ActionType.MagicH2Action) ?? 2
+        this.next = this
+        this.keytimeout = setTimeout(() => {
+            this.Uninit()
+            this.playerPhy.AttackIdleSt.Init()
+            this.next = this.playerPhy.AttackIdleSt
+        }, duration * 1000)
+    }
+    Uninit(): void {
+        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
+    }
+    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+        const d = this.DefaultCheck()
+        if(d != undefined) return d
+
+        return this.next
+    }
+}
+export class MagicH1State extends State implements IPlayerAction {
+    keytimeout?:NodeJS.Timeout
+    next: IPlayerAction = this
+
+    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
+        super(playerPhy, player, gphysic)
+    }
+    Init(): void {
+        console.log("Magic!!")
+        const duration = this.player.ChangeAction(ActionType.MagicH1Action) ?? 2
+        this.next = this
+        this.keytimeout = setTimeout(() => {
+            this.Uninit()
+            this.playerPhy.AttackIdleSt.Init()
+            this.next = this.playerPhy.AttackIdleSt
+        }, duration * 1000)
+    }
+    Uninit(): void {
+        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
+    }
+    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+        const d = this.DefaultCheck()
+        if(d != undefined) return d
+
+        return this.next
+    }
+}
 
 export class AttackState extends State implements IPlayerAction {
     keytimeout?:NodeJS.Timeout
@@ -62,25 +145,12 @@ export class AttackState extends State implements IPlayerAction {
     Init(): void {
         console.log("Attack!!")
         this.player.ChangeAction(ActionType.PunchAction)
-        this.keytimeout = setTimeout(() => {
-            this.Uninit()
-            return this.playerPhy.AttackIdleSt
-        }, 2000)
     }
-    Uninit(): void {
-        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
-    }
+    Uninit(): void { }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
-        const checkRun = this.CheckRun()
-        if (checkRun != undefined) {
-            this.Uninit()
-            return checkRun
-        }
-        const checkJump = this.CheckJump()
-        if (checkJump != undefined) {
-            this.Uninit()
-            return checkJump
-        }
+        const d = this.DefaultCheck()
+        if(d != undefined) return d
+        
 
         return this
     }
@@ -96,14 +166,8 @@ export class AttackIdleState extends State implements IPlayerAction {
         
     }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
-        const checkRun = this.CheckRun()
-        if (checkRun != undefined) return checkRun
-
-        const checkAtt = this.CheckAttack()
-        if (checkAtt != undefined) return checkAtt
-
-        const checkJump = this.CheckJump()
-        if (checkJump != undefined) return checkJump
+        const d = this.DefaultCheck()
+        if(d != undefined) return d
 
         return this
     }
@@ -121,14 +185,8 @@ export class IdleState extends State implements IPlayerAction {
         
     }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
-        const checkRun = this.CheckRun()
-        if (checkRun != undefined) return checkRun
-
-        const checkAtt = this.CheckAttack()
-        if (checkAtt != undefined) return checkAtt
-
-        const checkJump = this.CheckJump()
-        if (checkJump != undefined) return checkJump
+        const d = this.DefaultCheck()
+        if(d != undefined) return d
 
         const checkGravity = this.CheckGravity()
         if (checkGravity != undefined) return checkGravity

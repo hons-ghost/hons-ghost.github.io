@@ -7,7 +7,15 @@ export enum Ani {
     Jump,
     Punch,
     FightIdle,
+    Dying,
+    Shooting,
+    Sword,
+    MagicH1,
+    MagicH2,
     Dance0,
+
+    MonBiting,
+    MonScream,
 }
 
 export enum Char{
@@ -19,6 +27,10 @@ export enum Char{
     Mushroom2,
     Portal,
     Test,
+    Zombie,
+
+    Bat,
+    Gun,
 }
 export enum ModelType {
     Gltf,
@@ -40,7 +52,7 @@ export class AssetModel{
     protected meshs?: THREE.Group
     protected size?: THREE.Vector3
     protected mixer?: THREE.AnimationMixer
-    protected clips = new Map<Ani, THREE.AnimationClip>()
+        protected clips = new Map<Ani, THREE.AnimationClip | undefined>()
     private models = new Map<string, THREE.Group>()
     private mixers = new Map<string, THREE.AnimationMixer>()
 

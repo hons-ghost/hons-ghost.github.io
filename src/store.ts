@@ -18,11 +18,7 @@ export class BlockStore {
         this.models.set(key, model)
     }
     GetModel(key: string): ModelsEntry | undefined{
-        const model = this.models.get(key)
-        if (model != undefined) {
-            return model
-        }
-        return undefined
+        return this.models.get(key)
     }
     FetchModels(masterAddr: string): Promise<Map<string, string>>{
         const addr = masterAddr + "/glambda?txid=" + 

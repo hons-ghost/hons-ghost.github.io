@@ -1,6 +1,6 @@
 import { Canvas } from "./common/canvas";
 import { EventController, EventFlag } from "./event/eventctrl";
-import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeySystem0, KeyUp } from "./event/keycommand";
+import { KeyAction1, KeyAction2, KeyAction3, KeyAction4, KeyAction5, KeyDown, KeyLeft, KeyRight, KeySpace, KeySystem0, KeyUp } from "./event/keycommand";
 import { AppFactory } from "./factory/appfactory";
 import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
@@ -77,8 +77,12 @@ export default class App {
                         this.eventCtrl.OnKeyDownEvent(new KeySystem0);
                     }
                     break;
+                case `1`: this.eventCtrl.OnKeyDownEvent(new KeyAction1); break;
+                case '2': this.eventCtrl.OnKeyDownEvent(new KeyAction2);break;
+                case '3': this.eventCtrl.OnKeyDownEvent(new KeyAction3);break;
+                case '4': this.eventCtrl.OnKeyDownEvent(new KeyAction4);break;
+                case '5': this.eventCtrl.OnKeyDownEvent(new KeyAction5);break;
                 case ' ': this.eventCtrl.OnKeyDownEvent(new KeySpace); break;
-                case "Control": this.eventCtrl.OnKeyDownEvent(new KeyAction1); break;
             }
         })
         window.addEventListener("keyup", (e) => {
@@ -88,9 +92,6 @@ export default class App {
                 case "ArrowLeft": this.eventCtrl.OnKeyUpEvent(new KeyLeft); break;
                 case "ArrowRight": this.eventCtrl.OnKeyUpEvent(new KeyRight); break;
                 case "Space": this.eventCtrl.OnKeyUpEvent(new KeySpace); break;
-            }
-            switch (e.key) {
-                case "Control": this.eventCtrl.OnKeyUpEvent(new KeyAction1); break;
             }
         })
         this.initFlag = true

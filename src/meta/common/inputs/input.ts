@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { EventController } from '../../event/eventctrl'
 import { Joystick } from "./joystic";
-import { KeyAction1, KeySpace } from "../../event/keycommand";
+import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "../../event/keycommand";
 
 export class Input {
     //dom = document.createElement("div")
@@ -10,6 +10,10 @@ export class Input {
     virtualV = new THREE.Vector3()
     zeroV = new THREE.Vector3()
 
+    left = document.getElementById("goleft") as HTMLDivElement
+    right = document.getElementById("goright") as HTMLDivElement
+    up = document.getElementById("goup") as HTMLDivElement
+    down = document.getElementById("godown") as HTMLDivElement
     jump = document.getElementById("joypad_button1") as HTMLDivElement
     action1 = document.getElementById("joypad_button2") as HTMLDivElement
     currentEvent?: Touch
@@ -52,6 +56,15 @@ export class Input {
                 this.joystick.Hide()
             }
         })
+        this.up.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyUp); }
+        this.down.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyDown); }
+        this.left.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyLeft); }
+        this.right.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyRight); }
+        this.up.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyUp); }
+        this.down.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyDown); }
+        this.left.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyLeft); }
+        this.right.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyRight); }
+
         this.jump.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeySpace) }
         this.jump.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeySpace) }
 

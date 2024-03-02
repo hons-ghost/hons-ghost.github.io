@@ -17,6 +17,8 @@ export enum ActionType {
     PunchAction,
     FightAction,
     DanceAction,
+    MagicH1Action,
+    MagicH2Action,
 }
 const solidify = (mesh: THREE.Mesh) => {
     const THICKNESS = 0.02
@@ -49,6 +51,8 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     jumpClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
     fightIdleClip?: THREE.AnimationClip
+    magicH1Clip?: THREE.AnimationClip
+    magicH2Clip?: THREE.AnimationClip
     danceClip?: THREE.AnimationClip
 
     private playerModel: Char = Char.Male
@@ -97,6 +101,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     }
 
     async Massload(): Promise<void> {
+        await this.Reload()
     }
     async Reload(): Promise<void> {
         const model = this.store.PlayerModel
@@ -124,6 +129,8 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.punchingClip = this.asset.GetAnimationClip(Ani.Punch)
         this.fightIdleClip = this.asset.GetAnimationClip(Ani.FightIdle)
         this.danceClip = this.asset.GetAnimationClip(Ani.Dance0)
+        this.magicH1Clip = this.asset.GetAnimationClip(Ani.MagicH1)
+        this.magicH2Clip = this.asset.GetAnimationClip(Ani.MagicH2)
         this.changeAnimate(this.idleClip)
 
 
@@ -153,23 +160,33 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     clock = new THREE.Clock()
 
     ChangeAction(action: ActionType) {
+        let clip: THREE.AnimationClip | undefined
         switch(action) {
             case ActionType.IdleAction:
-                this.changeAnimate(this.idleClip)
+                clip = this.idleClip
                 break
             case ActionType.JumpAction:
-                this.changeAnimate(this.jumpClip)
+                clip = this.jumpClip
                 break
             case ActionType.RunAction:
-                this.changeAnimate(this.runClip)
+                clip = this.runClip
                 break
             case ActionType.PunchAction:
-                this.changeAnimate(this.punchingClip)
+                clip = this.punchingClip
                 break
             case ActionType.FightAction:
-                this.changeAnimate(this.fightIdleClip)
+                clip = this.fightIdleClip
+                console.log(clip)
+                break
+            case ActionType.MagicH1Action:
+                clip = this.magicH1Clip
+                break
+            case ActionType.MagicH2Action:
+                clip = this.magicH2Clip
                 break
         }
+        this.changeAnimate(clip)
+        return clip?.duration
     }
 
     Update() {

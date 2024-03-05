@@ -29,13 +29,13 @@ export class PlayerCtrl implements IGPhysic {
 
     keyType: KeyType = KeyType.None
 
-    IdleSt = new IdleState(this, this.player, this.gphysic)
     AttackSt = new AttackState(this, this.player, this.gphysic, this.eventCtrl)
     MagicH1St = new MagicH1State(this, this.player, this.gphysic)
     MagicH2St = new MagicH2State(this, this.player, this.gphysic)
     AttackIdleSt = new AttackIdleState(this, this.player, this.gphysic)
     RunSt = new RunState(this, this.player, this.gphysic)
     JumpSt = new JumpState(this, this.player, this.gphysic)
+    IdleSt = new IdleState(this, this.player, this.gphysic)
     currentState: IPlayerAction = this.IdleSt
 
     targets: THREE.Object3D[] = []

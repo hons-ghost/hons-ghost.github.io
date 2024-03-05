@@ -7,18 +7,12 @@ import App, { AppMode } from "./meta/app";
 import { Page } from "./page";
 import { Ui } from "./models/ui";
 
-type HonsData = { 
-    id: string,
-    email: string,
-    html: string 
-}
 export class Hons extends Page{
     m_masterAddr: string;
     loadedCount: number
     targetLoadCount: number
     profileVisible = true
     requestCount = 5
-    honsData: HonsData[] = []
     ui = new Ui(this.meta, AppMode.Long)
     public constructor(private blockStore: BlockStore
         , private session: Session, private meta: App, url: string) {
@@ -57,19 +51,14 @@ export class Hons extends Page{
             html = await DrawHtmlHonItem(this.blockStore, ret, id) 
             this.blockStore.SaveHonView(id, html)
         }
-        this.honsData.push({ id: id, email: ret.email, html: html })
+        const feedstag = document.getElementById("feeds") as HTMLDivElement
+        feedstag.insertAdjacentHTML("afterend", html)
     }
     public async RequestHon(keys: string[]) {
         await Promise.all(keys.map(async (key) => {
             await this.blockStore.FetchHon(this.m_masterAddr, atob(key))
                 .then((result) => this.makeHtmlHon(result, key))
         }))
-        let htmlString = ""
-        this.honsData.forEach(data => {
-            htmlString += data.html
-        });
-        const feedstag = document.getElementById("feeds") as HTMLDivElement
-        feedstag.innerHTML = htmlString
         this.ViewLoadingSpinner(false)
     }
     
@@ -175,7 +164,6 @@ export class Hons extends Page{
 
     public Release(): void {
         this.loadedCount = 0
-        this.honsData.length = 0
         this.ReleaseHtml()
     }
 }

@@ -26,6 +26,7 @@ export const DrawHtmlHonItem = async (store: BlockStore, e: HonEntry, key: strin
             .then(res => res.blob())
             .then(img => {
                 imgUrl = URL.createObjectURL(img)
+                imgUrl = `<span class="m-1"> <img src="` + imgUrl + `" class="rounded img-fluid w-100"> </span> `
             })
     }
     // reply count
@@ -66,8 +67,8 @@ export const DrawHtmlHonItem = async (store: BlockStore, e: HonEntry, key: strin
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <pre class="hon-contents m-0" style="font-size:medium;">${e.content}</pre>
                 </div>
-                <div class="row m-1" onclick="ClickLoadPage('hon', false, '&key=${key}')">
-                    <img src="${imgUrl}" class="rounded img-fluid w-100">
+                <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
+                    ${imgUrl}
                 </div>
                 ${tag}
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">

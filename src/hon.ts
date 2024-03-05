@@ -58,7 +58,8 @@ export class Hon extends Page{
     async drawHtmlHon(ret: HonEntry, key: string, targetDiv: string) {
         const feeds = document.getElementById(targetDiv);
         if (feeds == null) return;
-        feeds.innerHTML += await DrawHtmlHonItem(this.blockStore, ret, key)
+        const html = await DrawHtmlHonItem(this.blockStore, ret, key)
+        feeds.insertAdjacentHTML("afterend", html)
     }
     warningMsg(msg: string) {
         const info = document.getElementById("information");
@@ -110,7 +111,7 @@ export class Hon extends Page{
             encodeURIComponent(HonTxId) + "&table=replyfeeds&key=";
         return fetch(addr + key)
             .then((response) => response.json())
-            .then((result) => this.drawHtmlHon(result, key, "reply"))
+            .then(async (result) => await this.drawHtmlHon(result, key, "reply"))
             .then(() => this.warningMsg(""))
     }
     /* reply feedlink */
@@ -123,8 +124,8 @@ export class Hon extends Page{
             .then((response) => response.json())
             .then((result) => {
                 if (result.result.constructor == Array) {
-                    result.result.forEach((key: any) => {
-                        this.RequestHonReply(key)
+                    result.result.forEach(async (key: any) => {
+                        await this.RequestHonReply(key)
                     });
                 } else {
                     this.warningMsg("")

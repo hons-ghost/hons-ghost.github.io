@@ -161,7 +161,7 @@ export class HonDetail extends Page {
                 console.log(ret)
                 const uniqId = ret.id + ret.time.toString()
                 const followerTag = document.getElementById("followerlist") as HTMLDivElement;
-                followerTag.innerHTML += `
+                followerTag.insertAdjacentHTML("afterend", `
                 <div class="row p-1 border-top handcursor" onclick="ClickLoadPage('hondetail', false, '&email=${ret.email}')">
                     <div class="col-auto">
                             <span id="${uniqId}" class="m-1"></span>
@@ -170,7 +170,7 @@ export class HonDetail extends Page {
                         <b>${ret.id}</b> @${ret.email}
                     </div>
                 </div>
-                `
+                `)
 
                 if (ret.file != "") {
                     fetch("data:image/jpg;base64," + ret.file)

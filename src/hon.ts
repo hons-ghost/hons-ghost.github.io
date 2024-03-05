@@ -3,11 +3,13 @@ import { Session } from "./session";
 import { FetchResult, HonEntry } from "./models/param";
 import { HonReplyLinkTxId, HonReplyTxId, HonTxId, MyHonsTxId } from "./models/tx";
 import { DrawHtmlHonItem } from "./models/honview";
+import { Page } from "./page";
 
-export class Hon {
+export class Hon extends Page{
     m_masterAddr: string;
     public constructor(private blockStore: BlockStore
-        , private session: Session) {
+        , private session: Session, url: string) {
+        super(url)
         this.m_masterAddr = "";
     }
     drawHtmlUserReply() {
@@ -53,27 +55,10 @@ export class Hon {
         if (email == null) return null;
         return email;
     }
-    drawHtmlHon(ret: HonEntry, key: string, targetDiv: string) {
-        const uniqId = ret.id + ret.time.toString()
+    async drawHtmlHon(ret: HonEntry, key: string, targetDiv: string) {
         const feeds = document.getElementById(targetDiv);
         if (feeds == null) return;
-        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, key)
-        this.blockStore.FetchProfile(window.MasterAddr, ret.email)
-            .then((result) => {
-                if (result.file != "") {
-                    fetch("data:image/jpg;base64," + result.file)
-                        .then(res => res.blob())
-                        .then(img => {
-                            const imageUrl = URL.createObjectURL(img)
-                            const imageElement = new Image()
-                            imageElement.src = imageUrl
-                            imageElement.className = 'profile-sm';
-                            const container = document.getElementById(uniqId) as HTMLSpanElement
-                            container.innerHTML = ''
-                            container.appendChild(imageElement)
-                        })
-                }
-            })
+        feeds.innerHTML += await DrawHtmlHonItem(this.blockStore, ret, key)
     }
     warningMsg(msg: string) {
         const info = document.getElementById("information");
@@ -123,7 +108,7 @@ export class Hon {
     public RequestHonReply(key: string) {
         const addr = this.m_masterAddr + "/glambda?txid=" + 
             encodeURIComponent(HonTxId) + "&table=replyfeeds&key=";
-        fetch(addr + key)
+        return fetch(addr + key)
             .then((response) => response.json())
             .then((result) => this.drawHtmlHon(result, key, "reply"))
             .then(() => this.warningMsg(""))
@@ -138,8 +123,6 @@ export class Hon {
             .then((response) => response.json())
             .then((result) => {
                 if (result.result.constructor == Array) {
-                    const container = document.getElementById(key + "-cnt") as HTMLElement
-                    container.innerHTML = result.result.length
                     result.result.forEach((key: any) => {
                         this.RequestHonReply(key)
                     });
@@ -160,7 +143,8 @@ export class Hon {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = (onoff) ? "block" : "none"
     }
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
         this.m_masterAddr = masterAddr;
         const key = this.getParam();
         if (key == null) return false
@@ -181,6 +165,7 @@ export class Hon {
     }
 
     public Release(): void { 
-        //this.canvasVisible(true)
+        this.canvasVisible(true)
+        this.ReleaseHtml()
     }
 }

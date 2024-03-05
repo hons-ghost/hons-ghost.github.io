@@ -4,16 +4,23 @@ import { HonReplyLinkTxId, HonTxId, HonsTxId } from "./models/tx";
 import { HonEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import App, { AppMode } from "./meta/app";
+import { Page } from "./page";
 
-
-export class Hons {
+type HonsData = { 
+    id: string,
+    email: string,
+    html: string 
+}
+export class Hons extends Page{
     m_masterAddr: string;
     loadedCount: number
     targetLoadCount: number
     profileVisible = true
     requestCount = 5
+    honsData: HonsData[] = []
     public constructor(private blockStore: BlockStore
-        , private session: Session, private meta: App) {
+        , private session: Session, private meta: App, url: string) {
+        super(url)
         this.m_masterAddr = "";
         this.loadedCount = 0
         this.targetLoadCount = 0
@@ -40,60 +47,30 @@ export class Hons {
         bodyTag.innerHTML = `Connected Master - 
         ${window.MasterNode.User.Nickname}`;
     }
-    drawHtmlHon(ret: HonEntry, id: string) {
+    async makeHtmlHon(ret: HonEntry, id: string) {
         this.loadedCount++
-        if (this.loadedCount == this.targetLoadCount) {
-            this.ViewLoadingSpinner(false)
-        }
         if ("result" in ret) return
-        const uniqId = ret.id + ret.time.toString()
-        const feeds = document.getElementById("feeds");
-        if (feeds == null) return;
-        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, id)
-        this.blockStore.FetchProfile(this.m_masterAddr, ret.email)
-            .then((result) => {
-                if (result.file != "" && "file" in result) {
-                    fetch("data:image/jpg;base64," + result.file)
-                        .then(res => res.blob())
-                        .then(img => {
-                            const imageUrl = URL.createObjectURL(img)
-                            const imageElement = new Image()
-                            imageElement.src = imageUrl
-                            imageElement.className = 'profile-sm';
-                            const container = document.getElementById(uniqId) as HTMLSpanElement
-                            if(container == null) return
-                            container.innerHTML = ''
-                            container.appendChild(imageElement)
-                        })
-                } else {
-                    const container = document.getElementById(uniqId) as HTMLSpanElement
-                    container.innerHTML = `<img class="profile-sm" src="static/img/ghost_background_black.png">`
-                }
-            })
+        let html = this.blockStore.LoadHonView(id)
+        if (html == undefined) {
+            html = await DrawHtmlHonItem(this.blockStore, ret, id) 
+            this.blockStore.SaveHonView(id, html)
+        }
+        this.honsData.push({ id: id, email: ret.email, html: html })
     }
-    public RequestHon(keys: string[]) {
-        const addr = this.m_masterAddr + "/glambda?txid=" + 
-            encodeURIComponent(HonTxId) + "&table=feeds&key=";
-        keys.forEach((key) => {
-            this.blockStore.FetchHon(this.m_masterAddr, atob(key))
-                .then((result) => this.drawHtmlHon(result, key))
-                .then(() => this.RequestHonsReplys(key))
+    public async RequestHon(keys: string[]) {
+        await Promise.all(keys.map(async (key) => {
+            await this.blockStore.FetchHon(this.m_masterAddr, atob(key))
+                .then((result) => this.makeHtmlHon(result, key))
+        }))
+        let htmlString = ""
+        this.honsData.forEach(data => {
+            htmlString += data.html
         });
+        const feedstag = document.getElementById("feeds") as HTMLDivElement
+        feedstag.innerHTML = htmlString
+        this.ViewLoadingSpinner(false)
     }
-    public RequestHonsReplys(key: string) {
-        this.m_masterAddr = window.MasterAddr;
-        const masterAddr = this.m_masterAddr;
-        const addr = `
-        ${masterAddr}/glambda?txid=${encodeURIComponent(HonReplyLinkTxId)}&table=replylink&key=${key}`;
-        fetch(addr)
-            .then((response) => response.json())
-            .then((result) => {
-                if (result.result.constructor == Array) {
-                    const container = document.getElementById(key + "-cnt") as HTMLElement
-                    container.innerHTML = result.result.length
-                }
-            })
-    }
+    
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
         const tag = encodeURIComponent(urlParams.get("tag")??"");
@@ -145,7 +122,6 @@ export class Hons {
             wrapper.style.display = "none"
             footer.style.display = "none"
             header.style.display = "none"
-            this.meta.ChangeUiEvent(true)
             this.meta.ModeChange(AppMode.Play)
             //this.meta.ModeChange(AppMode.Long, true)
             controllerBtn.style.display = "block"
@@ -155,7 +131,6 @@ export class Hons {
             wrapper.style.display = "block"
             footer.style.display = "block"
             header.style.display = "block"
-            this.meta.ChangeUiEvent(false)
             this.meta.ModeChange(AppMode.Long, false)
             controllerBtn.style.display = "none"
             menuGui.style.display = "none"
@@ -206,7 +181,8 @@ export class Hons {
 
     }
     
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
         
         this.loadedCount = 0
         this.m_masterAddr = masterAddr;
@@ -237,10 +213,9 @@ export class Hons {
         return true;
     }
 
-    public Release(): void { 
+    public Release(): void {
         this.loadedCount = 0
-        const feeds = document.getElementById("feeds");
-        if (feeds == null) return;
-        feeds.innerHTML = ``;
+        this.honsData.length = 0
+        this.ReleaseHtml()
     }
 }

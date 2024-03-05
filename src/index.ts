@@ -15,15 +15,13 @@ import { Main } from "./main";
 import App from "./meta/app";
 import { EditHome } from "./edithome";
 
-const blockStore = new BlockStore();
-const session = new Session(blockStore);
 
 interface IPage {
-    Run(str: string): boolean; 
+    Run(str: string): Promise<boolean>;
     Release(): void;
 }
 
-type FuncMap = { [key: string]: Function };
+type FuncMap = { [key: string]: IPage };
 type UrlMap = { [key: string]: string; };
 declare global {
     interface Window {
@@ -35,136 +33,124 @@ declare global {
     }
 }
 
-const meta = new App()
-const ipc = new Socket
-const router = new Router(ipc)
-const newHon = new NewHon(blockStore, session, ipc)
-const profile = new Profile(blockStore, session, ipc)
+class Index {
+    blockStore = new BlockStore();
+    session = new Session(this.blockStore);
+    meta = new App()
+    ipc = new Socket
+    router = new Router(this.ipc)
+    newHon = new NewHon(this.blockStore, this.session, this.ipc, "views/newhon.html")
+    profile = new Profile(this.blockStore, this.session, this.ipc, "views/profile.html")
 
-let CurrentPage: IPage | null
-const funcMap: FuncMap = {
-    "signin": () => new Signin(blockStore, session),
-    "signup": () => new Signup(blockStore, session),
-    "hon": () => new Hon(blockStore, session),
-    "hons": () => new Hons(blockStore, session, meta),
-    "hondetail": () => new HonDetail(blockStore,session, meta),
-    "newhon": () => newHon,
-    "uploadhon": () => new UploadHon(blockStore, session),
-    "profile": () => profile,
-    "main": () => new Main(blockStore, session),
-    "edithome": () => new EditHome(blockStore, session, meta),
-};
-
-router.RegisterClient("newhon", newHon)
-router.RegisterClient("profile", profile)
-
-const urlToFileMap: UrlMap = {
-    "signin": "views/signin.html",
-    "signup": "views/signup.html",
-    "main": "views/main.html",
-    "hons": "views/hons.html",
-    "hon": "views/hon.html",
-    "hondetail": "views/hondetail.html",
-    "newhon": "views/newhon.html",
-    "uploadhon": "views/uploadhon.html",
-    "profile": "views/profile.html",
-    "edithome": "views/edithome.html",
-};
-
-const getPageIdParam = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const pageid = urlParams.get("pageid");
-    const key = (pageid == null) ? "main" : pageid;
-    beforPage ??= key
-    return key;
-}
-
-let beforPage: string;
-window.ClickLoadPage = async (key: string, fromEvent: boolean, ...args: string[]) => {
-    //if (getPageIdParam() == key) return;
-    await session.DrawHtmlSessionInfo();
-
-    const url = urlToFileMap[key];
-    const state = { 
-        'url': window.location.href,
-        'key': key,
-        'fromEvent': fromEvent,
-        'args': args
+    CurrentPage?: IPage
+    funcMap: FuncMap = {
+        "signin": new Signin(this.blockStore, this.session, "views/signin.html"),
+        "signup":  new Signup(this.blockStore, this.session, "views/signup.html"),
+        "hon": new Hon(this.blockStore, this.session, "views/hon.html"),
+        "hons": new Hons(this.blockStore, this.session, this.meta, "views/hons.html"),
+        "hondetail": new HonDetail(this.blockStore, this.session, this.meta, "views/hondetail.html"),
+        "newhon": this.newHon,
+        "uploadhon": new UploadHon(this.blockStore, this.session, "views/uploadhon.html"),
+        "profile": this.profile,
+        "main": new Main(this.blockStore, this.session, "views/main.html"),
+        "edithome": new EditHome(this.blockStore, this.session, this.meta, "views/edithome.html"),
     };
-    console.log(`page change : ${beforPage} ==> ${key}`)
-    const backUpBeforPage = beforPage;
-    beforPage = key;
 
-    router.Activate(key)
-    history.pushState(state, "login", "./?pageid=" + key + args);
-    fetch(url)
-        .then(response => { return response.text(); })
-        .then(data => { 
-            CurrentPage = null;
-            (document.querySelector("contents") as HTMLDivElement).innerHTML = data; 
-        })
-        .then(() => {
-            const beforePageObj = CurrentPage
+    urlToFileMap: UrlMap = {
+        "signin": "views/signin.html",
+        "signup": "views/signup.html",
+        "main": "views/main.html",
+        "hons": "views/hons.html",
+        "hon": "views/hon.html",
+        "hondetail": "views/hondetail.html",
+        "newhon": "views/newhon.html",
+        "uploadhon": "views/uploadhon.html",
+        "profile": "views/profile.html",
+        "edithome": "views/edithome.html",
+    };
+    beforPage: string = ""
+    constructor() {
+        this.router.RegisterClient("newhon", this.newHon)
+        this.router.RegisterClient("profile", this.profile)
+
+        window.ClickLoadPage = async (key: string, fromEvent: boolean, ...args: string[]) => {
+            //if (getPageIdParam() == key) return;
+            await this.session.DrawHtmlSessionInfo();
+
+            const url = this.urlToFileMap[key];
+            const state = {
+                'url': window.location.href,
+                'key': key,
+                'fromEvent': fromEvent,
+                'args': args
+            };
+            console.log(`page change : ${this.beforPage} ==> ${key}`)
+            const backUpBeforPage = this.beforPage;
+            this.beforPage = key;
+
+            this.router.Activate(key)
+            history.pushState(state, "login", "./?pageid=" + key + args)
+
+            const beforePageObj = this.CurrentPage
             if (beforePageObj != undefined) {
                 beforePageObj.Release();
             }
 
-            CurrentPage = funcMap[key]();
-            if (CurrentPage != undefined) {
-                CurrentPage.Run(window.MasterAddr);
+            this.CurrentPage = this.funcMap[key]
+            if (this.CurrentPage != undefined) {
+                await this.CurrentPage.Run(window.MasterAddr);
             }
-        });
-};
+        };
 
-window.onpopstate = () => {
-    includeContentHTML(window.MasterAddr);
-};
+        window.onpopstate = () => {
+            this.includeContentHTML(window.MasterAddr);
+        };
+    }
 
-const parseResponse = (nodes: GhostWebUser[]) => {
-    let randIdx = Math.floor(Math.random() * nodes.length);
-    window.NodeCount = nodes.length;
-    console.log(nodes);
-    return nodes[randIdx];
-};
+    async includeContentHTML(master: string) {
+        await this.session.DrawHtmlSessionInfo();
+        const key = this.getPageIdParam();
+        this.beforPage = key;
+        this.router.Activate(key)
 
-const loadNodesHtml = (node: GhostWebUser) => {
-    window.MasterNode = node;
-    window.MasterAddr = `http://${node.User.ip.Ip}:${node.User.ip.Port}`;
-    window.MasterWsAddr = `ws://${node.User.ip.Ip}:${node.User.ip.Port}`;
-    console.log(node.User.Nickname, window.MasterNode);
-    return window.MasterAddr;
-};
-const includeHTML = (id: string, filename: string) => {
-    window.addEventListener('load', () => fetch(filename)
-        .then(response => { return response.text(); })
-        .then(data => { (document.querySelector(id) as HTMLDivElement).innerHTML = data; }));
-}
+        const beforePageObj = this.CurrentPage
+        beforePageObj?.Release();
 
-const includeContentHTML = async (master: string) => {
-    await session.DrawHtmlSessionInfo();
-    const key = getPageIdParam();
-    const filename = urlToFileMap[key];
-    const backUpBeforPage = beforPage;
-    beforPage = key;
-    router.Activate(key)
-    fetch(filename)
-        .then(response => { return response.text(); })
-        .then(data => { 
-            CurrentPage = null;
-            (document.querySelector("contents") as HTMLDivElement).innerHTML = data; 
-        })
-        .then(() => {
-            const beforePageObj = CurrentPage
-            beforePageObj?.Release();
+        this.CurrentPage = this.funcMap[key];
+        await this.CurrentPage?.Run(window.MasterAddr);
+    }
 
-            CurrentPage = funcMap[key]();
-            CurrentPage?.Run(window.MasterAddr);
-        });
-}
+    getPageIdParam() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const pageid = urlParams.get("pageid");
+        const key = (pageid == null) ? "main" : pageid;
+        this.beforPage ??= key
+        return key;
+    }
+
+    parseResponse(nodes: GhostWebUser[]) {
+        let randIdx = Math.floor(Math.random() * nodes.length);
+        window.NodeCount = nodes.length;
+        console.log(nodes);
+        return nodes[randIdx];
+    };
+
+    loadNodesHtml(node: GhostWebUser) {
+        window.MasterNode = node;
+        window.MasterAddr = `http://${node.User.ip.Ip}:${node.User.ip.Port}`;
+        window.MasterWsAddr = `ws://${node.User.ip.Ip}:${node.User.ip.Port}`;
+        console.log(node.User.Nickname, window.MasterNode);
+        return window.MasterAddr;
+    };
+    includeHTML(id: string, filename: string) {
+        window.addEventListener('load', () => fetch(filename)
+            .then(response => { return response.text(); })
+            .then(data => { (document.querySelector(id) as HTMLDivElement).innerHTML = data; }));
+    }
 
 
-function errmsg(title: string, content: string): string {
-    return `
+    errmsg(title: string, content: string): string {
+        return `
 <div class="container my-3">
     <div class="row division-line">
         <div class="col">
@@ -181,26 +167,32 @@ function errmsg(title: string, content: string): string {
     </div>
 </div>
         `;
-}
-
-
-includeHTML("header", "navbar.html");
-includeHTML("footer", "foot.html");
-
-const tag = document.getElementById("contents");
-if (tag != null) {
-    if (location.protocol != 'http:') {
-        tag.innerHTML = errmsg(` https 를 지원하지 않습니다.`, 
-            `링크를 클릭해주세요. <a href="http://hons.ghostwebservice.com"> <strong class="me-auto">hons.ghostwebservice.com</strong> </a> `);
-    } else {
-        addEventListener("load", () =>
-            fetch("http://lb.ghostnetroot.com:58083/nodes")
-                .then((response) => response.json())
-                .then(parseResponse)
-                .then(loadNodesHtml)
-                .then((url) => includeContentHTML(url))
-                .catch(() => {
-                    tag.innerHTML = errmsg(` Network Down`, ` 사용가능한 Node가 존재하지 않습니다.`);
-                }));
+    }
+    Start() {
+        const tag = document.getElementById("contents");
+        if (tag != null) {
+            if (location.protocol != 'http:') {
+                tag.innerHTML = this.errmsg(` https 를 지원하지 않습니다.`,
+                    `링크를 클릭해주세요. <a href="http://hons.ghostwebservice.com"> <strong class="me-auto">hons.ghostwebservice.com</strong> </a> `);
+            } else {
+                addEventListener("load", () =>
+                    fetch("http://lb.ghostnetroot.com:58083/nodes")
+                        .then((response) => response.json())
+                        .then(this.parseResponse)
+                        .then(this.loadNodesHtml)
+                        .then((url) => this.includeContentHTML(url))
+                        .catch(() => {
+                            tag.innerHTML = this.errmsg(` Network Down`, ` 사용가능한 Node가 존재하지 않습니다.`);
+                        }));
+            }
+        }
     }
 }
+
+
+const index = new Index()
+
+index.includeHTML("header", "navbar.html");
+index.includeHTML("footer", "foot.html");
+index.Start()
+

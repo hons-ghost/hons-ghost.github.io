@@ -48,14 +48,6 @@ export class EventController {
         this.eventEmitter.on("ctrlobj", callback)
     }
 
-    // UI
-    OnChangeUiEvent(visible: boolean) {
-        this.eventEmitter.emit("ui", visible)
-    }
-
-    RegisterUiEvent(callback: (...e: any[]) => void) {
-        this.eventEmitter.on("ui", callback)
-    }
 
     // Send Event
     OnChangeBrickInfo(opt: BrickOption) { 

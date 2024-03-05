@@ -3,15 +3,17 @@ import { Channel } from "./models/com";
 import { HonUser, Session } from "./session";
 import { NewProfileTxId } from "./models/tx";
 import { Rout } from "./libs/router";
+import { Page } from "./page";
 
 
-export class Profile implements Rout{
+export class Profile extends Page implements Rout {
     m_masterAddr: string
     m_session: Session
     m_img: Blob;
     public constructor(private blockStore: BlockStore
         , private session: Session
-        , private ipc: Channel) {
+        , private ipc: Channel, url: string) {
+        super(url)
         this.m_masterAddr = "";
         this.m_session = session;
         this.m_img = new Blob()
@@ -96,7 +98,9 @@ export class Profile implements Rout{
         console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",step, "|",seed)
         this.ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);
     }
-   public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
+
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
         /*
         const txLink = document.getElementById("txLink") as HTMLElement;
@@ -115,7 +119,7 @@ export class Profile implements Rout{
         return true;
     }
 
-    public Release(): void { }
-
-
+    public Release(): void {
+        this.ReleaseHtml()
+    }
 }

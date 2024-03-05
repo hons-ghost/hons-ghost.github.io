@@ -1,13 +1,15 @@
 import { BlockStore } from "./store";
 import { Session } from "./session";
 import { UploadTxId } from "./models/tx";
+import { Page } from "./page";
 
 
-export class UploadHon {
+export class UploadHon extends Page {
     m_masterAddr: string;
     m_session: Session
     public constructor(private blockStore: BlockStore
-        , private session: Session) {
+        , private session: Session, url: string) {
+        super(url)
         this.m_masterAddr = "";
         this.m_session = session;
     }
@@ -38,7 +40,9 @@ export class UploadHon {
 
     }
 
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
+
         this.m_masterAddr = masterAddr;
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
@@ -52,5 +56,7 @@ export class UploadHon {
         return true;
     }
 
-    public Release(): void { }
+    public Release(): void {
+        this.ReleaseHtml()
+    }
 }

@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { EventController } from '../../event/eventctrl'
+import { EventController, EventFlag } from '../../event/eventctrl'
 import { Joystick } from "./joystic";
 import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "../../event/keycommand";
+import { AppMode } from "../../app";
 
 export class Input {
     //dom = document.createElement("div")
@@ -49,13 +50,33 @@ export class Input {
         */
     })
     constructor(private eventCtrl: EventController) {
-        eventCtrl.RegisterUiEvent((visible) => {
-            if (visible) {
-                this.joystick.Show()
-            } else {
-                this.joystick.Hide()
+        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            switch (mode) {
+                case AppMode.Brick:
+                case AppMode.LegoDelete:
+                case AppMode.Lego:
+                case AppMode.Locate:
+                case AppMode.Portal:
+                    if (e == EventFlag.Start) {
+                        this.LegacyButtonShow()
+                        this.ButtonShow()
+                    } else {
+                        this.LegacyButtonHide()
+                        this.ButtonHide()
+                    }
+                    break;
+                case AppMode.Play:
+                    if (e == EventFlag.Start) {
+                        this.joystick.Show()
+                        this.ButtonShow()
+                    } else {
+                        this.joystick.Hide()
+                        this.ButtonHide()
+                    }
+                    break;
             }
         })
+
         this.up.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyUp); }
         this.down.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyDown); }
         this.left.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyLeft); }
@@ -71,6 +92,27 @@ export class Input {
         this.action1.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyAction1) }
         this.action1.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyAction1) }
     }
+    LegacyButtonShow() {
+        this.up.style.display = 'block'
+        this.down.style.display = 'block'
+        this.left.style.display = 'block'
+        this.right.style.display = 'block'
+    }
+    LegacyButtonHide() {
+        this.up.style.display = 'none'
+        this.down.style.display = 'none'
+        this.left.style.display = 'none'
+        this.right.style.display = 'none'
+    }
+    ButtonShow() {
+        this.jump.style.display = 'block'
+        this.action1.style.display = 'block'
+    }
+    ButtonHide() {
+        this.jump.style.display = 'none'
+        this.action1.style.display = 'none'
+    }
+
     MultiTouchEvent(e: Touch) {
         if (this.currentEvent == undefined) {
             if(e!= undefined) {

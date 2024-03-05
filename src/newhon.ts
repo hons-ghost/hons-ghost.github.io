@@ -4,6 +4,7 @@ import { Session } from "./session";
 import { NewHonTxId } from "./models/tx";
 import { Channel } from "./models/com";
 import Cropper from "cropperjs"
+import { Page } from "./page";
 
 const AiMode = {
     Filter: 'Filter',
@@ -11,7 +12,7 @@ const AiMode = {
 } as const
 type AiMode = typeof AiMode[keyof typeof AiMode]
 
-export class NewHon {
+export class NewHon extends Page{
     m_masterAddr: string;
     m_session: Session
     m_model: string;
@@ -20,7 +21,8 @@ export class NewHon {
     mode: AiMode
     readyprocess = false
     public constructor(private blockStore: BlockStore
-        , private session: Session, private ipc: Channel) {
+        , private session: Session, private ipc: Channel, url: string) {
+        super(url)
         this.m_masterAddr = "";
         this.m_model = "toonyou_beta6-f16.gguf"
         this.m_session = session;
@@ -307,7 +309,8 @@ export class NewHon {
         if (tag == "") return null;
         return tag;
     }
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
         window.scrollTo(0, 0)
 
         const btn = document.getElementById("feedBtn") as HTMLButtonElement
@@ -362,7 +365,8 @@ export class NewHon {
         return true;
     }
 
-    public Release(): void { 
+    public Release(): void {
+        this.ReleaseHtml()
         this.readyprocess = false
         //this.canvasVisible(true)
     }

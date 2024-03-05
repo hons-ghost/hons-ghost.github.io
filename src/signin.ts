@@ -2,15 +2,17 @@ import { BlockStore } from "./store";
 import { Session, HonUser } from "./session";
 import { SHA256 } from "./libs/sha256";
 import { SigninTxId } from "./models/tx";
+import { Page } from "./page";
 
 
-export class Signin {
+export class Signin extends Page {
     m_masterAddr: string;
     m_session: Session;
     m_user: HonUser;
 
     public constructor(private blockStore: BlockStore
-        , private session: Session) {
+        , private session: Session, url: string) {
+        super(url)
         this.m_user = {Email: "", Nickname:"", Password:""};
         this.m_masterAddr = "";
         this.m_session = session;
@@ -58,7 +60,8 @@ export class Signin {
     }
 
 
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
         this.m_masterAddr = masterAddr;
         const txLink = document.getElementById("txLink") as HTMLElement;
         txLink.innerHTML = `
@@ -71,5 +74,7 @@ export class Signin {
         return true;
     }
 
-    public Release(): void { }
+    public Release(): void {
+        this.ReleaseHtml()
+    }
 }

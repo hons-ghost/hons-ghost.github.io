@@ -1,18 +1,22 @@
+import { AlwaysStencilFunc } from "three";
 import { HonEntry, ProfileEntry } from "./models/param";
 import { GlobalLoadListTx, GlobalLoadTx, HonsTxId } from "./models/tx";
+import { Page } from "./page";
 import { Session } from "./session";
 import { BlockStore } from "./store";
 import * as bootstrap from "bootstrap"
 
 
-export class Main {
-    targetloadCnt: number
-    currenloadCnt: number
+export class Main extends Page {
+    targetloadCnt = 0
+    currenloadCnt = 0
+    userlist: string[] = []
 
     public constructor(private blockStore: BlockStore, 
-        private session: Session) {
-            this.targetloadCnt = this.currenloadCnt = 0
+        private session: Session, url: string) {
+            super(url)
     }
+
     tagResult(ret: any): string[] {
         if ("json" in ret) {
             const tags = JSON.parse(ret.json);
@@ -22,24 +26,37 @@ export class Main {
     }
     drawHtmlTaglist(tags: string[]) {
         const taglist = document.getElementById('taglist') as HTMLDivElement
+        let htmlString = `
+        <span class='badge bg-primary handcursor select-disable' onclick="ClickLoadPage('hons', false)">#최신글</span>
+        <span class='badge bg-info handcursor select-disable' onclick="ClickLoadPage('newhon', false)">#AI 체험하기</span>
+        `
         tags.forEach((tag: string) => {
-            taglist.innerHTML += `
+            htmlString += `
             <span class='badge bg-primary handcursor select-disable' onclick="ClickLoadPage('hons', false, '&tag=${atob(tag)}')">
             ${decodeURIComponent(atob(atob(tag)))}
             </span>
             `
         })
+        taglist.innerHTML = htmlString
     }
-    drawHtmlUserInfo(hon: ProfileEntry) {
+    async makeHtmlUserInfo(hon: ProfileEntry) {
         this.currenloadCnt++
         if ("file" in hon) {
-            const uniqId = hon.id + hon.time.toString()
-            const userTag = document.getElementById("userlist") as HTMLDivElement;
-            userTag.innerHTML += `
+            let imgUrl: string = ""
+            if (hon.file != "" && "file" in hon) {
+                await fetch("data:image/jpg;base64," + hon.file)
+                    .then(res => res.blob())
+                    .then(img => {
+                        imgUrl = URL.createObjectURL(img)
+                    })
+            } else {
+                imgUrl = "static/img/ghost_background_black.png"
+            }
+            const htmlString = `
                 <div class="container pt-2">
                 <div class="row p-1 border rounded handcursor" onclick="ClickLoadPage('hondetail', false, '&email=${hon.email}')">
                     <div class="col-auto">
-                            <span id="${uniqId}" class="m-1"></span>
+                            <span class="m-1"><img class="profile-sm" src="${imgUrl}"></span>
                     </div>
                     <div class="col">
                         <b>${hon.id}</b> @${hon.email}
@@ -48,27 +65,20 @@ export class Main {
                 </div>
                 `
 
-            if (hon.file != "" && "file" in hon) {
-                fetch("data:image/jpg;base64," + hon.file)
-                    .then(res => res.blob())
-                    .then(img => {
-                        const imageUrl = URL.createObjectURL(img)
-                        const imageElement = new Image()
-                        imageElement.src = imageUrl
-                        imageElement.className = 'profile-sm';
-                        const container = document.getElementById(uniqId) as HTMLSpanElement
-                            container.innerHTML = ''
-                        container.appendChild(imageElement)
-                    })
-            } else {
-                const container = document.getElementById(uniqId) as HTMLSpanElement
-                container.innerHTML = `<img class="profile-sm" src="static/img/ghost_background_black.png">`
-            }
+            this.userlist.push(htmlString)
         }
         if (this.targetloadCnt == this.currenloadCnt) {
             const tag = document.getElementById("loadspinner") as HTMLSpanElement
             tag.style.display = "none"
         }
+    }
+    drawHtmlUserInfo() {
+        let htmlString: string = `<span style="font-size: 20px;"><b>New Members</b></span>`
+        this.userlist.forEach((html) => {
+            htmlString += html
+        })
+        const userTag = document.getElementById("userlist") as HTMLDivElement;
+        userTag.innerHTML = htmlString
     }
     public RequestTaglist(n: number) {
         const masterAddr = window.MasterAddr;
@@ -85,11 +95,13 @@ export class Main {
         const masterAddr = window.MasterAddr;
         this.targetloadCnt = emails.length
         this.currenloadCnt = 0
-        emails.forEach((email) => {
-            const key = atob(email)
-            this.blockStore.FetchProfile(masterAddr, key)
-                .then((result) => this.drawHtmlUserInfo(result))
-        })
+            const promise = emails.map(async (email) => {
+                const key = atob(email)
+                await this.blockStore.FetchProfile(masterAddr, key)
+                    .then((result) => this.makeHtmlUserInfo(result))
+            })
+
+        Promise.all(promise).then(() => this.drawHtmlUserInfo())
     }
 
     public RequestUserlist(n: number) {
@@ -121,7 +133,8 @@ export class Main {
         carousel?.cycle()
     }
 
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
         this.disableMeta()
         this.bugfixCarousel()
         this.RequestTaglist(20)
@@ -130,6 +143,7 @@ export class Main {
         return true
     }
 
-    public Release(): void { 
+    public Release(): void {
+        this.ReleaseHtml()
     }
 }

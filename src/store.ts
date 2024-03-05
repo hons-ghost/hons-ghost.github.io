@@ -4,14 +4,19 @@ import { GlobalLoadListTx, GlobalLoadTx, HonTxId } from "./models/tx";
 const MaxUnsignedInt = ((1 << 31) >>> 0); // unsigned int max
 
 export class BlockStore {
-    hons: Map<string, HonEntry>
-    profiles: Map<string, ProfileEntry>
-    models: Map<string, ModelsEntry>
+    hons = new Map<string, HonEntry>()
+    profiles = new Map<string, ProfileEntry>()
+    models = new Map<string, ModelsEntry>()
+    honviews = new Map<string, string>()
 
-    public constructor() {
-        this.hons = new Map<string, HonEntry>()
-        this.profiles = new Map<string, ProfileEntry>()
-        this.models = new Map<string, ModelsEntry>()
+    public constructor() { }
+
+    SaveHonView(key: string, html: string) {
+        this.honviews.set(key, html)
+    }
+
+    LoadHonView(key: string): string | undefined {
+        return this.honviews.get(key)
     }
 
     UpdateModels(model: ModelsEntry, key: string) {

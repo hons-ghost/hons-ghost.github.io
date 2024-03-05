@@ -5,72 +5,58 @@ import { MetaTxId } from "./models/tx";
 import { Session } from "./session";
 import { BlockStore } from "./store";
 import ColorPicker from "@thednp/color-picker";
+import { Page } from "./page";
 
-export class EditHome {
+export class EditHome extends Page {
     m_masterAddr = ""
     mode = AppMode.Edit
     profileVisible = true
     brickSize = new THREE.Vector3(3, 3, 1)
     brickRotate = new THREE.Vector3()
 
-    sav = document.getElementById("save") as HTMLDivElement
-    loc = document.getElementById("locatmode") as HTMLDivElement
-    avr = document.getElementById("avatarmode") as HTMLDivElement
-    avr2 = document.getElementById("avatar-second") as HTMLDivElement
-    div = document.getElementById("brickmode") as HTMLDivElement
-    fun = document.getElementById("funituremode") as HTMLDivElement
-    fun2 = document.getElementById("funiture-second") as HTMLDivElement
-    wea = document.getElementById("weaponmode") as HTMLDivElement
-
-    male = document.getElementById("change-male") as HTMLDivElement
-    female = document.getElementById("change-female") as HTMLDivElement
+    myPicker?: ColorPicker
+    color: string = "#fff"
 
     alarm = document.getElementById("alarm-msg") as HTMLDivElement
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
 
-    gate = document.getElementById("gate") as HTMLDivElement
-    lego = document.getElementById("apart") as HTMLDivElement
-    eraser = document.getElementById("eraser") as HTMLDivElement
-    brickReset = document.getElementById("reset-brick") as HTMLDivElement
-    brickctrl = document.getElementById("brickctrl") as HTMLDivElement
-
-    rect = document.getElementById("rect") as HTMLDivElement
-    roun = document.getElementById("rounded_corner") as HTMLDivElement
-    x_up = document.getElementById("x_up") as HTMLDivElement
-    x_down = document.getElementById("x_down") as HTMLDivElement
-    x_value = document.getElementById("x_value") as HTMLDivElement
-    y_up = document.getElementById("y_up") as HTMLDivElement
-    y_down = document.getElementById("y_down") as HTMLDivElement
-    y_value = document.getElementById("y_value") as HTMLDivElement
-    z_up = document.getElementById("z_up") as HTMLDivElement
-    z_down = document.getElementById("z_down") as HTMLDivElement
-    z_value = document.getElementById("z_value") as HTMLDivElement
-    colorPick = document.getElementById("myPicker") as HTMLInputElement
-
-    y_rotation = document.getElementById("y_rotation") as HTMLDivElement
-    x_rotation = document.getElementById("x_rotation") as HTMLDivElement
-
-    myPicker = new ColorPicker("#myPicker")
-    color: string = "#fff"
     constructor(
         private blockStore: BlockStore,
         private session: Session, 
-        private meta: App
+        private meta: App, 
+        url: string
     ) {
-        this.x_up.onclick = () => this.ChangeBrickSize("x", 2)
-        this.x_down.onclick = () => this.ChangeBrickSize("x", -2)
-        this.y_up.onclick = () => this.ChangeBrickSize("y", 2)
-        this.y_down.onclick = () => this.ChangeBrickSize("y", -2)
-        this.z_up.onclick = () => this.ChangeBrickSize("z", 2)
-        this.z_down.onclick = () => this.ChangeBrickSize("z", -2)
-        this.y_rotation.onclick = () => this.ChangeRotation(0, 90, 0)
-        this.x_rotation.onclick = () => this.ChangeRotation(90, 0, 0)
+        super(url)
+    }
+
+    GetElement() {
+        const rect = document.getElementById("rect") as HTMLDivElement
+        const roun = document.getElementById("rounded_corner") as HTMLDivElement
+        const x_up = document.getElementById("x_up") as HTMLDivElement
+        const x_down = document.getElementById("x_down") as HTMLDivElement
+        const y_up = document.getElementById("y_up") as HTMLDivElement
+        const y_down = document.getElementById("y_down") as HTMLDivElement
+        const z_up = document.getElementById("z_up") as HTMLDivElement
+        const z_down = document.getElementById("z_down") as HTMLDivElement
+        const y_rotation = document.getElementById("y_rotation") as HTMLDivElement
+        const x_rotation = document.getElementById("x_rotation") as HTMLDivElement
+
+        x_up.onclick = () => this.ChangeBrickSize("x", 2)
+        x_down.onclick = () => this.ChangeBrickSize("x", -2)
+        y_up.onclick = () => this.ChangeBrickSize("y", 2)
+        y_down.onclick = () => this.ChangeBrickSize("y", -2)
+        z_up.onclick = () => this.ChangeBrickSize("z", 2)
+        z_down.onclick = () => this.ChangeBrickSize("z", -2)
+        y_rotation.onclick = () => this.ChangeRotation(0, 90, 0)
+        x_rotation.onclick = () => this.ChangeRotation(90, 0, 0)
+
+        this.myPicker = new ColorPicker("#myPicker")
         this.myPicker.pointerMove = () => {
-            if (this.colorPick.value == this.color) return
-            this.color = this.colorPick.value
-            this.meta.ChangeBrickInfo({ color: this.colorPick.value })
+            const colorPick = document.getElementById("myPicker") as HTMLInputElement
+            if (colorPick.value == this.color) return
+            this.color = colorPick.value
+            this.meta.ChangeBrickInfo({ color: colorPick.value })
         }
-        this.UpdateBrickUI()
     }
     ChangeBrickSize(xyz: string, value: number) {
         if (xyz == "x" && this.brickSize.x + value < 1) { return }
@@ -90,19 +76,30 @@ export class EditHome {
         this.meta.ChangeBrickInfo({ r: this.brickRotate })
     }
     UpdateBrickUI() {
-        this.x_value.innerText = this.brickSize.x.toString()
-        this.y_value.innerText = this.brickSize.y.toString()
-        this.z_value.innerText = this.brickSize.z.toString()
+        const x_value = document.getElementById("x_value") as HTMLDivElement
+        x_value.innerText = this.brickSize.x.toString()
+        const y_value = document.getElementById("y_value") as HTMLDivElement
+        y_value.innerText = this.brickSize.y.toString()
+        const z_value = document.getElementById("z_value") as HTMLDivElement
+        z_value.innerText = this.brickSize.z.toString()
     }
     public UpdateMenu() {
-        this.loc.style.backgroundColor = (this.mode == AppMode.Locate) ? "silver" : "transparent"
-        this.avr.style.backgroundColor = (this.mode == AppMode.Face) ? "silver" : "transparent"
-        this.avr2.style.display = (this.mode == AppMode.Face) ? "block" : "none"
-        this.div.style.backgroundColor = (this.mode == AppMode.Brick) ? "silver" : "transparent"
-        this.fun.style.backgroundColor = (this.mode == AppMode.Funiture) ? "silver" : "transparent"
-        this.fun2.style.display = (this.mode == AppMode.Funiture) ? "block" : "none"
-        this.wea.style.backgroundColor = (this.mode == AppMode.Weapon) ? "silver" : "transparent"
-        this.brickctrl.style.display = (this.mode == AppMode.Lego) ? "block" : "none"
+        const loc = document.getElementById("locatmode") as HTMLDivElement
+        loc.style.backgroundColor = (this.mode == AppMode.Locate) ? "silver" : "transparent"
+        const avr = document.getElementById("avatarmode") as HTMLDivElement
+        avr.style.backgroundColor = (this.mode == AppMode.Face) ? "silver" : "transparent"
+        const avr2 = document.getElementById("avatar-second") as HTMLDivElement
+        avr2.style.display = (this.mode == AppMode.Face) ? "block" : "none"
+        const div = document.getElementById("brickmode") as HTMLDivElement
+        div.style.backgroundColor = (this.mode == AppMode.Brick) ? "silver" : "transparent"
+        const fun = document.getElementById("funituremode") as HTMLDivElement
+        fun.style.backgroundColor = (this.mode == AppMode.Funiture) ? "silver" : "transparent"
+        const fun2 = document.getElementById("funiture-second") as HTMLDivElement
+        fun2.style.display = (this.mode == AppMode.Funiture) ? "block" : "none"
+        const wea = document.getElementById("weaponmode") as HTMLDivElement
+        wea.style.backgroundColor = (this.mode == AppMode.Weapon) ? "silver" : "transparent"
+        const brickctrl = document.getElementById("brickctrl") as HTMLDivElement
+        brickctrl.style.display = (this.mode == AppMode.Lego) ? "block" : "none"
     }
     public RequestNewMeta(models: string) {
         const masterAddr = this.m_masterAddr;
@@ -139,64 +136,77 @@ export class EditHome {
     }
 
     public MenuEvent(email: string) {
-        this.sav.onclick = () => {
+        const sav = document.getElementById("save") as HTMLDivElement
+        sav.onclick = () => {
             this.alarm.style.display = "block"
             this.alarmText.innerHTML = "저장 중입니다."
 
             const models = this.meta.ModelStore()
             this.RequestNewMeta(models)
         }
-        this.div.onclick = () => {
+        const div = document.getElementById("brickmode") as HTMLDivElement
+        div.onclick = () => {
             this.mode = (this.mode != AppMode.Brick) ? AppMode.Brick : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
-        this.loc.onclick = () => {
+        const loc = document.getElementById("locatmode") as HTMLDivElement
+        loc.onclick = () => {
             this.mode = (this.mode != AppMode.Locate) ? AppMode.Locate : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
-        this.avr.onclick = () => {
+        const avr = document.getElementById("avatarmode") as HTMLDivElement
+        avr.onclick = () => {
             this.mode = (this.mode != AppMode.Face) ? AppMode.Face : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
-        this.fun.onclick = () => {
+        const fun = document.getElementById("funituremode") as HTMLDivElement
+        fun.onclick = () => {
             this.mode = (this.mode != AppMode.Funiture) ? AppMode.Funiture : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
-        this.wea.onclick = () => {
+        const wea = document.getElementById("weaponmode") as HTMLDivElement
+        wea.onclick = () => {
             this.mode = (this.mode != AppMode.Weapon) ? AppMode.Weapon : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
-        this.male.onclick = () => {
+        const male = document.getElementById("change-male") as HTMLDivElement
+        male.onclick = () => {
             this.meta.ChangeCharactor(Char.Male)
         }
-        this.female.onclick = () => {
+        const female = document.getElementById("change-female") as HTMLDivElement
+        female.onclick = () => {
             this.meta.ChangeCharactor(Char.Female)
         }
 
-        this.gate.onclick = () => {
+        const gate = document.getElementById("gate") as HTMLDivElement
+        gate.onclick = () => {
             this.mode = (this.mode != AppMode.Portal) ? AppMode.Portal : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
-        this.lego.onclick = () => {
+        const lego = document.getElementById("apart") as HTMLDivElement
+        lego.onclick = () => {
             this.mode = (this.mode != AppMode.Lego) ? AppMode.Lego : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
+            const colorPick = document.getElementById("myPicker") as HTMLInputElement
             this.meta.ChangeBrickInfo({
-                v: this.brickSize, r: this.brickRotate, color: this.colorPick.value
+                v: this.brickSize, r: this.brickRotate, color: colorPick.value
             })
         }
-        this.eraser.onclick = () => {
+        const eraser = document.getElementById("eraser") as HTMLDivElement
+        eraser.onclick = () => {
             this.mode = (this.mode != AppMode.LegoDelete) ? AppMode.LegoDelete : AppMode.Edit
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
-        this.brickReset.onclick = () => this.meta.ChangeBrickInfo({ clear: true })
+        const brickReset = document.getElementById("reset-brick") as HTMLDivElement
+        brickReset.onclick = () => this.meta.ChangeBrickInfo({ clear: true })
 
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {
@@ -213,13 +223,11 @@ export class EditHome {
         if (this.profileVisible) {
             footer.style.display = "none"
             header.style.display = "none"
-            this.meta.ChangeUiEvent(true)
             controllerBtn.style.display = "block"
             this.profileVisible = false
         } else {
             footer.style.display = "block"
             header.style.display = "block"
-            this.meta.ChangeUiEvent(false)
             controllerBtn.style.display = "none"
             this.profileVisible = true
         }
@@ -250,7 +258,12 @@ export class EditHome {
             .then(() => {
             })
     }
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
+
+        this.GetElement()
+        this.UpdateBrickUI()
+        
         this.m_masterAddr = masterAddr;
         const email = this.getParam();
         if(email == null) return false;
@@ -264,5 +277,6 @@ export class EditHome {
 
     public Release(): void { 
         this.VisibleUi()
+        this.ReleaseHtml()
     }
 }

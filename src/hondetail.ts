@@ -5,19 +5,26 @@ import { HonEntry, ProfileEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import { gsap } from "gsap"
 import App, { AppMode } from "./meta/app";
+import { Page } from "./page";
 
-
-export class HonDetail {
+type HonsData = { 
+    id: string,
+    email: string,
+    html: string 
+}
+export class HonDetail extends Page {
     m_masterAddr: string = ""
     targetHonEmail: string = ""
     profileVisible = true
     fullscreen = false
+    honsData: HonsData[] = []
 
     alarm = document.getElementById("alarm-msg") as HTMLDivElement
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
 
     public constructor(private blockStore: BlockStore
-        , private session: Session, private meta: App) {
+        , private session: Session, private meta: App, url: string) {
+        super(url)
     }
     drawHtml(ret: any) {
         const honUser :HonUser = {
@@ -65,58 +72,33 @@ export class HonDetail {
         if (email == null) return null;
         return email;
     }
-    drawHtmlHon(ret: HonEntry, key: string) {
-        const uniqId = ret.id + ret.time.toString()
-        const feeds = document.getElementById("feeds");
-        if (feeds == null) return;
-        feeds.innerHTML += DrawHtmlHonItem(uniqId, ret, btoa(key))
-        this.blockStore.FetchProfile(window.MasterAddr, ret.email)
-            .then((result) => {
-                if (result.file != "" && "file" in result) {
-                    fetch("data:image/jpg;base64," + result.file)
-                        .then(res => res.blob())
-                        .then(img => {
-                            const imageUrl = URL.createObjectURL(img)
-                            const imageElement = new Image()
-                            imageElement.src = imageUrl
-                            imageElement.className = 'profile-sm';
-                            const container = document.getElementById(uniqId) as HTMLSpanElement
-                            container.innerHTML = ''
-                            container?.appendChild(imageElement)
-                        })
-                } else {
-                    const container = document.getElementById(uniqId) as HTMLSpanElement
-                    container.innerHTML = `<img class="profile-sm" src="static/img/ghost_background_black.png">`
-                }
-            })
+    async drawHtmlHon(ret: HonEntry, id: string) {
+        let html = this.blockStore.LoadHonView(id)
+        if (html == undefined) {
+            html = await DrawHtmlHonItem(this.blockStore, ret, id) 
+            this.blockStore.SaveHonView(id, html)
+        }
+        this.honsData.push({ id: id, email: ret.email, html: html })
     }
     honsResult(ret: any): string[] {
         const keys: string[] = ret.result
         if (keys.length == 0) return []
         return keys
     }
-    public RequestHon(keys: string[]) {
-        if( keys)
-        keys.forEach((key) => {
-            this.blockStore.FetchHon(this.m_masterAddr, key)
-                .then((result) => this.drawHtmlHon(result, key))
-                .then(() => this.RequestHonsReplys(btoa(key)))
+    public async RequestHon(keys: string[]) {
+        if (keys.length == 0) return 
+
+        await Promise.all(keys.map(async (key) => {
+            await this.blockStore.FetchHon(this.m_masterAddr, key)
+                .then((result) => this.drawHtmlHon(result, btoa(key)))
                 .catch((err) => console.log(err))
+        }))
+        let htmlString = ""
+        this.honsData.forEach(data => {
+            htmlString += data.html
         });
-    }
-    public RequestHonsReplys(key: string) {
-        this.m_masterAddr = window.MasterAddr;
-        const masterAddr = this.m_masterAddr;
-        const addr = `
-        ${masterAddr}/glambda?txid=${encodeURIComponent(HonReplyLinkTxId)}&table=replylink&key=${key}`;
-        fetch(addr)
-            .then((response) => response.json())
-            .then((result) => {
-                if (result.result.constructor == Array) {
-                    const container = document.getElementById(key + "-cnt") as HTMLElement
-                    if (container != null) container.innerHTML = result.result.length
-                }
-            })
+        const feedstag = document.getElementById("feeds") as HTMLDivElement
+        feedstag.innerHTML = htmlString
     }
     public RequestHons(email: string) {
         this.m_masterAddr = window.MasterAddr;
@@ -128,6 +110,8 @@ export class HonDetail {
             .then((result) => this.honsResult(result))
             .then((feedlist) => this.RequestHon(feedlist))
     }
+
+    ////////////Follow//////////////
     public Follow() {
         const followBtn = document.getElementById("followBtn") as HTMLButtonElement
         followBtn.onclick = () => {
@@ -163,12 +147,12 @@ export class HonDetail {
             .then((followers) => {
                 if (followers["result"].constructor == Array) {
                     followers["result"].forEach((follower: string) => {
-                        this.GetProfile(follower)
+                        this.makeFollowerHtml(follower)
                     })
                 }
             })
     }
-    public GetProfile(email: string) {
+    public makeFollowerHtml(email: string) {
         console.log(email)
         this.blockStore.FetchProfile(window.MasterAddr, email)
             .then((ret: ProfileEntry) => {
@@ -218,7 +202,6 @@ export class HonDetail {
             wrapper.style.display = "none"
             footer.style.display = "none"
             header.style.display = "none"
-            this.meta.ChangeUiEvent(true)
             controllerBtn.style.display = "block"
             menuGui.style.display = "block"
             this.profileVisible = false
@@ -226,7 +209,6 @@ export class HonDetail {
             wrapper.style.display = "block"
             footer.style.display = "block"
             header.style.display = "block"
-            this.meta.ChangeUiEvent(false)
             controllerBtn.style.display = "none"
             menuGui.style.display = "none"
             this.profileVisible = true
@@ -305,7 +287,8 @@ export class HonDetail {
         }
     }
 
-    public Run(masterAddr: string): boolean {
+    public async Run(masterAddr: string): Promise<boolean> {
+        await this.LoadHtml()
         this.m_masterAddr = masterAddr;
         const email = this.getParam();
         if(email == null) return false;
@@ -322,8 +305,10 @@ export class HonDetail {
         return true;
     }
 
-    public Release(): void { 
+    public Release(): void {
+        this.honsData.length = 0
         const footer = document.getElementById("footer") as HTMLDivElement
         footer.style.display = "block"
+        this.ReleaseHtml()
     }
 }

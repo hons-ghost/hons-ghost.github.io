@@ -1,21 +1,36 @@
+import { BlockStore } from "../store";
 import { elapsedTime} from "../utils";
 import { HonEntry } from "./param";
+import { HonReplyLinkTxId } from "./tx";
 
 
-export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): string => {
+export const DrawHtmlHonItem = async (store: BlockStore, e: HonEntry, key: string): Promise<string> => {
+    console.log(e, key)
+    let profile = ""
+    await store.FetchProfile(window.MasterAddr, e.email)
+        .then(async (result) => {
+            if (result.file != "" && "file" in result) {
+                await fetch("data:image/jpg;base64," + result.file)
+                    .then(res => res.blob())
+                    .then(img => {
+                        profile = URL.createObjectURL(img)
+                    })
+            } else {
+                profile = "static/img/ghost_background_black.png"
+            }
+        })
+
+    /// post image
+    let imgUrl = ""
     if (typeof e.file != "undefined" && e.file != "") {
-        fetch("data:image/jpg;base64," + e.file)
+        await fetch("data:image/jpg;base64," + e.file)
             .then(res => res.blob())
             .then(img => {
-                const imageUrl = URL.createObjectURL(img)
-                const imageElement = new Image()
-                imageElement.src = imageUrl
-                imageElement.className = "rounded img-fluid w-100"
-                const container = document.getElementById(uniqId + "-file") as HTMLSpanElement
-                container.innerHTML = ''
-                container.appendChild(imageElement)
+                imgUrl = URL.createObjectURL(img)
             })
     }
+    // reply count
+    const replyCnt = await RequestHonsReplys(key)
     const rawTag = e.tag
     try {
         e.tag = decodeURIComponent(atob(e.tag))
@@ -33,7 +48,8 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
     <div class="row p-0 handcursor">
         <div class="col-auto text-center pe-0">
                     <a href="javascript:void(0)" onclick="ClickLoadPage('hondetail', false, '&email=${e.email}')">
-                    <span id="${uniqId}" class="m-1"></span>
+                    <span class="m-1">
+                    <img class="profile-sm" src="${profile}"></span>
                     </a>
         </div>
         <div class="col m-0 p-0">
@@ -51,8 +67,8 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
                     <pre class="hon-contents m-0" style="font-size:medium;">${e.content}</pre>
                 </div>
-                <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
-                    <span id="${uniqId}-file" class="m-1"></span>
+                <div class="row m-1" onclick="ClickLoadPage('hon', false, '&key=${key}')">
+                    <img src="${imgUrl}" class="rounded img-fluid w-100">
                 </div>
                 ${tag}
                 <div class="row" onclick="ClickLoadPage('hon', false, '&key=${key}')">
@@ -62,11 +78,25 @@ export const DrawHtmlHonItem = (uniqId: string, e: HonEntry, key: string): strin
                     </span>
                     </div>
                     <div class="col ps-1">
-                    <small id="${key}-cnt"></small>
+                    <small>${replyCnt}</small>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </div>
         `;
+}
+const RequestHonsReplys = (key: string): Promise<string> => {
+    const masterAddr = window.MasterAddr;
+    const addr = `
+        ${masterAddr}/glambda?txid=${encodeURIComponent(HonReplyLinkTxId)}&table=replylink&key=${key}`;
+    return fetch(addr)
+        .then((response) => response.json())
+        .then((result) => {
+            if (result.result.constructor == Array) {
+                return result.result.length
+            }
+            return ""
+        })
 }

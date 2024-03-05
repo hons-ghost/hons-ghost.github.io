@@ -123,10 +123,6 @@ export default class App {
     ChangeBrickInfo(opt: BrickOption) {
         this.eventCtrl.OnChangeBrickInfo(opt)
     }
-    ChangeUiEvent(visible: boolean) {
-        this.eventCtrl.OnChangeUiEvent(visible)
-    }
-
     ModeChange(mode: AppMode, ...arg: any[]) {
         this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.End)
         this.eventCtrl.OnAppModeEvent(mode, EventFlag.Start, arg)

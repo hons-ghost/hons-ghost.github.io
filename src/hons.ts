@@ -5,6 +5,7 @@ import { HonEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import App, { AppMode } from "./meta/app";
 import { Page } from "./page";
+import { Ui } from "./models/ui";
 
 type HonsData = { 
     id: string,
@@ -18,6 +19,7 @@ export class Hons extends Page{
     profileVisible = true
     requestCount = 5
     honsData: HonsData[] = []
+    ui = new Ui(this.meta, AppMode.Long)
     public constructor(private blockStore: BlockStore
         , private session: Session, private meta: App, url: string) {
         super(url)
@@ -112,39 +114,14 @@ export class Hons extends Page{
         `:"";
     }
 
-    public VisibleUi() {
-        const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
-        const header = document.getElementById("navibar") as HTMLDivElement
-        const footer = document.getElementById("footer") as HTMLDivElement
-        const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
-        const menuGui = document.getElementById("menu-gui") as HTMLDivElement
-        if (this.profileVisible) {
-            wrapper.style.display = "none"
-            footer.style.display = "none"
-            header.style.display = "none"
-            this.meta.ModeChange(AppMode.Play)
-            //this.meta.ModeChange(AppMode.Long, true)
-            controllerBtn.style.display = "block"
-            menuGui.style.display = "block"
-            this.profileVisible = false
-        } else {
-            wrapper.style.display = "block"
-            footer.style.display = "block"
-            header.style.display = "block"
-            this.meta.ModeChange(AppMode.Long, false)
-            controllerBtn.style.display = "none"
-            menuGui.style.display = "none"
-            this.profileVisible = true
-        }
-    }
     public CanvasRenderer() {
-        this.profileVisible = false
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
+        this.profileVisible = false
         this.meta.init()
             .then(() => {
                 //this.meta.ModeChange(AppMode.Long, false)
-                this.VisibleUi()
+                this.ui.UiOn()
             })
         const myModel = this.blockStore.GetModel(this.session.UserId)
         this.blockStore.FetchModels(this.m_masterAddr)
@@ -154,27 +131,9 @@ export class Hons extends Page{
         this.meta.render()
 
         const play = document.getElementById("playBtn") as HTMLButtonElement
-        play.onclick = () => { this.VisibleUi() }
+        play.onclick = () => { this.ui.UiOff(AppMode.Play) }
 
-        const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
-        fullscreen.onclick = () => {
-            if(document.fullscreenElement) {
-                document.exitFullscreen()
-                fullscreen.innerText = "fullscreen"
-            } else {
-                document.documentElement.requestFullscreen()
-                fullscreen.innerText = "fullscreen_exit"
-            }
-        }
-
-        const getback = document.getElementById("returnSns") as HTMLSpanElement
-        getback.onclick = () => { 
-            if (document.fullscreenElement) {
-                document.exitFullscreen()
-                fullscreen.innerText = "fullscreen"
-            }
-            this.VisibleUi() 
-        }
+        
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"
@@ -183,6 +142,7 @@ export class Hons extends Page{
     
     public async Run(masterAddr: string): Promise<boolean> {
         await this.LoadHtml()
+        this.ui.Init()
         
         this.loadedCount = 0
         this.m_masterAddr = masterAddr;

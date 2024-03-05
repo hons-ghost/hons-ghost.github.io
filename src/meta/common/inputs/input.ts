@@ -93,24 +93,32 @@ export class Input {
         this.action1.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyAction1) }
     }
     LegacyButtonShow() {
+        const joypad = document.getElementById("joypad") as HTMLDivElement
+        joypad.style.display = "block"
+        /*
         this.up.style.display = 'block'
         this.down.style.display = 'block'
         this.left.style.display = 'block'
         this.right.style.display = 'block'
+        */
     }
     LegacyButtonHide() {
+        const joypad = document.getElementById("joypad") as HTMLDivElement
+        joypad.style.display = "none"
+        /*
         this.up.style.display = 'none'
         this.down.style.display = 'none'
         this.left.style.display = 'none'
         this.right.style.display = 'none'
+        */
     }
     ButtonShow() {
-        this.jump.style.display = 'block'
-        this.action1.style.display = 'block'
+        const btnTag = document.getElementById("joypad_buttons") as HTMLDivElement
+        btnTag.style.display = 'block'
     }
     ButtonHide() {
-        this.jump.style.display = 'none'
-        this.action1.style.display = 'none'
+        const btnTag = document.getElementById("joypad_buttons") as HTMLDivElement
+        btnTag.style.display = 'none'
     }
 
     MultiTouchEvent(e: Touch) {

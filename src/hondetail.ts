@@ -6,6 +6,7 @@ import { DrawHtmlHonItem } from "./models/honview";
 import { gsap } from "gsap"
 import App, { AppMode } from "./meta/app";
 import { Page } from "./page";
+import { Ui } from "./models/ui";
 
 type HonsData = { 
     id: string,
@@ -18,6 +19,7 @@ export class HonDetail extends Page {
     profileVisible = true
     fullscreen = false
     honsData: HonsData[] = []
+    ui = new Ui(this.meta, AppMode.Close)
 
     alarm = document.getElementById("alarm-msg") as HTMLDivElement
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
@@ -192,57 +194,14 @@ export class HonDetail extends Page {
         }
 
     }
-    public VisibleUi() {
-        const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
-        const header = document.getElementById("navibar") as HTMLDivElement
-        const footer = document.getElementById("footer") as HTMLDivElement
-        const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
-        const menuGui = document.getElementById("menu-gui") as HTMLDivElement
-        if (this.profileVisible) {
-            wrapper.style.display = "none"
-            footer.style.display = "none"
-            header.style.display = "none"
-            controllerBtn.style.display = "block"
-            menuGui.style.display = "block"
-            this.profileVisible = false
-        } else {
-            wrapper.style.display = "block"
-            footer.style.display = "block"
-            header.style.display = "block"
-            controllerBtn.style.display = "none"
-            menuGui.style.display = "none"
-            this.profileVisible = true
-        }
-    }
     public CanvasRenderer(email: string) {
-        const play = document.getElementById("playBtn") as HTMLButtonElement
-        play.onclick = () => { 
-            this.VisibleUi() 
-            this.meta.ModeChange(AppMode.Play)
-        }
-        const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
-        fullscreen.onclick = () => {
-            if(document.fullscreenElement) {
-                document.exitFullscreen()
-                fullscreen.innerText = "fullscreen"
-            } else {
-                document.documentElement.requestFullscreen()
-                fullscreen.innerText = "fullscreen_exit"
-            }
-        }
-
-        const getback = document.getElementById("returnSns") as HTMLSpanElement
-        getback.onclick = () => { 
-            if(document.fullscreenElement) {
-                document.exitFullscreen()
-                fullscreen.innerText = "fullscreen"
-            }
-            this.VisibleUi() 
-            this.meta.ModeChange(AppMode.Close)
-        }
-
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
+
+        const play = document.getElementById("playBtn") as HTMLButtonElement
+        play.onclick = () => { 
+            this.ui.UiOff(AppMode.Play)
+        }
 
         this.meta.init().then(() => {
             this.alarm.style.display = "block"
@@ -289,6 +248,7 @@ export class HonDetail extends Page {
 
     public async Run(masterAddr: string): Promise<boolean> {
         await this.LoadHtml()
+        this.ui.Init()
         this.m_masterAddr = masterAddr;
         const email = this.getParam();
         if(email == null) return false;

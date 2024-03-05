@@ -5,7 +5,6 @@ import { HonReplyLinkTxId } from "./tx";
 
 
 export const DrawHtmlHonItem = async (store: BlockStore, e: HonEntry, key: string): Promise<string> => {
-    console.log(e, key)
     let profile = ""
     await store.FetchProfile(window.MasterAddr, e.email)
         .then(async (result) => {

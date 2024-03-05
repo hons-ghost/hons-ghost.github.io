@@ -6,6 +6,7 @@ import { Session } from "./session";
 import { BlockStore } from "./store";
 import ColorPicker from "@thednp/color-picker";
 import { Page } from "./page";
+import { Ui } from "./models/ui";
 
 export class EditHome extends Page {
     m_masterAddr = ""
@@ -13,6 +14,7 @@ export class EditHome extends Page {
     profileVisible = true
     brickSize = new THREE.Vector3(3, 3, 1)
     brickRotate = new THREE.Vector3()
+    ui = new Ui(this.meta, AppMode.Edit)
 
     myPicker?: ColorPicker
     color: string = "#fff"
@@ -210,26 +212,7 @@ export class EditHome extends Page {
 
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {
-            this.VisibleUi()
             window.ClickLoadPage("hondetail", false, "&email=" + email)
-        }
-    }
-
-    public VisibleUi() {
-        const controllerBtn = document.getElementById("joypad_buttons") as HTMLDivElement
-        const footer = document.getElementById("footer") as HTMLDivElement
-        const header = document.getElementById("navibar") as HTMLDivElement
-
-        if (this.profileVisible) {
-            footer.style.display = "none"
-            header.style.display = "none"
-            controllerBtn.style.display = "block"
-            this.profileVisible = false
-        } else {
-            footer.style.display = "block"
-            header.style.display = "block"
-            controllerBtn.style.display = "none"
-            this.profileVisible = true
         }
     }
 
@@ -269,14 +252,14 @@ export class EditHome extends Page {
         if(email == null) return false;
         this.loadHelper()
         this.CanvasRenderer()
-        this.VisibleUi()
+        this.ui.UiOff(AppMode.Edit)
         this.MenuEvent(email)
 
         return true;
     }
 
     public Release(): void { 
-        this.VisibleUi()
+        this.ui.UiOn()
         this.ReleaseHtml()
     }
 }

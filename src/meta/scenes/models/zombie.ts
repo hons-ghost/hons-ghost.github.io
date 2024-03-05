@@ -8,8 +8,9 @@ import { GhostModel } from "./ghostmodel";
 import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
 import { GPhysics } from "../../common/physics/gphysics";
+import { ActionType } from "./player";
 
-export class Zombie extends GhostModel implements IViewer, IPhysicsObject {
+export class Zombie extends GhostModel implements IPhysicsObject {
     mixer?: THREE.AnimationMixer
     currentAni?: THREE.AnimationAction
     currentClip?: THREE.AnimationClip
@@ -17,6 +18,7 @@ export class Zombie extends GhostModel implements IViewer, IPhysicsObject {
     idleClip?: THREE.AnimationClip
     runClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
+    dyingClip?: THREE.AnimationClip
 
     private controllerEnable: boolean = false
 
@@ -40,37 +42,40 @@ export class Zombie extends GhostModel implements IViewer, IPhysicsObject {
     async Init(text: string) {
         if(this.text == undefined) return
         this.text.SetText(text)
-        this.text.position.y += 0.5
+        this.text.position.y = 3.5
     }
 
-    async Loader(asset: IAsset, position: THREE.Vector3, text: string) {
+    async Loader(asset: IAsset, position: THREE.Vector3, text: string, id: number) {
         this.asset = asset
 
-        const [meshs, exist] = await asset.UniqModel(text)
+        const [meshs, exist] = await asset.UniqModel(text + id)
         this.meshs = meshs
+
+        console.log(this.meshs)
         this.meshs.position.set(position.x, position.y, position.z)
 
-        if (exist && this.text != undefined) {
+        if (this.text != undefined) {
             this.meshs.remove(this.text)
         }
 
         if (this.text != undefined) {
             this.text.SetText(text)
-            this.text.position.y += 0.5
+            this.text.position.y = 3.5
             this.meshs.add(this.text)
         }
 
-        this.mixer = this.asset.GetMixer(text)
+        this.mixer = this.asset.GetMixer(text + id)
         if (this.mixer == undefined) throw new Error("mixer is undefined");
         
         this.idleClip = this.asset.GetAnimationClip(Ani.Idle)
         this.runClip = this.asset.GetAnimationClip(Ani.Run)
         this.punchingClip = this.asset.GetAnimationClip(Ani.Punch)
+        this.dyingClip = this.asset.GetAnimationClip(Ani.Dying)
         this.changeAnimate(this.idleClip)
 
         this.Visible = false
     }
-    changeAnimate(animate: THREE.AnimationClip | undefined) {
+    changeAnimate(animate: THREE.AnimationClip | undefined, ) {
         if (animate == undefined) return
 
         const currentAction = this.mixer?.clipAction(animate)
@@ -78,16 +83,40 @@ export class Zombie extends GhostModel implements IViewer, IPhysicsObject {
 
         let fadeTime = 0.2
         this.currentAni?.fadeOut(0.2)
-
-        currentAction.setLoop(THREE.LoopRepeat, 10000)
+        if (animate == this.dyingClip) {
+            fadeTime = 0
+            currentAction.clampWhenFinished = true
+            currentAction.setLoop(THREE.LoopOnce, 1)
+        } else {
+            currentAction.setLoop(THREE.LoopRepeat, 10000)
+        }
         currentAction.reset().fadeIn(fadeTime).play()
 
         this.currentAni = currentAction
         this.currentClip = animate
     }
+    ChangeAction(action: ActionType) {
+        let clip: THREE.AnimationClip | undefined
+        switch(action) {
+            case ActionType.IdleAction:
+                clip = this.idleClip
+                break
+            case ActionType.RunAction:
+                clip = this.runClip
+                break
+            case ActionType.PunchAction:
+                clip = this.punchingClip
+                break
+            case ActionType.DyingAction:
+                clip = this.dyingClip
+                break
+
+        }
+        this.changeAnimate(clip)
+        return clip?.duration
+    }
     clock = new THREE.Clock()
 
-    resize(width: number, height: number) { }
     update() {
         this.mixer?.update(this.clock.getDelta())
     }

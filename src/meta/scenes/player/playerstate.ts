@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { ActionType, Player } from "../../scenes/models/player"
-import { GPhysics } from "./gphysics";
-import { PlayerPhysic } from "./playerphy";
+import { ActionType, Player } from "../models/player"
+import { AttackOption, AttackType, PlayerCtrl } from "./playerctrl";
 import { KeyType } from "../../event/keycommand";
+import { GPhysics } from "../../common/physics/gphysics";
+import { EventController } from "../../event/eventctrl";
 
 export interface IPlayerAction {
     Init(): void
@@ -12,7 +13,7 @@ export interface IPlayerAction {
 
 class State {
     constructor(
-        protected playerPhy: PlayerPhysic,
+        protected playerCtrl: PlayerCtrl,
         protected player: Player,
         protected gphysic: GPhysics
     ) { }
@@ -35,47 +36,47 @@ class State {
     }
 
     CheckRun() {
-        if (this.playerPhy.moveDirection.x || this.playerPhy.moveDirection.z
+        if (this.playerCtrl.moveDirection.x || this.playerCtrl.moveDirection.z
             /*this.playerPhy.KeyState[KeyType.Up] ||
             this.playerPhy.KeyState[KeyType.Down] ||
             this.playerPhy.KeyState[KeyType.Left] ||
             this.playerPhy.KeyState[KeyType.Right]*/) {
-            this.playerPhy.RunSt.Init()
-            return this.playerPhy.RunSt
+            this.playerCtrl.RunSt.Init()
+            return this.playerCtrl.RunSt
         }
     }
     CheckAttack() {
-        if (this.playerPhy.KeyState[KeyType.Action1]) {
-            this.playerPhy.AttackSt.Init()
-            return this.playerPhy.AttackSt
+        if (this.playerCtrl.KeyState[KeyType.Action1]) {
+            this.playerCtrl.AttackSt.Init()
+            return this.playerCtrl.AttackSt
         }
     }
     CheckMagic() {
-        if (this.playerPhy.KeyState[KeyType.Action2]) {
-            this.playerPhy.MagicH1St.Init()
-            return this.playerPhy.MagicH1St
+        if (this.playerCtrl.KeyState[KeyType.Action2]) {
+            this.playerCtrl.MagicH1St.Init()
+            return this.playerCtrl.MagicH1St
         }
     }
     CheckMagic2() {
-        if (this.playerPhy.KeyState[KeyType.Action3]) {
-            this.playerPhy.MagicH2St.Init()
-            return this.playerPhy.MagicH2St
+        if (this.playerCtrl.KeyState[KeyType.Action3]) {
+            this.playerCtrl.MagicH2St.Init()
+            return this.playerCtrl.MagicH2St
         }
     }
     CheckJump() {
-        if (this.playerPhy.KeyState[KeyType.Action0]) {
-            this.playerPhy.JumpSt.Init()
-            return this.playerPhy.JumpSt
+        if (this.playerCtrl.KeyState[KeyType.Action0]) {
+            this.playerCtrl.JumpSt.Init()
+            return this.playerCtrl.JumpSt
         }
     }
     CheckGravity() {
         this.player.Meshs.position.y -= 1
         if (!this.gphysic.Check(this.player)) {
             this.player.Meshs.position.y += 1
-            this.playerPhy.JumpSt.Init()
-            this.playerPhy.JumpSt.velocity_y = 0
+            this.playerCtrl.JumpSt.Init()
+            this.playerCtrl.JumpSt.velocity_y = 0
             console.log("going down!")
-            return this.playerPhy.JumpSt
+            return this.playerCtrl.JumpSt
         }
         this.player.Meshs.position.y += 1
     }
@@ -85,7 +86,7 @@ export class MagicH2State extends State implements IPlayerAction {
     keytimeout?:NodeJS.Timeout
     next: IPlayerAction = this
 
-    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
+    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
@@ -94,8 +95,8 @@ export class MagicH2State extends State implements IPlayerAction {
         this.next = this
         this.keytimeout = setTimeout(() => {
             this.Uninit()
-            this.playerPhy.AttackIdleSt.Init()
-            this.next = this.playerPhy.AttackIdleSt
+            this.playerCtrl.AttackIdleSt.Init()
+            this.next = this.playerCtrl.AttackIdleSt
         }, duration * 1000)
     }
     Uninit(): void {
@@ -115,7 +116,7 @@ export class MagicH1State extends State implements IPlayerAction {
     keytimeout?:NodeJS.Timeout
     next: IPlayerAction = this
 
-    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
+    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
@@ -124,8 +125,8 @@ export class MagicH1State extends State implements IPlayerAction {
         this.next = this
         this.keytimeout = setTimeout(() => {
             this.Uninit()
-            this.playerPhy.AttackIdleSt.Init()
-            this.next = this.playerPhy.AttackIdleSt
+            this.playerCtrl.AttackIdleSt.Init()
+            this.next = this.playerCtrl.AttackIdleSt
         }, duration * 1000)
     }
     Uninit(): void {
@@ -143,10 +144,15 @@ export class MagicH1State extends State implements IPlayerAction {
 }
 
 export class AttackState extends State implements IPlayerAction {
-    keytimeout?:NodeJS.Timeout
+    raycast = new THREE.Raycaster()
+    attackDist = 5
+    attackDir = new THREE.Vector3()
 
-    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
-        super(playerPhy, player, gphysic)
+    constructor(playerCtrl: PlayerCtrl, player: Player, gphysic: GPhysics, 
+        private eventCtrl: EventController
+    ) {
+        super(playerCtrl, player, gphysic)
+        this.raycast.params.Points.threshold = 20
     }
     Init(): void {
         console.log("Attack!!")
@@ -156,13 +162,38 @@ export class AttackState extends State implements IPlayerAction {
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
-        
+
+        this.player.Meshs.getWorldDirection(this.attackDir)
+        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+    
+        const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
+        if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
+            const msgs = new Map()
+            intersects.forEach((obj) => {
+                if (obj.distance> this.attackDist) return false
+                const mons = msgs.get("monster")
+                const msg = {
+                        type: AttackType.NormalSwing,
+                        demage: delta * 10,
+                        uuid: obj.object.uuid,
+                        obj: obj.object
+                    }
+                if(mons == undefined) {
+                    msgs.set("monster", [msg])
+                } else {
+                    mons.push(msg)
+                }
+            })
+            msgs.forEach((v, k) => {
+                this.eventCtrl.OnAttackEvent(k, v)
+            })
+        }
 
         return this
     }
 }
 export class AttackIdleState extends State implements IPlayerAction {
-    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
+    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
@@ -180,7 +211,7 @@ export class AttackIdleState extends State implements IPlayerAction {
 }
 
 export class IdleState extends State implements IPlayerAction {
-    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
+    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
         this.Init()
     }
@@ -202,7 +233,7 @@ export class IdleState extends State implements IPlayerAction {
 }
 export class RunState extends State implements IPlayerAction {
     speed = 10
-    constructor(playerPhy: PlayerPhysic, player: Player, gphysic: GPhysics) {
+    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
@@ -228,9 +259,10 @@ export class RunState extends State implements IPlayerAction {
         if (checkGravity != undefined) return checkGravity
 
         if (v.x == 0 && v.z == 0) {
-            this.playerPhy.IdleSt.Init()
-            return this.playerPhy.IdleSt
+            this.playerCtrl.IdleSt.Init()
+            return this.playerCtrl.IdleSt
         }
+        v.y = 0
 
         const movX = v.x * delta * this.speed
         const movZ = v.z * delta * this.speed
@@ -257,7 +289,7 @@ export class JumpState implements IPlayerAction {
     MX = new THREE.Matrix4()
     QT = new THREE.Quaternion()
 
-    constructor(private playerPhy: PlayerPhysic, private player: Player, private gphysic: GPhysics) { }
+    constructor(private playerPhy: PlayerCtrl, private player: Player, private gphysic: GPhysics) { }
     Init(): void {
         console.log("Jump Init!!")
         this.player.ChangeAction(ActionType.JumpAction)

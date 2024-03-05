@@ -12,7 +12,6 @@ export interface IPhysicsObject {
     get Box(): THREE.Box3
     get CannonPos(): THREE.Vector3
     set CannonPos(v: THREE.Vector3)
-    set Quaternion(v: THREE.Quaternion)
     set Visible(flag: boolean)
     get Meshs(): THREE.Group | THREE.Mesh
 }

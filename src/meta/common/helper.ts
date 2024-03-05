@@ -14,6 +14,7 @@ import { Camera } from "./camera";
 import { RayViwer } from "./raycaster";
 import { IViewer } from "../scenes/models/iviewer";
 import { Canvas } from "./canvas";
+import { PlayerCtrl } from "../scenes/player/playerctrl";
 
 export const gui = new GUI()
 gui.hide()
@@ -26,10 +27,12 @@ export class Helper implements IViewer {
     gridHelper: THREE.GridHelper = new THREE.GridHelper(300)
     stats = new Stats()
     arrowHelper: THREE.ArrowHelper
+    arrowAttackHelper: THREE.ArrowHelper
 
     constructor(
         private scene: Game,
         private player: Player,
+        private playerCtrl: PlayerCtrl,
         private npcs: NpcManager,
         private portal: Portal,
         private floor: Floor,
@@ -58,6 +61,9 @@ export class Helper implements IViewer {
         ffp.add(floor, 'visible').listen().name("visible")
 
         this.arrowHelper = new THREE.ArrowHelper(rayViewer.ray.direction, rayViewer.ray.origin, 300, 0x00ff00)
+        this.arrowAttackHelper = new THREE.ArrowHelper(
+            this.playerCtrl.AttackSt.raycast.ray.direction, 
+            this.playerCtrl.AttackSt.raycast.ray.origin, 300, 0xff0000)
 
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if (keyCommand.Type == KeyType.System0) {
@@ -70,6 +76,9 @@ export class Helper implements IViewer {
     update(): void {
         this.arrowHelper.position.copy(this.rayViewer.ray.origin)
         this.arrowHelper.setDirection(this.rayViewer.ray.direction)
+
+        this.arrowAttackHelper.position.copy(this.playerCtrl.AttackSt.raycast.ray.origin)
+        this.arrowAttackHelper.setDirection(this.playerCtrl.AttackSt.raycast.ray.direction)
     }
 
     On() {
@@ -78,6 +87,7 @@ export class Helper implements IViewer {
                 this.axesHelper,
                 this.gridHelper,
                 this.arrowHelper,
+                this.arrowAttackHelper,
             )
             document.body.removeChild(this.stats.dom)
             this.gui.hide()
@@ -89,6 +99,7 @@ export class Helper implements IViewer {
                 this.axesHelper,
                 this.gridHelper,
                 this.arrowHelper,
+                this.arrowAttackHelper,
             )
             document.body.appendChild(this.stats.dom)
             this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom

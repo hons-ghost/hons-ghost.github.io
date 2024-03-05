@@ -19,11 +19,12 @@ import { NpcManager } from "../scenes/npcmanager";
 import { ModelStore } from "../common/modelstore";
 import SConf from "../configs/staticconf";
 import { GPhysics } from "../common/physics/gphysics";
-import { PlayerPhysic } from "../common/physics/playerphy";
+import { PlayerCtrl } from "../scenes/player/playerctrl";
 import { Helper } from "../common/helper";
 import { Legos } from "../scenes/legos";
 import { Input } from "../common/inputs/input";
 import { RayViwer } from "../common/raycaster";
+import { Zombies } from "../scenes/zombies";
 
 
 export class AppFactory {
@@ -31,7 +32,7 @@ export class AppFactory {
 
     private eventCtrl = new EventController()
     private canvas = new Canvas()
-    private loader = new Loader()
+    private loader = new Loader(this.eventCtrl)
 
     private store: ModelStore
     private input: Input
@@ -42,8 +43,9 @@ export class AppFactory {
     private floor: Floor
     private portal: Portal
     private npcs: NpcManager
+    private zombies: Zombies
 
-    private playerPhy : PlayerPhysic
+    private playerCtrl : PlayerCtrl
     
     private trees: Tree[]
     private deadtrees: DeadTree[]
@@ -86,28 +88,18 @@ export class AppFactory {
         this.portal = new Portal(this.loader, this.loader.PortalAsset, this.store, this.eventCtrl, this.gphysics)
 
         this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
-        this.playerPhy = new PlayerPhysic(this.player, this.gphysics, this.eventCtrl)
+        this.playerCtrl = new PlayerCtrl(this.player, this.gphysics, this.eventCtrl)
         this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
+        this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.currentScene = this.game
 
-        const progressBar = document.querySelector('#progress-bar') as HTMLProgressElement
-        const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
-        this.loader.LoadingManager.onProgress = (url, loaded, total) => {
-            progressBar.value = (loaded / total) * 100
-        }
-        this.loader.LoadingManager.onStart = () => {
-            const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
-            progressBarContainer.style.display = "flex"
-        }
-        this.loader.LoadingManager.onLoad = () => {
-            progressBarContainer.style.display ='none'
-        }
+      
         
     }
     async MassMushroomLoader(type: number) {
@@ -199,7 +191,7 @@ export class AppFactory {
         this.npcs.InitScene()
 
         this.Helper = new Helper(
-            this.game, this.player, this.npcs, this.portal, this.floor,
+            this.game, this.player, this.playerCtrl, this.npcs, this.portal, this.floor,
             this.legos, this.camera, this.rayViewer, this.gphysics, 
             this.canvas, this.eventCtrl
         )

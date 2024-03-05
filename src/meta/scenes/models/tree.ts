@@ -33,23 +33,4 @@ export class Tree extends GhostModel implements IBuildingObject {
         })
         this.gphysics.addMeshBuilding(this)
     }
-
-    async Loader(scale: number, position: THREE.Vector3) {
-        return new Promise((resolve) => {
-            this.loader.Load.load("assets/custom_island/tree.glb", (gltf) => {
-                this.meshs = gltf.scene
-                this.meshs.scale.set(scale, scale, scale)
-                this.meshs.position.copy(position)
-                this.meshs.castShadow = true
-                this.meshs.receiveShadow = true
-                this.meshs.traverse(child => { 
-                    child.castShadow = true 
-                    child.receiveShadow = true
-                })
-
-
-                resolve(gltf.scene)
-            })
-        })
-    }
 }

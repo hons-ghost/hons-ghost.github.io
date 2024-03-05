@@ -250,19 +250,19 @@ header {
 }
 .joypad_arrow {
 display: inline-block;
-    width: 3rem;
-    height: 3rem;
+    width: 4rem;
+    height: 4rem;
     vertical-align: -0.125em;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     margin: 0 auto;
 }
 .joypad_button {
     display: inline-block;
-    width: 3rem;
-    height: 3rem;
+    width: 4rem;
+    height: 4rem;
     vertical-align: middle;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     margin: 0 auto;
 }

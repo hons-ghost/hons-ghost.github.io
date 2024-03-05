@@ -12,6 +12,8 @@ import { TestFab } from "./testfab";
 import { ZombieFab } from "./zombiefab";
 import { BatFab } from "./batfab";
 import { GunFab } from "./gunfab";
+import { EventController, EventFlag } from "../event/eventctrl";
+import { AppMode } from "../app";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -46,8 +48,9 @@ export class Loader {
     get FBXLoader(): FBXLoader { return this.fbxLoader}
 
     assets = new Map<Char, IAsset>()
+    loadingVisible = true
 
-    constructor() {
+    constructor(private eventCtrl: EventController) {
         THREE.Cache.enabled = true
 
         this.assets.set(Char.Male, this.male)
@@ -62,6 +65,34 @@ export class Loader {
         this.assets.set(Char.Zombie, this.zombie)
         this.assets.set(Char.Bat, this.bat)
         this.assets.set(Char.Gun, this.gun)
+
+        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Play) return
+            switch (e) {
+                case EventFlag.Start:
+                    this.loadingVisible = false
+                    break
+                case EventFlag.End:
+                    this.loadingVisible = true
+                    break
+            }
+        })
+
+        const progressBar = document.querySelector('#progress-bar') as HTMLProgressElement
+        const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
+        this.LoadingManager.onProgress = (url, loaded, total) => {
+            if(!this.loadingVisible) return
+            progressBar.value = (loaded / total) * 100
+        }
+        this.LoadingManager.onStart = () => {
+            if(!this.loadingVisible) return
+            const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
+            progressBarContainer.style.display = "flex"
+        }
+        this.LoadingManager.onLoad = () => {
+            if(!this.loadingVisible) return
+            progressBarContainer.style.display ='none'
+        }
     }
 
     GetAssets(id: Char): IAsset{

@@ -19,6 +19,7 @@ export enum ActionType {
     DanceAction,
     MagicH1Action,
     MagicH2Action,
+    DyingAction,
 }
 const solidify = (mesh: THREE.Mesh) => {
     const THICKNESS = 0.02

@@ -201,6 +201,7 @@ export class Bricks {
             this.brickGuide.Visible = true
             this.brickfield.visible = true
         }
+        this.eventCtrl.OnChangeCtrlObjEvent(this.brickGuide)
         this.CheckCollision()
     
         return this.brickGuide

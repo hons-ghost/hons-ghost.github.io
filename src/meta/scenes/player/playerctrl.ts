@@ -1,11 +1,24 @@
 import * as THREE from "three";
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
-import { GPhysics, IGPhysic } from "./gphysics";
-import { ActionType, Player } from "../../scenes/models/player";
+import { GPhysics, IGPhysic } from "../../common/physics/gphysics";
+import { ActionType, Player } from "../models/player";
 import { AttackIdleState, AttackState, IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
+import { IPhysicsObject } from "../models/iobject";
 
-export class PlayerPhysic implements IGPhysic {
+export enum AttackType {
+    NormalSwing,
+    Magic0,
+}
+
+export type AttackOption = {
+    type: AttackType,
+    demage: number
+    uuid: string
+    obj: THREE.Object3D
+}
+
+export class PlayerCtrl implements IGPhysic {
     keyDownQueue: IKeyCommand[] = []
     keyUpQueue: IKeyCommand[] = []
     inputVQueue: THREE.Vector3[] = []
@@ -17,7 +30,7 @@ export class PlayerPhysic implements IGPhysic {
     keyType: KeyType = KeyType.None
 
     IdleSt = new IdleState(this, this.player, this.gphysic)
-    AttackSt = new AttackState(this, this.player, this.gphysic)
+    AttackSt = new AttackState(this, this.player, this.gphysic, this.eventCtrl)
     MagicH1St = new MagicH1State(this, this.player, this.gphysic)
     MagicH2St = new MagicH2State(this, this.player, this.gphysic)
     AttackIdleSt = new AttackIdleState(this, this.player, this.gphysic)
@@ -25,6 +38,7 @@ export class PlayerPhysic implements IGPhysic {
     JumpSt = new JumpState(this, this.player, this.gphysic)
     currentState: IPlayerAction = this.IdleSt
 
+    targets: THREE.Object3D[] = []
 
     constructor(
         private player: Player,
@@ -53,6 +67,12 @@ export class PlayerPhysic implements IGPhysic {
             }
         })
 
+    }
+    add(...obj: THREE.Object3D[]) {
+        this.targets.push(...obj)
+    }
+    remove(obj: THREE.Object3D) {
+        this.targets.splice(this.targets.indexOf(obj), 1)
     }
     updateInputVector() {
         const cmd = this.inputVQueue.shift()

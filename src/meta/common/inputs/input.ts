@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { EventController, EventFlag } from '../../event/eventctrl'
 import { Joystick } from "./joystic";
-import { KeyAction1, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "../../event/keycommand";
+import { KeyAction1, KeyAction2, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "../../event/keycommand";
 import { AppMode } from "../../app";
 
 export class Input {
@@ -17,6 +17,7 @@ export class Input {
     down = document.getElementById("godown") as HTMLDivElement
     jump = document.getElementById("joypad_button1") as HTMLDivElement
     action1 = document.getElementById("joypad_button2") as HTMLDivElement
+    action2 = document.getElementById("joypad_button3") as HTMLDivElement
     currentEvent?: Touch
     clock = new THREE.Clock()
     startTime = this.clock.getElapsedTime().toFixed(2)
@@ -91,26 +92,17 @@ export class Input {
 
         this.action1.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyAction1) }
         this.action1.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyAction1) }
+
+        this.action2.ontouchstart = () => { this.eventCtrl.OnKeyDownEvent(new KeyAction2) }
+        this.action2.ontouchend = () => { this.eventCtrl.OnKeyUpEvent(new KeyAction2) }
     }
     LegacyButtonShow() {
         const joypad = document.getElementById("joypad") as HTMLDivElement
         joypad.style.display = "block"
-        /*
-        this.up.style.display = 'block'
-        this.down.style.display = 'block'
-        this.left.style.display = 'block'
-        this.right.style.display = 'block'
-        */
     }
     LegacyButtonHide() {
         const joypad = document.getElementById("joypad") as HTMLDivElement
         joypad.style.display = "none"
-        /*
-        this.up.style.display = 'none'
-        this.down.style.display = 'none'
-        this.left.style.display = 'none'
-        this.right.style.display = 'none'
-        */
     }
     ButtonShow() {
         const btnTag = document.getElementById("joypad_buttons") as HTMLDivElement

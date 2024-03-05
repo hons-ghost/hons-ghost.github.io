@@ -36,11 +36,7 @@ class State {
     }
 
     CheckRun() {
-        if (this.playerCtrl.moveDirection.x || this.playerCtrl.moveDirection.z
-            /*this.playerPhy.KeyState[KeyType.Up] ||
-            this.playerPhy.KeyState[KeyType.Down] ||
-            this.playerPhy.KeyState[KeyType.Left] ||
-            this.playerPhy.KeyState[KeyType.Right]*/) {
+        if (this.playerCtrl.moveDirection.x || this.playerCtrl.moveDirection.z) {
             this.playerCtrl.RunSt.Init()
             return this.playerCtrl.RunSt
         }
@@ -98,6 +94,7 @@ export class MagicH2State extends State implements IPlayerAction {
             this.playerCtrl.AttackIdleSt.Init()
             this.next = this.playerCtrl.AttackIdleSt
         }, duration * 1000)
+        this.playerCtrl.RunSt.PreviousState(this.playerCtrl.AttackIdleSt)
     }
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
@@ -128,6 +125,7 @@ export class MagicH1State extends State implements IPlayerAction {
             this.playerCtrl.AttackIdleSt.Init()
             this.next = this.playerCtrl.AttackIdleSt
         }, duration * 1000)
+        this.playerCtrl.RunSt.PreviousState(this.playerCtrl.AttackIdleSt)
     }
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
@@ -157,6 +155,7 @@ export class AttackState extends State implements IPlayerAction {
     Init(): void {
         console.log("Attack!!")
         this.player.ChangeAction(ActionType.PunchAction)
+        this.playerCtrl.RunSt.PreviousState(this)
     }
     Uninit(): void { }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
@@ -217,6 +216,7 @@ export class IdleState extends State implements IPlayerAction {
     }
     Init(): void {
         this.player.ChangeAction(ActionType.IdleAction)
+        this.playerCtrl.RunSt.PreviousState(this)
     }
     Uninit(): void {
         
@@ -233,14 +233,17 @@ export class IdleState extends State implements IPlayerAction {
 }
 export class RunState extends State implements IPlayerAction {
     speed = 10
+    previous: IPlayerAction = this.playerCtrl.IdleSt
     constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
         this.player.ChangeAction(ActionType.RunAction)
     }
-    Uninit(): void {
-        
+    Uninit(): void { }
+
+    PreviousState(state: IPlayerAction) {
+        this.previous = state
     }
 
     ZeroV = new THREE.Vector3(0, 0, 0)
@@ -259,8 +262,8 @@ export class RunState extends State implements IPlayerAction {
         if (checkGravity != undefined) return checkGravity
 
         if (v.x == 0 && v.z == 0) {
-            this.playerCtrl.IdleSt.Init()
-            return this.playerCtrl.IdleSt
+            this.previous.Init()
+            return this.previous
         }
         v.y = 0
 
@@ -289,11 +292,12 @@ export class JumpState implements IPlayerAction {
     MX = new THREE.Matrix4()
     QT = new THREE.Quaternion()
 
-    constructor(private playerPhy: PlayerCtrl, private player: Player, private gphysic: GPhysics) { }
+    constructor(private playerCtrl: PlayerCtrl, private player: Player, private gphysic: GPhysics) { }
     Init(): void {
         console.log("Jump Init!!")
         this.player.ChangeAction(ActionType.JumpAction)
         this.velocity_y = 16
+        this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
     }
     Uninit(): void {
         this.velocity_y = 16
@@ -325,8 +329,8 @@ export class JumpState implements IPlayerAction {
             this.player.Meshs.position.y -= movY
 
             this.Uninit()
-            this.playerPhy.IdleSt.Init()
-            return this.playerPhy.IdleSt
+            this.playerCtrl.IdleSt.Init()
+            return this.playerCtrl.IdleSt
         }
         this.velocity_y -= 9.8 * 3 *delta
 

@@ -13,7 +13,7 @@ export enum AttackType {
 
 export type AttackOption = {
     type: AttackType,
-    demage: number
+    damage: number
     uuid: string
     obj: THREE.Object3D
 }

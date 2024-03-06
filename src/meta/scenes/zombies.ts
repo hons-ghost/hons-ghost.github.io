@@ -53,7 +53,7 @@ export class Zombies {
                 if (obj == null) return
 
                 const z = this.zombies[obj.Id]
-                if (z && !z.zCtrl.ReceiveDemage(opt.demage)) {
+                if (z && !z.zCtrl.ReceiveDemage(opt.damage)) {
                     this.playerCtrl.remove(z.zCtrl.phybox)
                 }
             })

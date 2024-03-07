@@ -13,7 +13,7 @@ export class Light extends THREE.DirectionalLight implements IViewer {
         this.position.set(pos.x + 7, 500, pos.z + 30)
         this.target.position.set(pos.x, 3, pos.z)
         this.castShadow = true
-        this.shadow.radius = 800
+        this.shadow.radius = 1000
         this.shadow.mapSize.width = 4096
         this.shadow.mapSize.height = 4096
         this.shadow.camera.near = 0.1

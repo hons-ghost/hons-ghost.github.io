@@ -2,9 +2,10 @@ import * as THREE from "three";
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics";
-import { ActionType, Player } from "../models/player";
-import { AttackIdleState, AttackState, IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
-import { IPhysicsObject } from "../models/iobject";
+import { Player } from "../models/player";
+import { IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
+import { AttackIdleState, AttackState } from "./attackstate";
+import { Inventory } from "../../inventory/inventory";
 
 export enum AttackType {
     NormalSwing,
@@ -14,7 +15,6 @@ export enum AttackType {
 export type AttackOption = {
     type: AttackType,
     damage: number
-    uuid: string
     obj: THREE.Object3D
 }
 
@@ -42,6 +42,7 @@ export class PlayerCtrl implements IGPhysic {
 
     constructor(
         private player: Player,
+        private inventory: Inventory,
         private gphysic: GPhysics,
         private eventCtrl: EventController
     ) {

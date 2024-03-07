@@ -47,7 +47,7 @@ export class Zombies {
                     break
             }
         })
-        eventCtrl.RegisterAttackEvent("monster", (opts: AttackOption[]) => {
+        eventCtrl.RegisterAttackEvent("Zombie", (opts: AttackOption[]) => {
             opts.forEach((opt) => {
                 let obj = opt.obj as ZombieBox
                 if (obj == null) return

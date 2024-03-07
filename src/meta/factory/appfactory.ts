@@ -25,6 +25,7 @@ import { Legos } from "../scenes/legos";
 import { Input } from "../common/inputs/input";
 import { RayViwer } from "../common/raycaster";
 import { Zombies } from "../scenes/zombies";
+import { InvenFactory } from "../inventory/invenfactory";
 
 
 export class AppFactory {
@@ -38,6 +39,8 @@ export class AppFactory {
     private input: Input
     private game: Game
     private gphysics: GPhysics
+
+    private invenFab: InvenFactory
 
     private player: Player
     private floor: Floor
@@ -85,10 +88,12 @@ export class AppFactory {
         this.game = new Game(this.light)
         this.gphysics = new GPhysics(this.game, this.eventCtrl)
 
+        this.invenFab = new InvenFactory(this.loader)
+
         this.portal = new Portal(this.loader, this.loader.PortalAsset, this.store, this.eventCtrl, this.gphysics)
 
         this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
-        this.playerCtrl = new PlayerCtrl(this.player, this.gphysics, this.eventCtrl)
+        this.playerCtrl = new PlayerCtrl(this.player, this.invenFab.inven, this.gphysics, this.eventCtrl)
         this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
@@ -122,7 +127,7 @@ export class AppFactory {
     async MassDeadTreeLoader() {
         const meshs = await this.loader.DeadTreeAsset.CloneModel()
         const pos = new THREE.Vector3()
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 30; i++) {
             pos.set(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
                 math.rand_int(1.5, 3),
@@ -139,16 +144,16 @@ export class AppFactory {
     async MassTreeLoad() {
         const meshs = await this.loader.TreeAsset.CloneModel()
         const pos = new THREE.Vector3()
-        for (let i = 0; i < 100; i++) {
+        const radius = this.worldSize / 2
+        for (let i = 0; i < 120; i++) {
+            const phi = Math.random() * Math.PI * 2
+            const r = THREE.MathUtils.randFloat(radius * 0.5, radius * 1.5)
             pos.set(
-                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                r * Math.cos(phi),
                 2,
-                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                r * Math.sin(phi)
             )
-            if (pos.z > 0 && pos.z < 50 && pos.x > -50 && pos.x < 50) {
-                pos.x += 50
-                pos.z += 50
-            }
+            
             const scale = math.rand_int(5, 9)
             const tree = new Tree(this.loader, this.loader.TreeAsset, this.gphysics)
             tree.MassLoad(meshs, scale, pos)

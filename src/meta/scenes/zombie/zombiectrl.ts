@@ -7,11 +7,13 @@ import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
 
+
 export class ZombieBox extends THREE.Mesh {
-    Id: number
-    constructor(id: number, geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial) {
+    constructor(public Id: number, public ObjName: string,
+        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
+    ) {
         super(geo, mat)
-        this.Id = id
+        this.name = ObjName
     }
 }
 
@@ -45,7 +47,7 @@ export class ZombieCtrl implements IGPhysic{
             opacity: 0,
             color: 0xff0000,
         })
-        this.phybox = new ZombieBox(id, geometry, material)
+        this.phybox = new ZombieBox(id, "Zombie", geometry, material)
         this.phybox.position.copy(this.zombie.CannonPos)
     }
 
@@ -83,6 +85,7 @@ export class ZombieCtrl implements IGPhysic{
     }
     ReceiveDemage(demage: number): boolean {
         if (this.health <= 0) return false
+        console.log(this.health, demage)
         this.health -= demage
         if (this.health <= 0) {
             this.DyingSt.Init()

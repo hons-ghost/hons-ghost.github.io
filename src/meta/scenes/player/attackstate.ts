@@ -14,6 +14,7 @@ export class AttackState extends State implements IPlayerAction {
     attackSpeed = 2
     attackDamageMax = 1
     attackDamageMin = 1
+    keytimeout?:NodeJS.Timeout
 
     constructor(playerCtrl: PlayerCtrl, player: Player, gphysic: GPhysics, 
         private eventCtrl: EventController
@@ -29,17 +30,15 @@ export class AttackState extends State implements IPlayerAction {
         this.attackDamageMin = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMin
         this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
         this.playerCtrl.RunSt.PreviousState(this)
-    }
-    Uninit(): void { }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
-        const d = this.DefaultCheck()
-        if(d != undefined) return d
-        this.attackTime += delta
 
-        if(this.attackTime / this.attackSpeed < 1) {
-            return this
-        }
-        this.attackTime = 0
+        this.keytimeout = setTimeout(() => {
+            this.attack()
+        }, this.attackSpeed * 1000 * 0.6)
+    }
+    Uninit(): void {
+        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
+    }
+    attack() {
         this.player.Meshs.getWorldDirection(this.attackDir)
         this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
     
@@ -54,7 +53,6 @@ export class AttackState extends State implements IPlayerAction {
                         damage: THREE.MathUtils.randInt(this.attackDamageMin, this.attackDamageMax),
                         obj: obj.object
                     }
-                console.log(msg)
                 if(mons == undefined) {
                     msgs.set(obj.object.name, [msg])
                 } else {
@@ -65,10 +63,24 @@ export class AttackState extends State implements IPlayerAction {
                 this.eventCtrl.OnAttackEvent(k, v)
             })
         }
+    }
+    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+        const d = this.DefaultCheck()
+        if(d != undefined) return d
+        this.attackTime += delta
 
+        if(this.attackTime / this.attackSpeed < 1) {
+            return this
+        }
+        this.attackTime -= this.attackSpeed
+
+        this.keytimeout = setTimeout(() => {
+            this.attack()
+        }, this.attackSpeed * 1000 * 0.6)
         return this
     }
 }
+
 export class AttackIdleState extends State implements IPlayerAction {
     constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)

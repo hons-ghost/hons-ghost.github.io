@@ -9,6 +9,7 @@ import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
 import { GPhysics } from "../../common/physics/gphysics";
 import { TextStatus } from "../../effects/status";
+import { Damage } from "../../effects/damage";
 
 export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     mixer?: THREE.AnimationMixer
@@ -23,6 +24,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     danceClip?: THREE.AnimationClip
 
     private controllerEnable: boolean = false
+
 
     movePos = new THREE.Vector3()
     vFlag = true
@@ -132,7 +134,8 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
 
     resize(width: number, height: number) { }
     update() {
-        this.mixer?.update(this.clock.getDelta())
+        const delta = this.clock.getDelta()
+        this.mixer?.update(delta)
     }
     UpdatePhysics(): void {
 

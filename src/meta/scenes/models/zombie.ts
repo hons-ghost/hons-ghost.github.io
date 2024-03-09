@@ -24,8 +24,7 @@ export class Zombie extends GhostModel implements IPhysicsObject {
 
     private controllerEnable: boolean = false
     damageEffect: Damage
-    txtStatusLeft: TextStatus
-    txtStatusRight: TextStatus
+    txtStatus: TextStatus
 
     movePos = new THREE.Vector3()
     vFlag = true
@@ -43,8 +42,7 @@ export class Zombie extends GhostModel implements IPhysicsObject {
         super(asset)
         this.text = new FloatingName("Zombie")
         this.damageEffect = new Damage(this.CannonPos.x, this.CannonPos.y, this.CannonPos.z)
-        this.txtStatusLeft = new TextStatus("0", "#ff0000", true)
-        this.txtStatusRight = new TextStatus("0", "#ff0000", false)
+        this.txtStatus = new TextStatus("0", "#ff0000", true)
     }
 
     async Init(text: string) {
@@ -73,9 +71,8 @@ export class Zombie extends GhostModel implements IPhysicsObject {
         }
         this.meshs.add(this.damageEffect.Mesh)
         this.damageEffect.Mesh.visible = false
-        this.meshs.add(this.txtStatusLeft, this.txtStatusRight)
-        this.txtStatusLeft.visible = false
-        this.txtStatusRight.visible = false
+        this.meshs.add(this.txtStatus)
+        this.txtStatus.visible = false
 
         this.mixer = this.asset.GetMixer(text + id)
         if (this.mixer == undefined) throw new Error("mixer is undefined");
@@ -134,20 +131,13 @@ export class Zombie extends GhostModel implements IPhysicsObject {
 
     DamageEffect(damage: number) {
         this.damageEffect.Start()
-        if (this.flag) {
-            this.txtStatusLeft.Start("-" + damage, "#ff0000")
-            this.flag = false
-        } else {
-            this.txtStatusRight.Start("-" + damage, "#ff0000")
-            this.flag = true
-        }
+        this.txtStatus.Start(damage.toString(), "#fff")
     }
 
     update() {
         const delta = this.clock.getDelta()
         this.damageEffect.update(delta)
-        this.txtStatusLeft.update(delta)
-        this.txtStatusRight.update(delta)
+        this.txtStatus.update(delta)
         this.mixer?.update(delta)
     }
     UpdatePhysics(): void {

@@ -1,14 +1,12 @@
 import * as THREE from "three";
 
-const font =  "bold 30pt sans-serif";
+const font =  "bold 14pt sans-serif";
 const shadowColor =  "rgba(0,0,0,0.8)";
 const shadowBlur = 2
 
 export class TextStatus extends THREE.Sprite {
     params_?: string
     visible_?: boolean
-    element_?: HTMLCanvasElement
-    context2d_?: CanvasRenderingContext2D | null
 
     processFlag = false
     get Mesh() { return this }
@@ -34,7 +32,6 @@ export class TextStatus extends THREE.Sprite {
         context2d.fillStyle = color;
         context2d.shadowOffsetX = 3;
         context2d.shadowOffsetY = 3;
-        context2d.shadowColor = shadowColor
         context2d.shadowBlur = shadowBlur
         context2d.textAlign = 'center';
         context2d.textBaseline = "middle"
@@ -49,8 +46,6 @@ export class TextStatus extends THREE.Sprite {
 
         this.params_ = params;
         this.visible_ = true;
-        this.element_ = element
-        this.context2d_ = context2d
     }
 
     Destroy() {
@@ -82,62 +77,71 @@ export class TextStatus extends THREE.Sprite {
     OnDeath_() {
         this.Destroy();
     }
+    v = 0.0001
     Start(text: string, color: string) {
         this.visible = true
         this.SetText(text, color)
-        this.position.set(0, 3, 0)
+        this.position.set(THREE.MathUtils.randFloatSpread(1), 3.3, 1)
         this.material.opacity = 1 
+        this.v = 0.0001
     }
     Complete() {
         this.visible = false
     }
-    v = 0.0001
     update(delta: number) {
-        if(this.material.opacity < 0) return
-        this.position.y += delta
-        if(this.left) {
-            this.position.z -= delta + this.v
-        } else {
-            this.position.z += delta + this.v
-        }
-        this.v += 0.0001
+        this.position.y += delta * .5
+        this.v += 0.001
         this.material.opacity -= this.v
+        if(this.material.opacity < 0) {
+            this.Complete()
+        }
     }
 
     SetText(text: string, color: string) {
-        if (!this.visible_ || this.context2d_ == null) {
+        if (!this.visible_) {
             return;
         }
+        const element = document.createElement('canvas') as HTMLCanvasElement;
         this.material.dispose()
 
         this.params_ = text
 
-        if (this.element_ == undefined) return
+        if (element == undefined) return
 
-        this.context2d_ = this.element_.getContext('2d');
-        if (this.context2d_ == null) return
+        const context2d_ = element.getContext('2d');
+        if (context2d_ == null) return
 
-        this.context2d_.font = font
-        const metrics = this.context2d_.measureText(text)
+        context2d_.font = font
+        const metrics = context2d_.measureText(text)
         const w = metrics.width
         const h = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
-        this.element_.width = w;
-        this.element_.height = h;
+        element.width = w + 10;
+        element.height = h;
 
-        this.context2d_ = this.element_.getContext('2d');
-        if (this.context2d_ == null) return
+        const context2d = element.getContext('2d');
+        if (context2d == null) return
 
-        this.context2d_.font = font
+        context2d.font = font
+        context2d.shadowOffsetX = 1;
+        context2d.shadowOffsetY = 1;
+        context2d.shadowColor = "rgba(0, 0, 0, 1)";
+        context2d.shadowBlur = 0;
 
-        this.context2d_.fillStyle = color;
-        this.context2d_.textAlign = 'center';
-        this.context2d_.textBaseline = "middle"
-        this.context2d_.fillText(text, w / 2, h / 2, w);
+        context2d.fillStyle = color;
+        context2d.textAlign = 'center';
+        context2d.textBaseline = "middle"
+        context2d.fillText(text, w / 2, h / 2, w);
 
 
-        const map = new THREE.CanvasTexture(this.context2d_.canvas);
+        const map = new THREE.CanvasTexture(context2d.canvas);
         this.material =
-            new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false, transparent: true });
+            new THREE.SpriteMaterial({ 
+                map: map, 
+                color: 0xffffff, 
+                fog: false, 
+                transparent: true,
+                depthTest: false, 
+            });
         //this.sprite_.position.y += modelData.nameOffset;
         //msg.model.add(this.sprite_);
     }

@@ -10,7 +10,7 @@ export class Damage {
     })
     geometry = new THREE.BufferGeometry()
     points: THREE.Points
-    count = 20
+    count = 30
     delta: THREE.Vector3[] = []
     particles: THREE.Vector3[] = []
     velocity = 5 + Math.random() 
@@ -36,8 +36,6 @@ export class Damage {
         this.points = new THREE.Points(this.geometry, this.material)
     }
     Start() {
-        if(this.processFlag) return
-        this.processFlag = true
         // this.scene.add(this.points)
         const positions = this.points.geometry.attributes.position
         this.material.opacity = 1
@@ -51,13 +49,12 @@ export class Damage {
         this.points.visible = true
     }
     Complet() {
-        this.processFlag = false
         this.points.visible = false
         // this.scene.remove(this.points)
     }
     v = 0.001
     update(delta: number) {
-        if (!this.processFlag) return 
+        if (this.material.opacity <= 0) return 
         const positions = this.points.geometry.attributes.position
 
         for (let i = 0; i < this.particles.length; i++) {
@@ -71,7 +68,7 @@ export class Damage {
 //            console.log(positions.getX(i), positions.getY(i), positions.getZ(i))
         }
         this.v += 0.01
-        this.material.opacity -= (1.5 * delta)
+        this.material.opacity -= (1 * delta)
         if (this.material.opacity <= 0) {
             this.Complet()
         }

@@ -126,7 +126,7 @@ export class Helper implements IViewer {
         f.add(v, "y", -100, 100, 0.1).listen().name(name + "Y")
         f.add(v, "z", -100, 100, 0.1).listen().name(name + "Z")
     }
-    CreateMeshGui(meshs: THREE.Group | THREE.Mesh | Camera, name: string) {
+    CreateMeshGui(meshs: THREE.Group | THREE.Mesh | Camera | THREE.Sprite, name: string) {
         const fp = this.gui.addFolder(name)
         this.CreateVectorGui(fp, meshs.position, "Pos")
         this.CreateVectorGui(fp, meshs.rotation, "Rot")

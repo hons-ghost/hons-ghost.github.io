@@ -1,11 +1,17 @@
 import { Bat } from "./items/bat";
-import { IItem } from "./items/item";
+import { Bind, IItem } from "./items/item";
 
 
 export class Inventory {
-    bodySlo: IItem [] = []
+    bodySlot: IItem [] = []
     inventroySlot: IItem [] = []
+
     constructor() {
-        this.inventroySlot.push(new Bat())
+        this.bodySlot[Bind.Hands] = new Bat()
+        this.inventroySlot.push()
+    }
+
+    GetBindItem(pos: Bind) {
+        return this.bodySlot[pos]
     }
 }

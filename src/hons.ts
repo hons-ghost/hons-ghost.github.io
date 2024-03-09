@@ -52,7 +52,7 @@ export class Hons extends Page{
             this.blockStore.SaveHonView(id, html)
         }
         const feedstag = document.getElementById("feeds") as HTMLDivElement
-        feedstag.insertAdjacentHTML("afterend", html)
+        feedstag.insertAdjacentHTML("beforeend", html)
     }
     public async RequestHon(keys: string[]) {
         await Promise.all(keys.map(async (key) => {

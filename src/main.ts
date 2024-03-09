@@ -145,5 +145,6 @@ export class Main extends Page {
 
     public Release(): void {
         this.ReleaseHtml()
+        this.userlist.length = 0
     }
 }

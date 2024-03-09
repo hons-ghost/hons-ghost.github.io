@@ -42,7 +42,7 @@ export class PlayerCtrl implements IGPhysic {
 
     constructor(
         private player: Player,
-        private inventory: Inventory,
+        public inventory: Inventory,
         private gphysic: GPhysics,
         private eventCtrl: EventController
     ) {

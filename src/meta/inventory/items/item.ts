@@ -35,7 +35,11 @@ export enum Level {
     Mythic,
 }
 
-export interface IItem { }
+export interface IItem {
+    get DamageMin(): number
+    get DamageMax(): number
+    get Speed(): number
+}
 
 export class Item {
     type?: ItemType
@@ -53,9 +57,12 @@ export class Item {
 
     damageMin: number = 0
     damageMax: number = 0
+    get DamageMin() {return this.damageMin}
+    get DamageMax() {return this.damageMax}
     armor: number = 0
 
     speed: number = 0
+    get Speed() {return this.speed}
 
     agility: number = 0
     stamina: number = 0

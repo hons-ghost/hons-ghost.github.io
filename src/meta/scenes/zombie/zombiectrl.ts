@@ -27,7 +27,7 @@ export class ZombieCtrl implements IGPhysic{
     raycast = new THREE.Raycaster()
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
-    health = 20
+    health = 10
     phybox: ZombieBox
 
     constructor(
@@ -85,7 +85,7 @@ export class ZombieCtrl implements IGPhysic{
     }
     ReceiveDemage(demage: number): boolean {
         if (this.health <= 0) return false
-        console.log(this.health, demage)
+        this.zombie.DamageEffect(demage)
         this.health -= demage
         if (this.health <= 0) {
             this.DyingSt.Init()

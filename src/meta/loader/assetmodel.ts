@@ -81,6 +81,10 @@ export class AssetModel{
         console.log(this.models, id)
         return [ret, false]
     }
+    async LoadAnimation(url: string, type: Ani) {
+        const obj = await this.loader.FBXLoader.loadAsync(url)
+        this.clips.set(type, obj.animations[0])
+    }
 
     GetMixer(id: string): THREE.AnimationMixer | undefined {
         const has = this.mixers.get(id)
@@ -95,16 +99,16 @@ export class AssetModel{
     }
     async NewModel(): Promise<THREE.Group> {
         if (this.loaderType == ModelType.Gltf) {
-            return await new Promise((resolve) => {
-                this.loader.Load.load(this.path, (gltf) => {
+            return await new Promise(async (resolve) => {
+                await this.loader.Load.load(this.path, async (gltf) => {
                     this.meshs = gltf.scene
-                    this.afterLoad(gltf)
+                    await this.afterLoad(gltf)
                     resolve(gltf.scene)
                 })
             })
         }
-        return await new Promise((resolve) => {
-            this.loader.FBXLoader.load(this.path, async (obj) => {
+        return await new Promise(async (resolve) => {
+            await this.loader.FBXLoader.load(this.path, async (obj) => {
                 await this.afterLoad(obj)
                 console.log(this)
                 resolve(obj)

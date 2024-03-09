@@ -10,9 +10,9 @@ export class Bat extends Item implements IItem {
         this.bind = Bind.Hands
         this.binding = true
         this.name = "Bat"
-        this.damageMin = 1
+        this.damageMin = 3
         this.damageMax = 5
-        this.speed = 2
+        this.speed = 1
     }
     async Loader(asset: IAsset ) {
         this.asset = asset

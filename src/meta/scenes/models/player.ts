@@ -132,12 +132,13 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.danceClip = this.asset.GetAnimationClip(Ani.Dance0)
         this.magicH1Clip = this.asset.GetAnimationClip(Ani.MagicH1)
         this.magicH2Clip = this.asset.GetAnimationClip(Ani.MagicH2)
+        console.log(this.punchingClip)
         this.changeAnimate(this.idleClip)
 
 
         this.Visible = false
     }
-    changeAnimate(animate: THREE.AnimationClip | undefined) {
+    changeAnimate(animate: THREE.AnimationClip | undefined, speed?: number) {
         if (animate == undefined || this.currentClip == animate) return
         
         let fadeTime = 0.2
@@ -152,6 +153,9 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         } else {
             currentAction.setLoop(THREE.LoopRepeat, 10000)
         }
+        if(speed != undefined) {
+            currentAction.timeScale = animate.duration / speed
+        }
         currentAction.reset().fadeIn(fadeTime).play()
 
         this.currentAni = currentAction
@@ -160,7 +164,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
 
     clock = new THREE.Clock()
 
-    ChangeAction(action: ActionType) {
+    ChangeAction(action: ActionType, speed?: number) {
         let clip: THREE.AnimationClip | undefined
         switch(action) {
             case ActionType.IdleAction:
@@ -186,7 +190,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
                 clip = this.magicH2Clip
                 break
         }
-        this.changeAnimate(clip)
+        this.changeAnimate(clip, speed)
         return clip?.duration
     }
 

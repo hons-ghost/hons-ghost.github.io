@@ -9,6 +9,8 @@ import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
 import { GPhysics } from "../../common/physics/gphysics";
 import { ActionType } from "./player";
+import { Damage } from "../../effects/damage";
+import { TextStatus } from "../../effects/status";
 
 export class Zombie extends GhostModel implements IPhysicsObject {
     mixer?: THREE.AnimationMixer
@@ -21,6 +23,9 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     dyingClip?: THREE.AnimationClip
 
     private controllerEnable: boolean = false
+    damageEffect: Damage
+    txtStatusLeft: TextStatus
+    txtStatusRight: TextStatus
 
     movePos = new THREE.Vector3()
     vFlag = true
@@ -37,6 +42,9 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     ) {
         super(asset)
         this.text = new FloatingName("Zombie")
+        this.damageEffect = new Damage(this.CannonPos.x, this.CannonPos.y, this.CannonPos.z)
+        this.txtStatusLeft = new TextStatus("0", "#ff0000", true)
+        this.txtStatusRight = new TextStatus("0", "#ff0000", false)
     }
 
     async Init(text: string) {
@@ -63,6 +71,11 @@ export class Zombie extends GhostModel implements IPhysicsObject {
             this.text.position.y = 3.5
             this.meshs.add(this.text)
         }
+        this.meshs.add(this.damageEffect.Mesh)
+        this.damageEffect.Mesh.visible = false
+        this.meshs.add(this.txtStatusLeft, this.txtStatusRight)
+        this.txtStatusLeft.visible = false
+        this.txtStatusRight.visible = false
 
         this.mixer = this.asset.GetMixer(text + id)
         if (this.mixer == undefined) throw new Error("mixer is undefined");
@@ -74,6 +87,7 @@ export class Zombie extends GhostModel implements IPhysicsObject {
         this.changeAnimate(this.idleClip)
 
         this.Visible = false
+
     }
     changeAnimate(animate: THREE.AnimationClip | undefined, ) {
         if (animate == undefined) return
@@ -116,9 +130,25 @@ export class Zombie extends GhostModel implements IPhysicsObject {
         return clip?.duration
     }
     clock = new THREE.Clock()
+    flag = false
+
+    DamageEffect(damage: number) {
+        this.damageEffect.Start()
+        if (this.flag) {
+            this.txtStatusLeft.Start("-" + damage, "#ff0000")
+            this.flag = false
+        } else {
+            this.txtStatusRight.Start("-" + damage, "#ff0000")
+            this.flag = true
+        }
+    }
 
     update() {
-        this.mixer?.update(this.clock.getDelta())
+        const delta = this.clock.getDelta()
+        this.damageEffect.update(delta)
+        this.txtStatusLeft.update(delta)
+        this.txtStatusRight.update(delta)
+        this.mixer?.update(delta)
     }
     UpdatePhysics(): void {
 

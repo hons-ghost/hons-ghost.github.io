@@ -8,6 +8,7 @@ import { GhostModel } from "./ghostmodel";
 import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
 import { GPhysics } from "../../common/physics/gphysics";
+import { TextStatus } from "../../effects/status";
 
 export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     mixer?: THREE.AnimationMixer
@@ -110,14 +111,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
         this.changeAnimate(this.idleClip)
 
         this.Visible = false
-        /*
-        Gui.add(this.text.scale, 'x', -10, 10, 1).listen()
-        Gui.add(this.text.scale, 'y', -10, 10, 1).listen()
-        Gui.add(this.text.scale, 'z', -10, 10, 1).listen()
-        Gui.add(this.text.position, 'x', -50, 50, 0.1).listen()
-        Gui.add(this.text.position, 'y', -50, 50, 0.1).listen()
-        Gui.add(this.text.position, 'z', -50, 50, 0.1).listen()
-        */
+
     }
     changeAnimate(animate: THREE.AnimationClip | undefined) {
         if (animate == undefined) return

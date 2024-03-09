@@ -4,11 +4,16 @@ import { AttackType, PlayerCtrl } from "./playerctrl";
 import { ActionType, Player } from "../models/player";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController } from "../../event/eventctrl";
+import { Bind } from "../../inventory/items/item";
 
 export class AttackState extends State implements IPlayerAction {
     raycast = new THREE.Raycaster()
     attackDist = 5
     attackDir = new THREE.Vector3()
+    attackTime = 0
+    attackSpeed = 2
+    attackDamageMax = 1
+    attackDamageMin = 1
 
     constructor(playerCtrl: PlayerCtrl, player: Player, gphysic: GPhysics, 
         private eventCtrl: EventController
@@ -18,14 +23,23 @@ export class AttackState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Attack!!")
-        this.player.ChangeAction(ActionType.PunchAction)
+        this.attackTime = 0
+        this.attackSpeed = this.playerCtrl.inventory.GetBindItem(Bind.Hands).Speed
+        this.attackDamageMax = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMax
+        this.attackDamageMin = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMin
+        this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
         this.playerCtrl.RunSt.PreviousState(this)
     }
     Uninit(): void { }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
+        this.attackTime += delta
 
+        if(this.attackTime / this.attackSpeed < 1) {
+            return this
+        }
+        this.attackTime = 0
         this.player.Meshs.getWorldDirection(this.attackDir)
         this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
     
@@ -37,9 +51,10 @@ export class AttackState extends State implements IPlayerAction {
                 const mons = msgs.get(obj.object.name)
                 const msg = {
                         type: AttackType.NormalSwing,
-                        damage: delta * 10,
+                        damage: THREE.MathUtils.randInt(this.attackDamageMin, this.attackDamageMax),
                         obj: obj.object
                     }
+                console.log(msg)
                 if(mons == undefined) {
                     msgs.set(obj.object.name, [msg])
                 } else {

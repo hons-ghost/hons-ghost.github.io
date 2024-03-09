@@ -7,6 +7,7 @@ export class Damage {
         vertexColors: true,
         transparent: true,
         opacity: 1,
+        depthTest: false,
     })
     geometry = new THREE.BufferGeometry()
     points: THREE.Points

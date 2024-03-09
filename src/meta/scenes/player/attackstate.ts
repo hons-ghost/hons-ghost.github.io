@@ -15,6 +15,8 @@ export class AttackState extends State implements IPlayerAction {
     attackDamageMax = 1
     attackDamageMin = 1
     keytimeout?:NodeJS.Timeout
+    attackProcess = false
+    clock?: THREE.Clock
 
     constructor(playerCtrl: PlayerCtrl, player: Player, gphysic: GPhysics, 
         private eventCtrl: EventController
@@ -24,16 +26,13 @@ export class AttackState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Attack!!")
-        this.attackTime = 0
         this.attackSpeed = this.playerCtrl.inventory.GetBindItem(Bind.Hands).Speed
         this.attackDamageMax = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMax
         this.attackDamageMin = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMin
         this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
         this.playerCtrl.RunSt.PreviousState(this)
-
-        this.keytimeout = setTimeout(() => {
-            this.attack()
-        }, this.attackSpeed * 1000 * 0.6)
+        this.attackTime = this.attackSpeed
+        this.clock = new THREE.Clock()
     }
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
@@ -63,17 +62,23 @@ export class AttackState extends State implements IPlayerAction {
                 this.eventCtrl.OnAttackEvent(k, v)
             })
         }
+        this.attackProcess = false
     }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
+        if(this.clock == undefined) return  this
+
+        delta = this.clock?.getDelta()
         this.attackTime += delta
+        if(this.attackProcess) return this
 
         if(this.attackTime / this.attackSpeed < 1) {
             return this
         }
         this.attackTime -= this.attackSpeed
 
+        this.attackProcess = true
         this.keytimeout = setTimeout(() => {
             this.attack()
         }, this.attackSpeed * 1000 * 0.6)

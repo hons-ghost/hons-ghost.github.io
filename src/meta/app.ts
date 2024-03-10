@@ -32,6 +32,7 @@ export default class App {
     eventCtrl: EventController
     store: ModelStore
     initFlag: boolean = false
+    renderFlag: boolean = false
     currentMode = AppMode.Long
     /*
     modeMap = {
@@ -57,7 +58,7 @@ export default class App {
     }
 
     async init() {
-        if (this.initFlag) return
+        if (this.initFlag) return false
 
 
         await this.factory.GltfLoad()
@@ -99,14 +100,16 @@ export default class App {
         if (window.location.hostname != "hons.ghostwebservice.com") {
             this.eventCtrl.OnKeyDownEvent(new KeySystem0)
         }
+
+        return true
     }
 
     despose() {
         this.factory.Despose()
     }
 
-    render() {
-        window.requestAnimationFrame((t) => {
+    loop() {
+        window.requestAnimationFrame(() => {
             this.factory.Helper?.CheckStateBegin()
             this.currentScene.play()
             this.canvas.update()
@@ -114,8 +117,14 @@ export default class App {
             //this.factory.phydebugger.update()
 
             this.factory.Helper?.CheckStateEnd()
-            this.render()
-        })
+            this.loop()
+        })       
+    }
+
+    render() {
+        if(this.renderFlag) return
+        this.renderFlag = true
+        this.loop()
     }
     ChangeCharactor(model: Char) {
         this.factory.ModelStore.ChangeCharactor(model)

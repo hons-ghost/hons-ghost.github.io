@@ -200,7 +200,8 @@ export class HonDetail extends Page {
 
         const play = document.getElementById("playBtn") as HTMLButtonElement
         play.onclick = () => { 
-            this.ui.UiOff(AppMode.Play)
+            //this.ui.UiOff(AppMode.Play)
+            window.ClickLoadPage("play", false, `&email=${email}`)
         }
 
         this.meta.init().then(() => {

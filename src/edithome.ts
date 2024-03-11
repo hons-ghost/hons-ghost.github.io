@@ -216,11 +216,38 @@ export class EditHome extends Page {
         }
     }
 
-    public CanvasRenderer() {
+    public CanvasRenderer(email: string | null) {
+        const myModel = this.blockStore.GetModel(this.session.UserId)
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
-        this.meta.init().then(() => {
+        this.meta.init().then((inited) => {
             this.meta.ModeChange(AppMode.Edit)
+            if (email == null) {
+                this.alarm.style.display = "block"
+                this.alarmText.innerText = "Login이 필요합니다."
+                setTimeout(() => {
+                    this.alarm.style.display = "none"
+                }, 2000)
+            } else {
+                if (!inited) return
+
+                this.alarm.style.display = "block"
+                this.alarmText.innerText = "이동중입니다."
+
+                this.blockStore.FetchModel(this.m_masterAddr, email)
+                    .then(async (result) => {
+                        await this.meta.LoadModel(result.models, result.id, myModel?.models)
+                        this.alarm.style.display = "none"
+                    })
+                    .then(() => {
+                        this.meta.ModeChange(AppMode.Close)
+                    })
+                    .catch(async () => {
+                        this.alarm.style.display = "none"
+                        await this.meta.LoadModelEmpty(email, myModel?.models)
+                        this.meta.ModeChange(AppMode.Close)
+                    })
+            }
         })
         this.meta.render()
     }
@@ -251,7 +278,7 @@ export class EditHome extends Page {
         const email = this.getParam();
         if(email == null) return false;
         this.loadHelper()
-        this.CanvasRenderer()
+        this.CanvasRenderer(email)
         this.ui.UiOff(AppMode.Edit)
         this.MenuEvent(email)
 

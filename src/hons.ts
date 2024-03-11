@@ -120,7 +120,10 @@ export class Hons extends Page{
         this.meta.render()
 
         const play = document.getElementById("playBtn") as HTMLButtonElement
-        play.onclick = () => { this.ui.UiOff(AppMode.Play) }
+        play.onclick = () => { 
+            //this.ui.UiOff(AppMode.Play) 
+            window.ClickLoadPage("play", false)
+        }
 
         
 
@@ -136,6 +139,7 @@ export class Hons extends Page{
         this.loadedCount = 0
         this.m_masterAddr = masterAddr;
         this.drawHtmlConnectMaster()
+        this.CanvasRenderer()
         this.RequestHons(this.loadedCount, this.requestCount);
 
         const tagBtn = document.getElementById("tagtitle") as HTMLDivElement
@@ -158,7 +162,6 @@ export class Hons extends Page{
             }
             this.RequestHons(this.loadedCount, this.requestCount);
         }
-        this.CanvasRenderer()
         return true;
     }
 

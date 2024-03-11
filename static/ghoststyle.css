@@ -266,6 +266,16 @@ display: inline-block;
     border-radius: 50%;
     margin: 0 auto;
 }
+.joypad_inven {
+    display: inline-block;
+    width: 4rem;
+    height: 4rem;
+    vertical-align: middle;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    margin: 0;
+    text-align: center;
+}
 ._tooltip-wrap {
     position: relative;
     display: inline-block;
@@ -402,4 +412,30 @@ display: inline-block;
     top: 5px;
     left: 50%;
     transform: translate(-50%, 0);
+}
+
+.health {
+    position: absolute;
+    display: none;
+    top: 5px;
+    left: 5px;
+}
+.health_text {
+    font-size: xx-small;
+    color:#fff;
+    text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;
+}
+.inven {
+    position: absolute;
+    display: none;
+    top: 50px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.invenBtn {
+    position: absolute;
+    display: none;
+    bottom: 0px;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -14,6 +14,7 @@ import { Router } from "./libs/router";
 import { Main } from "./main";
 import App from "./meta/app";
 import { EditHome } from "./edithome";
+import { Play } from "./play";
 
 
 interface IPage {
@@ -54,6 +55,7 @@ class Index {
         "profile": this.profile,
         "main": new Main(this.blockStore, this.session, "views/main.html"),
         "edithome": new EditHome(this.blockStore, this.session, this.meta, "views/edithome.html"),
+        "play": new Play(this.blockStore, this.session, this.meta, "views/play.html"),
     };
 
     urlToFileMap: UrlMap = {
@@ -77,7 +79,6 @@ class Index {
             //if (getPageIdParam() == key) return;
             await this.session.DrawHtmlSessionInfo();
 
-            const url = this.urlToFileMap[key];
             const state = {
                 'url': window.location.href,
                 'key': key,

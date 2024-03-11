@@ -28,10 +28,10 @@ export class Play extends Page {
         this.meta.init()
             .then((inited) => {
                 if (email == null) {
-                    this.ui.UiOff(AppMode.Play)
                     this.blockStore.FetchModels(this.m_masterAddr)
                         .then(async (result) => {
                             await this.meta.LoadVillage(result, myModel?.models)
+                            this.ui.UiOff(AppMode.Play)
                         })
                 } else {
                     if(!inited) {
@@ -67,7 +67,7 @@ export class Play extends Page {
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
         const email = encodeURIComponent(urlParams.get("email")??"");
-        if (email == null) return null;
+        if (email == "") return null;
         return email;
     }
     public async Run(masterAddr: string): Promise<boolean> {

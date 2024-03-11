@@ -1,29 +1,29 @@
 <div id="health" class="health">
     <div class="container p-1">
-        <div class="row text-center select-disable">
-            <div class="col-auto health_text">HP: </div>
-            <div class="col"><progress id="hp-bar" value="0" max="100"></progress></div>
+        <div class="row" style="height:20px;">
+            <div class="col-auto health_text pe-0">HP: </div>
+            <div class="col"><progress id="hp-bar" style="width:100px;" value="0" max="100"></progress></div>
         </div>
-        <div class="row">
-            <div class="col-auto health_text">MP: </div>
-            <div class="col"><progress id="special-bar" value="0" max="100"></progress></div>
+        <div class="row" style="height:20px;">
+            <div class="col-auto health_text pe-0">MP: </div>
+            <div class="col"><progress id="special-bar" style="width:100px;" value="0" max="100"></progress></div>
         </div>
-        <div class="row">
-            <div class="col-auto health_text">Exp: </div>
-            <div class="col"><progress id="exp-bar" value="0" max="100"></progress></div>
+        <div class="row" style="height:20px;">
+            <div class="col-auto health_text pe-0">Exp: </div>
+            <div class="col"><progress id="exp-bar" style="width:100px;" value="0" max="100"></progress></div>
         </div>
     </div>
 </div>
 <div id="invenContent" class="inven rounded p-2 m-1">
     <div class="row">
         <div class="col">
-            <ul class="nav nav-pills" id="pills-tab" role="tablist">
+            <ul class="nav nav-underline" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="pills-inventory-tab" data-bs-toggle="pill" data-bs-target="#filter"
                         type="button" role="tab" aria-controls="inventory" aria-selected="false">Invertory</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-talent-tab" data-bs-toggle="pill" data-bs-target="#sd1"
+                    <button class="nav-link disabled" id="pills-talent-tab" data-bs-toggle="pill" data-bs-target="#sd1"
                         type="button" role="tab" aria-controls="talent" aria-selected="true">특성</button>
                 </li>
             </ul>
@@ -34,16 +34,26 @@
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="inventory" role="tabpanel" aria-labelledby="pills-inventory-tab"
                     tabindex="0">
+                    <!--Invertory START-->
+                    <div class="container p-1">
+                        <div class="row">
+                            <div class="col rounded bg-white">Head</div>
+                        </div>
+                    </div>  
+                    <!--Invertory END-->
                 </div>
                 <div class="tab-pane fade show p-0" id="talent" role="tabpanel" aria-labelledby="pills-talent-tab"
                     tabindex="0">
+                    <!--Telant START-->
+
+                    <!--Telant END-->
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div id="invenBtn" class="invenBtn">
-    <div class="joypad_inven select-disable">
+    <div class="joypad_inven select-disable pt-1">
         <span style="font-size:xxx-large;opacity: 0.7;" class="material-symbols-outlined" id="invenBtn">
             category
         </span>

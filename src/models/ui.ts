@@ -23,7 +23,8 @@ export class Ui {
                 document.exitFullscreen()
                 fullscreen.innerText = "fullscreen"
             }
-            this.UiOn()
+            history.back()
+            //this.UiOn()
         }
     }
     UiOff(to: AppMode) {
@@ -32,7 +33,7 @@ export class Ui {
         const footer = document.getElementById("footer") as HTMLDivElement
         const menuGui = document.getElementById("menu-gui") as HTMLDivElement
         const health = document.getElementById("health") as HTMLDivElement
-        const inven = document.getElementById("inven") as HTMLDivElement
+        const inven = document.getElementById("invenBtn") as HTMLDivElement
         if (inven) inven.style.display = "block"
         if (health) health.style.display = "block"
         menuGui.style.display = "block"
@@ -56,7 +57,7 @@ export class Ui {
         const footer = document.getElementById("footer") as HTMLDivElement
         const menuGui = document.getElementById("menu-gui") as HTMLDivElement
         const health = document.getElementById("health") as HTMLDivElement
-        const inven = document.getElementById("inven") as HTMLDivElement
+        const inven = document.getElementById("invenBtn") as HTMLDivElement
         if (inven) inven.style.display = "none"
         if (health) health.style.display = "none"
         menuGui.style.display = "none"
@@ -74,7 +75,7 @@ export class Ui {
         const footer = document.getElementById("footer") as HTMLDivElement
         const menuGui = document.getElementById("menu-gui") as HTMLDivElement
         const health = document.getElementById("health") as HTMLDivElement
-        const inven = document.getElementById("inven") as HTMLDivElement
+        const inven = document.getElementById("invenBtn") as HTMLDivElement
         if (this.profileVisible) {
             wrapper.style.display = "none"
             footer.style.display = "none"

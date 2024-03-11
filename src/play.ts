@@ -45,8 +45,6 @@ export class Play extends Page {
                         .then(async (result) => {
                             await this.meta.LoadModel(result.models, result.id, myModel?.models)
                             this.alarm.style.display = "none"
-                        })
-                        .then(() => {
                             this.ui.UiOff(AppMode.Play)
                         })
                         .catch(async () => {
@@ -59,6 +57,13 @@ export class Play extends Page {
 
         this.meta.render()
     }
+    binding(){
+        const invenBtn = document.getElementById("invenBtn") as HTMLDivElement
+        const invenCont = document.getElementById("invenContent") as HTMLDivElement
+        invenBtn.onclick = () => {
+            invenCont.style.display = (invenCont.style.display == "none" || invenCont.style.display == "") ? "block" : "none"
+        }
+    }
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
         const email = encodeURIComponent(urlParams.get("email")??"");
@@ -68,8 +73,7 @@ export class Play extends Page {
     public async Run(masterAddr: string): Promise<boolean> {
         await this.LoadHtml()
         this.m_masterAddr = masterAddr;
-
-        this.ui.UiOff(AppMode.Play)
+        this.binding()
         const email = this.getParam();
         this.CanvasRenderer(email)
 

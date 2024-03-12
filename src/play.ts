@@ -57,6 +57,31 @@ export class Play extends Page {
 
         this.meta.render()
     }
+    makeSlot() {
+        const invenSlots = document.getElementById("invenslots") as HTMLDivElement
+        const colCont = 5
+        let htmlString = ""
+        for (let i = 0; i < 3; i++) {
+            htmlString += `<div class="row">`
+            for (let j = 0; j < colCont; j++) {
+                htmlString += `
+                    <div class="col ps-1 pe-0 pb-1">
+                        <div class="rounded inven_slot p-1" id="slot${j + i * colCont}">
+                            <img src="assets/icons/Material/Leather.png">
+                        </div>
+                    </div>
+                `
+            }
+            htmlString += `</div>`
+        }
+        invenSlots.insertAdjacentHTML("beforeend", htmlString)
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < colCont; j++) {
+                const id = j + i * colCont
+                const slotTag = document.getElementById(`slot${id}`)
+            }
+        }
+    }
     binding(){
         const invenBtn = document.getElementById("invenBtn") as HTMLDivElement
         const invenCont = document.getElementById("invenContent") as HTMLDivElement

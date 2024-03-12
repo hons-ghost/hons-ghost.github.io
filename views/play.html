@@ -19,25 +19,61 @@
         <div class="col">
             <ul class="nav nav-underline" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-inventory-tab" data-bs-toggle="pill" data-bs-target="#filter"
+                    <button class="nav-link active text-white" id="pills-inventory-tab" data-bs-toggle="pill" data-bs-target="#inventory"
                         type="button" role="tab" aria-controls="inventory" aria-selected="false">Invertory</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link disabled" id="pills-talent-tab" data-bs-toggle="pill" data-bs-target="#sd1"
-                        type="button" role="tab" aria-controls="talent" aria-selected="true">특성</button>
+                    <button class="nav-link text-white" id="pills-talent-tab" data-bs-toggle="pill" data-bs-target="#talent"
+                        type="button" role="tab" aria-controls="talent" aria-selected="true">Skill</button>
                 </li>
             </ul>
         </div>
     </div>
     <div class="row">
-        <div class="col mt-0 m-2">
+        <div class="col mt-0">
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="inventory" role="tabpanel" aria-labelledby="pills-inventory-tab"
                     tabindex="0">
                     <!--Invertory START-->
-                    <div class="container p-1">
+                    <div class="container m-1" id="invenslots">
                         <div class="row">
-                            <div class="col rounded bg-white">Head</div>
+                            <div class="col-auto p-1 text-white"> Head</div>
+                            <div class="col p-1">
+                                <div class="rounded inven_slot p-1" id="headslot"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-auto p-1 text-white"> Hands</div>
+                            <div class="col-auto p-1">
+                                <div class="rounded inven_slot p-1" id="r_handslot"><img src="assets/icons/WeaponTool/TopazStaff.png"></div>
+                            </div>
+                            <div class="col p-1">
+                                <div class="rounded inven_slot p-1" id="l_handslot"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-white ps-0">Bag</div>
+                        </div>
+                        <div class="row">
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"><img src="assets/icons/Material/Leather.png"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                        </div>
+                        <div class="row">
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                        </div>
+                        <div class="row">
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
+                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
                         </div>
                     </div>  
                     <!--Invertory END-->
@@ -45,7 +81,11 @@
                 <div class="tab-pane fade show p-0" id="talent" role="tabpanel" aria-labelledby="pills-talent-tab"
                     tabindex="0">
                     <!--Telant START-->
-
+                    <div class="container m-1">
+                        <div class="row">
+                            <div class="col"></div>
+                        </div> 
+                    </div>
                     <!--Telant END-->
                 </div>
             </div>

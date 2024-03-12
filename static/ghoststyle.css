@@ -432,6 +432,11 @@ display: inline-block;
     right: 5px;
     background-color: rgba(0, 0, 0, 0.5);
 }
+.inven_slot {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.6);
+}
 .invenBtn {
     position: absolute;
     display: none;

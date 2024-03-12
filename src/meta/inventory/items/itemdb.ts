@@ -2,10 +2,16 @@ import { IAsset } from "../../loader/assetmodel"
 import { Loader } from "../../loader/loader"
 import { AttackItemType, Bind, ItemType, Level } from "./item"
 
+export class ItemId {
+    public static Hanhwasbat = Symbol("Hanhwa's Bat")
+    public static DefaultGun = Symbol("DefaultGun")
+    public static Leather = Symbol("Leather")
+}
+
 export type ItemProperty = {
     type: ItemType
-    weapon: AttackItemType
-    bind: Bind
+    weapon?: AttackItemType
+    bind?: Bind
     asset?: IAsset
     meshs?: THREE.Group
 
@@ -29,9 +35,10 @@ export type ItemProperty = {
 }
 
 export class ItemDb {
-    itemDb = new Map<string, ItemProperty>()
+    itemDb = new Map<symbol, ItemProperty>()
+
     constructor(private loader: Loader) {
-        this.itemDb.set("Hanhwa's Bat", {
+        this.itemDb.set(ItemId.Hanhwasbat, {
             type: ItemType.Attack,
             weapon: AttackItemType.Blunt,
             bind: Bind.Hands,
@@ -41,6 +48,14 @@ export class ItemDb {
             icon: "WeaponTool/TopazStaff.png",
             stackable: false, binding: true,
             damageMax: 5, damageMin: 3, speed: 1,
+        })
+        this.itemDb.set(ItemId.Leather, {
+            type: ItemType.Material,
+            name: "Leather",
+            icon: "Material/Leather.png",
+            stackable: true,
+            binding: false,
+            price: 1,
         })
     }
 }

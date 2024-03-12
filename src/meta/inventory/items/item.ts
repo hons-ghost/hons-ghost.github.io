@@ -1,4 +1,5 @@
 import { IAsset } from "../../loader/assetmodel"
+import { ItemProperty } from "./itemdb"
 
 export enum ItemType {
     Attack,
@@ -40,32 +41,9 @@ export interface IItem {
     get DamageMax(): number
     get Speed(): number
 }
-
 export class Item {
-    type?: ItemType
-    weapon?: AttackItemType
-    bind?: Bind
-    asset?: IAsset
-    meshs?: THREE.Group
-
-    level: Level = Level.Common
-    name?: string
-    icon?: string
-    stackable: boolean = false
-    binding: boolean = false
-    price: number = 0
-
-    damageMin: number = 0
-    damageMax: number = 0
-    get DamageMin() {return this.damageMin}
-    get DamageMax() {return this.damageMax}
-    armor: number = 0
-
-    speed: number = 0
-    get Speed() {return this.speed}
-
-    agility: number = 0
-    stamina: number = 0
-    fireResistance: number = 0
-    natureResistance: number = 0
+    get DamageMin() { return (this.property.damageMin == undefined) ? 0 : this.property.damageMin }
+    get DamageMax() { return (this.property.damageMax == undefined) ? 0 : this.property.damageMax }
+    get Speed() { return (this.property.speed == undefined) ? 0 : this.property.speed }
+    constructor(protected property: ItemProperty) {}
 }

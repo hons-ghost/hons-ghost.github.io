@@ -417,8 +417,8 @@ display: inline-block;
 .health {
     position: absolute;
     display: none;
-    top: 5px;
-    left: 5px;
+    top: 10px;
+    left: 10px;
 }
 .health_text {
     font-size: xx-small;
@@ -428,9 +428,14 @@ display: inline-block;
 .inven {
     position: absolute;
     display: none;
-    top: 50px;
+    top: 60px;
     right: 5px;
     background-color: rgba(0, 0, 0, 0.5);
+}
+.inven_slot {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.6);
 }
 .invenBtn {
     position: absolute;

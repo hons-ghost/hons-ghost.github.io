@@ -106,11 +106,10 @@ export class ModelStore {
         this.data.ownerModel = Char.Male
         this.data.portal = SConf.DefaultPortalPosition
 
-        await Promise.all([
-            this.mgrs.forEach(async (mgr) => {
-                await mgr.Reload()
-            })
-        ])
+        const promise = this.mgrs.map(async (mgr) => {
+            await mgr.Reload()
+        })
+        await Promise.all(promise)
     }
 
     async LoadModels(data: string, name: string, playerModel: string | undefined) {
@@ -120,11 +119,10 @@ export class ModelStore {
         }
         this.name = name
         this.data = JSON.parse(data)
-        await Promise.all([
-            this.mgrs.forEach(async (mgr) => {
+        const promise = this.mgrs.map(async (mgr) => {
                 await mgr.Reload()
             })
-        ])
+        await Promise.all(promise)
     }
     async LoadVillage(users: Map<string, string>, playerModel: string | undefined) {
         if (playerModel != undefined) {
@@ -149,10 +147,9 @@ export class ModelStore {
             this.owners.push(data.owner)
             this.ownerModels.push(data.ownerModel)
         })
-        await Promise.all([
-            this.mgrs.forEach(async (mgr) => {
-                await mgr.Massload()
-            })
-        ])
+        const promise = this.mgrs.map(async (mgr) => {
+            await mgr.Massload()
+        })
+        await Promise.all(promise)
     }
 }

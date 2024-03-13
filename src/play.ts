@@ -28,10 +28,10 @@ export class Play extends Page {
         this.meta.init()
             .then((inited) => {
                 if (email == null) {
-                    this.ui.UiOff(AppMode.Play)
                     this.blockStore.FetchModels(this.m_masterAddr)
                         .then(async (result) => {
                             await this.meta.LoadVillage(result, myModel?.models)
+                            this.ui.UiOff(AppMode.Play)
                         })
                 } else {
                     if(!inited) {
@@ -57,6 +57,31 @@ export class Play extends Page {
 
         this.meta.render()
     }
+    makeSlot() {
+        const invenSlots = document.getElementById("invenslots") as HTMLDivElement
+        const colCont = 5
+        let htmlString = ""
+        for (let i = 0; i < 3; i++) {
+            htmlString += `<div class="row">`
+            for (let j = 0; j < colCont; j++) {
+                htmlString += `
+                    <div class="col ps-1 pe-0 pb-1">
+                        <div class="rounded inven_slot p-1" id="slot${j + i * colCont}">
+                            <img src="assets/icons/Material/Leather.png">
+                        </div>
+                    </div>
+                `
+            }
+            htmlString += `</div>`
+        }
+        invenSlots.insertAdjacentHTML("beforeend", htmlString)
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < colCont; j++) {
+                const id = j + i * colCont
+                const slotTag = document.getElementById(`slot${id}`)
+            }
+        }
+    }
     binding(){
         const invenBtn = document.getElementById("invenBtn") as HTMLDivElement
         const invenCont = document.getElementById("invenContent") as HTMLDivElement
@@ -67,7 +92,7 @@ export class Play extends Page {
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
         const email = encodeURIComponent(urlParams.get("email")??"");
-        if (email == null) return null;
+        if (email == "") return null;
         return email;
     }
     public async Run(masterAddr: string): Promise<boolean> {

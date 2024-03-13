@@ -1,22 +1,16 @@
 import { IAsset } from "../../loader/assetmodel";
 import { AttackItemType, Bind, IItem, Item, ItemType } from "./item";
+import { ItemProperty } from "./itemdb";
 
 
 export class Bat extends Item implements IItem {
-    constructor() {
-        super()
-        this.type = ItemType.Attack
-        this.weapon = AttackItemType.Blunt
-        this.bind = Bind.Hands
-        this.binding = true
-        this.name = "Bat"
-        this.damageMin = 3
-        this.damageMax = 5
-        this.speed = 1
+    constructor(property: ItemProperty) {
+        super(property)
     }
-    async Loader(asset: IAsset ) {
-        this.asset = asset
+    async Loader() {
+        const asset = this.property.asset
+        if (asset == undefined) return
         const meshs = await asset.CloneModel()
-        this.meshs = meshs
+        this.property.meshs = meshs
     }
 }

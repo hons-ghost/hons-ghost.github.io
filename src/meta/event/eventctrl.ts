@@ -5,6 +5,7 @@ import { BrickOption } from "../scenes/bricks";
 import { AppMode } from "../app";
 import { IPhysicsObject } from "../scenes/models/iobject";
 import { AttackOption } from "../scenes/player/playerctrl";
+import { Inventory } from "../inventory/inventory";
 
 export enum EventFlag {
     Start,
@@ -48,8 +49,14 @@ export class EventController {
     RegisterChangeCtrlObjEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on("ctrlobj", callback)
     }
+    // Change Event Inventory
 
-
+    OnChangeEquipmentEvent(inven: Inventory) {
+        this.eventEmitter.emit("equip", inven)
+    }
+    RegisterChangeEquipmentEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on("equip", callback)
+    }
     // Send Event
     OnChangeBrickInfo(opt: BrickOption) { 
         this.eventEmitter.emit("bsize", opt)

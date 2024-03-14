@@ -14,6 +14,14 @@
         </div>
     </div>
 </div>
+<div class="menu-gui p-2" id="menu-gui">
+    <span style="font-size: xxx-large;" class="material-symbols-outlined font-icon select-disable" id="fullscreen">
+        fullscreen
+    </span>
+    <span style="font-size: xxx-large;" class="material-symbols-outlined font-icon select-disable" id="returnSns">
+        door_open
+    </span>
+</div>
 <div id="invenContent" class="inven rounded p-2 m-1">
     <div class="row">
         <div class="col">
@@ -36,6 +44,11 @@
                     tabindex="0">
                     <!--Invertory START-->
                     <div class="container m-1" id="invenslots">
+                        <!--Item Info Start-->
+                        <div id="item_info" class="item_info border rounded text-white p-1" 
+                            style="width: 200px;">
+                        </div>
+                        <!--Item Info End-->
                         <div class="row">
                             <div class="col-auto p-1 text-white"> Head</div>
                             <div class="col p-1">
@@ -45,7 +58,7 @@
                         <div class="row">
                             <div class="col-auto p-1 text-white"> Hands</div>
                             <div class="col-auto p-1">
-                                <div class="rounded inven_slot p-1" id="r_handslot"><img src="assets/icons/WeaponTool/TopazStaff.png"></div>
+                                <div class="rounded inven_slot p-1" id="r_handslot"></div>
                             </div>
                             <div class="col p-1">
                                 <div class="rounded inven_slot p-1" id="l_handslot"></div>
@@ -53,27 +66,6 @@
                         </div>
                         <div class="row">
                             <div class="col text-white ps-0">Bag</div>
-                        </div>
-                        <div class="row">
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"><img src="assets/icons/Material/Leather.png"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                        </div>
-                        <div class="row">
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                        </div>
-                        <div class="row">
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
-                            <div class="col ps-1 pe-0 pb-1"><div class="rounded inven_slot p-1"></div></div>
                         </div>
                     </div>  
                     <!--Invertory END-->

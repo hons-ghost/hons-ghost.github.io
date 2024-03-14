@@ -5,6 +5,7 @@ import { Char } from "../loader/assetmodel";
 import { BrickShapeType } from "../scenes/legos";
 import { Npc } from "../scenes/models/npc";
 import { Player } from "../scenes/models/player";
+import { Inventory } from "../inventory/inventory";
 
 type Lego = {
     position: THREE.Vector3
@@ -59,13 +60,12 @@ export class ModelStore {
     get OwnerModel() { return this.data.ownerModel }
     get PlayerModel() { return this.playerModel }
     get Name() {return this.name}
-    constructor(private eventCtrl: EventController) {
+    constructor(private eventCtrl: EventController, private inven: Inventory) {
         this.eventCtrl.RegisterReloadEvent(async () => {
-            await Promise.all([
-                this.mgrs.forEach(async (mgr) => {
+            const promise = this.mgrs.map(async (mgr) => {
                 await mgr.Reload()
             })
-        ])
+            await Promise.all(promise)
         })
     }
 
@@ -85,6 +85,17 @@ export class ModelStore {
         this.mgrs.forEach(async (mgr) => {
             await mgr.Reload()
         })
+    }
+    StoreInventory(): string {
+        const json = JSON.stringify(this.inven)
+        return json
+    }
+    LoadInventory(inven: Inventory | undefined) {
+        if (inven != undefined) {
+            this.inven.Copy(inven)
+            this.eventCtrl.OnChangeEquipmentEvent(inven)
+        }
+        return this.inven
     }
 
     StoreModels() {
@@ -111,7 +122,6 @@ export class ModelStore {
         })
         await Promise.all(promise)
     }
-
     async LoadModels(data: string, name: string, playerModel: string | undefined) {
         if (playerModel != undefined) {
             const playerData = JSON.parse(playerModel)

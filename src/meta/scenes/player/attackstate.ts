@@ -4,7 +4,7 @@ import { AttackType, PlayerCtrl } from "./playerctrl";
 import { ActionType, Player } from "../models/player";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController } from "../../event/eventctrl";
-import { Bind } from "../../inventory/items/item";
+import { AttackItemType, Bind } from "../../inventory/items/item";
 
 export class AttackState extends State implements IPlayerAction {
     raycast = new THREE.Raycaster()
@@ -26,10 +26,32 @@ export class AttackState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Attack!!")
-        this.attackSpeed = this.playerCtrl.inventory.GetBindItem(Bind.Hands).Speed
-        this.attackDamageMax = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMax
-        this.attackDamageMin = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMin
-        this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
+        const handItem = this.playerCtrl.inventory.GetBindItem(Bind.Hands_R)
+        if(handItem == undefined) {
+            this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
+        } else {
+            this.attackSpeed = handItem.Speed
+            this.attackDamageMax = handItem.DamageMax
+            this.attackDamageMin = handItem.DamageMin
+            switch(handItem.AttackType) {
+                case AttackItemType.Blunt:
+                case AttackItemType.Axe:
+                case AttackItemType.Sword:
+                case AttackItemType.Knife:
+                    this.player.ChangeAction(ActionType.SwordAction, this.attackSpeed)
+                    break;
+                case AttackItemType.Gun:
+                    this.player.ChangeAction(ActionType.GunAction, this.attackSpeed)
+                    break;
+                case AttackItemType.Bow:
+                    this.player.ChangeAction(ActionType.BowAction, this.attackSpeed)
+                    break;
+                case AttackItemType.Wand:
+                    this.player.ChangeAction(ActionType.WandAction, this.attackSpeed)
+                    break;
+            }
+        }
+        
         this.playerCtrl.RunSt.PreviousState(this)
         this.attackTime = this.attackSpeed
         this.clock = new THREE.Clock()

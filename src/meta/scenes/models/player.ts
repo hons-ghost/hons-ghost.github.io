@@ -9,17 +9,26 @@ import { GhostModel } from "./ghostmodel";
 import { Ani, Char, IAsset } from "../../loader/assetmodel";
 import { Portal } from "./portal";
 import { AppMode } from "../../app";
+import { Inventory } from "../../inventory/inventory";
+import { Bind } from "../../inventory/items/item";
 
 export enum ActionType {
     IdleAction,
     RunAction,
     JumpAction,
     PunchAction,
+    SwordAction,
+    GunAction,
+    BowAction,
+    WandAction,
     FightAction,
     DanceAction,
     MagicH1Action,
     MagicH2Action,
     DyingAction,
+    ClimAction,
+    SwimAction,
+    DownfallAction,
 }
 const solidify = (mesh: THREE.Mesh) => {
     const THICKNESS = 0.02
@@ -51,12 +60,14 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     runClip?: THREE.AnimationClip
     jumpClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
+    swordClip?: THREE.AnimationClip
     fightIdleClip?: THREE.AnimationClip
     magicH1Clip?: THREE.AnimationClip
     magicH2Clip?: THREE.AnimationClip
     danceClip?: THREE.AnimationClip
 
     private playerModel: Char = Char.Male
+    bindMesh: THREE.Group[] = []
 
     get BoxPos() {
         return this.asset.GetBoxPos(this.meshs)
@@ -89,6 +100,26 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
                 case EventFlag.End:
                     this.Visible = false
                     break
+            }
+        })
+        this.eventCtrl.RegisterChangeEquipmentEvent((inven: Inventory) => {
+            const rightId = this.asset.GetRightMeshId()
+            if(rightId) {
+                const right = this.meshs.getObjectByName(rightId)
+                const prev = this.bindMesh[Bind.Hands_R]
+
+                if (prev) {
+                    right?.remove(prev)
+                    this.bindMesh.splice(this.bindMesh.indexOf(prev), 1)
+                }
+
+                const rItem = inven.GetBindItem(Bind.Hands_R)
+                if (rItem) {
+                    if (rItem.Mesh != undefined) {
+                        right?.add(rItem.Mesh)
+                        this.bindMesh[Bind.Hands_R] = rItem.Mesh
+                    }
+                } 
             }
         })
     }
@@ -128,6 +159,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.runClip = this.asset.GetAnimationClip(Ani.Run)
         this.jumpClip = this.asset.GetAnimationClip(Ani.Jump)
         this.punchingClip = this.asset.GetAnimationClip(Ani.Punch)
+        this.swordClip = this.asset.GetAnimationClip(Ani.Sword)
         this.fightIdleClip = this.asset.GetAnimationClip(Ani.FightIdle)
         this.danceClip = this.asset.GetAnimationClip(Ani.Dance0)
         this.magicH1Clip = this.asset.GetAnimationClip(Ani.MagicH1)
@@ -178,6 +210,9 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
                 break
             case ActionType.PunchAction:
                 clip = this.punchingClip
+                break
+            case ActionType.SwordAction:
+                clip = this.swordClip
                 break
             case ActionType.FightAction:
                 clip = this.fightIdleClip

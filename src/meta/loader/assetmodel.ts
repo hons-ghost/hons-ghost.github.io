@@ -16,6 +16,7 @@ export enum Ani {
 
     MonBiting,
     MonScream,
+    MonHurt,
 }
 
 export enum Char{
@@ -28,6 +29,17 @@ export enum Char{
     Portal,
     Test,
     Zombie,
+    Minataur,
+    BatPig,
+    Bilby,
+    BilbyMon,
+    BirdMon,
+    CrabMon,
+    Gorillish,
+    PantherBlackWhite,
+    PantherBlue,
+    PantherRed,
+    AnimalPack,
 
     Bat,
     Gun,
@@ -46,6 +58,7 @@ export interface IAsset {
     CloneModel(): Promise<THREE.Group>
     UniqModel(id: string): Promise<[THREE.Group, boolean]>
     GetMixer(id: string): THREE.AnimationMixer | undefined
+    GetRightMeshId() : string | undefined
 }
 
 export class AssetModel{

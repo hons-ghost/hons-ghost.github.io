@@ -49,4 +49,5 @@ export class GunFab extends AssetModel implements IAsset {
         const v = mesh.position
         return new THREE.Vector3(v.x, v.y, v.z)
     }
+    GetRightMeshId() { return "mixamorigRightHand" }
 }

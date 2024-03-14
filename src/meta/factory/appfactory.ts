@@ -82,13 +82,14 @@ export class AppFactory {
         this.mushrooms = []
         this.deadtrees = []
 
-        this.store = new ModelStore(this.eventCtrl)
+        this.invenFab = new InvenFactory(this.loader)
+
+        this.store = new ModelStore(this.eventCtrl, this.invenFab.inven)
         this.input = new Input(this.eventCtrl)
         this.light = new Light(this.canvas)
         this.game = new Game(this.light)
         this.gphysics = new GPhysics(this.game, this.eventCtrl)
 
-        this.invenFab = new InvenFactory(this.loader)
 
         this.portal = new Portal(this.loader, this.loader.PortalAsset, this.store, this.eventCtrl, this.gphysics)
 
@@ -172,6 +173,7 @@ export class AppFactory {
             this.MassMushroomLoader(2),
             this.MassDeadTreeLoader(),
             this.npcs.NpcLoader(),
+            this.invenFab.LoadAsset(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)

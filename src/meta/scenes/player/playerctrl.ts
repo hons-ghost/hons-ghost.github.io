@@ -67,6 +67,11 @@ export class PlayerCtrl implements IGPhysic {
                 this.reset()
             }
         })
+        eventCtrl.RegisterChangeEquipmentEvent(() => {
+            if (this.currentState == this.AttackSt) {
+                this.currentState.Init()
+            }
+        })
 
     }
     add(...obj: THREE.Object3D[]) {

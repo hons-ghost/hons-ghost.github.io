@@ -41,7 +41,7 @@ export class ItemDb {
         this.itemDb.set(ItemId.Hanhwasbat, {
             type: ItemType.Attack,
             weapon: AttackItemType.Blunt,
-            bind: Bind.Hands,
+            bind: Bind.Hands_R,
             asset: this.loader.BatAsset,
             level: Level.Common,
             name: "Hanhwa's Bat",
@@ -57,5 +57,11 @@ export class ItemDb {
             binding: false,
             price: 1,
         })
+    }
+    GetItem(key: symbol): ItemProperty  {
+        const ret = this.itemDb.get(key)
+        if(ret == undefined)
+            throw new Error("unkown key");
+        return ret
     }
 }

@@ -16,6 +16,7 @@ import { ZombieBox, ZombieCtrl } from "./zombie/zombiectrl";
 import { Player } from "./models/player";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { math } from "../../libs/math";
+import { Minataur } from "./models/minataur";
 
 type ZombieSet = {
     zombie: Zombie,
@@ -77,6 +78,17 @@ export class Zombies {
                 this.randomSpawning()
             }, 5000)
         }, 5000)
+
+        /*
+        const ani = this.loader.GetAssets(Char.CrabMon)
+        const [meshs, exist] = await ani.UniqModel("test")
+        meshs.position.set(10, 2.5, 14)
+        this.game.add(meshs)
+        const minataur = new Minataur(this.loader, this.eventCtrl, this.gphysic, this.loader.MinatuarAsset)
+        await minataur.Loader(this.loader.GetAssets(Char.Minataur), new THREE.Vector3(10, 2.5, 16), "Minataur", 0)
+        minataur.Visible = true
+        this.game.add(minataur.Meshs)
+        */
     }
 
     ReleaseZombie() {

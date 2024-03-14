@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { Loader } from "./loader";
 import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import GUI from "lil-gui";
+import { gui } from "../common/helper";
 
 
 export class MaleFab extends AssetModel implements IAsset {
@@ -28,6 +30,7 @@ export class MaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Punch, gltf.animations[3])
             this.clips.set(Ani.FightIdle, gltf.animations[4])
             this.clips.set(Ani.Dance0, gltf.animations[5])
+           
 
             await this.LoadAnimation("assets/male/Shooting.fbx", Ani.Shooting)
             await this.LoadAnimation("assets/male/Standing 1H Magic Attack 01.fbx", Ani.MagicH1)
@@ -36,9 +39,16 @@ export class MaleFab extends AssetModel implements IAsset {
             await this.LoadAnimation("assets/male/Sword And Shield Slash.fbx", Ani.Sword)
             await this.LoadAnimation("assets/male/Gunplay.fbx", Ani.Shooting)
             await this.LoadAnimation("assets/male/Dying Backwards.fbx", Ani.Dying)
+ 
         })
     }
+    CreateVectorGui(f: GUI, v: THREE.Vector3 | THREE.Euler, name: string, step: number) {
+        f.add(v, "x", -100, 100, step).listen().name(name + "X")
+        f.add(v, "y", -100, 100, step).listen().name(name + "Y")
+        f.add(v, "z", -100, 100, step).listen().name(name + "Z")
+    }
 
+    GetRightMeshId() { return "mixamorigRightHand" }
     box?: THREE.Mesh
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh

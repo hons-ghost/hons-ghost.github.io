@@ -212,6 +212,9 @@ export class EditHome extends Page {
 
         const exit = document.getElementById("exit") as HTMLDivElement
         exit.onclick = () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+            }
             window.ClickLoadPage("hondetail", false, "&email=" + email)
         }
     }

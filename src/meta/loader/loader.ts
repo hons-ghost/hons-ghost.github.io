@@ -14,6 +14,8 @@ import { BatFab } from "./batfab";
 import { GunFab } from "./gunfab";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { AppMode } from "../app";
+import { MinataurFab } from "./minataurfab";
+import { CrabFab } from "./crabfab";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -29,6 +31,9 @@ export class Loader {
     private portal = new PortalFab(this)
     private test = new TestFab(this)
     private zombie = new ZombieFab(this)
+    private minatuar = new MinataurFab(this)
+    private crab = new CrabFab(this)
+
     private bat = new BatFab(this)
     private gun = new GunFab(this)
 
@@ -41,6 +46,9 @@ export class Loader {
     get DeadTreeAsset(): IAsset { return this.deadtree }
     get PortalAsset(): IAsset { return this.portal }
     get ZombieAsset(): IAsset { return this.zombie }
+    get MinatuarAsset(): IAsset { return this.minatuar }
+    get CrabAsset(): IAsset { return this.crab }
+
     get GunAsset(): IAsset { return this.gun }
     get BatAsset(): IAsset { return this.bat }
     get Load(): GLTFLoader { return this.loader }
@@ -63,6 +71,9 @@ export class Loader {
         this.assets.set(Char.Portal, this.portal)
         this.assets.set(Char.Test, this.test)
         this.assets.set(Char.Zombie, this.zombie)
+        this.assets.set(Char.Minataur, this.minatuar)
+        this.assets.set(Char.CrabMon, this.crab)
+
         this.assets.set(Char.Bat, this.bat)
         this.assets.set(Char.Gun, this.gun)
 

@@ -30,7 +30,8 @@ export class ZombieFab extends AssetModel implements IAsset {
         })
     }
     box?: THREE.Mesh
-    
+    GetRightMeshId() { return "mixamorigRightHand" }
+
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
@@ -55,4 +56,5 @@ export class ZombieFab extends AssetModel implements IAsset {
         const v = mesh.position
         return new THREE.Vector3(v.x, v.y, v.z)
     }
+    
 }

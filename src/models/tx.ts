@@ -29,3 +29,4 @@ export const FollowTxId = "SIEMAHD4UoD6wDfQns3Xz5TPhlOTNyjCOVIgpQF7OIk="
 export const GetFollowerTxId = HonReplyLinkTxId
 
 export const MetaTxId = "+bo01CLDwef63KG0t4Rc83KekF/U2tgr6BVwcxgmCVA="
+export const GlobalSaveTxId = "ruxUKmdYSA1fcf0/MtjjjvfcC2kXGSSyodhln57wKWQ="

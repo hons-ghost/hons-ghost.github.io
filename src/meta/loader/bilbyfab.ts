@@ -3,28 +3,38 @@ import { Loader } from "./loader";
 import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-export class BatFab extends AssetModel implements IAsset {
-    gltf?:GLTF
+export class BilbyFab extends AssetModel implements IAsset {
+    Gltf?:GLTF
 
-    get Id() {return Char.Male}
+    get Id() {return Char.Female}
 
     constructor(loader: Loader) { 
-        super(loader, ModelType.Gltf, "assets/weapon/bat.glb", async (gltf: GLTF) => {
-            this.gltf = gltf
+        super(loader, ModelType.Gltf, "assets/monster/bilby_animated.glb", async (gltf: GLTF) => {
+            this.Gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
-
-            const scale = 0.3
+            this.meshs.receiveShadow = true
+            this.meshs.traverse(child => {
+                child.castShadow = true
+                child.receiveShadow = true
+            })
+            const scale = 1
             this.meshs.scale.set(scale, scale, scale)
-            this.meshs.position.set(0.1, 0.2, -0.1)
-            this.meshs.rotation.set(3, -0.5, -1.8)
+            this.mixer = new THREE.AnimationMixer(gltf.scene)
+            console.log(gltf.animations)
+            this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "Armature|idle"))
+            this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Armature|Walk"))
+            this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "Armature|Attack"))
+            this.clips.set(Ani.MonBiting, gltf.animations.find((clip) => clip.name == "Armature|Attack Double"))
+            this.clips.set(Ani.Dying, gltf.animations.find((clip) => clip.name == "Armature|Death"))
+            this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "Armature|Jump"))
         })
     }
-    GetRightMeshId() { return "mixamorigRightHand" }
     box?: THREE.Mesh
+    
+    GetRightMeshId() { return "mixamorigRightHand" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
-        // Don't Use this.meshs
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
             this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
@@ -36,9 +46,6 @@ export class BatFab extends AssetModel implements IAsset {
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         if (this.meshs == undefined) this.meshs = mesh
-        // Don't Use mesh
-
-        if (this.size != undefined) return this.size
         const bbox = new THREE.Box3().setFromObject(this.meshs)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
@@ -46,7 +53,6 @@ export class BatFab extends AssetModel implements IAsset {
         return this.size 
     }
     GetBoxPos(mesh: THREE.Group) {
-        // Don't Use this.meshs
         const v = mesh.position
         return new THREE.Vector3(v.x, v.y, v.z)
     }

@@ -46,6 +46,7 @@ export interface IItem {
     get Bindable(): boolean
     get Bind(): Bind | undefined
     get Mesh(): THREE.Group | undefined
+    get AttackType(): AttackItemType | undefined
     MakeInformation(): Array<{k?: string, v: string}>
 }
 export class Item {
@@ -56,6 +57,7 @@ export class Item {
     get Bindable() { return this.property.binding }
     get Bind() { return this.property.bind }
     get Mesh() { return this.property.meshs }
+    get AttackType() { return this.property.weapon }
     constructor(protected property: ItemProperty) {}
 
     MakeInformation() {

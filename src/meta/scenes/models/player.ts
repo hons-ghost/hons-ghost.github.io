@@ -18,11 +18,17 @@ export enum ActionType {
     JumpAction,
     PunchAction,
     SwordAction,
+    GunAction,
+    BowAction,
+    WandAction,
     FightAction,
     DanceAction,
     MagicH1Action,
     MagicH2Action,
     DyingAction,
+    ClimAction,
+    SwimAction,
+    DownfallAction,
 }
 const solidify = (mesh: THREE.Mesh) => {
     const THICKNESS = 0.02

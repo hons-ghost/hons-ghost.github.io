@@ -127,7 +127,6 @@ export class Bricks {
         const l = this.store.Legos
         for (let i = 0; i < l.length; i++) {
             if (this.VEqual(l[i].position, b.position)) {
-                console.log("delete lego stroe", l[i])
                 l.splice(i, 1)
                 i--
             }
@@ -160,7 +159,6 @@ export class Bricks {
         const subV = new THREE.Vector3(0.1, 0.1, 0.1)
         const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
 
-        console.log(this.brickGuide.position, size, this.brickSize)
 
         const eventbrick = new EventBrick(this.brickSize, b.position)
         eventbrick.brick = b
@@ -171,7 +169,6 @@ export class Bricks {
     }
 
     ClearBlock() {
-        console.log("clear blocks", this.bricks2, this.bricks2.length)
         this.bricks2.forEach((b) => {
             this.scene.remove(b);
             b.Dispose()

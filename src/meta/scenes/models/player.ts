@@ -15,6 +15,7 @@ export enum ActionType {
     RunAction,
     JumpAction,
     PunchAction,
+    SwordAction,
     FightAction,
     DanceAction,
     MagicH1Action,
@@ -51,6 +52,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     runClip?: THREE.AnimationClip
     jumpClip?: THREE.AnimationClip
     punchingClip?: THREE.AnimationClip
+    swordClip?: THREE.AnimationClip
     fightIdleClip?: THREE.AnimationClip
     magicH1Clip?: THREE.AnimationClip
     magicH2Clip?: THREE.AnimationClip
@@ -128,6 +130,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.runClip = this.asset.GetAnimationClip(Ani.Run)
         this.jumpClip = this.asset.GetAnimationClip(Ani.Jump)
         this.punchingClip = this.asset.GetAnimationClip(Ani.Punch)
+        this.swordClip = this.asset.GetAnimationClip(Ani.Sword)
         this.fightIdleClip = this.asset.GetAnimationClip(Ani.FightIdle)
         this.danceClip = this.asset.GetAnimationClip(Ani.Dance0)
         this.magicH1Clip = this.asset.GetAnimationClip(Ani.MagicH1)
@@ -178,6 +181,9 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
                 break
             case ActionType.PunchAction:
                 clip = this.punchingClip
+                break
+            case ActionType.SwordAction:
+                clip = this.swordClip
                 break
             case ActionType.FightAction:
                 clip = this.fightIdleClip

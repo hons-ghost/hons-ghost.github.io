@@ -118,7 +118,6 @@ export class Legos extends Bricks implements IModelReload {
         this.CreateBricks()
     }
     CreateBricks() {
-        console.log("create brick")
         const userBricks = this.store.Legos
         const subV = new THREE.Vector3(0.1, 0.1, 0.1)
         const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
@@ -134,7 +133,6 @@ export class Legos extends Bricks implements IModelReload {
         })
     }
     CreateInstacedMesh() {
-        console.log("create mesh")
         const userBricks = this.store.Legos
         if(!userBricks?.length) {
             return

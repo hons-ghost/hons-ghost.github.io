@@ -26,10 +26,16 @@ export class AttackState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Attack!!")
-        this.attackSpeed = this.playerCtrl.inventory.GetBindItem(Bind.Hands).Speed
-        this.attackDamageMax = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMax
-        this.attackDamageMin = this.playerCtrl.inventory.GetBindItem(Bind.Hands).DamageMin
-        this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
+        const handItem = this.playerCtrl.inventory.GetBindItem(Bind.Hands)
+        if(handItem == undefined) {
+            this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
+        } else {
+            this.attackSpeed = handItem.Speed
+            this.attackDamageMax = handItem.DamageMax
+            this.attackDamageMin = handItem.DamageMin
+            this.player.ChangeAction(ActionType.SwordAction, this.attackSpeed)
+        }
+        
         this.playerCtrl.RunSt.PreviousState(this)
         this.attackTime = this.attackSpeed
         this.clock = new THREE.Clock()

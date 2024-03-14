@@ -27,7 +27,10 @@ export class FloatingName extends THREE.Sprite {
       const map = new THREE.CanvasTexture(context2d.canvas);
 
       super(
-        new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false }));
+        new THREE.SpriteMaterial({ 
+          map: map, color: 0xffffff, fog: false,
+          depthTest: false, 
+        }));
       this.scale.set(2, 1, 1)
       this.position.y = 2
     }
@@ -101,7 +104,10 @@ export class FloatingName extends THREE.Sprite {
     const map = new THREE.CanvasTexture(this.context2d_.canvas);
 
     this.material =
-      new THREE.SpriteMaterial({ map: map, color: 0xffffff, fog: false });
+      new THREE.SpriteMaterial({ 
+        map: map, color: 0xffffff, fog: false,
+        depthTest: false, 
+      });
     this.scale.set(4, 2, 1)
     this.position.y = 2
     //this.sprite_.position.y += modelData.nameOffset;

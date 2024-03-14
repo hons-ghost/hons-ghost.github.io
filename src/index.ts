@@ -182,7 +182,8 @@ class Index {
                         .then(this.parseResponse)
                         .then(this.loadNodesHtml)
                         .then((url) => this.includeContentHTML(url))
-                        .catch(() => {
+                        .catch((err) => {
+                            console.log(err)
                             tag.innerHTML = this.errmsg(` Network Down`, ` 사용가능한 Node가 존재하지 않습니다.`);
                         }));
             }

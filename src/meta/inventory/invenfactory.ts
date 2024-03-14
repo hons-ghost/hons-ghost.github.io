@@ -1,14 +1,22 @@
 import { Loader } from "../loader/loader";
 import { Inventory } from "./inventory";
 import { Bat } from "./items/bat";
+import { ItemDb, ItemId } from "./items/itemdb";
 
 
 export class InvenFactory {
-    inven = new Inventory()
+    itemDb = new ItemDb(this.loader)
+    bat = new Bat(this.itemDb.GetItem(ItemId.Hanhwasbat))
 
-    constructor(private loader: Loader) {
-    }
+    inven = new Inventory(this.bat)
+
+    constructor(private loader: Loader) { }
 
     LoadAsset() {
+        this.bat.Loader()
+    }
+
+    LoadItems(load: Inventory) {
+        this.inven = load
     }
 }

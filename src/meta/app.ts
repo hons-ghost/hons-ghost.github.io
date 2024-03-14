@@ -7,6 +7,7 @@ import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
 import { BrickOption } from "./scenes/bricks";
+import { Inventory } from "./inventory/inventory";
 
 export enum AppMode {
     Long,
@@ -34,21 +35,7 @@ export default class App {
     initFlag: boolean = false
     renderFlag: boolean = false
     currentMode = AppMode.Long
-    /*
-    modeMap = {
-        [AppMode.Long]: (e: EventFlag) => { this.eventCtrl.OnLongModeEvent(e)},
-        [AppMode.Close]: (e: EventFlag) => { this.eventCtrl.OnCloseModeEvent(e)},
-        [AppMode.Play]: (e: EventFlag) => { this.eventCtrl.OnPlayModeEvent(e)},
-        [AppMode.Edit]: (e: EventFlag) => { this.eventCtrl.OnEditModeEvent(e)},
-        [AppMode.Brick]: (e: EventFlag) => { this.eventCtrl.OnBrickModeEvent(e) },
-        [AppMode.Locate]: (e: EventFlag) => { this.eventCtrl.OnLocatModeEvent(e)},
-        [AppMode.Face]: (e: EventFlag) => { this.eventCtrl.OnLocatModeEvent(e)},
-        [AppMode.Weapon]: (e: EventFlag) => { this.eventCtrl.OnWeaponModeEvent(e)},
-        [AppMode.Funiture]: (e: EventFlag) => { this.eventCtrl.OnFunitureModeEvent(e)},
-        [AppMode.Portal]: (e: EventFlag) => { this.eventCtrl.OnPortalModeEvent(e)},
-        [AppMode.Lego]: (e: EventFlag) => { this.eventCtrl.OnLegoModeEvent(e)},
-    }
-    */
+
     constructor() {
         this.canvas = this.factory.Canvas
         this.currentScene = this.factory.Scene
@@ -59,7 +46,6 @@ export default class App {
 
     async init() {
         if (this.initFlag) return false
-
 
         await this.factory.GltfLoad()
         this.factory.InitScene()
@@ -154,7 +140,9 @@ export default class App {
         this.eventCtrl.OnSceneClearEvent()
         await this.store.LoadVillage(users, playerModel)
     }
+    async LoadInventory(inven: Inventory) {
 
+    }
     resize() {
         this.canvas.resize()
     }

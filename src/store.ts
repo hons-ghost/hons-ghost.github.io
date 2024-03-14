@@ -1,5 +1,6 @@
+import { Inventory } from "./meta/inventory/inventory";
 import { HonEntry, ModelsEntry, ProfileEntry } from "./models/param";
-import { GlobalLoadListTx, GlobalLoadTx, HonTxId } from "./models/tx";
+import { GlobalLoadListTx, GlobalLoadTx, GlobalSaveTxId, HonTxId } from "./models/tx";
 
 const MaxUnsignedInt = ((1 << 31) >>> 0); // unsigned int max
 
@@ -18,7 +19,18 @@ export class BlockStore {
     LoadHonView(key: string): string | undefined {
         return this.honviews.get(key)
     }
-
+    FetchCharacter(masterAddr: string, id: string) {
+        const addr = masterAddr + "/glambda?txid=" + 
+            encodeURIComponent(GlobalSaveTxId) + "&table=inventory&key=" + id;
+        return fetch(addr)
+            .then((response) => response.json())
+            .then((inven: Inventory) => {
+                if ("json" in inven) {
+                    return inven
+                }
+                return undefined
+            })
+    }
     UpdateModels(model: ModelsEntry, key: string) {
         this.models.set(key, model)
     }

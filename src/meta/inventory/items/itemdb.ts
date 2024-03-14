@@ -58,4 +58,10 @@ export class ItemDb {
             price: 1,
         })
     }
+    GetItem(key: symbol): ItemProperty  {
+        const ret = this.itemDb.get(key)
+        if(ret == undefined)
+            throw new Error("unkown key");
+        return ret
+    }
 }

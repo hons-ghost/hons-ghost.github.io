@@ -1,4 +1,5 @@
 import App, { AppMode } from "./meta/app";
+import { Inventory } from "./meta/inventory/inventory";
 import { Ui } from "./models/ui";
 import { Page } from "./page";
 import { Session } from "./session";
@@ -27,6 +28,13 @@ export class Play extends Page {
         canvas.style.display = "block"
         this.meta.init()
             .then((inited) => {
+                if (this.session.CheckLogin()) {
+                    this.blockStore.FetchCharacter(this.m_masterAddr, this.session.UserId)
+                        .then((inven: Inventory | undefined) => {
+                            console.log(inven)
+                            this.meta.store.LoadInventory(inven)
+                        }) 
+                }
                 if (email == null) {
                     this.blockStore.FetchModels(this.m_masterAddr)
                         .then(async (result) => {
@@ -87,6 +95,27 @@ export class Play extends Page {
         const invenCont = document.getElementById("invenContent") as HTMLDivElement
         invenBtn.onclick = () => {
             invenCont.style.display = (invenCont.style.display == "none" || invenCont.style.display == "") ? "block" : "none"
+        }
+
+        const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
+        fullscreen.onclick = () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+                fullscreen.innerText = "fullscreen"
+            } else {
+                document.documentElement.requestFullscreen()
+                fullscreen.innerText = "fullscreen_exit"
+            }
+        }
+
+        const getback = document.getElementById("returnSns") as HTMLSpanElement
+        getback.onclick = () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen()
+                fullscreen.innerText = "fullscreen"
+            }
+            history.back()
+            //this.UiOn()
         }
     }
     getParam(): string | null {

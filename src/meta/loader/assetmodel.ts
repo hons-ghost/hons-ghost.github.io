@@ -16,6 +16,7 @@ export enum Ani {
 
     MonBiting,
     MonScream,
+    MonHurt,
 }
 
 export enum Char{
@@ -28,6 +29,17 @@ export enum Char{
     Portal,
     Test,
     Zombie,
+    Minataur,
+    BatPig,
+    Bilby,
+    BilbyMon,
+    BirdMon,
+    CrabMon,
+    Gorillish,
+    PantherBlackWhite,
+    PantherBlue,
+    PantherRed,
+    AnimalPack,
 
     Bat,
     Gun,

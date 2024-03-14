@@ -58,6 +58,7 @@ export interface IAsset {
     CloneModel(): Promise<THREE.Group>
     UniqModel(id: string): Promise<[THREE.Group, boolean]>
     GetMixer(id: string): THREE.AnimationMixer | undefined
+    GetRightMeshId() : string | undefined
 }
 
 export class AssetModel{

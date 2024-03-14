@@ -26,7 +26,7 @@ export class AttackState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Attack!!")
-        const handItem = this.playerCtrl.inventory.GetBindItem(Bind.Hands)
+        const handItem = this.playerCtrl.inventory.GetBindItem(Bind.Hands_R)
         if(handItem == undefined) {
             this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
         } else {

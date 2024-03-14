@@ -207,6 +207,7 @@ export class HonDetail extends Page {
         this.meta.init().then(() => {
             this.alarm.style.display = "block"
             this.alarmText.innerHTML = "이동중입니다."
+            this.ui.UiOn()
 
             const myModel = this.blockStore.GetModel(this.session.UserId)
             this.blockStore.FetchModel(this.m_masterAddr, email)

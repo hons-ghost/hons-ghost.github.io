@@ -20,6 +20,7 @@ export class BatFab extends AssetModel implements IAsset {
             this.meshs.rotation.set(3, -0.5, -1.8)
         })
     }
+    GetRightMeshId() { return "mixamorigRightHand" }
     box?: THREE.Mesh
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh

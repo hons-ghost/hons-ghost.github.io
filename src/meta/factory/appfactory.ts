@@ -173,6 +173,7 @@ export class AppFactory {
             this.MassMushroomLoader(2),
             this.MassDeadTreeLoader(),
             this.npcs.NpcLoader(),
+            this.invenFab.LoadAsset(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)

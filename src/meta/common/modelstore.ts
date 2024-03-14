@@ -90,9 +90,12 @@ export class ModelStore {
         const json = JSON.stringify(this.inven)
         return json
     }
-    async LoadInventory(inven: Inventory | undefined) {
-        this.inven.Copy(inven)
-        console.log(this.inven)
+    LoadInventory(inven: Inventory | undefined) {
+        if (inven != undefined) {
+            this.inven.Copy(inven)
+            this.eventCtrl.OnChangeEquipmentEvent(inven)
+        }
+        return this.inven
     }
 
     StoreModels() {

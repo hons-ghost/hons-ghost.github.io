@@ -9,6 +9,8 @@ import { GhostModel } from "./ghostmodel";
 import { Ani, Char, IAsset } from "../../loader/assetmodel";
 import { Portal } from "./portal";
 import { AppMode } from "../../app";
+import { Inventory } from "../../inventory/inventory";
+import { Bind } from "../../inventory/items/item";
 
 export enum ActionType {
     IdleAction,
@@ -59,6 +61,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     danceClip?: THREE.AnimationClip
 
     private playerModel: Char = Char.Male
+    bindMesh: THREE.Group[] = []
 
     get BoxPos() {
         return this.asset.GetBoxPos(this.meshs)
@@ -91,6 +94,26 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
                 case EventFlag.End:
                     this.Visible = false
                     break
+            }
+        })
+        this.eventCtrl.RegisterChangeEquipmentEvent((inven: Inventory) => {
+            const rightId = this.asset.GetRightMeshId()
+            if(rightId) {
+                const right = this.meshs.getObjectByName(rightId)
+                const prev = this.bindMesh[Bind.Hands_R]
+
+                if (prev) {
+                    right?.remove(prev)
+                    this.bindMesh.splice(this.bindMesh.indexOf(prev), 1)
+                }
+
+                const rItem = inven.GetBindItem(Bind.Hands_R)
+                if (rItem) {
+                    if (rItem.Mesh != undefined) {
+                        right?.add(rItem.Mesh)
+                        this.bindMesh[Bind.Hands_R] = rItem.Mesh
+                    }
+                } 
             }
         })
     }

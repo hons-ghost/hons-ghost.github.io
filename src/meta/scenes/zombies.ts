@@ -79,11 +79,11 @@ export class Zombies {
             }, 5000)
         }, 5000)
 
+        /*
         const ani = this.loader.GetAssets(Char.CrabMon)
         const [meshs, exist] = await ani.UniqModel("test")
         meshs.position.set(10, 2.5, 14)
         this.game.add(meshs)
-        /*
         const minataur = new Minataur(this.loader, this.eventCtrl, this.gphysic, this.loader.MinatuarAsset)
         await minataur.Loader(this.loader.GetAssets(Char.Minataur), new THREE.Vector3(10, 2.5, 16), "Minataur", 0)
         minataur.Visible = true

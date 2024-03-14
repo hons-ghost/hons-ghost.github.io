@@ -224,7 +224,6 @@ header {
     margin-top: 4px;
 }
 #menu-gui {
-    display: none;
     position: absolute;
     right: 0;
     top: 60;
@@ -443,4 +442,10 @@ display: inline-block;
     bottom: 0px;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.item_info {
+    position: absolute;
+    display: none;
+    background-color: rgba(0, 0, 0, 0.6);
+    transform: translate(-100%, 0%);
 }

@@ -34,6 +34,7 @@ export class TestFab extends AssetModel implements IAsset {
             })
         })
     }
+    GetRightMeshId() { return "mixamorigRightHand" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         return new THREE.Box3().setFromObject(this.meshs)

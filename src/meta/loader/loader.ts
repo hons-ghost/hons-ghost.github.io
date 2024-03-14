@@ -15,7 +15,6 @@ import { GunFab } from "./gunfab";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { AppMode } from "../app";
 import { MinataurFab } from "./minataurfab";
-import { AnimalPackFab } from "./animalpack";
 import { CrabFab } from "./crabfab";
 
 export class Loader {

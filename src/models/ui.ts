@@ -11,12 +11,10 @@ export class Ui {
         const wrapper = document.getElementById("wrapper-profile") as HTMLDivElement
         const header = document.getElementById("navibar") as HTMLDivElement
         const footer = document.getElementById("footer") as HTMLDivElement
-        const menuGui = document.getElementById("menu-gui") as HTMLDivElement
         const health = document.getElementById("health") as HTMLDivElement
         const inven = document.getElementById("invenBtn") as HTMLDivElement
         if (inven) inven.style.display = "block"
         if (health) health.style.display = "block"
-        menuGui.style.display = "block"
 
         if (wrapper) wrapper.style.display = "none"
         footer.style.display = "none"

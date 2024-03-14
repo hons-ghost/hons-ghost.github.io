@@ -41,7 +41,7 @@ export class ItemDb {
         this.itemDb.set(ItemId.Hanhwasbat, {
             type: ItemType.Attack,
             weapon: AttackItemType.Blunt,
-            bind: Bind.Hands,
+            bind: Bind.Hands_R,
             asset: this.loader.BatAsset,
             level: Level.Common,
             name: "Hanhwa's Bat",

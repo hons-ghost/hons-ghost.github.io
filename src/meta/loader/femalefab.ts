@@ -52,6 +52,7 @@ export class FemaleFab extends AssetModel implements IAsset {
             //this.meshs.scale.set(0.03, 0.03, 0.03)
             */
 
+            /*
             const right = this.meshs.getObjectByName("mixamorigRightHand")
             const bat = await this.loader.Load.loadAsync("assets/weapon/bat.glb")
             const meshs = bat.scene
@@ -67,6 +68,7 @@ export class FemaleFab extends AssetModel implements IAsset {
             this.CreateVectorGui(fp, meshs.rotation, "Rot", 0.1)
             this.CreateVectorGui(fp, meshs.scale, "Scale", 0.01)
             right?.add(meshs)
+            */
         })
     }
     CreateVectorGui(f: GUI, v: THREE.Vector3 | THREE.Euler, name: string, step: number) {
@@ -76,6 +78,7 @@ export class FemaleFab extends AssetModel implements IAsset {
     }
     box?: THREE.Mesh
     
+    GetRightMeshId() { return "mixamorigRightHand" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {

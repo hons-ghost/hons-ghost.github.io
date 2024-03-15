@@ -1,15 +1,15 @@
 import * as THREE from "three";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics"
 import { Player } from "../models/player"
-import { Zombie } from "../models/zombie"
-import { AttackZState, DyingZState, IdleZState, RunZState } from "./zombiestate"
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
+import { AttackMState, DyingMState, IdleMState, RunMState } from "./minataurstate";
+import { Minataur } from "../models/minataur";
 import { IPlayerAction } from "../zombies";
 
 
-export class ZombieBox extends THREE.Mesh {
+export class MinataurBox extends THREE.Mesh {
     constructor(public Id: number, public ObjName: string,
         geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
     ) {
@@ -18,29 +18,29 @@ export class ZombieBox extends THREE.Mesh {
     }
 }
 
-export class ZombieCtrl implements IGPhysic {
-    IdleSt = new IdleZState(this, this.zombie, this.gphysic)
-    AttackSt = new AttackZState(this, this.zombie, this.gphysic)
-    RunSt = new RunZState(this, this.zombie, this.gphysic)
-    DyingSt = new DyingZState(this, this.zombie, this.gphysic)
+export class MinataurCtrl implements IGPhysic{
+    IdleSt = new IdleMState(this, this.monster, this.gphysic)
+    AttackSt = new AttackMState(this, this.monster, this.gphysic)
+    RunSt = new RunMState(this, this.monster, this.gphysic)
+    DyingSt = new DyingMState(this, this.monster, this.gphysic)
 
     currentState: IPlayerAction = this.IdleSt
     raycast = new THREE.Raycaster()
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
     health = 10
-    phybox: ZombieBox
+    phybox: MinataurBox
 
     constructor(
         private id: number,
         private player: IPhysicsObject, 
-        private zombie: Zombie, 
+        private monster: Minataur, 
         private legos: Legos,
         private eventBricks: EventBricks,
         private gphysic: GPhysics
     ) {
         gphysic.Register(this)
-        const size = zombie.Size
+        const size = monster.Size
         const geometry = new THREE.BoxGeometry(size.x * 3, size.y, size.z * 3)
         const material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
@@ -48,18 +48,18 @@ export class ZombieCtrl implements IGPhysic {
             opacity: 0,
             color: 0xff0000,
         })
-        this.phybox = new ZombieBox(id, "Zombie", geometry, material)
-        this.phybox.position.copy(this.zombie.CannonPos)
+        this.phybox = new MinataurBox(id, "Minataur", geometry, material)
+        this.phybox.position.copy(this.monster.CannonPos)
     }
 
     update(delta: number): void {
-        if (!this.zombie.Visible) return
+        if (!this.monster.Visible) return
 
-        const dist = this.zombie.CannonPos.distanceTo(this.player.CannonPos)
+        const dist = this.monster.CannonPos.distanceTo(this.player.CannonPos)
 
         if (this.health > 0) {
-            this.dir.subVectors(this.player.CannonPos, this.zombie.CannonPos)
-            this.raycast.set(this.zombie.CannonPos, this.dir.normalize())
+            this.dir.subVectors(this.player.CannonPos, this.monster.CannonPos)
+            this.raycast.set(this.monster.CannonPos, this.dir.normalize())
 
             let find = false
             if (this.legos.instancedBlock != undefined)
@@ -80,13 +80,13 @@ export class ZombieCtrl implements IGPhysic {
         }
 
         this.currentState = this.currentState.Update(delta, this.moveDirection, dist)
-        this.zombie.update()
+        this.monster.update()
 
-        this.phybox.position.copy(this.zombie.CannonPos)
+        this.phybox.position.copy(this.monster.CannonPos)
     }
     ReceiveDemage(demage: number): boolean {
         if (this.health <= 0) return false
-        this.zombie.DamageEffect(demage)
+        this.monster.DamageEffect(demage)
         this.health -= demage
         if (this.health <= 0) {
             this.DyingSt.Init()

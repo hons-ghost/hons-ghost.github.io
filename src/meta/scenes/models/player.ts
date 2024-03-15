@@ -103,25 +103,31 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
             }
         })
         this.eventCtrl.RegisterChangeEquipmentEvent((inven: Inventory) => {
-            const rightId = this.asset.GetRightMeshId()
-            if(rightId) {
-                const right = this.meshs.getObjectByName(rightId)
-                const prev = this.bindMesh[Bind.Hands_R]
-
-                if (prev) {
-                    right?.remove(prev)
-                    this.bindMesh.splice(this.bindMesh.indexOf(prev), 1)
-                }
-
-                const rItem = inven.GetBindItem(Bind.Hands_R)
-                if (rItem) {
-                    if (rItem.Mesh != undefined) {
-                        right?.add(rItem.Mesh)
-                        this.bindMesh[Bind.Hands_R] = rItem.Mesh
-                    }
-                } 
-            }
+            // right hand
+            this.ReloadBindingItem(inven, Bind.Head)
+            this.ReloadBindingItem(inven, Bind.Hands_L)
+            this.ReloadBindingItem(inven, Bind.Hands_R)
         })
+    }
+    ReloadBindingItem(inven: Inventory, bind: Bind) {
+        const rightId = this.asset.GetBodyMeshId(bind)
+        if (rightId == undefined) return
+
+        const mesh = this.meshs.getObjectByName(rightId)
+        const prev = this.bindMesh[bind]
+
+        if (prev) {
+            mesh?.remove(prev)
+            this.bindMesh.splice(this.bindMesh.indexOf(prev), 1)
+        }
+
+        const rItem = inven.GetBindItem(bind)
+        if (rItem) {
+            if (rItem.Mesh != undefined) {
+                mesh?.add(rItem.Mesh)
+                this.bindMesh[bind] = rItem.Mesh
+            }
+        }
     }
 
     Init() {

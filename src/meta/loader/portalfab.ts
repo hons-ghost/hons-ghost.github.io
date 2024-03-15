@@ -34,7 +34,7 @@ export class PortalFab extends AssetModel implements IAsset {
         this.size.z = Math.ceil(this.size.z)
         return this.size 
     }
-    GetRightMeshId() { return "mixamorigRightHand" }
+    GetBodyMeshId() { return "mixamorigRightHand" }
 
     GetBoxPos(mesh: THREE.Group) {
         const v = mesh.position

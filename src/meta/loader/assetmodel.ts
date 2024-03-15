@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { Loader } from "./loader";
+import { Bind } from "../inventory/items/item";
 
 export enum Ani {
     Idle,
@@ -58,7 +59,7 @@ export interface IAsset {
     CloneModel(): Promise<THREE.Group>
     UniqModel(id: string): Promise<[THREE.Group, boolean]>
     GetMixer(id: string): THREE.AnimationMixer | undefined
-    GetRightMeshId() : string | undefined
+    GetBodyMeshId(bind?: Bind) : string | undefined
 }
 
 export class AssetModel{

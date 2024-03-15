@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { Loader } from "./loader";
 import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import { Bind } from "../inventory/items/item";
 
 
 export class TestFab extends AssetModel implements IAsset {
@@ -34,7 +35,7 @@ export class TestFab extends AssetModel implements IAsset {
             })
         })
     }
-    GetRightMeshId() { return "mixamorigRightHand" }
+    GetBodyMeshId(bind: Bind) { return "" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         return new THREE.Box3().setFromObject(this.meshs)

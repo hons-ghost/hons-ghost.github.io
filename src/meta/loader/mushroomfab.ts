@@ -43,5 +43,5 @@ export class MushroomFab extends AssetModel implements IAsset {
         return new THREE.Vector3(v.x, v.y, v.z)
     }
 
-    GetRightMeshId() { return "mixamorigRightHand" }
+    GetBodyMeshId() { return "mixamorigRightHand" }
 }

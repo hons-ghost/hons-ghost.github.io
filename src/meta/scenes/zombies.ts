@@ -22,6 +22,11 @@ type ZombieSet = {
     zombie: Zombie,
     zCtrl: ZombieCtrl
 }
+export interface IPlayerAction {
+    Init(): void
+    Uninit(): void
+    Update(delta: number, v: THREE.Vector3, dist: number): IPlayerAction
+}
 
 export class Zombies {
     zombies: ZombieSet[] = []

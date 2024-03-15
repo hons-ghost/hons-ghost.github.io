@@ -1,32 +1,33 @@
 import * as THREE from "three";
 import { GPhysics } from "../../common/physics/gphysics"
 import { ActionType } from "../models/player"
-import { Zombie } from "../models/zombie"
-import { ZombieCtrl } from "./zombiectrl";
+import { MinataurCtrl } from "./minataurctrl";
+import { Minataur } from "../models/minataur";
 import { IPlayerAction } from "../zombies";
+
 
 class State {
     attackDist = 4
     constructor(
-        protected zCtrl: ZombieCtrl,
-        protected zombie: Zombie,
+        protected ctrl: MinataurCtrl,
+        protected obj: Minataur,
         protected gphysic: GPhysics
     ) { }
 
     CheckRun(v: THREE.Vector3) {
         if (v.x || v.z) {
-            this.zCtrl.RunSt.Init()
-            return this.zCtrl.RunSt
+            this.ctrl.RunSt.Init()
+            return this.ctrl.RunSt
         }
     }
 }
 
-export class AttackZState extends State implements IPlayerAction {
-    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics) {
-        super(zCtrl, zombie, gphysic)
+export class AttackMState extends State implements IPlayerAction {
+    constructor(ctrl: MinataurCtrl, monster: Minataur, gphysic: GPhysics) {
+        super(ctrl, monster, gphysic)
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.PunchAction)
+        this.obj.ChangeAction(ActionType.PunchAction)
     }
     Uninit(): void {
         
@@ -41,13 +42,13 @@ export class AttackZState extends State implements IPlayerAction {
     }
 }
 
-export class IdleZState extends State implements IPlayerAction {
-    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics) {
-        super(zCtrl, zombie, gphysic)
+export class IdleMState extends State implements IPlayerAction {
+    constructor(ctrl: MinataurCtrl, monster: Minataur, gphysic: GPhysics) {
+        super(ctrl, monster, gphysic)
         this.Init()
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.IdleAction)
+        this.obj.ChangeAction(ActionType.IdleAction)
     }
     Uninit(): void {
         
@@ -59,12 +60,12 @@ export class IdleZState extends State implements IPlayerAction {
         return this
     }
 }
-export class DyingZState extends State implements IPlayerAction {
-    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics) {
-        super(zCtrl, zombie, gphysic)
+export class DyingMState extends State implements IPlayerAction {
+    constructor(zCtrl: MinataurCtrl, monster: Minataur, gphysic: GPhysics) {
+        super(zCtrl, monster, gphysic)
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.DyingAction)
+        this.obj.ChangeAction(ActionType.DyingAction)
     }
     Uninit(): void {
         
@@ -73,13 +74,13 @@ export class DyingZState extends State implements IPlayerAction {
         return this
     }
 }
-export class RunZState extends State implements IPlayerAction {
+export class RunMState extends State implements IPlayerAction {
     speed = 1
-    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics) {
-        super(zCtrl, zombie, gphysic)
+    constructor(zCtrl: MinataurCtrl, monster: Minataur, gphysic: GPhysics) {
+        super(zCtrl, monster, gphysic)
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.RunAction)
+        this.obj.ChangeAction(ActionType.RunAction)
     }
     Uninit(): void {
         
@@ -92,27 +93,27 @@ export class RunZState extends State implements IPlayerAction {
 
     Update(delta: number, v: THREE.Vector3, dist: number): IPlayerAction {
         if(dist < this.attackDist) {
-            this.zCtrl.AttackSt.Init()
-            return this.zCtrl.AttackSt
+            this.ctrl.AttackSt.Init()
+            return this.ctrl.AttackSt
         }
         if (v.x == 0 && v.z == 0) {
-            this.zCtrl.IdleSt.Init()
-            return this.zCtrl.IdleSt
+            this.ctrl.IdleSt.Init()
+            return this.ctrl.IdleSt
         }
         v.y = 0
 
         const movX = v.x * delta * this.speed
         const movZ = v.z * delta * this.speed
-        this.zombie.Meshs.position.x += movX
-        this.zombie.Meshs.position.z += movZ
+        this.obj.Meshs.position.x += movX
+        this.obj.Meshs.position.z += movZ
 
         const mx = this.MX.lookAt(v, this.ZeroV, this.YV)
         const qt = this.QT.setFromRotationMatrix(mx)
-        this.zombie.Meshs.quaternion.copy(qt)
+        this.obj.Meshs.quaternion.copy(qt)
 
-        if (this.gphysic.Check(this.zombie)){
-            this.zombie.Meshs.position.x -= movX
-            this.zombie.Meshs.position.z -= movZ
+        if (this.gphysic.Check(this.obj)){
+            this.obj.Meshs.position.x -= movX
+            this.obj.Meshs.position.z -= movZ
         }
         return this
     }

@@ -29,7 +29,7 @@ export class MinataurFab extends AssetModel implements IAsset {
             this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "Armature|Jump"))
         })
     }
-    GetRightMeshId() { return "mixamorigRightHand" }
+    GetBodyMeshId() { return "mixamorigRightHand" }
     box?: THREE.Mesh
     
     GetBox(mesh: THREE.Group) {

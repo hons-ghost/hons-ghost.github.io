@@ -4,6 +4,7 @@ import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import GUI from "lil-gui";
 import { gui } from "../common/helper";
+import { Bind } from "../inventory/items/item";
 
 
 export class MaleFab extends AssetModel implements IAsset {
@@ -48,7 +49,12 @@ export class MaleFab extends AssetModel implements IAsset {
         f.add(v, "z", -100, 100, step).listen().name(name + "Z")
     }
 
-    GetRightMeshId() { return "mixamorigRightHand" }
+    GetBodyMeshId(bind: Bind) {
+        switch(bind) {
+            case Bind.Hands_R: return "mixamorigRightHand";
+            case Bind.Hands_L: return "mixamorigLeftHand";
+        }
+    }
     box?: THREE.Mesh
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh

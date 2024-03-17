@@ -22,11 +22,14 @@ export class Ui {
         this.meta.ModeChange(to)
         this.profileVisible = false
 
+        const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
         const isMobile = /iPone|iPad|iPod|Android/i.test(window.navigator.userAgent)
-        if (isMobile) {
-            const fullscreen = document.getElementById("fullscreen") as HTMLSpanElement
-            document.documentElement.requestFullscreen()
+        if (isMobile && fullscreen) {
             fullscreen.innerText = "fullscreen_exit"
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(err)
+                fullscreen.innerText = "fullscreen"
+            })
         }
     }
     UiOn() {

@@ -2,33 +2,27 @@ import * as THREE from "three";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics"
 import { Player } from "../models/player"
 import { Zombie } from "../models/zombie"
-import { AttackZState, DyingZState, IPlayerAction, IdleZState, RunZState } from "./zombiestate"
+import { AttackZState, DyingZState, IdleZState, RunZState } from "./zombiestate"
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
+import { IPlayerAction, MonsterBox } from "../zombies";
+import { EventController } from "../../event/eventctrl";
 
 
-export class ZombieBox extends THREE.Mesh {
-    constructor(public Id: number, public ObjName: string,
-        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
-    ) {
-        super(geo, mat)
-        this.name = ObjName
-    }
-}
 
-export class ZombieCtrl implements IGPhysic{
+export class ZombieCtrl implements IGPhysic {
     IdleSt = new IdleZState(this, this.zombie, this.gphysic)
-    AttackSt = new AttackZState(this, this.zombie, this.gphysic)
+    AttackSt = new AttackZState(this, this.zombie, this.gphysic, this.eventCtrl)
     RunSt = new RunZState(this, this.zombie, this.gphysic)
-    DyingSt = new DyingZState(this, this.zombie, this.gphysic)
+    DyingSt = new DyingZState(this, this.zombie, this.gphysic, this.eventCtrl)
 
     currentState: IPlayerAction = this.IdleSt
     raycast = new THREE.Raycaster()
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
     health = 10
-    phybox: ZombieBox
+    phybox: MonsterBox
 
     constructor(
         private id: number,
@@ -36,7 +30,8 @@ export class ZombieCtrl implements IGPhysic{
         private zombie: Zombie, 
         private legos: Legos,
         private eventBricks: EventBricks,
-        private gphysic: GPhysics
+        private gphysic: GPhysics,
+        private eventCtrl: EventController
     ) {
         gphysic.Register(this)
         const size = zombie.Size
@@ -47,8 +42,13 @@ export class ZombieCtrl implements IGPhysic{
             opacity: 0,
             color: 0xff0000,
         })
-        this.phybox = new ZombieBox(id, "Zombie", geometry, material)
+        this.phybox = new MonsterBox(id, "Zombie", geometry, material)
         this.phybox.position.copy(this.zombie.CannonPos)
+    }
+    Respawning() {
+        this.health = 10
+        this.currentState = this.IdleSt
+        this.currentState.Init()
     }
 
     update(delta: number): void {
@@ -83,6 +83,7 @@ export class ZombieCtrl implements IGPhysic{
 
         this.phybox.position.copy(this.zombie.CannonPos)
     }
+    
     ReceiveDemage(demage: number): boolean {
         if (this.health <= 0) return false
         this.zombie.DamageEffect(demage)

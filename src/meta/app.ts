@@ -8,6 +8,7 @@ import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
 import { BrickOption } from "./scenes/bricks";
 import { Inventory } from "./inventory/inventory";
+import { IBuffItem } from "./buff/buff";
 
 export enum AppMode {
     Long,
@@ -145,5 +146,14 @@ export default class App {
     }
     resize() {
         this.canvas.resize()
+    }
+    RegisterChangePlayerStatusEvent (callback: (...e: any[]) => void) {
+        this.eventCtrl.RegisterChangePlayerStatusEvent(callback)
+    }
+    GetRandomBuff() {
+        return this.factory.Buff.GetRandomBuff()
+    }
+    SelectRandomBuff(buff: IBuffItem) {
+        this.factory.Buff.SelectBuff(buff)
     }
 }

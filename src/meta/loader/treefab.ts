@@ -17,7 +17,7 @@ export class TreeFab extends AssetModel {
             })
         })
     }
-    GetRightMeshId() { return "mixamorigRightHand" }
+    GetBodyMeshId() { return "" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         const s = this.GetSize(mesh)

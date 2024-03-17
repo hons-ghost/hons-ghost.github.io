@@ -3,15 +3,12 @@ import { GPhysics } from "../../common/physics/gphysics"
 import { ActionType } from "../models/player"
 import { Zombie } from "../models/zombie"
 import { ZombieCtrl } from "./zombiectrl";
-
-export interface IPlayerAction {
-    Init(): void
-    Uninit(): void
-    Update(delta: number, v: THREE.Vector3, dist: number): IPlayerAction
-}
+import { IPlayerAction } from "../zombies";
+import { EventController } from "../../event/eventctrl";
+import { AttackType } from "../player/playerctrl";
 
 class State {
-    attackDist = 4
+    attackDist = 3
     constructor(
         protected zCtrl: ZombieCtrl,
         protected zombie: Zombie,
@@ -27,22 +24,52 @@ class State {
 }
 
 export class AttackZState extends State implements IPlayerAction {
-    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics) {
+    keytimeout?:NodeJS.Timeout
+    attackSpeed = 2
+    attackProcess = false
+    attackTime = 0
+    attackDamageMax = 1
+    attackDamageMin = 5
+
+    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics,
+        private eventCtrl: EventController
+    ) {
         super(zCtrl, zombie, gphysic)
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.PunchAction)
+        const duration = this.zombie.ChangeAction(ActionType.PunchAction)
+        if (duration != undefined) this.attackSpeed = duration * 0.8
+        this.attackTime = this.attackSpeed
     }
     Uninit(): void {
-        
+        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
     Update(delta: number, v: THREE.Vector3, dist: number): IPlayerAction {
         if (dist > this.attackDist) {
             const checkRun = this.CheckRun(v)
             if (checkRun != undefined) return checkRun
         }
+        if(this.attackProcess) return this
+        this.attackTime += delta
+        if (this.attackTime / this.attackSpeed < 1) {
+            return this
+        }
+        this.attackTime -= this.attackSpeed
+        this.attackProcess = true
+
+        this.keytimeout = setTimeout(() => {
+            this.attack()
+        }, this.attackSpeed * 1000 * 0.4)
 
         return this
+    }
+    attack() {
+        this.eventCtrl.OnAttackEvent("player", [{
+            type: AttackType.NormalSwing,
+            damage: THREE.MathUtils.randInt(this.attackDamageMin, this.attackDamageMax),
+        }])
+
+        this.attackProcess = false
     }
 }
 
@@ -65,11 +92,16 @@ export class IdleZState extends State implements IPlayerAction {
     }
 }
 export class DyingZState extends State implements IPlayerAction {
-    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics) {
+    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics, private eventCtrl: EventController) {
         super(zCtrl, zombie, gphysic)
     }
     Init(): void {
         this.zombie.ChangeAction(ActionType.DyingAction)
+
+        this.eventCtrl.OnAttackEvent("player", [{
+            type: AttackType.Exp,
+            damage: 20,
+        }])
     }
     Uninit(): void {
         

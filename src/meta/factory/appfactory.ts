@@ -26,6 +26,7 @@ import { Input } from "../common/inputs/input";
 import { RayViwer } from "../common/raycaster";
 import { Zombies } from "../scenes/zombies";
 import { InvenFactory } from "../inventory/invenfactory";
+import { Buff } from "../buff/buff";
 
 
 export class AppFactory {
@@ -48,6 +49,7 @@ export class AppFactory {
     private npcs: NpcManager
     private zombies: Zombies
 
+    private buff: Buff
     private playerCtrl : PlayerCtrl
     
     private trees: Tree[]
@@ -74,6 +76,7 @@ export class AppFactory {
     get EventCtrl(): EventController { return this.eventCtrl }
     get ModelStore() { return this.store }
     get Player() { return this.player }
+    get Buff() { return this.buff }
 
     constructor() {
         this.worldSize = 300
@@ -99,6 +102,7 @@ export class AppFactory {
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
         this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics)
+        this.buff = new Buff(this.eventCtrl, this.playerCtrl)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
@@ -146,7 +150,7 @@ export class AppFactory {
         const meshs = await this.loader.TreeAsset.CloneModel()
         const pos = new THREE.Vector3()
         const radius = this.worldSize / 2
-        for (let i = 0; i < 120; i++) {
+        for (let i = 0; i < 150; i++) {
             const phi = Math.random() * Math.PI * 2
             const r = THREE.MathUtils.randFloat(radius * 0.5, radius * 1.5)
             pos.set(
@@ -155,7 +159,7 @@ export class AppFactory {
                 r * Math.sin(phi)
             )
             
-            const scale = math.rand_int(5, 9)
+            const scale = math.rand_int(9, 15)
             const tree = new Tree(this.loader, this.loader.TreeAsset, this.gphysics)
             tree.MassLoad(meshs, scale, pos)
             this.trees.push(tree)

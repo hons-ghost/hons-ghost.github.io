@@ -1,44 +1,66 @@
 import * as THREE from "three";
-import { EventController } from "../../event/eventctrl";
+import { EventController, EventFlag } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics";
 import { Player } from "../models/player";
-import { IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
+import { DeadState, IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
 import { AttackIdleState, AttackState } from "./attackstate";
 import { Inventory } from "../../inventory/inventory";
+import { AppMode } from "../../app";
+import { PlayerSpec } from "./playerspec";
+import { IBuffItem } from "../../buff/buff";
 
 export enum AttackType {
     NormalSwing,
     Magic0,
+    Exp,
+    Heal,
+    AOE, // Area of effect
+    Buff,
 }
 
 export type AttackOption = {
     type: AttackType,
     damage: number
-    obj: THREE.Object3D
+    distance?: number
+    obj?: THREE.Object3D
 }
 
+export type PlayerStatus = {
+    level: number
+    maxHealth: number
+    health: number
+    maxMana: number
+    mana: number
+    maxExp: number
+    exp: number
+}
+
+
 export class PlayerCtrl implements IGPhysic {
+
     keyDownQueue: IKeyCommand[] = []
     keyUpQueue: IKeyCommand[] = []
     inputVQueue: THREE.Vector3[] = []
+    targets: THREE.Object3D[] = []
 
     contollerEnable = true
     inputMode = false
     moveDirection = new THREE.Vector3()
 
+    spec: PlayerSpec = new PlayerSpec(this.inventory)
     keyType: KeyType = KeyType.None
 
-    AttackSt = new AttackState(this, this.player, this.gphysic, this.eventCtrl)
+    AttackSt = new AttackState(this, this.player, this.gphysic, this.eventCtrl, this.spec)
     MagicH1St = new MagicH1State(this, this.player, this.gphysic)
     MagicH2St = new MagicH2State(this, this.player, this.gphysic)
     AttackIdleSt = new AttackIdleState(this, this.player, this.gphysic)
     RunSt = new RunState(this, this.player, this.gphysic)
     JumpSt = new JumpState(this, this.player, this.gphysic)
     IdleSt = new IdleState(this, this.player, this.gphysic)
+    DyingSt = new DeadState(this, this.player, this.gphysic)
     currentState: IPlayerAction = this.IdleSt
 
-    targets: THREE.Object3D[] = []
 
     constructor(
         private player: Player,
@@ -48,6 +70,19 @@ export class PlayerCtrl implements IGPhysic {
     ) {
         gphysic.Register(this)
 
+        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Play) return
+            switch (e) {
+                case EventFlag.Start:
+                    this.spec.ResetStatus()
+                    eventCtrl.OnChangePlayerStatusEvent(this.spec.Status)
+                    this.currentState = this.IdleSt
+                    this.currentState.Init()
+                    break
+                case EventFlag.End:
+                    break
+            }
+        })
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
             if (!this.contollerEnable) return
             this.keyDownQueue.push(keyCommand)
@@ -68,9 +103,30 @@ export class PlayerCtrl implements IGPhysic {
             }
         })
         eventCtrl.RegisterChangeEquipmentEvent(() => {
+            this.spec.ItemUpdate()
             if (this.currentState == this.AttackSt) {
                 this.currentState.Init()
             }
+        })
+        eventCtrl.RegisterAttackEvent("player", (opts: AttackOption[]) => {
+            opts.forEach((opt) => {
+                switch(opt.type) {
+                    case AttackType.NormalSwing:
+                    case AttackType.Magic0:
+                        if(this.currentState == this.DyingSt) break;
+                        this.spec.ReceiveCalcDamage(opt.damage)
+                        this.player.DamageEffect(opt.damage)
+                        if(this.spec.CheckDie()) {
+                            this.currentState = this.DyingSt
+                            this.currentState.Init()
+                        }
+                        break;
+                    case AttackType.Exp:
+                        this.spec.ReceiveExp(opt.damage)
+                        break;
+                }
+            })
+            eventCtrl.OnChangePlayerStatusEvent(this.spec.Status)
         })
 
     }
@@ -103,6 +159,7 @@ export class PlayerCtrl implements IGPhysic {
 
         this.currentState = this.currentState.Update(delta, this.moveDirection)
         this.player.Update()
+        this.spec.Update(delta)
         this.actionReset()
     }
     actionReset() {
@@ -146,5 +203,8 @@ export class PlayerCtrl implements IGPhysic {
         if (position.y == this.moveDirection.y) { this.moveDirection.y = 0 }
         if (position.z == this.moveDirection.z) { this.moveDirection.z = 0 }
     }
-
+    UpdateBuff(buff: IBuffItem[]) {
+        this.spec.SetBuff(buff)
+        console.log(buff)
+    }
 }

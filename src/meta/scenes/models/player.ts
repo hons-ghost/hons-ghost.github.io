@@ -11,6 +11,8 @@ import { Portal } from "./portal";
 import { AppMode } from "../../app";
 import { Inventory } from "../../inventory/inventory";
 import { Bind } from "../../inventory/items/item";
+import { Damage } from "../../effects/damage";
+import { TextStatus } from "../../effects/status";
 
 export enum ActionType {
     IdleAction,
@@ -65,9 +67,13 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     magicH1Clip?: THREE.AnimationClip
     magicH2Clip?: THREE.AnimationClip
     danceClip?: THREE.AnimationClip
+    dyingClip?: THREE.AnimationClip
 
     private playerModel: Char = Char.Male
     bindMesh: THREE.Group[] = []
+
+    damageEffect = new Damage(this.CannonPos.x, this.CannonPos.y, this.CannonPos.z)
+    txtStatus = new TextStatus("0", "#ff0000", true)
 
     get BoxPos() {
         return this.asset.GetBoxPos(this.meshs)
@@ -103,25 +109,31 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
             }
         })
         this.eventCtrl.RegisterChangeEquipmentEvent((inven: Inventory) => {
-            const rightId = this.asset.GetRightMeshId()
-            if(rightId) {
-                const right = this.meshs.getObjectByName(rightId)
-                const prev = this.bindMesh[Bind.Hands_R]
-
-                if (prev) {
-                    right?.remove(prev)
-                    this.bindMesh.splice(this.bindMesh.indexOf(prev), 1)
-                }
-
-                const rItem = inven.GetBindItem(Bind.Hands_R)
-                if (rItem) {
-                    if (rItem.Mesh != undefined) {
-                        right?.add(rItem.Mesh)
-                        this.bindMesh[Bind.Hands_R] = rItem.Mesh
-                    }
-                } 
-            }
+            // right hand
+            this.ReloadBindingItem(inven, Bind.Head)
+            this.ReloadBindingItem(inven, Bind.Hands_L)
+            this.ReloadBindingItem(inven, Bind.Hands_R)
         })
+    }
+    ReloadBindingItem(inven: Inventory, bind: Bind) {
+        const rightId = this.asset.GetBodyMeshId(bind)
+        if (rightId == undefined) return
+
+        const mesh = this.meshs.getObjectByName(rightId)
+        const prev = this.bindMesh[bind]
+
+        if (prev) {
+            mesh?.remove(prev)
+            this.bindMesh.splice(this.bindMesh.indexOf(prev), 1)
+        }
+
+        const rItem = inven.GetBindItem(bind)
+        if (rItem) {
+            if (rItem.Mesh != undefined) {
+                mesh?.add(rItem.Mesh)
+                this.bindMesh[bind] = rItem.Mesh
+            }
+        }
     }
 
     Init() {
@@ -164,9 +176,14 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.danceClip = this.asset.GetAnimationClip(Ani.Dance0)
         this.magicH1Clip = this.asset.GetAnimationClip(Ani.MagicH1)
         this.magicH2Clip = this.asset.GetAnimationClip(Ani.MagicH2)
+        this.dyingClip = this.asset.GetAnimationClip(Ani.Dying)
         console.log(this.punchingClip)
         this.changeAnimate(this.idleClip)
 
+        this.meshs.add(this.damageEffect.Mesh)
+        this.damageEffect.Mesh.visible = false
+        this.meshs.add(this.txtStatus)
+        this.txtStatus.visible = false
 
         this.Visible = false
     }
@@ -178,7 +195,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         const currentAction = this.mixer?.clipAction(animate)
         if (currentAction == undefined) return
 
-        if (animate == this.jumpClip) {
+        if (animate == this.jumpClip || animate == this.dyingClip) {
             fadeTime = 0
             currentAction.clampWhenFinished = true
             currentAction.setLoop(THREE.LoopOnce, 1)
@@ -224,12 +241,21 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
             case ActionType.MagicH2Action:
                 clip = this.magicH2Clip
                 break
+            case ActionType.DyingAction:
+                clip = this.dyingClip
+                break;
         }
         this.changeAnimate(clip, speed)
         return clip?.duration
     }
-
+    DamageEffect(damage: number) {
+        this.damageEffect.Start()
+        this.txtStatus.Start(damage.toString(), "#fff")
+    }
     Update() {
-        this.mixer?.update(this.clock.getDelta())
+        const delta = this.clock.getDelta()
+        this.damageEffect.update(delta)
+        this.txtStatus.update(delta)
+        this.mixer?.update(delta)
     }
 }

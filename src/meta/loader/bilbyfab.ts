@@ -32,7 +32,7 @@ export class BilbyFab extends AssetModel implements IAsset {
     }
     box?: THREE.Mesh
     
-    GetRightMeshId() { return "mixamorigRightHand" }
+    GetBodyMeshId() { return "mixamorigRightHand" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {

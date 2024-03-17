@@ -44,10 +44,12 @@ export class Play extends Page {
                         .then(async (result) => {
                             await this.meta.LoadVillage(result, myModel?.models)
                             this.ui.UiOff(AppMode.Play)
+                            this.LevelUp()
                         })
                 } else {
                     if(!inited) {
                         this.ui.UiOff(AppMode.Play)
+                            this.LevelUp()
                         return
                     }
                     this.alarm.style.display = "block"
@@ -58,11 +60,13 @@ export class Play extends Page {
                             await this.meta.LoadModel(result.models, result.id, myModel?.models)
                             this.alarm.style.display = "none"
                             this.ui.UiOff(AppMode.Play)
+                            this.LevelUp()
                         })
                         .catch(async () => {
                             this.alarm.style.display = "none"
                             await this.meta.LoadModelEmpty(email, myModel?.models)
                             this.ui.UiOff(AppMode.Play)
+                            this.LevelUp()
                         })
                 }
             })
@@ -129,7 +133,6 @@ export class Play extends Page {
         const email = this.getParam();
         this.CanvasRenderer(email)
         this.inven.binding()
-        this.LevelUp()
 
         return true;
     }

@@ -10,13 +10,13 @@ export class AttackUp implements IBuffItem {
     lv = 0
     attack = .05
     get explain(): string {
-        return `공격력이 ${Math.round((this.attack + this.lv + 1) * 100)}% 증가합니다.`
+        return `공격력이 ${Math.round(((.01 * (this.lv + 1)) + this.attack) * 100)}% 증가합니다.`
     }
     IncreaseLv(): number { return ++this.lv }
     GetAttackSpeed(): number { return 1 }
     GetMoveSpeed(): number { return 1 }
     GetDamageMax(): number {
-        return 1 + this.attack * this.lv
+        return 1 + this.attack + (.01 * this.lv)
     }
     Update(delta: number, status: PlayerStatus): void { }
 }

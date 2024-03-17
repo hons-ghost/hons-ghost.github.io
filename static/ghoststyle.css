@@ -477,7 +477,7 @@ display: inline-block;
 
 .levelup {
     position: absolute;
-    display: block;
+    display: none;
     width:fit-content;
     top: 60px;
     left: 50%;

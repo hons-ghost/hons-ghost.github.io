@@ -26,6 +26,7 @@ import { Input } from "../common/inputs/input";
 import { RayViwer } from "../common/raycaster";
 import { Zombies } from "../scenes/zombies";
 import { InvenFactory } from "../inventory/invenfactory";
+import { Buff } from "../buff/buff";
 
 
 export class AppFactory {
@@ -48,6 +49,7 @@ export class AppFactory {
     private npcs: NpcManager
     private zombies: Zombies
 
+    private buff: Buff
     private playerCtrl : PlayerCtrl
     
     private trees: Tree[]
@@ -74,6 +76,7 @@ export class AppFactory {
     get EventCtrl(): EventController { return this.eventCtrl }
     get ModelStore() { return this.store }
     get Player() { return this.player }
+    get Buff() { return this.buff }
 
     constructor() {
         this.worldSize = 300
@@ -99,6 +102,7 @@ export class AppFactory {
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
         this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics)
+        this.buff = new Buff(this.eventCtrl, this.playerCtrl)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)

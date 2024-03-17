@@ -69,20 +69,54 @@ export class Play extends Page {
 
         this.meta.render()
 
-        const hpBar = document.getElementById("hp-bar") as HTMLProgressElement
-        const spBar = document.getElementById("special-bar") as HTMLProgressElement
-        const expBar = document.getElementById("exp-bar") as HTMLProgressElement
-        const lv = document.getElementById("level") as HTMLDivElement
         this.meta.RegisterChangePlayerStatusEvent((status: PlayerStatus) => {
+            const hpBar = document.getElementById("hp-bar") as HTMLProgressElement
+            const spBar = document.getElementById("special-bar") as HTMLProgressElement
+            const expBar = document.getElementById("exp-bar") as HTMLProgressElement
+            const lv = document.getElementById("level") as HTMLDivElement
             hpBar.value = status.health / status.maxHealth * 100
             spBar.value = status.mana / status.maxMana * 100
             expBar.value = status.exp / status.maxExp * 100
             lv.innerText = "Lv." + status.level
             if (status.level > this.defaultLv) {
                 this.defaultLv = status.level
+                this.LevelUp()
             }
         })
     }
+    LevelUp() {
+        const lvView = document.getElementById("levelview") as HTMLDivElement
+        lvView.replaceChildren()
+
+        const buffs = this.meta.GetRandomBuff()
+        let htmlString = `
+        <div class="row pb-2">
+            <div class="col xxx-large text-white text-center h2">Level Up!!</div>
+        </div>
+        `
+        buffs.forEach((b, i) => {
+            htmlString += `
+        <div class="row p-2 handcursor" id="buff_${i}">
+            <div class="col-auto"><img src="assets/icons/${b.icon}" style="width: 45px;"></div>
+            <div class="col text-white">${b.name},<br>${(b.lv == 0) ? "new" : "Lv." + b.lv}: ${b.explain}</div>
+        </div>
+            `
+        })
+        lvView.innerHTML = htmlString
+
+        const lvTag = document.getElementById("levelup") as HTMLDivElement
+        lvTag.style.display = "block"
+
+        buffs.forEach((b, i) => {
+            const buff = document.getElementById("buff_" + i) as HTMLDivElement
+            buff.onclick = () => {
+                this.meta.SelectRandomBuff(b)
+                const lvTag = document.getElementById("levelup") as HTMLDivElement
+                lvTag.style.display = "none"
+            }
+        })
+    }
+    
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
         const email = encodeURIComponent(urlParams.get("email") ?? "");
@@ -95,6 +129,7 @@ export class Play extends Page {
         const email = this.getParam();
         this.CanvasRenderer(email)
         this.inven.binding()
+        this.LevelUp()
 
         return true;
     }

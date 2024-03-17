@@ -1,3 +1,4 @@
+import { IBuffItem } from "../../buff/buff";
 import { Inventory } from "../../inventory/inventory";
 import { Bind } from "../../inventory/items/item";
 import { PlayerStatus } from "./playerctrl";
@@ -19,11 +20,25 @@ export class PlayerSpec {
     defence = 1
 
     status: PlayerStatus = { ...defaultStatus }
+    buff?:IBuffItem[]
+
     get AttackSpeed() {
-        return this.attackSpeed
+        let ret = this.attackSpeed
+        if(this.buff != undefined) {
+            this.buff.forEach((b) => {
+                ret *= b.GetAttackSpeed()
+            })
+        }
+        return ret
     }
     get AttackDamageMax() {
-        return this.attackDamageMax
+        let ret = this.attackDamageMax
+        if(this.buff != undefined) {
+            this.buff.forEach((b) => {
+                ret *= b.GetDamageMax()
+            })
+        }
+        return ret
     }
     get AttackDamageMin() {
         return this.attackDamageMin
@@ -31,6 +46,10 @@ export class PlayerSpec {
     get Status() { return this.status}
 
     constructor(private inven: Inventory) { }
+
+    SetBuff(buff: IBuffItem[]) {
+        this.buff = buff
+    }
     
     ResetStatus() {
         this.status = { ...defaultStatus }
@@ -76,5 +95,10 @@ export class PlayerSpec {
     }
     CheckDie(): boolean {
         return (this.status.health <= 0)
+    }
+    Update(delta: number) {
+        this.buff?.forEach((b) => {
+            b.Update(delta, this.status)
+        })
     }
 }

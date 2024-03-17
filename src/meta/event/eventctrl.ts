@@ -95,7 +95,7 @@ export class EventController {
         this.eventEmitter.on(SConf.AppMode, callback)
     }
 
-    // GAME MODE
+    // Player Health Monitor
     OnChangePlayerStatusEvent(status: PlayerStatus) {
         this.eventEmitter.emit(SConf.PlayerStatus, status)
     }

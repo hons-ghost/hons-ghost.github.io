@@ -1,28 +1,82 @@
-import { PlayerStatus } from "../scenes/player/playerctrl"
+import { EventController } from "../event/eventctrl"
+import { AttackType, PlayerStatus } from "../scenes/player/playerctrl"
+import { IBuffItem } from "./buff"
 
 
-export interface IBuffItem {
-    GetAttackSpeed(): number
-    GetMoveSpeed(): number
-    GetDamageMax(): number
-    Update(delta: number, status: PlayerStatus): void
-}
 
 export class AttackUp implements IBuffItem {
     name = "헐크의혼"
     icon = "skill2/UI_Skill_Icon_Buff.png"
-    explain = "공격력이 5% 증가합니다."
-    lv = 1
-    GetAttackSpeed(): number {
-        return 1
+    lv = 0
+    attack = .05
+    get explain(): string {
+        return `공격력이 ${Math.round((this.attack + this.lv + 1) * 100)}% 증가합니다.`
     }
-    GetMoveSpeed(): number {
-        return 1
-    }
+    IncreaseLv(): number { return ++this.lv }
+    GetAttackSpeed(): number { return 1 }
+    GetMoveSpeed(): number { return 1 }
     GetDamageMax(): number {
-        return 1.05
+        return 1 + this.attack * this.lv
     }
+    Update(delta: number, status: PlayerStatus): void { }
+}
+
+export class AreaAttack implements IBuffItem {
+    name = "영혼의공격"
+    icon = "skill2/UI_Skill_Icon_PsycicAttack.png"
+    lv = 0
+    time = 4
+    area = 3
+    damage = 2
+    get explain(): string {
+        return `${this.time}초당 주변 ${this.area + (this.lv + 1)}이내 ${this.damage * (this.lv + 1)}몬스터에게 피해를 줍니다. `
+    }
+    accTime = 0
+
+    constructor(private eventCtrl: EventController) { }
+    IncreaseLv(): number { return ++this.lv }
+    GetAttackSpeed(): number { return 1 }
+    GetMoveSpeed(): number { return 1 }
+    GetDamageMax(): number { return 1 }
     Update(delta: number, status: PlayerStatus): void {
-        
+        this.accTime += delta
+        if(this.accTime / (this.time) < 1) {
+            return
+        }
+        this.accTime -= this.time
+
+        this.eventCtrl.OnAttackEvent("monster", [{
+            type: AttackType.AOE,
+            damage: this.damage * this.lv,
+            distance: this.area + this.lv,
+        }])
+    }
+}
+export class Healing implements IBuffItem {
+    name = "성스러운느낌"
+    icon = "skill2/UI_Skill_Icon_Heal.png"
+    lv = 0
+    time = 4
+    heal = .01
+    accTime = 0
+    get explain(): string {
+        return `${this.time}초당 ${(this.heal * (this.lv + 1)) * 100}만큼 피가 차오릅니다.`
+    }
+    constructor(private eventCtrl: EventController) { }
+    IncreaseLv(): number { return ++this.lv }
+    GetAttackSpeed(): number { return 1 }
+    GetMoveSpeed(): number { return 1 }
+    GetDamageMax(): number { return 1 }
+    Update(delta: number, status: PlayerStatus): void {
+        this.accTime += delta
+        if(this.accTime / (this.time) < 1) {
+            return
+        }
+        this.accTime -= this.time
+
+        this.eventCtrl.OnAttackEvent("player", [{
+            type: AttackType.Heal,
+            damage: status.maxHealth * (1 + this.heal * this.lv)
+        }])
     }
 }

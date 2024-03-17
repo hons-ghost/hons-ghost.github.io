@@ -8,16 +8,21 @@ import { AttackIdleState, AttackState } from "./attackstate";
 import { Inventory } from "../../inventory/inventory";
 import { AppMode } from "../../app";
 import { PlayerSpec } from "./playerspec";
+import { IBuffItem } from "../../buff/buff";
 
 export enum AttackType {
     NormalSwing,
     Magic0,
     Exp,
+    Heal,
+    AOE, // Area of effect
+    Buff,
 }
 
 export type AttackOption = {
     type: AttackType,
     damage: number
+    distance?: number
     obj?: THREE.Object3D
 }
 
@@ -154,6 +159,7 @@ export class PlayerCtrl implements IGPhysic {
 
         this.currentState = this.currentState.Update(delta, this.moveDirection)
         this.player.Update()
+        this.spec.Update(delta)
         this.actionReset()
     }
     actionReset() {
@@ -197,5 +203,8 @@ export class PlayerCtrl implements IGPhysic {
         if (position.y == this.moveDirection.y) { this.moveDirection.y = 0 }
         if (position.z == this.moveDirection.z) { this.moveDirection.z = 0 }
     }
-
+    UpdateBuff(buff: IBuffItem[]) {
+        this.spec.SetBuff(buff)
+        console.log(buff)
+    }
 }

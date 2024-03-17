@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { EventController } from "../event/eventctrl"
+import { EventController, EventFlag } from "../event/eventctrl"
 import { AttackOption, AttackType, PlayerCtrl, PlayerStatus } from "../scenes/player/playerctrl"
 import { AreaAttack, AttackUp, Healing } from "./buffitem"
+import { AppMode } from "../app";
 
 
 export interface IBuffItem {
@@ -32,6 +33,19 @@ export class Buff {
                         break;
                 }
             })
+        })
+         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Play) return
+            switch (e) {
+                case EventFlag.Start:
+                    this.buffItem.forEach(b => {
+                        b.lv = 0
+                    })
+                    this.userBuff.length = 0
+                    break
+                case EventFlag.End:
+                    break
+            }
         })
     }
 

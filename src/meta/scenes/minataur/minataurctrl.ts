@@ -6,17 +6,8 @@ import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
 import { AttackMState, DyingMState, IdleMState, RunMState } from "./minataurstate";
 import { Minataur } from "../models/minataur";
-import { IPlayerAction } from "../zombies";
+import { IPlayerAction, MonsterBox } from "../zombies";
 
-
-export class MinataurBox extends THREE.Mesh {
-    constructor(public Id: number, public ObjName: string,
-        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
-    ) {
-        super(geo, mat)
-        this.name = ObjName
-    }
-}
 
 export class MinataurCtrl implements IGPhysic{
     IdleSt = new IdleMState(this, this.monster, this.gphysic)
@@ -29,7 +20,7 @@ export class MinataurCtrl implements IGPhysic{
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
     health = 10
-    phybox: MinataurBox
+    phybox: MonsterBox
 
     constructor(
         private id: number,
@@ -48,7 +39,7 @@ export class MinataurCtrl implements IGPhysic{
             opacity: 0,
             color: 0xff0000,
         })
-        this.phybox = new MinataurBox(id, "Minataur", geometry, material)
+        this.phybox = new MonsterBox(id, "Minataur", geometry, material)
         this.phybox.position.copy(this.monster.CannonPos)
     }
 

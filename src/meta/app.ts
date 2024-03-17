@@ -146,4 +146,7 @@ export default class App {
     resize() {
         this.canvas.resize()
     }
+    RegisterChangePlayerStatusEvent (callback: (...e: any[]) => void) {
+        this.eventCtrl.RegisterChangePlayerStatusEvent(callback)
+    }
 }

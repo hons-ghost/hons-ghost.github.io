@@ -5,6 +5,7 @@ import { ActionType, Player } from "../models/player";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController } from "../../event/eventctrl";
 import { AttackItemType, Bind } from "../../inventory/items/item";
+import { PlayerSpec } from "./playerspec";
 
 export class AttackState extends State implements IPlayerAction {
     raycast = new THREE.Raycaster()
@@ -19,23 +20,20 @@ export class AttackState extends State implements IPlayerAction {
     clock?: THREE.Clock
 
     constructor(playerCtrl: PlayerCtrl, player: Player, gphysic: GPhysics, 
-        private eventCtrl: EventController
+        private eventCtrl: EventController, private spec: PlayerSpec
     ) {
         super(playerCtrl, player, gphysic)
         this.raycast.params.Points.threshold = 20
     }
     Init(): void {
         console.log("Attack!!")
+        this.attackSpeed = this.spec.attackSpeed
+        this.attackDamageMax = this.spec.AttackDamageMax
+        this.attackDamageMin = this.spec.AttackDamageMin
         const handItem = this.playerCtrl.inventory.GetBindItem(Bind.Hands_R)
         if(handItem == undefined) {
-            this.attackSpeed = 2
-            this.attackDamageMax = 1
-            this.attackDamageMin = 1
             this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
         } else {
-            this.attackSpeed = handItem.Speed
-            this.attackDamageMax = handItem.DamageMax
-            this.attackDamageMin = handItem.DamageMin
             switch(handItem.AttackType) {
                 case AttackItemType.Blunt:
                 case AttackItemType.Axe:

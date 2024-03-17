@@ -264,6 +264,7 @@ display: inline-block;
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     margin: 0 auto;
+    text-align: center;
 }
 .joypad_inven {
     display: inline-block;
@@ -448,4 +449,38 @@ display: inline-block;
     display: none;
     background-color: rgba(0, 0, 0, 0.6);
     transform: translate(-100%, 0%);
+}
+.line {
+	position: relative;
+    height: 10px;
+	width: 30px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+.line::after {
+	content: '';
+	position: absolute;
+    height:20px;
+	width: 2px;
+	background-color: #ccc;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.skillup {
+    position: absolute;
+    padding: 10px;
+    right: 0;
+    bottom: 0;
+}
+
+.levelup {
+    position: absolute;
+    display: block;
+    width:fit-content;
+    top: 60px;
+    left: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transform: translate(-50%, 0%);
 }

@@ -12,7 +12,7 @@ import { AppMode } from "../app";
 import { Zombie } from "./models/zombie";
 import { Legos } from "./legos";
 import { EventBricks } from "./eventbricks";
-import { ZombieBox, ZombieCtrl } from "./zombie/zombiectrl";
+import { ZombieCtrl } from "./zombie/zombiectrl";
 import { Player } from "./models/player";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { math } from "../../libs/math";
@@ -21,6 +21,14 @@ import { Minataur } from "./models/minataur";
 type ZombieSet = {
     zombie: Zombie,
     zCtrl: ZombieCtrl
+}
+export class MonsterBox extends THREE.Mesh {
+    constructor(public Id: number, public ObjName: string,
+        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
+    ) {
+        super(geo, mat)
+        this.name = ObjName
+    }
 }
 export interface IPlayerAction {
     Init(): void
@@ -31,6 +39,7 @@ export interface IPlayerAction {
 export class Zombies {
     zombies: ZombieSet[] = []
     keytimeout?:NodeJS.Timeout
+    respawntimeout?:NodeJS.Timeout
 
     constructor(
         private loader: Loader,
@@ -55,12 +64,18 @@ export class Zombies {
         })
         eventCtrl.RegisterAttackEvent("Zombie", (opts: AttackOption[]) => {
             opts.forEach((opt) => {
-                let obj = opt.obj as ZombieBox
+                let obj = opt.obj as MonsterBox
                 if (obj == null) return
 
                 const z = this.zombies[obj.Id]
                 if (z && !z.zCtrl.ReceiveDemage(opt.damage)) {
                     this.playerCtrl.remove(z.zCtrl.phybox)
+                    this.respawntimeout = setTimeout(() => {
+                        z.zombie.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
+                        z.zombie.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
+                        z.zCtrl.Respawning()
+                        this.playerCtrl.add(z.zCtrl.phybox)
+                    }, THREE.MathUtils.randInt(2000, 7000))
                 }
             })
         })
@@ -70,7 +85,7 @@ export class Zombies {
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
                 new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
 
-        const zCtrl =  new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic)
+        const zCtrl =  new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, this.eventCtrl)
         this.zombies.push({ zombie: zombie, zCtrl: zCtrl })
 
 
@@ -108,7 +123,7 @@ export class Zombies {
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
                 new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
 
-        const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic)
+        const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, this.eventCtrl)
         this.zombies.push({ zombie: zombie, zCtrl: zCtrl })
 
 

@@ -4,7 +4,7 @@ import SConf from "../configs/staticconf";
 import { BrickOption } from "../scenes/bricks";
 import { AppMode } from "../app";
 import { IPhysicsObject } from "../scenes/models/iobject";
-import { AttackOption } from "../scenes/player/playerctrl";
+import { AttackOption, PlayerStatus } from "../scenes/player/playerctrl";
 import { Inventory } from "../inventory/inventory";
 
 export enum EventFlag {
@@ -87,12 +87,19 @@ export class EventController {
         this.eventEmitter.on("reload", callback)
     }
 
-
     // GAME MODE
     OnAppModeEvent(mode: AppMode, e: EventFlag, ...arg: any[]) {
         this.eventEmitter.emit(SConf.AppMode, mode, e, ...arg)
     }
     RegisterAppModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.AppMode, callback)
+    }
+
+    // GAME MODE
+    OnChangePlayerStatusEvent(status: PlayerStatus) {
+        this.eventEmitter.emit(SConf.PlayerStatus, status)
+    }
+    RegisterChangePlayerStatusEvent(callback: (...e: any[]) => void) {
+        this.eventEmitter.on(SConf.PlayerStatus, callback)
     }
 }

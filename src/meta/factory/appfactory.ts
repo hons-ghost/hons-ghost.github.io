@@ -146,7 +146,7 @@ export class AppFactory {
         const meshs = await this.loader.TreeAsset.CloneModel()
         const pos = new THREE.Vector3()
         const radius = this.worldSize / 2
-        for (let i = 0; i < 120; i++) {
+        for (let i = 0; i < 150; i++) {
             const phi = Math.random() * Math.PI * 2
             const r = THREE.MathUtils.randFloat(radius * 0.5, radius * 1.5)
             pos.set(
@@ -155,7 +155,7 @@ export class AppFactory {
                 r * Math.sin(phi)
             )
             
-            const scale = math.rand_int(5, 9)
+            const scale = math.rand_int(9, 15)
             const tree = new Tree(this.loader, this.loader.TreeAsset, this.gphysics)
             tree.MassLoad(meshs, scale, pos)
             this.trees.push(tree)

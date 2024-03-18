@@ -93,6 +93,13 @@ export class PlayerSpec {
     ReceiveCalcDamage(damage: number) {
         this.status.health -= Math.round((5500 / (5500 + this.defence)) * damage)
     }
+    ReceiveCalcHeal(heal: number) {
+        if(this.status.health >= this.status.maxHealth) {
+            this.status.health = this.status.maxHealth
+            return
+        } 
+        this.status.health +=  heal
+    }
     CheckDie(): boolean {
         return (this.status.health <= 0)
     }

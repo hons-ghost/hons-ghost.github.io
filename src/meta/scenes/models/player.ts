@@ -252,6 +252,9 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.damageEffect.Start()
         this.txtStatus.Start(damage.toString(), "#fff")
     }
+    HealEffect(heal: number) {
+        this.txtStatus.Start("+" + heal, "#00ff00")
+    }
     Update() {
         const delta = this.clock.getDelta()
         this.damageEffect.update(delta)

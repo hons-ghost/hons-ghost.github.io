@@ -124,6 +124,10 @@ export class PlayerCtrl implements IGPhysic {
                     case AttackType.Exp:
                         this.spec.ReceiveExp(opt.damage)
                         break;
+                    case AttackType.Heal:
+                        this.player.HealEffect(opt.damage)
+                        this.spec.ReceiveCalcHeal(opt.damage)
+                        break;
                 }
             })
             eventCtrl.OnChangePlayerStatusEvent(this.spec.Status)

@@ -20,6 +20,10 @@ export class NewHon extends Page{
     m_srcImg: Blob;
     mode: AiMode
     readyprocess = false
+
+    alarm = document.getElementById("alarm-msg") as HTMLDivElement
+    alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
+
     public constructor(private blockStore: BlockStore
         , private session: Session, private ipc: Channel, url: string) {
         super(url)
@@ -233,6 +237,8 @@ export class NewHon extends Page{
         }
         const cropBtn = document.getElementById("cropBtn") as HTMLButtonElement;
         cropBtn.onclick = () => {
+            this.alarm.style.display = "block"
+            this.alarmText.innerText = "이미지 처리중"
             cropper.getCroppedCanvas().toBlob((data) => {
                 if (data == null) return
                 const imageUrl = URL.createObjectURL(data)
@@ -259,6 +265,7 @@ export class NewHon extends Page{
                         container.innerHTML = ""
                         container.appendChild(cropImageElement)
                         this.readyprocess = true
+                        this.alarm.style.display = "none"
                     })
                 }
             })

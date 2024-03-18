@@ -102,7 +102,7 @@ export class Play extends Page {
             htmlString += `
         <div class="row p-2 handcursor" id="buff_${i}">
             <div class="col-auto"><img src="assets/icons/${b.icon}" style="width: 45px;"></div>
-            <div class="col text-white">${b.name},<br>${(b.lv == 0) ? "new" : "Lv." + b.lv}: ${b.explain}</div>
+            <div class="col text-white">${b.name}<br>${(b.lv == 0) ? "신규" : "Lv." + (b.lv + 1)}: ${b.explain}</div>
         </div>
             `
         })

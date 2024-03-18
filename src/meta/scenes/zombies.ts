@@ -21,6 +21,7 @@ import { Minataur } from "./models/minataur";
 type ZombieSet = {
     zombie: Zombie,
     zCtrl: ZombieCtrl
+    live: boolean
 }
 export class MonsterBox extends THREE.Mesh {
     constructor(public Id: number, public ObjName: string,
@@ -68,17 +69,36 @@ export class Zombies {
                 if (obj == null) return
 
                 const z = this.zombies[obj.Id]
-                if (z && !z.zCtrl.ReceiveDemage(opt.damage)) {
-                    this.playerCtrl.remove(z.zCtrl.phybox)
-                    this.respawntimeout = setTimeout(() => {
-                        z.zombie.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
-                        z.zombie.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
-                        z.zCtrl.Respawning()
-                        this.playerCtrl.add(z.zCtrl.phybox)
-                    }, THREE.MathUtils.randInt(2000, 7000))
-                }
+                this.ReceiveDemage(z, opt.damage)
             })
         })
+        eventCtrl.RegisterAttackEvent("monster", (opts: AttackOption[]) => {
+            const pos = this.player.CannonPos
+            const dist = opts[0].distance
+            const damage = opts[0].damage
+            if(dist == undefined) return
+            for(let i = 0; i < this.zombies.length; i++) {
+                const z = this.zombies[i]
+                if (!z.live) continue
+                const betw = z.zombie.CannonPos.distanceTo(pos)
+                if (betw < dist) {
+                    this.ReceiveDemage(z, damage)
+                }
+            }
+        })
+    }
+    ReceiveDemage(z: ZombieSet, damage: number) {
+        if (z && !z.zCtrl.ReceiveDemage(damage)) {
+            z.live = false
+            this.playerCtrl.remove(z.zCtrl.phybox)
+            this.respawntimeout = setTimeout(() => {
+                z.zombie.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
+                z.zombie.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
+                z.live = true
+                z.zCtrl.Respawning()
+                this.playerCtrl.add(z.zCtrl.phybox)
+            }, THREE.MathUtils.randInt(2000, 7000))
+        }
     }
     async InitZombie() {
         const zombie = new Zombie(this.loader, this.eventCtrl, this.gphysic, this.loader.ZombieAsset)
@@ -86,7 +106,7 @@ export class Zombies {
                 new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
 
         const zCtrl =  new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, this.eventCtrl)
-        this.zombies.push({ zombie: zombie, zCtrl: zCtrl })
+        this.zombies.push({ zombie: zombie, zCtrl: zCtrl, live: true })
 
 
         this.keytimeout = setTimeout(()=> {
@@ -124,7 +144,7 @@ export class Zombies {
                 new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
 
         const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, this.eventCtrl)
-        this.zombies.push({ zombie: zombie, zCtrl: zCtrl })
+        this.zombies.push({ zombie: zombie, zCtrl: zCtrl, live: true })
 
 
         zombie.Visible = true

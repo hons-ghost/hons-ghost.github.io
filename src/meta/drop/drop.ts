@@ -29,105 +29,60 @@ export class Drop implements IViewer {
     constructor(
         private alarm: Alarm,
         private inventory: Inventory,
-        private player: Player, 
+        private player: Player,
         canvas: Canvas,
         private scene: THREE.Scene,
     ) {
         canvas.RegisterViewer(this)
         //this.points = this.CreateInstancedMesh()//this.CreatePoints()
         this.points = this.CreatePoints()
+        // frustumCulled 안하면 특정 각도에서 보이지 않는다.
         this.points.frustumCulled = false
         this.scene.add(this.points)
     }
 
-    CreateInstancedMesh() {
-        const geometry = new THREE.IcosahedronGeometry(1, 0)
-        const material = new THREE.MeshStandardMaterial({ 
-            //color: 0xD9AB61,
-            color: 0x00ff00,
-        })
-        const instance =  new THREE.InstancedMesh(
-            geometry, material, this.maxCount
-        )
-        instance.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
-        const positions = this.makeDropPoints()
-        const scale = 0.5
-        positions.forEach((p, i) => {
-            this.dummy.position.copy(p)
-            this.dummy.scale.set(scale, scale, scale)
-            this.dummy.updateMatrix()
-            instance.setMatrixAt(i, this.dummy.matrix)
-            const r = THREE.MathUtils.randInt(Math.random(), .1)
-            const g = THREE.MathUtils.randInt(.6, 1)
-            const b = THREE.MathUtils.randInt(0, .8)
-            instance.setColorAt(i, new THREE.Color(r, g, b))
-        })
-        return instance
+    DropItem(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
+        this.dropPoint(pos, drop)
     }
-    dropMesh(pos: THREE.Vector3) {
-        const instance = this.points as THREE.InstancedMesh
-        for(let i = 0; i < this.dropBox.length; i++) {
+
+    dropPoint(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
+        if (this.pointsGeometry == undefined) return
+        const itemIds: symbol[] = []
+        if (drop != undefined) {
+            const ticket = Math.random()
+            drop.forEach((item) => {
+                if (item.ratio < ticket) {
+                    itemIds.push(item.itemId)
+                }
+            })
+        }
+        const points = this.pointsGeometry.attributes.position
+        for (let i = 0; i < this.dropBox.length; i++) {
             const b = this.dropBox[this.head]
-            if(!b.droped) {
+            if (!b.droped) {
                 b.id = this.head
                 b.droped = true
-                this.dummy.position.copy(pos)
-                this.dummy.updateMatrix()
-                instance.setMatrixAt(b.id, this.dummy.matrix)
-                instance.instanceMatrix.needsUpdate = true
+                b.items = itemIds
+                points.setX(b.id, pos.x)
+                points.setY(b.id, pos.y)
+                points.setZ(b.id, pos.z)
                 this.activeDropBox.push(b)
                 break;
             }
             this.head++
             this.head %= this.dropBox.length
         }
-    }
-
-    DropItem(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
-        this.dropPoint(pos, drop)
-    }
-    instanceUpdate(delta: number) {
-        if (!this.activeDropBox.length) return
-        const tp = this.player.CannonPos
-        const instance = this.points as THREE.InstancedMesh
-        const matrix = new THREE.Matrix4()
-        const pos = new THREE.Vector3()
-        for(let i = 0; i < this.activeDropBox.length; i++) {
-            const b = this.activeDropBox[i];
-            instance.getMatrixAt(b.id, matrix)
-            pos.setFromMatrixPosition(matrix)
-            const dist = pos.distanceTo(tp)
-            if ( dist < 1) {
-                // Get Iem
-                matrix.setPosition(this.resetPos)
-                b.droped = false
-                this.activeDropBox.splice(i, 1)
-            } else if (dist < this.moveDist) {
-                if (tp.x - pos.x < 0) {
-                    pos.x -= delta * this.speed * this.moveDist
-                } else {
-                    pos.x += delta * this.speed * this.moveDist
-                }
-                if (tp.z - pos.z < 0) {
-                    pos.z -= delta * this.speed * this.moveDist
-                } else {
-                    pos.z += delta * this.speed * this.moveDist
-                }
-                matrix.setPosition(pos)
-            }
-            instance.setMatrixAt(b.id, matrix)
-        }
-        instance.instanceMatrix.needsUpdate = true
+        points.needsUpdate = true
     }
     pointsUpdate(delta: number) {
-        if(!this.activeDropBox.length || this.pointsGeometry == undefined) return
+        if (!this.activeDropBox.length || this.pointsGeometry == undefined) return
         const tp = this.player.CannonPos
         const points = this.pointsGeometry.attributes.position
-        for(let i = 0; i < this.activeDropBox.length; i++) {
+        for (let i = 0; i < this.activeDropBox.length; i++) {
             const b = this.activeDropBox[i];
             const pos = new THREE.Vector3(points.getX(b.id), points.getY(b.id), points.getZ(b.id))
             const dist = pos.distanceTo(tp)
-            if ( dist < 1) {
+            if (dist < 1) {
                 // Get Item
                 points.setX(b.id, this.resetPos.x)
                 points.setY(b.id, this.resetPos.y)
@@ -159,7 +114,7 @@ export class Drop implements IViewer {
     }
 
     resize(width: number, height: number): void { }
-    
+
     speed = 1
     update(delta: number): void {
         this.pointsUpdate(delta)
@@ -168,11 +123,11 @@ export class Drop implements IViewer {
 
     makeDropPoints() {
         const boxPos: THREE.Vector3[] = []
-        for(let i = 0; i < this.maxCount; i++) {
+        for (let i = 0; i < this.maxCount; i++) {
             const v = new THREE.Vector3()
             v.copy(this.resetPos)
             boxPos.push(v)
-            this.dropBox.push({id: i, droped: false})
+            this.dropBox.push({ id: i, droped: false })
         }
         return boxPos
     }
@@ -181,7 +136,7 @@ export class Drop implements IViewer {
         this.pointsGeometry = new THREE.BufferGeometry()
         this.pointsGeometry.setFromPoints(positions)
         const colors = []
-        for( let i = 0; i < positions.length / 3; i++){
+        for (let i = 0; i < positions.length / 3; i++) {
             const r = THREE.MathUtils.randInt(Math.random(), .1)
             const g = THREE.MathUtils.randInt(.6, 1)
             const b = THREE.MathUtils.randInt(0, .8)
@@ -196,7 +151,7 @@ export class Drop implements IViewer {
         _canvas.height = 128
         const context = _canvas.getContext('2d')
         if (context == undefined) throw new Error("fail get context");
-        
+
         context.globalAlpha = 0.3
         context.filter = 'blur(16px)'
         context.fillStyle = 'white'
@@ -234,7 +189,7 @@ export class Drop implements IViewer {
         }
         image.src = "assets/texture/particle.png"
 
-        const radius = THREE.MathUtils.randInt(2, 3) 
+        const radius = THREE.MathUtils.randInt(2, 3)
         uniforms.size.value = radius
         uniforms.scale.value = 100
 
@@ -242,7 +197,7 @@ export class Drop implements IViewer {
             uniforms: uniforms,
             defines: {
                 USE_COLOR: "",
-                USE_MAP:"",
+                USE_MAP: "",
                 USE_SIZEATTENUATION: "",
             },
             //transparent: true,
@@ -255,33 +210,80 @@ export class Drop implements IViewer {
         }))
     }
 
-    dropPoint(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
-        if(this.pointsGeometry == undefined) return
-        const itemIds:symbol[] = []
-        if(drop != undefined) {
-            const ticket = Math.random()
-            drop.forEach((item) => {
-                if (item.ratio < ticket) {
-                    itemIds.push(item.itemId)
-                }
-            })
-        }
-        const points = this.pointsGeometry.attributes.position
-        for(let i = 0; i < this.dropBox.length; i++) {
+    CreateInstancedMesh() {
+        const geometry = new THREE.IcosahedronGeometry(1, 0)
+        const material = new THREE.MeshStandardMaterial({
+            //color: 0xD9AB61,
+            color: 0x00ff00,
+        })
+        const instance = new THREE.InstancedMesh(
+            geometry, material, this.maxCount
+        )
+        instance.instanceMatrix.setUsage(THREE.DynamicDrawUsage)
+        const positions = this.makeDropPoints()
+        const scale = 0.5
+        positions.forEach((p, i) => {
+            this.dummy.position.copy(p)
+            this.dummy.scale.set(scale, scale, scale)
+            this.dummy.updateMatrix()
+            instance.setMatrixAt(i, this.dummy.matrix)
+            const r = THREE.MathUtils.randInt(Math.random(), .1)
+            const g = THREE.MathUtils.randInt(.6, 1)
+            const b = THREE.MathUtils.randInt(0, .8)
+            instance.setColorAt(i, new THREE.Color(r, g, b))
+        })
+        return instance
+    }
+    dropMesh(pos: THREE.Vector3) {
+        const instance = this.points as THREE.InstancedMesh
+        for (let i = 0; i < this.dropBox.length; i++) {
             const b = this.dropBox[this.head]
-            if(!b.droped) {
+            if (!b.droped) {
                 b.id = this.head
                 b.droped = true
-                b.items = itemIds
-                points.setX(b.id, pos.x)
-                points.setY(b.id, pos.y)
-                points.setZ(b.id, pos.z)
+                this.dummy.position.copy(pos)
+                this.dummy.updateMatrix()
+                instance.setMatrixAt(b.id, this.dummy.matrix)
+                instance.instanceMatrix.needsUpdate = true
                 this.activeDropBox.push(b)
                 break;
             }
             this.head++
             this.head %= this.dropBox.length
         }
-        points.needsUpdate = true
     }
+    instanceUpdate(delta: number) {
+        if (!this.activeDropBox.length) return
+        const tp = this.player.CannonPos
+        const instance = this.points as THREE.InstancedMesh
+        const matrix = new THREE.Matrix4()
+        const pos = new THREE.Vector3()
+        for (let i = 0; i < this.activeDropBox.length; i++) {
+            const b = this.activeDropBox[i];
+            instance.getMatrixAt(b.id, matrix)
+            pos.setFromMatrixPosition(matrix)
+            const dist = pos.distanceTo(tp)
+            if (dist < 1) {
+                // Get Iem
+                matrix.setPosition(this.resetPos)
+                b.droped = false
+                this.activeDropBox.splice(i, 1)
+            } else if (dist < this.moveDist) {
+                if (tp.x - pos.x < 0) {
+                    pos.x -= delta * this.speed * this.moveDist
+                } else {
+                    pos.x += delta * this.speed * this.moveDist
+                }
+                if (tp.z - pos.z < 0) {
+                    pos.z -= delta * this.speed * this.moveDist
+                } else {
+                    pos.z += delta * this.speed * this.moveDist
+                }
+                matrix.setPosition(pos)
+            }
+            instance.setMatrixAt(b.id, matrix)
+        }
+        instance.instanceMatrix.needsUpdate = true
+    }
+
 }

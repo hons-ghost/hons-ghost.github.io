@@ -73,7 +73,11 @@ export class MaleFab extends AssetModel implements IAsset {
         // Don't Use mesh
 
         if (this.size != undefined) return this.size
+
+        const effector = this.meshs.getObjectByName("effector")
+        if(effector != undefined) this.meshs.remove(effector)
         const bbox = new THREE.Box3().setFromObject(this.meshs)
+        if(effector != undefined) this.meshs.add(effector)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)

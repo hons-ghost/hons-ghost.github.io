@@ -15,6 +15,7 @@ import { RayViwer } from "./raycaster";
 import { IViewer } from "../scenes/models/iviewer";
 import { Canvas } from "./canvas";
 import { PlayerCtrl } from "../scenes/player/playerctrl";
+import { Drop } from "../drop/drop";
 
 export const gui = new GUI()
 gui.hide()
@@ -41,7 +42,8 @@ export class Helper implements IViewer {
         private rayViewer: RayViwer,
         private physics: GPhysics,
         private canvas: Canvas,
-        private eventCtrl: EventController
+        private eventCtrl: EventController,
+        private drop: Drop
     ) {
         this.gui.hide()
         this.gui.close()
@@ -50,6 +52,7 @@ export class Helper implements IViewer {
         this.CreateMeshGui(npcs.Helper.Meshs, "Helper1")
         this.CreateMeshGui(npcs.Helper2.Meshs, "Helper2")
         this.CreateMeshGui(portal.Meshs, "Portal")
+        this.CreateMeshGui(drop.points, "drop")
 
         const cp = this.CreateMeshGui(camera, "Camera")
         cp.add(camera, "debugMode").listen()
@@ -126,7 +129,7 @@ export class Helper implements IViewer {
         f.add(v, "y", -100, 100, 0.1).listen().name(name + "Y")
         f.add(v, "z", -100, 100, 0.1).listen().name(name + "Z")
     }
-    CreateMeshGui(meshs: THREE.Group | THREE.Mesh | Camera | THREE.Sprite, name: string) {
+    CreateMeshGui(meshs: THREE.Group | THREE.Mesh | Camera | THREE.Sprite | THREE.Points, name: string) {
         const fp = this.gui.addFolder(name)
         this.CreateVectorGui(fp, meshs.position, "Pos")
         this.CreateVectorGui(fp, meshs.rotation, "Rot")

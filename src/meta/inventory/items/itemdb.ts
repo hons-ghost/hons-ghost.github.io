@@ -9,6 +9,7 @@ export class ItemId {
 }
 
 export type ItemProperty = {
+    id: symbol
     type: ItemType
     weapon?: AttackItemType
     bind?: Bind
@@ -39,6 +40,7 @@ export class ItemDb {
 
     constructor(private loader: Loader) {
         this.itemDb.set(ItemId.Hanhwasbat, {
+            id: ItemId.Hanhwasbat,
             type: ItemType.Attack,
             weapon: AttackItemType.Blunt,
             bind: Bind.Hands_R,
@@ -50,6 +52,7 @@ export class ItemDb {
             damageMax: 5, damageMin: 3, speed: 1,
         })
         this.itemDb.set(ItemId.Leather, {
+            id: ItemId.Leather,
             type: ItemType.Material,
             name: "Leather",
             icon: "Material/Leather.png",

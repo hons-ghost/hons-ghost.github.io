@@ -16,6 +16,7 @@ export class Brick2 extends GhostModel2 {
             //color: 0xD9AB61,
             transparent: true,
             color: color,
+            emissiveIntensity: 0,
         })
         super(geometry, material)
         this.castShadow = true

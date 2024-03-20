@@ -1,6 +1,7 @@
 import * as THREE from "three";
+import { IEffect } from "./effector";
 
-export class Damage {
+export class Damage implements IEffect {
     material = new THREE.PointsMaterial( {
         size: 0.1,
         color: 0xff0000,
@@ -35,6 +36,7 @@ export class Damage {
         this.geometry.setFromPoints(this.particles)
 
         this.points = new THREE.Points(this.geometry, this.material)
+        this.points.visible = false
     }
     Start() {
         // this.scene.add(this.points)
@@ -48,14 +50,16 @@ export class Damage {
             positions.setZ(i, 1)
         }
         this.points.visible = true
+        this.processFlag = true
     }
     Complet() {
         this.points.visible = false
+        this.processFlag = false
         // this.scene.remove(this.points)
     }
     v = 0.001
-    update(delta: number) {
-        if (this.material.opacity <= 0) return 
+    Update(delta: number) {
+        if (this.material.opacity <= 0 || !this.processFlag) return 
         const positions = this.points.geometry.attributes.position
 
         for (let i = 0; i < this.particles.length; i++) {

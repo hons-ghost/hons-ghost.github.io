@@ -1,9 +1,7 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
-import { IViewer } from "./iviewer";
 import { EventController } from "../../event/eventctrl";
-import { IKeyCommand } from "../../event/keycommand";
 import { GhostModel } from "./ghostmodel";
 import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
@@ -11,6 +9,7 @@ import { GPhysics } from "../../common/physics/gphysics";
 import { ActionType } from "./player";
 import { Damage } from "../../effects/damage";
 import { TextStatus } from "../../effects/status";
+import { EffectType, Effector } from "../../effects/effector";
 
 export class Zombie extends GhostModel implements IPhysicsObject {
     mixer?: THREE.AnimationMixer
@@ -23,11 +22,11 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     dyingClip?: THREE.AnimationClip
 
     private controllerEnable: boolean = false
-    damageEffect: Damage
-    txtStatus: TextStatus
 
+    effector = new Effector()
     movePos = new THREE.Vector3()
     vFlag = true
+
     get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
     get Model() { return this.asset.Id }
     set ControllerEnable(flag: boolean) { this.controllerEnable = flag }
@@ -41,8 +40,6 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     ) {
         super(asset)
         this.text = new FloatingName("Zombie")
-        this.damageEffect = new Damage(this.CannonPos.x, this.CannonPos.y, this.CannonPos.z)
-        this.txtStatus = new TextStatus("0", "#ff0000", true)
     }
 
     async Init(text: string) {
@@ -69,10 +66,7 @@ export class Zombie extends GhostModel implements IPhysicsObject {
             this.text.position.y = 3.5
             this.meshs.add(this.text)
         }
-        this.meshs.add(this.damageEffect.Mesh)
-        this.damageEffect.Mesh.visible = false
-        this.meshs.add(this.txtStatus)
-        this.txtStatus.visible = false
+        this.meshs.add(this.effector.meshs)
 
         this.mixer = this.asset.GetMixer(text + id)
         if (this.mixer == undefined) throw new Error("mixer is undefined");
@@ -129,15 +123,24 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     clock = new THREE.Clock()
     flag = false
 
-    DamageEffect(damage: number) {
-        this.damageEffect.Start()
-        this.txtStatus.Start(damage.toString(), "#fff")
+    DamageEffect(damage: number, effect?: EffectType) {
+        switch(effect) {
+            case EffectType.Damage:
+            default:
+                //this.effector.StartEffector(EffectType.Lightning)
+                this.effector.StartEffector(EffectType.Damage)
+                break;
+            case EffectType.Lightning:
+                this.effector.StartEffector(EffectType.Damage)
+                //this.effector.StartEffector(EffectType.Lightning)
+                break;
+        }
+        this.effector.StartEffector(EffectType.Status, damage.toString(), "#fff")
     }
 
     update() {
         const delta = this.clock.getDelta()
-        this.damageEffect.update(delta)
-        this.txtStatus.update(delta)
+        this.effector.Update(delta)
         this.mixer?.update(delta)
     }
     UpdatePhysics(): void {

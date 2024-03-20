@@ -1,9 +1,7 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
-import { IViewer } from "./iviewer";
 import { EventController } from "../../event/eventctrl";
-import { IKeyCommand } from "../../event/keycommand";
 import { GhostModel } from "./ghostmodel";
 import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
@@ -136,8 +134,8 @@ export class Minataur extends GhostModel implements IPhysicsObject {
 
     update() {
         const delta = this.clock.getDelta()
-        this.damageEffect.update(delta)
-        this.txtStatus.update(delta)
+        this.damageEffect.Update(delta)
+        this.txtStatus.Update(delta)
         this.mixer?.update(delta)
     }
     UpdatePhysics(): void {

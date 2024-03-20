@@ -1,6 +1,7 @@
 import App, { AppMode } from "./meta/app";
 import { Inventory } from "./meta/inventory/inventory";
 import { Bind, IItem } from "./meta/inventory/items/item";
+import { ItemId } from "./meta/inventory/items/itemdb";
 import { PlayerStatus } from "./meta/scenes/player/playerctrl";
 import { Ui } from "./models/ui";
 import { Page } from "./page";
@@ -88,9 +89,50 @@ export class Play extends Page {
             }
         })
     }
+    FirstLevelUp() {
+        const lvView = document.getElementById("levelview") as HTMLDivElement
+        lvView.replaceChildren()
+        let htmlString = `
+        <div class="row pb-2">
+            <div class="col xxx-large text-white text-center h2">무기를 선택하세요!</div>
+        </div>
+        `
+        const i = 0
+        const items = [this.inven.inven?.GetItemInfo(ItemId.Hanhwasbat)]
+
+        items.forEach((item) => {
+            htmlString += `
+        <div class="row p-2 handcursor" id="buff_${i}">
+            <div class="col-auto"><img src="assets/icons/${item?.icon}" style="width: 45px;"></div>
+            <div class="col text-white">${item?.name}</div>
+        </div>
+            `
+        })
+        lvView.innerHTML = htmlString
+
+        const lvTag = document.getElementById("levelup") as HTMLDivElement
+        lvTag.style.display = "block"
+
+        items.forEach((b, i) => {
+            const buff = document.getElementById("buff_" + i) as HTMLDivElement
+            buff.onclick = async () => {
+                if(this.inven.inven == undefined) return
+                const item = await this.inven.inven?.NewItem(ItemId.Hanhwasbat)
+                if(item == undefined) throw new Error("inventory is full");
+                
+                this.inven.equipmentItem(item)
+                const lvTag = document.getElementById("levelup") as HTMLDivElement
+                lvTag.style.display = "none"
+            }
+        })
+    }
     LevelUp() {
         const lvView = document.getElementById("levelview") as HTMLDivElement
         lvView.replaceChildren()
+        if(this.defaultLv == 1) {
+            this.FirstLevelUp()
+            return
+        }
 
         const buffs = this.meta.GetRandomBuff()
         let htmlString = `
@@ -102,7 +144,7 @@ export class Play extends Page {
             htmlString += `
         <div class="row p-2 handcursor" id="buff_${i}">
             <div class="col-auto"><img src="assets/icons/${b.icon}" style="width: 45px;"></div>
-            <div class="col text-white">${b.name},<br>${(b.lv == 0) ? "new" : "Lv." + b.lv}: ${b.explain}</div>
+            <div class="col text-white">${b.name}<br>${(b.lv == 0) ? "신규" : "Lv." + (b.lv + 1)}: ${b.explain}</div>
         </div>
             `
         })

@@ -1,28 +1,27 @@
 import * as THREE from "three";
+import { IEffect } from "./effector";
 
-export class Lightning {
+export class Lightning implements IEffect {
+    process = false
+    points: THREE.Points;
+    startTime = 0
     constructor(
         private start: THREE.Vector3, 
         private end: THREE.Vector3,
-        private count: number
+        private count: number,
     ) {
         const particlesGeometry = new THREE.BufferGeometry()
-        const lineVertex = this.lightning(start, end, THREE.MathUtils.randInt(2, 8), count)
+        const lineVertex = this.lightning(start, end, THREE.MathUtils.randInt(5, 8), count)
         particlesGeometry.setFromPoints(lineVertex)
-
-        const positions = this.getPositions(particlesGeometry.attributes.position,
-            lineVertex.length, 4)
 
         const colors = []
         const r = THREE.MathUtils.randInt(Math.random(), .1)
         const g = THREE.MathUtils.randInt(.6, 1)
         const b = THREE.MathUtils.randInt(0, .8)
-        for( let i = 0; i < positions.length / 3; i++){
+        for( let i = 0; i < lineVertex.length ; i++){
             colors.push(r, g, b)
         }
-        const pointsGeometry = new THREE.BufferGeometry()
-        pointsGeometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3))
-        pointsGeometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3))
+        particlesGeometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3))
 
         /*
         pointsGeometry.computeBoundingSphere()
@@ -43,15 +42,15 @@ export class Lightning {
         const image = new Image()
         uniforms.map.value = new THREE.Texture(image)
         image.onload = () => {
-            uniforms.map.value.neddsUpdate = true
+            uniforms.map.value.needsUpdate = true
         }
-        image.src = "./particle.png"
+        image.src = "assets/texture/particle.png"
 
-        const radius = THREE.MathUtils.randInt(2, 3) | 0
+        const radius = THREE.MathUtils.randInt(2, 3)
         uniforms.size.value = radius
-        uniforms.scale.value = window.innerHeight * .2
+        uniforms.scale.value = 40
 
-        const points = new THREE.Points(pointsGeometry, new THREE.ShaderMaterial({
+        this.points = new THREE.Points(particlesGeometry, new THREE.ShaderMaterial({
             uniforms: uniforms,
             defines: {
                 USE_COLOR: "",
@@ -61,16 +60,33 @@ export class Lightning {
             transparent: true,
             // alphaTest: 4
             depthWrite: false,
-            // depthTest: false,
+            depthTest: false,
             blending: THREE.AdditiveBlending,
             vertexShader: shaderPoint.vertexShader,
             fragmentShader: shaderPoint.fragmentShader,
         }))
-        // this.scene.add(points)
+        this.points.visible = false
+    }
+    Start() {
+        this.points.visible = true
+        this.start.set(0, 0, 0)
+        this.end.copy(this.start)
+        this.end.y += 5
+        this.process = true
     }
 
-    update() {
-
+    Update(delta: number) {
+        if(!this.process) return 
+        const particlesGeometry = this.points.geometry
+        const lineVertex = this.lightning(this.start, this.end, 
+            THREE.MathUtils.randInt(6, 10), this.count)
+        particlesGeometry.setFromPoints(lineVertex)
+        particlesGeometry.attributes.position.needsUpdate = true
+        this.startTime += delta
+        if(this.startTime > 1) {
+            this.process = false
+            this.points.visible = false
+        }
     }
 
 

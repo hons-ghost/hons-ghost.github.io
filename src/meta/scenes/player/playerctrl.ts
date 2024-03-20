@@ -9,6 +9,7 @@ import { Inventory } from "../../inventory/inventory";
 import { AppMode } from "../../app";
 import { PlayerSpec } from "./playerspec";
 import { IBuffItem } from "../../buff/buff";
+import { EffectType } from "../../effects/effector";
 
 export enum AttackType {
     NormalSwing,
@@ -21,6 +22,7 @@ export enum AttackType {
 
 export type AttackOption = {
     type: AttackType,
+    effect?: EffectType,
     damage: number
     distance?: number
     obj?: THREE.Object3D
@@ -123,6 +125,10 @@ export class PlayerCtrl implements IGPhysic {
                         break;
                     case AttackType.Exp:
                         this.spec.ReceiveExp(opt.damage)
+                        break;
+                    case AttackType.Heal:
+                        this.player.HealEffect(opt.damage)
+                        this.spec.ReceiveCalcHeal(opt.damage)
                         break;
                 }
             })

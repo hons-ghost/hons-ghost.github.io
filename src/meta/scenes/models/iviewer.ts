@@ -5,5 +5,5 @@ export interface IScene {
 
 export interface IViewer {
     resize(width: number, height: number): void
-    update(): void
+    update(delta: number): void
 }

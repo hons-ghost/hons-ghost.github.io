@@ -65,15 +65,15 @@ export class State {
         }
     }
     CheckGravity() {
-        this.player.Meshs.position.y -= 1
+        this.player.Meshs.position.y -= 0.5
         if (!this.gphysic.Check(this.player)) {
-            this.player.Meshs.position.y += 1
+            this.player.Meshs.position.y += 0.5
             this.playerCtrl.JumpSt.Init()
             this.playerCtrl.JumpSt.velocity_y = 0
             console.log("going down!")
             return this.playerCtrl.JumpSt
         }
-        this.player.Meshs.position.y += 1
+        this.player.Meshs.position.y += 0.5
     }
 }
 

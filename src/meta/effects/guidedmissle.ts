@@ -1,6 +1,8 @@
 import * as THREE from "three";
+import { IEffect } from "./effector";
 
-export class Damage {
+export class GuideMissle implements IEffect {
+    process = false
     material = new THREE.PointsMaterial( {
         size: 0.1,
         color: 0xff0000,
@@ -16,13 +18,11 @@ export class Damage {
     randomV: THREE.Vector3[] = []
     velocity = 5 + Math.random() 
     processFlag = false
-    target = new THREE.Vector3()
     lastPos = new THREE.Vector3()
 
     get Mesh() { return this.points }
 
-    constructor( x: number, y: number, z: number) {
-        const colors = new Float32Array(this.count * 3)
+    constructor(private target: THREE.Vector3) {
         for (let i = 0; i < this.count; i++) {
             this.randomV.push(new THREE.Vector3(
                 THREE.MathUtils.randInt(3, 300),
@@ -35,16 +35,16 @@ export class Damage {
 
         this.points = new THREE.Points(this.geometry, this.material)
     }
-    Start() {
+    Start(pos: THREE.Vector3) {
         // this.scene.add(this.points)
         const positions = this.points.geometry.attributes.position
         this.material.opacity = 1
         this.v = 0.001
 
         for (let i = 0; i < this.particles.length; i++) {
-            positions.setX(i, 0)
-            positions.setY(i, 0)
-            positions.setZ(i, 1)
+            positions.setX(i, pos.x)
+            positions.setY(i, pos.y)
+            positions.setZ(i, pos.z)
         }
         this.points.visible = true
     }
@@ -53,7 +53,7 @@ export class Damage {
         // this.scene.remove(this.points)
     }
     v = 0.01
-    update(delta: number) {
+    Update(delta: number) {
         const positions = this.points.geometry.attributes.position
         for (let i = 0; i < this.particles.length; i++) {
             let x = positions.getX(i) + this.randomV[i].x * delta

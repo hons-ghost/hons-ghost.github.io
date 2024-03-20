@@ -1,10 +1,14 @@
 import * as THREE from "three";
+import { IEffect } from "./effector";
 
-export class Lightning {
+export class Lightning implements IEffect {
+    process = false
+    points: THREE.Points;
     constructor(
         private start: THREE.Vector3, 
         private end: THREE.Vector3,
-        private count: number
+        private count: number,
+        private scene: THREE.Scene
     ) {
         const particlesGeometry = new THREE.BufferGeometry()
         const lineVertex = this.lightning(start, end, THREE.MathUtils.randInt(2, 8), count)
@@ -43,15 +47,15 @@ export class Lightning {
         const image = new Image()
         uniforms.map.value = new THREE.Texture(image)
         image.onload = () => {
-            uniforms.map.value.neddsUpdate = true
+            uniforms.map.value.needsUpdate = true
         }
-        image.src = "./particle.png"
+        image.src = "assets/texture/particle.png"
 
         const radius = THREE.MathUtils.randInt(2, 3) | 0
         uniforms.size.value = radius
         uniforms.scale.value = window.innerHeight * .2
 
-        const points = new THREE.Points(pointsGeometry, new THREE.ShaderMaterial({
+        this.points = new THREE.Points(pointsGeometry, new THREE.ShaderMaterial({
             uniforms: uniforms,
             defines: {
                 USE_COLOR: "",
@@ -61,15 +65,17 @@ export class Lightning {
             transparent: true,
             // alphaTest: 4
             depthWrite: false,
-            // depthTest: false,
+            depthTest: false,
             blending: THREE.AdditiveBlending,
             vertexShader: shaderPoint.vertexShader,
             fragmentShader: shaderPoint.fragmentShader,
         }))
-        // this.scene.add(points)
+    }
+    Start(pos: THREE.Vector3) {
+        this.scene.add(this.points)
     }
 
-    update() {
+    Update(delta: number) {
 
     }
 

@@ -27,6 +27,7 @@ import { RayViwer } from "../common/raycaster";
 import { Zombies } from "../scenes/zombies";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Buff } from "../buff/buff";
+import { Drop } from "../drop/drop";
 
 
 export class AppFactory {
@@ -42,6 +43,7 @@ export class AppFactory {
     private gphysics: GPhysics
 
     private invenFab: InvenFactory
+    private drop : Drop
 
     private player: Player
     private floor: Floor
@@ -98,10 +100,13 @@ export class AppFactory {
 
         this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
         this.playerCtrl = new PlayerCtrl(this.player, this.invenFab.inven, this.gphysics, this.eventCtrl)
+
+        this.drop = new Drop(this.player, this.canvas, this.game)
+
         this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
-        this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics)
+        this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
@@ -177,7 +182,6 @@ export class AppFactory {
             this.MassMushroomLoader(2),
             this.MassDeadTreeLoader(),
             this.npcs.NpcLoader(),
-            this.invenFab.LoadAsset(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)
@@ -204,7 +208,7 @@ export class AppFactory {
         this.Helper = new Helper(
             this.game, this.player, this.playerCtrl, this.npcs, this.portal, this.floor,
             this.legos, this.camera, this.rayViewer, this.gphysics, 
-            this.canvas, this.eventCtrl
+            this.canvas, this.eventCtrl, this.drop
         )
     }
     Despose() {

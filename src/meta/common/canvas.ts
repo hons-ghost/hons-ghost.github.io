@@ -18,9 +18,11 @@ export class Canvas {
     RegisterViewer(obj: IViewer) {
         this.objs.push(obj)
     }
+    clock = new THREE.Clock
     update() {
+        const time = this.clock.getDelta()
         this.objs.forEach((obj) => {
-            obj.update()
+            obj.update(time)
         })
     }
 

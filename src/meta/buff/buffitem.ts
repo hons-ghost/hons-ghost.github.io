@@ -39,6 +39,7 @@ export class AreaAttack implements IBuffItem {
     GetMoveSpeed(): number { return 1 }
     GetDamageMax(): number { return 1 }
     Update(delta: number, status: PlayerStatus): void {
+        if (status.health <= 0) return
         this.accTime += delta
         if(this.accTime / (this.time) < 1) {
             return
@@ -60,7 +61,7 @@ export class Healing implements IBuffItem {
     heal = .01
     accTime = 0
     get explain(): string {
-        return `${this.time}초당 ${(this.heal * (this.lv + 1)) * 100}만큼 피가 차오릅니다.`
+        return `${this.time}초당 ${(this.heal * (this.lv + 1)) * 100}%만큼 피가 차오릅니다.`
     }
     constructor(private eventCtrl: EventController) { }
     IncreaseLv(): number { return ++this.lv }
@@ -68,6 +69,7 @@ export class Healing implements IBuffItem {
     GetMoveSpeed(): number { return 1 }
     GetDamageMax(): number { return 1 }
     Update(delta: number, status: PlayerStatus): void {
+        if (status.health <= 0) return
         this.accTime += delta
         if(this.accTime / (this.time) < 1) {
             return

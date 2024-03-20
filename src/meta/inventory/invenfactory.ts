@@ -8,14 +8,9 @@ export class InvenFactory {
     itemDb = new ItemDb(this.loader)
     bat = new Bat(this.itemDb.GetItem(ItemId.Hanhwasbat))
 
-    inven = new Inventory()
+    inven = new Inventory(this.itemDb)
 
     constructor(private loader: Loader) { }
-
-    async LoadAsset() {
-        await this.bat.Loader()
-        this.inven.InsertInventory(this.bat)
-    }
 
     LoadItems(load: Inventory) {
         this.inven = load

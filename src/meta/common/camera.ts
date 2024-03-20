@@ -41,7 +41,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         private portal: Portal,
         private eventCtrl: EventController
     ) {
-        super(75, canvas.Width / canvas.Height, 0.1, 500)
+        super(75, canvas.Width / canvas.Height, 0.1, 800)
         canvas.RegisterViewer(this)
         this.controls = new OrbitControls(this, canvas.Canvas)
         this.longPos = new THREE.Vector3(16, 24, 79)

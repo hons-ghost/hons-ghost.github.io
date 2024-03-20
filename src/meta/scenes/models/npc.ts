@@ -8,8 +8,6 @@ import { GhostModel } from "./ghostmodel";
 import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
 import { GPhysics } from "../../common/physics/gphysics";
-import { TextStatus } from "../../effects/status";
-import { Damage } from "../../effects/damage";
 
 export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     mixer?: THREE.AnimationMixer

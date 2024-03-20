@@ -49,7 +49,7 @@ export interface IItem {
     get AttackType(): AttackItemType | undefined
     MakeInformation(): Array<{k?: string, v: string}>
 }
-export class Item {
+export class Item implements IItem {
     get DamageMin() { return (this.property.damageMin == undefined) ? 0 : this.property.damageMin }
     get DamageMax() { return (this.property.damageMax == undefined) ? 0 : this.property.damageMax }
     get Speed() { return (this.property.speed == undefined) ? 0 : this.property.speed }
@@ -88,5 +88,11 @@ export class Item {
             infos.push({ k: "공속", v: p.speed.toString() })
         }
         return infos
+    }
+    async Loader() {
+        const asset = this.property.asset
+        if (asset == undefined) return
+        const meshs = await asset.CloneModel()
+        this.property.meshs = meshs
     }
 }

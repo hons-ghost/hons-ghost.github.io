@@ -17,6 +17,7 @@ import { Player } from "./models/player";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { math } from "../../libs/math";
 import { Minataur } from "./models/minataur";
+import { Drop } from "../drop/drop";
 
 type ZombieSet = {
     zombie: Zombie,
@@ -51,6 +52,7 @@ export class Zombies {
         private legos: Legos,
         private eventBricks: EventBricks,
         private gphysic: GPhysics,
+        private drop: Drop,
     ) {
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Play) return
@@ -90,6 +92,7 @@ export class Zombies {
     ReceiveDemage(z: ZombieSet, damage: number) {
         if (z && !z.zCtrl.ReceiveDemage(damage)) {
             z.live = false
+            this.drop.DropItem(z.zombie.CannonPos)
             this.playerCtrl.remove(z.zCtrl.phybox)
             this.respawntimeout = setTimeout(() => {
                 z.zombie.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)

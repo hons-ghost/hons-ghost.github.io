@@ -1,15 +1,22 @@
 import { Bat } from "./items/bat";
-import { Bind, IItem } from "./items/item";
+import { Bind, IItem, Item } from "./items/item";
+import { ItemDb } from "./items/itemdb";
 
 
 export class Inventory {
     bodySlot: IItem [] = []
     inventroySlot: IItem [] = []
 
-    constructor() {
+    constructor(private itemDb: ItemDb) {
     }
     InsertInventory(item: IItem) {
         this.inventroySlot.push(item)
+    }
+    async NewItem(key: symbol) {
+        const item = new Item(this.itemDb.GetItem(key))
+        await item.Loader()
+        this.inventroySlot.push(item)
+        return item
     }
     MoveToInvenFromBindItem(pos: Bind) {
         const item = this.bodySlot[pos]
@@ -32,6 +39,9 @@ export class Inventory {
 
     GetBindItem(pos: Bind) {
         return this.bodySlot[pos]
+    }
+    GetItemInfo(key: symbol) {
+        return this.itemDb.GetItem(key)
     }
     Copy(inven: Inventory) {
         this.bodySlot = inven.bodySlot

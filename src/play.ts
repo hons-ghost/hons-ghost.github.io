@@ -118,6 +118,8 @@ export class Play extends Page {
             buff.onclick = async () => {
                 if(this.inven.inven == undefined) return
                 const item = await this.inven.inven?.NewItem(ItemId.Hanhwasbat)
+                if(item == undefined) throw new Error("inventory is full");
+                
                 this.inven.equipmentItem(item)
                 const lvTag = document.getElementById("levelup") as HTMLDivElement
                 lvTag.style.display = "none"

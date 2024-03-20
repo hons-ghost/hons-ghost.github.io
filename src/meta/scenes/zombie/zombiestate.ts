@@ -6,6 +6,7 @@ import { ZombieCtrl } from "./zombiectrl";
 import { IPlayerAction } from "../zombies";
 import { EventController } from "../../event/eventctrl";
 import { AttackType } from "../player/playerctrl";
+import { MonsterProperty } from "../monsterdb";
 
 class State {
     attackDist = 3
@@ -25,14 +26,14 @@ class State {
 
 export class AttackZState extends State implements IPlayerAction {
     keytimeout?:NodeJS.Timeout
-    attackSpeed = 2
+    attackSpeed = this.property.attackSpeed
     attackProcess = false
     attackTime = 0
-    attackDamageMax = 1
-    attackDamageMin = 5
+    attackDamageMax = this.property.damageMax
+    attackDamageMin = this.property.damageMin
 
     constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics,
-        private eventCtrl: EventController
+        private eventCtrl: EventController, private property: MonsterProperty
     ) {
         super(zCtrl, zombie, gphysic)
     }
@@ -111,8 +112,8 @@ export class DyingZState extends State implements IPlayerAction {
     }
 }
 export class RunZState extends State implements IPlayerAction {
-    speed = 1
-    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics) {
+    speed = this.property.speed
+    constructor(zCtrl: ZombieCtrl, zombie: Zombie, gphysic: GPhysics, private property: MonsterProperty) {
         super(zCtrl, zombie, gphysic)
     }
     Init(): void {

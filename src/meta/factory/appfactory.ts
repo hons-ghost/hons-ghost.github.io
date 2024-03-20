@@ -28,10 +28,14 @@ import { Zombies } from "../scenes/zombies";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Buff } from "../buff/buff";
 import { Drop } from "../drop/drop";
+import { MonsterDb } from "../scenes/monsterdb";
+import { Alarm } from "../common/alarm";
 
 
 export class AppFactory {
     phydebugger: any
+
+    private alarm = new Alarm()
 
     private eventCtrl = new EventController()
     private canvas = new Canvas()
@@ -44,6 +48,7 @@ export class AppFactory {
 
     private invenFab: InvenFactory
     private drop : Drop
+    private monDb: MonsterDb
 
     private player: Player
     private floor: Floor
@@ -87,7 +92,8 @@ export class AppFactory {
         this.mushrooms = []
         this.deadtrees = []
 
-        this.invenFab = new InvenFactory(this.loader)
+        this.invenFab = new InvenFactory(this.loader, this.alarm)
+        this.monDb = new MonsterDb(this.loader)
 
         this.store = new ModelStore(this.eventCtrl, this.invenFab.inven)
         this.input = new Input(this.eventCtrl)
@@ -101,12 +107,12 @@ export class AppFactory {
         this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
         this.playerCtrl = new PlayerCtrl(this.player, this.invenFab.inven, this.gphysics, this.eventCtrl)
 
-        this.drop = new Drop(this.player, this.canvas, this.game)
+        this.drop = new Drop(this.alarm, this.invenFab.inven, this.player, this.canvas, this.game)
 
         this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
-        this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop)
+        this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)

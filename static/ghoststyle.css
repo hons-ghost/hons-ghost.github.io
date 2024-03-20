@@ -485,3 +485,15 @@ display: inline-block;
     background-color: rgba(0, 0, 0, 0.5);
     transform: translate(-50%, 0%);
 }
+
+.playalarm {
+    position: absolute;
+    display: none;
+    width:fit-content;
+    top: 60px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color:#fff;
+    text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;
+
+}

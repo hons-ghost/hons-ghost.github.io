@@ -1,10 +1,11 @@
 import App from "./meta/app";
-import { Inventory } from "./meta/inventory/inventory";
+import { Inventory, InventorySlot } from "./meta/inventory/inventory";
 import { Bind, IItem } from "./meta/inventory/items/item";
+
 
 export class UiInven {
     inven?: Inventory
-    slots: IItem[] = []
+    slots: InventorySlot[] = []
     colCont = 5
 
     constructor(private meta: App) { }
@@ -71,10 +72,11 @@ export class UiInven {
         itemInfo.replaceChildren()
         itemInfo.style.display = "none"
 
-        const item = this.slots[id]
-        if (item == undefined) {
+        const slot = this.slots[id]
+        if (slot == undefined) {
             return
         }
+        const item = slot.item
         const infos = item.MakeInformation()
         let htmlString = ""
         infos.forEach((info) => {
@@ -130,13 +132,19 @@ export class UiInven {
             for (let j = 0; j < this.colCont; j++) {
                 const id = j + i * this.colCont
                 const slotTag = document.getElementById(`slot${id}`) as HTMLDivElement
-                const item = this.inven.GetInventory(id)
-                const htmlImg = (item) ? `<img src="assets/icons/${item.IconPath}">` : ""
+                const slot = this.inven.GetInventory(id)
+                if(slot == undefined) continue
+                let htmlImg = `<img src="assets/icons/${slot.item.IconPath}">`
+                htmlImg += (slot.count > 1) ? `<span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-secondary"
+                                    id="slot${id}count">
+                                        ${slot.count}
+                                    </span>
+                ` : ""
                 slotTag.innerHTML = htmlImg
                 slotTag.onclick = () => {
                     this.slotClickEvent(id)
                 }
-                this.slots.push(item)
+                this.slots.push(slot)
             }
         }
     }
@@ -151,7 +159,7 @@ export class UiInven {
                 const id = j + i * this.colCont
                 htmlString += `
                     <div class="col ps-1 pe-0 pb-1">
-                        <div class="rounded inven_slot p-1" id="slot${id}"></div>
+                        <div class="popmenu-wrap rounded inven_slot p-1" id="slot${id}"></div>
                     </div>
                 `
             }
@@ -165,6 +173,8 @@ export class UiInven {
         const invenCont = document.getElementById("invenContent") as HTMLDivElement
         invenBtn.onclick = () => {
             if (invenCont.style.display == "none" || invenCont.style.display == "") {
+                this.inven = this.meta.store.LoadInventory(this.inven)
+                this.reloadSlot()
                 invenCont.style.display = "block"
             } else {
                 const itemInfo = document.getElementById("item_info") as HTMLDivElement

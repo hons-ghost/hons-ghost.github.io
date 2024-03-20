@@ -3,10 +3,16 @@ import { IViewer } from "../scenes/models/iviewer";
 import { Player } from "../scenes/models/player";
 import { Canvas } from "../common/canvas";
 import SConf from "../configs/staticconf";
+import { MonDrop } from "../scenes/monsterdb";
+import { ItemId } from "../inventory/items/itemdb";
+import { math } from "../../libs/math";
+import { Inventory } from "../inventory/inventory";
+import { Alarm, AlarmType } from "../common/alarm";
 
 type DropBox = {
     id: number
     droped: boolean
+    items?: symbol[]
 }
 
 export class Drop implements IViewer {
@@ -21,6 +27,8 @@ export class Drop implements IViewer {
     dummy = new THREE.Object3D()
 
     constructor(
+        private alarm: Alarm,
+        private inventory: Inventory,
         private player: Player, 
         canvas: Canvas,
         private scene: THREE.Scene,
@@ -75,9 +83,8 @@ export class Drop implements IViewer {
         }
     }
 
-    DropItem(pos: THREE.Vector3) {
-        this.dropPoint(pos)
-        
+    DropItem(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
+        this.dropPoint(pos, drop)
     }
     instanceUpdate(delta: number) {
         if (!this.activeDropBox.length) return
@@ -127,6 +134,11 @@ export class Drop implements IViewer {
                 points.setZ(b.id, this.resetPos.z)
                 b.droped = false
                 this.activeDropBox.splice(i, 1)
+                b.items?.forEach(item => {
+                    const info = this.inventory.GetItemInfo(item)
+                    this.alarm.NotifyInfo(`${info.name}을 얻었습니다.`, AlarmType.Normal)
+                    this.inventory.NewItem(item)
+                })
             } else if (dist < this.moveDist) {
                 if (tp.x - pos.x < 0) {
                     pos.x -= delta * this.speed
@@ -243,14 +255,24 @@ export class Drop implements IViewer {
         }))
     }
 
-    dropPoint(pos: THREE.Vector3) {
+    dropPoint(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
         if(this.pointsGeometry == undefined) return
+        const itemIds:symbol[] = []
+        if(drop != undefined) {
+            const ticket = Math.random()
+            drop.forEach((item) => {
+                if (item.ratio < ticket) {
+                    itemIds.push(item.itemId)
+                }
+            })
+        }
         const points = this.pointsGeometry.attributes.position
         for(let i = 0; i < this.dropBox.length; i++) {
             const b = this.dropBox[this.head]
             if(!b.droped) {
                 b.id = this.head
                 b.droped = true
+                b.items = itemIds
                 points.setX(b.id, pos.x)
                 points.setY(b.id, pos.y)
                 points.setZ(b.id, pos.z)

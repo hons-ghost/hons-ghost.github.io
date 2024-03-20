@@ -1,13 +1,9 @@
 import * as THREE from "three";
-import { Canvas } from "../common/canvas"
 import { Loader } from "../loader/loader"
 import { EventController, EventFlag } from "../event/eventctrl"
 import { Game } from "./game"
-import { UserInfo } from "../common/param"
-import { IModelReload, ModelStore } from "../common/modelstore"
 import { GPhysics } from "../common/physics/gphysics";
-import { Char, IAsset } from "../loader/assetmodel";
-import SConf from "../configs/staticconf";
+import { Char } from "../loader/assetmodel";
 import { AppMode } from "../app";
 import { Zombie } from "./models/zombie";
 import { Legos } from "./legos";
@@ -18,6 +14,8 @@ import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { math } from "../../libs/math";
 import { Minataur } from "./models/minataur";
 import { Drop } from "../drop/drop";
+import { MonsterDb, MonsterId } from "./monsterdb";
+import { EffectType } from "../effects/effector";
 
 type ZombieSet = {
     zombie: Zombie,
@@ -53,6 +51,7 @@ export class Zombies {
         private eventBricks: EventBricks,
         private gphysic: GPhysics,
         private drop: Drop,
+        private monDb: MonsterDb
     ) {
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Play) return
@@ -71,28 +70,31 @@ export class Zombies {
                 if (obj == null) return
 
                 const z = this.zombies[obj.Id]
-                this.ReceiveDemage(z, opt.damage)
+                if (!z.live) return
+
+                this.ReceiveDemage(z, opt.damage, opt.effect)
             })
         })
         eventCtrl.RegisterAttackEvent("monster", (opts: AttackOption[]) => {
             const pos = this.player.CannonPos
             const dist = opts[0].distance
             const damage = opts[0].damage
+            const effect = opts[0].effect
             if(dist == undefined) return
             for(let i = 0; i < this.zombies.length; i++) {
                 const z = this.zombies[i]
                 if (!z.live) continue
                 const betw = z.zombie.CannonPos.distanceTo(pos)
                 if (betw < dist) {
-                    this.ReceiveDemage(z, damage)
+                    this.ReceiveDemage(z, damage, effect)
                 }
             }
         })
     }
-    ReceiveDemage(z: ZombieSet, damage: number) {
-        if (z && !z.zCtrl.ReceiveDemage(damage)) {
+    ReceiveDemage(z: ZombieSet, damage: number, effect?: EffectType) {
+        if (z && !z.zCtrl.ReceiveDemage(damage, effect)) {
             z.live = false
-            this.drop.DropItem(z.zombie.CannonPos)
+            this.drop.DropItem(z.zombie.CannonPos, z.zCtrl.Drop)
             this.playerCtrl.remove(z.zCtrl.phybox)
             this.respawntimeout = setTimeout(() => {
                 z.zombie.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
@@ -100,7 +102,7 @@ export class Zombies {
                 z.live = true
                 z.zCtrl.Respawning()
                 this.playerCtrl.add(z.zCtrl.phybox)
-            }, THREE.MathUtils.randInt(2000, 7000))
+            }, THREE.MathUtils.randInt(4000, 8000))
         }
     }
     async InitZombie() {
@@ -108,7 +110,8 @@ export class Zombies {
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
                 new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
 
-        const zCtrl =  new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, this.eventCtrl)
+        const zCtrl =  new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, 
+            this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
         this.zombies.push({ zombie: zombie, zCtrl: zCtrl, live: true })
 
 
@@ -146,7 +149,8 @@ export class Zombies {
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
                 new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
 
-        const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, this.eventCtrl)
+        const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic,
+            this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
         this.zombies.push({ zombie: zombie, zCtrl: zCtrl, live: true })
 
 

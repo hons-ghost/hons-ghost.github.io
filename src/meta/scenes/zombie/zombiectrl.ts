@@ -8,21 +8,24 @@ import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
 import { IPlayerAction, MonsterBox } from "../zombies";
 import { EventController } from "../../event/eventctrl";
+import { MonsterProperty } from "../monsterdb";
+import { EffectType } from "../../effects/effector";
 
 
 
 export class ZombieCtrl implements IGPhysic {
     IdleSt = new IdleZState(this, this.zombie, this.gphysic)
-    AttackSt = new AttackZState(this, this.zombie, this.gphysic, this.eventCtrl)
-    RunSt = new RunZState(this, this.zombie, this.gphysic)
+    AttackSt = new AttackZState(this, this.zombie, this.gphysic, this.eventCtrl, this.property)
+    RunSt = new RunZState(this, this.zombie, this.gphysic, this.property)
     DyingSt = new DyingZState(this, this.zombie, this.gphysic, this.eventCtrl)
 
     currentState: IPlayerAction = this.IdleSt
     raycast = new THREE.Raycaster()
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
-    health = 10
+    health = this.property.health
     phybox: MonsterBox
+    get Drop() { return this.property.drop }
 
     constructor(
         private id: number,
@@ -31,7 +34,8 @@ export class ZombieCtrl implements IGPhysic {
         private legos: Legos,
         private eventBricks: EventBricks,
         private gphysic: GPhysics,
-        private eventCtrl: EventController
+        private eventCtrl: EventController,
+        private property: MonsterProperty
     ) {
         gphysic.Register(this)
         const size = zombie.Size
@@ -84,9 +88,9 @@ export class ZombieCtrl implements IGPhysic {
         this.phybox.position.copy(this.zombie.CannonPos)
     }
     
-    ReceiveDemage(demage: number): boolean {
+    ReceiveDemage(demage: number, effect?: EffectType): boolean {
         if (this.health <= 0) return false
-        this.zombie.DamageEffect(demage)
+        this.zombie.DamageEffect(demage, effect)
         this.health -= demage
         if (this.health <= 0) {
             this.DyingSt.Init()

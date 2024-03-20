@@ -1,3 +1,4 @@
+import { EffectType } from "../effects/effector"
 import { EventController } from "../event/eventctrl"
 import { AttackType, PlayerStatus } from "../scenes/player/playerctrl"
 import { IBuffItem } from "./buff"
@@ -48,6 +49,7 @@ export class AreaAttack implements IBuffItem {
 
         this.eventCtrl.OnAttackEvent("monster", [{
             type: AttackType.AOE,
+            effect: EffectType.Lightning,
             damage: this.damage * this.lv,
             distance: this.area + this.lv,
         }])

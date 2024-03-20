@@ -39,6 +39,7 @@ export enum Level {
 }
 
 export interface IItem {
+    get Id(): symbol
     get DamageMin(): number
     get DamageMax(): number
     get Speed(): number
@@ -47,9 +48,11 @@ export interface IItem {
     get Bind(): Bind | undefined
     get Mesh(): THREE.Group | undefined
     get AttackType(): AttackItemType | undefined
+    get Stackable(): boolean
     MakeInformation(): Array<{k?: string, v: string}>
 }
 export class Item implements IItem {
+    get Id() { return this.property.id }
     get DamageMin() { return (this.property.damageMin == undefined) ? 0 : this.property.damageMin }
     get DamageMax() { return (this.property.damageMax == undefined) ? 0 : this.property.damageMax }
     get Speed() { return (this.property.speed == undefined) ? 0 : this.property.speed }
@@ -58,6 +61,7 @@ export class Item implements IItem {
     get Bind() { return this.property.bind }
     get Mesh() { return this.property.meshs }
     get AttackType() { return this.property.weapon }
+    get Stackable() { return this.property.stackable }
     constructor(protected property: ItemProperty) {}
 
     MakeInformation() {

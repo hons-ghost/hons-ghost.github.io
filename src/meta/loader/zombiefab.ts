@@ -14,6 +14,7 @@ export class ZombieFab extends AssetModel implements IAsset {
         super(loader, ModelType.Gltf, "assets/monster/zombie.gltf", async (gltf: GLTF) => {
             this.Gltf = gltf
             this.meshs = gltf.scene
+            this.meshs.name = "zombie"
             this.meshs.castShadow = true
             this.meshs.receiveShadow = true
             this.meshs.traverse(child => {
@@ -45,7 +46,11 @@ export class ZombieFab extends AssetModel implements IAsset {
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         if (this.meshs == undefined) this.meshs = mesh
+        const effector = this.meshs.getObjectByName("effector")
+        if(effector != undefined) this.meshs.remove(effector)
         const bbox = new THREE.Box3().setFromObject(this.meshs)
+        if(effector != undefined) this.meshs.add(effector)
+
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)

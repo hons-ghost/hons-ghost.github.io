@@ -257,8 +257,8 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     }
     Update() {
         const delta = this.clock.getDelta()
-        this.damageEffect.update(delta)
-        this.txtStatus.update(delta)
+        this.damageEffect.Update(delta)
+        this.txtStatus.Update(delta)
         this.mixer?.update(delta)
     }
 }

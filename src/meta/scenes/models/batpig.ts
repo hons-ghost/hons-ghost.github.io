@@ -136,8 +136,8 @@ export class BatPig extends GhostModel implements IPhysicsObject {
 
     update() {
         const delta = this.clock.getDelta()
-        this.damageEffect.update(delta)
-        this.txtStatus.update(delta)
+        this.damageEffect.Update(delta)
+        this.txtStatus.Update(delta)
         this.mixer?.update(delta)
     }
     UpdatePhysics(): void {

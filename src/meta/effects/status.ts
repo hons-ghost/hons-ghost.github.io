@@ -1,10 +1,11 @@
 import * as THREE from "three";
+import { IEffect } from "./effector";
 
 const font =  "bold 14pt sans-serif";
 const shadowColor =  "rgba(0,0,0,0.8)";
 const shadowBlur = 2
 
-export class TextStatus extends THREE.Sprite {
+export class TextStatus extends THREE.Sprite implements IEffect {
     params_?: string
     visible_?: boolean
 
@@ -88,7 +89,7 @@ export class TextStatus extends THREE.Sprite {
     Complete() {
         this.visible = false
     }
-    update(delta: number) {
+    Update(delta: number) {
         this.position.y += delta * .5
         this.v += 0.001
         this.material.opacity -= this.v

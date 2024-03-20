@@ -9,7 +9,8 @@ export class Alarm {
     dom = document.createElement("div")
     constructor() {
         this.dom.className = "playalarm"
-        document.body.appendChild(this.dom)
+        const contents = document.getElementById("contents") as HTMLDivElement
+        contents.appendChild(this.dom)
     }
     NotifyInfo(text: string, type: AlarmType) {
         this.dom.style.display = "block"

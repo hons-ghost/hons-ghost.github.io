@@ -6,14 +6,14 @@ import { AttackZState, DyingZState, IdleZState, RunZState } from "./zombiestate"
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
-import { IPlayerAction, MonsterBox } from "../zombies";
+import { IMonsterCtrl, IPlayerAction, MonsterBox } from "../zombies";
 import { EventController } from "../../event/eventctrl";
 import { MonsterProperty } from "../monsterdb";
 import { EffectType } from "../../effects/effector";
 
 
 
-export class ZombieCtrl implements IGPhysic {
+export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
     IdleSt = new IdleZState(this, this.zombie, this.gphysic)
     AttackSt = new AttackZState(this, this.zombie, this.gphysic, this.eventCtrl, this.property)
     RunSt = new RunZState(this, this.zombie, this.gphysic, this.property)
@@ -24,8 +24,9 @@ export class ZombieCtrl implements IGPhysic {
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
     health = this.property.health
-    phybox: MonsterBox
+    private phybox: MonsterBox
     get Drop() { return this.property.drop }
+    get MonsterBox() { return this.phybox }
 
     constructor(
         private id: number,

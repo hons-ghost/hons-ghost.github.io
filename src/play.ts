@@ -1,3 +1,4 @@
+import { SubtractiveBlending } from "three";
 import App, { AppMode } from "./meta/app";
 import { Inventory } from "./meta/inventory/inventory";
 import { Bind, IItem } from "./meta/inventory/items/item";
@@ -29,6 +30,44 @@ export class Play extends Page {
         super(url)
     }
 
+    startPlay() {
+        const lvView = document.getElementById("levelview") as HTMLDivElement
+        lvView.replaceChildren()
+
+        let htmlString = `
+        <div class="row pb-2">
+            <div class="col xxx-large text-white text-center h2">Game Tips</div>
+        </div>
+        <div class="row p-2">
+            <div class="col-auto text-white">게임 유형</div>
+            <div class="col text-white">Random</div>
+        </div>
+        <div class="row p-2">
+            <div class="col text-white ">인벤토리의 아이템은 비워진채 시작합니다.</div>
+        </div>
+        <div class="row p-2">
+            <div class="col text-white ">수집한 아이템을 저장하기 위해서는 포탈에서 종료 해야합니다. 
+            포탈을 통해 수집된 아이템은 기존 아이템과 인벤토리에서 병합됩니다.</div>
+        </div>
+        <div class="row p-2">
+            <div class="col text-white text-center">
+            <button type="button" class="btn btn-primary" id="startBtn">시작하기</button>
+            </div>
+        </div>
+
+        `
+        lvView.innerHTML = htmlString
+
+        const lvTag = document.getElementById("levelup") as HTMLDivElement
+        lvTag.style.display = "block"
+        const startBtn = document.getElementById("startBtn") as HTMLButtonElement
+        startBtn.onclick = () => {
+            lvTag.style.display = "none"
+            this.ui.UiOff(AppMode.Play)
+            this.LevelUp()
+        }
+    }
+
     public CanvasRenderer(email: string | null) {
         const myModel = this.blockStore.GetModel(this.session.UserId)
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
@@ -44,13 +83,11 @@ export class Play extends Page {
                     this.blockStore.FetchModels(this.m_masterAddr)
                         .then(async (result) => {
                             await this.meta.LoadVillage(result, myModel?.models)
-                            this.ui.UiOff(AppMode.Play)
-                            this.LevelUp()
+                            this.startPlay()
                         })
                 } else {
                     if(!inited) {
-                        this.ui.UiOff(AppMode.Play)
-                            this.LevelUp()
+                        this.startPlay()
                         return
                     }
                     this.alarm.style.display = "block"
@@ -60,14 +97,12 @@ export class Play extends Page {
                         .then(async (result) => {
                             await this.meta.LoadModel(result.models, result.id, myModel?.models)
                             this.alarm.style.display = "none"
-                            this.ui.UiOff(AppMode.Play)
-                            this.LevelUp()
+                            this.startPlay()
                         })
                         .catch(async () => {
                             this.alarm.style.display = "none"
                             await this.meta.LoadModelEmpty(email, myModel?.models)
-                            this.ui.UiOff(AppMode.Play)
-                            this.LevelUp()
+                            this.startPlay()
                         })
                 }
             })

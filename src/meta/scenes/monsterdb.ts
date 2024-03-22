@@ -4,6 +4,9 @@ import { Loader } from "../loader/loader"
 export class MonsterId {
     public static Zombie = Symbol("zombie")
     public static Minataur = Symbol("minataur")
+
+    public static Stone = Symbol("stone")
+    public static Tree = Symbol("tree")
 }
 export enum MonsterType {
     Undead, Dragon, Machine, Warrior, Angel,
@@ -40,6 +43,28 @@ export class MonsterDb {
             attackSpeed: 2,
             drop: [
                 { itemId: ItemId.Leather, ratio: 0.5 }
+            ]
+        })
+        this.monDb.set(MonsterId.Stone, {
+            type: MonsterType.Rock,
+            health: 1,
+            speed: 0,
+            damageMin:0,
+            damageMax: 0,
+            attackSpeed: 0,
+            drop: [
+                { itemId: ItemId.Rocks, ratio: 1 }
+            ]
+        })
+        this.monDb.set(MonsterId.Tree, {
+            type: MonsterType.Plant,
+            health: 1,
+            speed: 0,
+            damageMin:0,
+            damageMax: 0,
+            attackSpeed: 0,
+            drop: [
+                { itemId: ItemId.Logs, ratio: 1 }
             ]
         })
     }

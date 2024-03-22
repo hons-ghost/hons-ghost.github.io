@@ -43,11 +43,13 @@ export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
         const geometry = new THREE.BoxGeometry(size.x * 3, size.y, size.z * 3)
         const material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
-            transparent: true,
-            opacity: 0,
+            //transparent: true,
+            //opacity: 0,
             color: 0xff0000,
+            depthWrite: false,
         })
         this.phybox = new MonsterBox(id, "Zombie", geometry, material)
+        this.phybox.visible = false
         this.phybox.position.copy(this.zombie.CannonPos)
     }
     Respawning() {

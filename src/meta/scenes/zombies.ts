@@ -114,17 +114,8 @@ export class Zombies {
         }
     }
     async InitZombie() {
-        /*
-        const zombie = new Zombie(this.loader, this.eventCtrl, this.gphysic, this.loader.ZombieAsset)
-        await zombie.Loader(this.loader.GetAssets(Char.Zombie),
-                new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
-
-        const zCtrl =  new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, 
-            this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
-            */
         const zSet = await this.CreateZombie()
         this.zombies.push(zSet)
-
 
         this.keytimeout = setTimeout(()=> {
             zSet.monModel.Visible = true
@@ -166,14 +157,6 @@ export class Zombies {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
     async randomSpawning(){
-        /*
-        const zombie = new Zombie(this.loader, this.eventCtrl, this.gphysic, this.loader.ZombieAsset)
-        await zombie.Loader(this.loader.GetAssets(Char.Zombie),
-                new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
-
-        const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic,
-            this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
-        */
         const zSet = await this.CreateZombie()
         this.zombies.push(zSet)
 

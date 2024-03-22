@@ -6,6 +6,8 @@ export class ItemId {
     public static Hanhwasbat = Symbol("Hanhwa's Bat")
     public static DefaultGun = Symbol("DefaultGun")
     public static Leather = Symbol("Leather")
+    public static Logs = Symbol("Logs")
+    public static Rocks = Symbol("Rocks")
 }
 
 export type ItemProperty = {
@@ -56,6 +58,24 @@ export class ItemDb {
             type: ItemType.Material,
             name: "Leather",
             icon: "Material/Leather.png",
+            stackable: true,
+            binding: false,
+            price: 1,
+        })
+        this.itemDb.set(ItemId.Logs, {
+            id: ItemId.Logs,
+            type: ItemType.Material,
+            name: "WoodLog",
+            icon: "Material/WoodLog.png",
+            stackable: true,
+            binding: false,
+            price: 1,
+        })
+        this.itemDb.set(ItemId.Rocks, {
+            id: ItemId.Rocks,
+            type: ItemType.Material,
+            name: "Rocks",
+            icon: "OreGem/SilverNugget.png",
             stackable: true,
             binding: false,
             price: 1,

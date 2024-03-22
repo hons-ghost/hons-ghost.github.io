@@ -4,7 +4,6 @@ import { IEffect } from "./effector";
 export class Damage implements IEffect {
     material = new THREE.PointsMaterial( {
         size: 0.1,
-        color: 0xff0000,
         vertexColors: true,
         transparent: true,
         opacity: 1,
@@ -14,15 +13,17 @@ export class Damage implements IEffect {
     points: THREE.Points
     count = 30
     delta: THREE.Vector3[] = []
-    particles: THREE.Vector3[] = []
     velocity = 5 + Math.random() 
     processFlag = false
     get Mesh() { return this.points }
 
-    constructor( x: number, y: number, z: number) {
-        const colors = new Float32Array(this.count * 3)
+    constructor( r: number, g: number, b: number) {
+        const particles = []
+        const colors = []
+        const color = new THREE.Color()
+        color.setRGB(r, g, b)
         for (let i = 0; i < this.count; i++) {
-            const particle = new THREE.Vector3(x, y, z)
+            const particle = new THREE.Vector3(0, 0, 0)
             const theta = Math.random() * Math.PI * 2
             const phi = Math.random() * 2
 
@@ -31,12 +32,15 @@ export class Damage implements IEffect {
             particle.z = this.velocity * Math.cos(theta) * 5
 
             this.delta.push(particle)
-            this.particles.push(new THREE.Vector3(x, y, z))
+            particles.push(0, 0, 0, i)
+            colors.push(color.r, color.g, color.b, i)
         }
-        this.geometry.setFromPoints(this.particles)
+        this.geometry.setAttribute("position", new THREE.Float32BufferAttribute(particles, 4))
+        this.geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 4))
 
         this.points = new THREE.Points(this.geometry, this.material)
         this.points.visible = false
+        this.points.geometry.attributes.color.needsUpdate = true
     }
     Start() {
         // this.scene.add(this.points)
@@ -44,7 +48,7 @@ export class Damage implements IEffect {
         this.material.opacity = 1
         this.v = 0.001
 
-        for (let i = 0; i < this.particles.length; i++) {
+        for (let i = 0; i < this.delta.length; i++) {
             positions.setX(i, 0)
             positions.setY(i, 0)
             positions.setZ(i, 1)
@@ -62,7 +66,7 @@ export class Damage implements IEffect {
         if (this.material.opacity <= 0 || !this.processFlag) return 
         const positions = this.points.geometry.attributes.position
 
-        for (let i = 0; i < this.particles.length; i++) {
+        for (let i = 0; i < this.delta.length; i++) {
             const x = positions.getX(i)
             const y = positions.getY(i)
             const z = positions.getZ(i)

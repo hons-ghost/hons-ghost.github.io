@@ -44,6 +44,8 @@ export enum Char{
 
     Bat,
     Gun,
+
+    Stone,
 }
 export enum ModelType {
     Gltf,
@@ -62,7 +64,7 @@ export interface IAsset {
     GetBodyMeshId(bind?: Bind) : string | undefined
 }
 
-export class AssetModel{
+export class AssetModel {
     protected meshs?: THREE.Group
     protected size?: THREE.Vector3
     protected mixer?: THREE.AnimationMixer

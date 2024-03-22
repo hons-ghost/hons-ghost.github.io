@@ -30,6 +30,7 @@ import { Buff } from "../buff/buff";
 import { Drop } from "../drop/drop";
 import { MonsterDb } from "../scenes/monsterdb";
 import { Alarm } from "../common/alarm";
+import { Materials } from "../scenes/materials";
 
 
 export class AppFactory {
@@ -55,11 +56,11 @@ export class AppFactory {
     private portal: Portal
     private npcs: NpcManager
     private zombies: Zombies
+    private materials: Materials
 
     private buff: Buff
     private playerCtrl : PlayerCtrl
     
-    private trees: Tree[]
     private deadtrees: DeadTree[]
     private mushrooms: Mushroom[]
     //island: Island
@@ -88,7 +89,6 @@ export class AppFactory {
     constructor() {
         this.worldSize = 300
         this.floor = new Floor(this.worldSize, this.worldSize, 5, new THREE.Vector3(0, 0, 0))
-        this.trees = []
         this.mushrooms = []
         this.deadtrees = []
 
@@ -114,6 +114,7 @@ export class AppFactory {
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
         this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
+        this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb, this.gphysics)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
@@ -157,25 +158,6 @@ export class AppFactory {
             this.deadtrees.push(tree)
         }
     }
-    async MassTreeLoad() {
-        const meshs = await this.loader.TreeAsset.CloneModel()
-        const pos = new THREE.Vector3()
-        const radius = this.worldSize / 2
-        for (let i = 0; i < 150; i++) {
-            const phi = Math.random() * Math.PI * 2
-            const r = THREE.MathUtils.randFloat(radius * 0.5, radius * 1.5)
-            pos.set(
-                r * Math.cos(phi),
-                2,
-                r * Math.sin(phi)
-            )
-            
-            const scale = math.rand_int(9, 15)
-            const tree = new Tree(this.loader, this.loader.TreeAsset, this.gphysics)
-            tree.MassLoad(meshs, scale, pos)
-            this.trees.push(tree)
-        }
-    }
 
     async GltfLoad() {
         const ret = await Promise.all([
@@ -183,10 +165,10 @@ export class AppFactory {
                 new THREE.Vector3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z),
                 "player"),
             this.portal.Loader(SConf.DefaultPortalPosition),
-            this.MassTreeLoad(),
             this.MassMushroomLoader(1),
             this.MassMushroomLoader(2),
             this.MassDeadTreeLoader(),
+            this.materials.MassLoader(),
             this.npcs.NpcLoader(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
@@ -200,9 +182,7 @@ export class AppFactory {
             this.floor.Meshs, 
             this.portal.Meshs, 
         )
-        this.trees.forEach((tree) => {
-            this.game.add(tree.Meshs)
-        })
+        
         this.deadtrees.forEach((tree) => {
             this.game.add(tree.Meshs)
         })

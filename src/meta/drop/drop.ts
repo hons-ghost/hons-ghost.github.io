@@ -38,6 +38,7 @@ export class Drop implements IViewer {
         this.points = this.CreatePoints()
         // frustumCulled 안하면 특정 각도에서 보이지 않는다.
         this.points.frustumCulled = false
+        this.points.renderOrder = 1
         this.scene.add(this.points)
     }
 
@@ -51,7 +52,7 @@ export class Drop implements IViewer {
         if (drop != undefined) {
             const ticket = Math.random()
             drop.forEach((item) => {
-                if (item.ratio < ticket) {
+                if (item.ratio > ticket) {
                     itemIds.push(item.itemId)
                 }
             })
@@ -136,7 +137,7 @@ export class Drop implements IViewer {
         this.pointsGeometry = new THREE.BufferGeometry()
         this.pointsGeometry.setFromPoints(positions)
         const colors = []
-        for (let i = 0; i < positions.length / 3; i++) {
+        for (let i = 0; i < positions.length ; i++) {
             const r = THREE.MathUtils.randInt(Math.random(), .1)
             const g = THREE.MathUtils.randInt(.6, 1)
             const b = THREE.MathUtils.randInt(0, .8)

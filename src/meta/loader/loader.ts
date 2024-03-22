@@ -16,6 +16,7 @@ import { EventController, EventFlag } from "../event/eventctrl";
 import { AppMode } from "../app";
 import { MinataurFab } from "./minataurfab";
 import { CrabFab } from "./crabfab";
+import { StoneFab } from "./stonefab";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -36,6 +37,7 @@ export class Loader {
 
     private bat = new BatFab(this)
     private gun = new GunFab(this)
+    private stone = new StoneFab(this)
 
     get MaleAsset(): IAsset { return this.male }
     get FemaleAsset(): IAsset { return this.female }
@@ -54,6 +56,8 @@ export class Loader {
     get Load(): GLTFLoader { return this.loader }
     get LoadingManager(): THREE.LoadingManager { return this.loadingManager }
     get FBXLoader(): FBXLoader { return this.fbxLoader}
+
+    get StoneAsset(): IAsset { return this.stone }
 
     assets = new Map<Char, IAsset>()
     loadingVisible = true
@@ -76,6 +80,8 @@ export class Loader {
 
         this.assets.set(Char.Bat, this.bat)
         this.assets.set(Char.Gun, this.gun)
+
+        this.assets.set(Char.Stone, this.stone)
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Play) return

@@ -40,6 +40,8 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     ) {
         super(asset)
         this.text = new FloatingName("Zombie")
+        this.effector.Enable(EffectType.Damage, 0, 1, 0)
+        this.effector.Enable(EffectType.Status)
     }
 
     async Init(text: string) {

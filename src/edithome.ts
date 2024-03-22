@@ -8,14 +8,15 @@ import ColorPicker from "@thednp/color-picker";
 import { Page } from "./page";
 import { Ui } from "./models/ui";
 import { UiInven } from "./play_inven";
+import { InvenData } from "./meta/inventory/inventory";
 
 export class EditHome extends Page {
     m_masterAddr = ""
-    mode = AppMode.Edit
+    mode = AppMode.EditPlay
     profileVisible = true
     brickSize = new THREE.Vector3(3, 3, 1)
     brickRotate = new THREE.Vector3()
-    ui = new Ui(this.meta, AppMode.Edit)
+    ui = new Ui(this.meta, AppMode.EditPlay)
 
     myPicker?: ColorPicker
     color: string = "#fff"
@@ -150,31 +151,31 @@ export class EditHome extends Page {
         }
         const div = document.getElementById("brickmode") as HTMLDivElement
         div.onclick = () => {
-            this.mode = (this.mode != AppMode.Brick) ? AppMode.Brick : AppMode.Edit
+            this.mode = (this.mode != AppMode.Brick) ? AppMode.Brick : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         const loc = document.getElementById("locatmode") as HTMLDivElement
         loc.onclick = () => {
-            this.mode = (this.mode != AppMode.Locate) ? AppMode.Locate : AppMode.Edit
+            this.mode = (this.mode != AppMode.Locate) ? AppMode.Locate : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         const avr = document.getElementById("avatarmode") as HTMLDivElement
         avr.onclick = () => {
-            this.mode = (this.mode != AppMode.Face) ? AppMode.Face : AppMode.Edit
+            this.mode = (this.mode != AppMode.Face) ? AppMode.Face : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         const fun = document.getElementById("funituremode") as HTMLDivElement
         fun.onclick = () => {
-            this.mode = (this.mode != AppMode.Funiture) ? AppMode.Funiture : AppMode.Edit
+            this.mode = (this.mode != AppMode.Funiture) ? AppMode.Funiture : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         const wea = document.getElementById("weaponmode") as HTMLDivElement
         wea.onclick = () => {
-            this.mode = (this.mode != AppMode.Weapon) ? AppMode.Weapon : AppMode.Edit
+            this.mode = (this.mode != AppMode.Weapon) ? AppMode.Weapon : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
@@ -189,13 +190,13 @@ export class EditHome extends Page {
 
         const gate = document.getElementById("gate") as HTMLDivElement
         gate.onclick = () => {
-            this.mode = (this.mode != AppMode.Portal) ? AppMode.Portal : AppMode.Edit
+            this.mode = (this.mode != AppMode.Portal) ? AppMode.Portal : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         const lego = document.getElementById("apart") as HTMLDivElement
         lego.onclick = () => {
-            this.mode = (this.mode != AppMode.Lego) ? AppMode.Lego : AppMode.Edit
+            this.mode = (this.mode != AppMode.Lego) ? AppMode.Lego : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
             const colorPick = document.getElementById("myPicker") as HTMLInputElement
@@ -205,7 +206,7 @@ export class EditHome extends Page {
         }
         const eraser = document.getElementById("eraser") as HTMLDivElement
         eraser.onclick = () => {
-            this.mode = (this.mode != AppMode.LegoDelete) ? AppMode.LegoDelete : AppMode.Edit
+            this.mode = (this.mode != AppMode.LegoDelete) ? AppMode.LegoDelete : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
@@ -226,7 +227,13 @@ export class EditHome extends Page {
         const canvas = document.getElementById("avatar-bg") as HTMLCanvasElement
         canvas.style.display = "block"
         this.meta.init().then((inited) => {
-            this.meta.ModeChange(AppMode.Edit)
+            this.blockStore.FetchInventory(this.m_masterAddr, this.session.UserId)
+                .then((inven: InvenData | undefined) => {
+                    console.log(inven)
+                    this.inven.LoadInven(this.meta.store.LoadInventory(inven))
+                    this.inven.loadSlot()
+                })
+            this.meta.ModeChange(AppMode.EditPlay)
             if (email == null) {
                 this.alarm.style.display = "block"
                 this.alarmText.innerText = "Login이 필요합니다."
@@ -245,12 +252,12 @@ export class EditHome extends Page {
                         this.alarm.style.display = "none"
                     })
                     .then(() => {
-                        this.meta.ModeChange(AppMode.Close)
+                        this.meta.ModeChange(AppMode.EditPlay)
                     })
                     .catch(async () => {
                         this.alarm.style.display = "none"
                         await this.meta.LoadModelEmpty(email, myModel?.models)
-                        this.meta.ModeChange(AppMode.Close)
+                        this.meta.ModeChange(AppMode.EditPlay)
                     })
             }
         })
@@ -284,8 +291,9 @@ export class EditHome extends Page {
         if(email == null) return false;
         this.loadHelper()
         this.CanvasRenderer(email)
-        this.ui.UiOff(AppMode.Edit)
+        this.ui.UiOff(AppMode.EditPlay)
         this.MenuEvent(email)
+        this.inven.binding()
 
         return true;
     }

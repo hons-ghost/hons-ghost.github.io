@@ -93,20 +93,21 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.store.RegisterPlayer(this, this)
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
-            if(mode != AppMode.Play)  {
-                this.Visible = false
+            if (mode == AppMode.Play || mode == AppMode.EditPlay) {
+                switch (e) {
+                    case EventFlag.Start:
+                        this.eventCtrl.OnChangeCtrlObjEvent(this)
+                        this.Init(mode)
+                        this.Visible = true
+                        break
+                    case EventFlag.End:
+                        this.Uninit(mode)
+                        this.Visible = false
+                        break
+                }
                 return
             }
-            switch (e) {
-                case EventFlag.Start:
-                    this.eventCtrl.OnChangeCtrlObjEvent(this)
-                    this.Init()
-                    this.Visible = true
-                    break
-                case EventFlag.End:
-                    this.Visible = false
-                    break
-            }
+            this.Visible = false
         })
         this.eventCtrl.RegisterChangeEquipmentEvent((inven: Inventory) => {
             // right hand
@@ -141,11 +142,20 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         }
     }
 
-    Init() {
-        const pos = new THREE.Vector3().copy(this.portal.CannonPos)
+    Uninit(mode: AppMode) {
+        if (mode == AppMode.EditPlay) {
+            this.store.Owner = this.CannonPos
+        }
+    }
+
+    Init(mode: AppMode) {
+        let pos = new THREE.Vector3().copy(this.portal.CannonPos)
         pos.x -= 4
-        pos.y = this.meshs.position.y
         pos.z += 4
+        if (mode == AppMode.EditPlay) {
+            pos = this.store.Owner ?? pos
+        }
+        pos.y = this.meshs.position.y
         this.meshs.position.copy(pos)
     }
 

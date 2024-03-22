@@ -1,6 +1,6 @@
 import App from "./meta/app";
 import { Inventory, InventorySlot } from "./meta/inventory/inventory";
-import { Bind, IItem } from "./meta/inventory/items/item";
+import { Bind, IItem, Item } from "./meta/inventory/items/item";
 
 
 export class UiInven {
@@ -133,12 +133,13 @@ export class UiInven {
             for (let j = 0; j < this.colCont; j++) {
                 const id = j + i * this.colCont
                 const slotTag = document.getElementById(`slot${id}`) as HTMLDivElement
-                const slot = this.inven.GetInventory(id)
+                const slot = this.inven.GetInventory(id) as InventorySlot
                 if(slot == undefined) {
                     slotTag.innerText = ""
                     continue
                 }
-                let htmlImg = `<img src="assets/icons/${slot.item.IconPath}">`
+                const item: IItem = slot.item
+                let htmlImg = `<img src="assets/icons/${item.IconPath ?? (item as Item).property.icon}">`
                 htmlImg += (slot.count > 1) ? `<span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-secondary"
                                     id="slot${id}count">
                                         ${slot.count}
@@ -200,7 +201,7 @@ export class UiInven {
         }
 
         const getback = document.getElementById("returnSns") as HTMLSpanElement
-        getback.onclick = () => {
+        if (getback) getback.onclick = () => {
             if (document.fullscreenElement) {
                 document.exitFullscreen()
                 fullscreen.innerText = "fullscreen"

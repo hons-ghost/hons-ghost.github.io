@@ -66,7 +66,7 @@ export class Input {
                         this.ButtonHide()
                     }
                     break;
-                case AppMode.Edit:
+                case AppMode.EditPlay:
                 case AppMode.Play:
                     if (e == EventFlag.Start) {
                         this.joystick.Show()

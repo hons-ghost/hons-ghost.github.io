@@ -15,7 +15,6 @@ export enum AppMode {
     Long,
     Close,
     Play,
-    Edit,
     EditPlay,
     Brick,
     Locate,

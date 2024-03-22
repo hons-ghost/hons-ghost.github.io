@@ -63,7 +63,7 @@ export class Inventory {
         
         this.data.bodySlot[pos] = item
     }
-    GetInventory(i :number) {
+    GetInventory(i: number): InventorySlot {
         return this.data.inventroySlot[i]
     }
 

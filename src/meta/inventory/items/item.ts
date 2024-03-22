@@ -62,7 +62,7 @@ export class Item implements IItem {
     get Mesh() { return this.property.meshs }
     get AttackType() { return this.property.weapon }
     get Stackable() { return this.property.stackable }
-    constructor(protected property: ItemProperty) {}
+    constructor(public property: ItemProperty) {}
 
     MakeInformation() {
         const infos = new Array<{k?: string, v: string}>()

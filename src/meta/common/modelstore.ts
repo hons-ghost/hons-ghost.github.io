@@ -58,6 +58,13 @@ export class ModelStore {
     get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
+    set Owner(v: THREE.Vector3 | undefined) {
+        if (v && this.data.owner != undefined) {
+            this.data.owner.x = v.x
+            this.data.owner.y = v.y
+            this.data.owner.z = v.z
+        }
+    }
     get OwnerModel() { return this.data.ownerModel }
     get PlayerModel() { return this.playerModel }
     get Name() {return this.name}

@@ -73,6 +73,11 @@ export class PlayerCtrl implements IGPhysic {
         gphysic.Register(this)
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode == AppMode.EditPlay) {
+                while (this.gphysic.Check(player)) {
+                    player.CannonPos.y += 0.2
+                }
+            }
             if(mode != AppMode.Play) return
             switch (e) {
                 case EventFlag.Start:

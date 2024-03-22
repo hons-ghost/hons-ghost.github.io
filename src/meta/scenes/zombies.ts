@@ -14,14 +14,22 @@ import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { math } from "../../libs/math";
 import { Minataur } from "./models/minataur";
 import { Drop } from "../drop/drop";
-import { MonsterDb, MonsterId } from "./monsterdb";
+import { MonDrop, MonsterDb, MonsterId } from "./monsterdb";
 import { EffectType } from "../effects/effector";
+import { IPhysicsObject } from "./models/iobject";
 
-type ZombieSet = {
-    zombie: Zombie,
-    zCtrl: ZombieCtrl
+type MonsterSet = {
+    monModel: IPhysicsObject,
+    monCtrl: IMonsterCtrl
     live: boolean
 }
+export interface IMonsterCtrl {
+    get MonsterBox(): MonsterBox
+    get Drop(): MonDrop[] | undefined
+    Respawning(): void
+    ReceiveDemage(demage: number, effect?: EffectType): boolean 
+}
+
 export class MonsterBox extends THREE.Mesh {
     constructor(public Id: number, public ObjName: string,
         geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
@@ -37,7 +45,7 @@ export interface IPlayerAction {
 }
 
 export class Zombies {
-    zombies: ZombieSet[] = []
+    zombies: MonsterSet[] = []
     keytimeout?:NodeJS.Timeout
     respawntimeout?:NodeJS.Timeout
 
@@ -84,41 +92,39 @@ export class Zombies {
             for(let i = 0; i < this.zombies.length; i++) {
                 const z = this.zombies[i]
                 if (!z.live) continue
-                const betw = z.zombie.CannonPos.distanceTo(pos)
+                const betw = z.monModel.CannonPos.distanceTo(pos)
                 if (betw < dist) {
                     this.ReceiveDemage(z, damage, effect)
                 }
             }
         })
     }
-    ReceiveDemage(z: ZombieSet, damage: number, effect?: EffectType) {
-        if (z && !z.zCtrl.ReceiveDemage(damage, effect)) {
+    ReceiveDemage(z: MonsterSet, damage: number, effect?: EffectType) {
+        if (z && !z.monCtrl.ReceiveDemage(damage, effect)) {
             z.live = false
-            this.drop.DropItem(z.zombie.CannonPos, z.zCtrl.Drop)
-            this.playerCtrl.remove(z.zCtrl.phybox)
+            this.drop.DropItem(z.monModel.CannonPos, z.monCtrl.Drop)
+            this.playerCtrl.remove(z.monCtrl.MonsterBox)
             this.respawntimeout = setTimeout(() => {
-                z.zombie.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
-                z.zombie.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
+                z.monModel.CannonPos.x = this.player.CannonPos.x + Math.floor(math.rand_int(-20, 20))
+                z.monModel.CannonPos.z = this.player.CannonPos.z + Math.floor(math.rand_int(-20, 20))
                 z.live = true
-                z.zCtrl.Respawning()
-                this.playerCtrl.add(z.zCtrl.phybox)
+                z.monCtrl.Respawning()
+
+                while (this.gphysic.Check(z.monModel)) {
+                    z.monModel.CannonPos.y += 0.5
+                }
+                this.playerCtrl.add(z.monCtrl.MonsterBox)
             }, THREE.MathUtils.randInt(4000, 8000))
         }
     }
     async InitZombie() {
-        const zombie = new Zombie(this.loader, this.eventCtrl, this.gphysic, this.loader.ZombieAsset)
-        await zombie.Loader(this.loader.GetAssets(Char.Zombie),
-                new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
-
-        const zCtrl =  new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic, 
-            this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
-        this.zombies.push({ zombie: zombie, zCtrl: zCtrl, live: true })
-
+        const zSet = await this.CreateZombie()
+        this.zombies.push(zSet)
 
         this.keytimeout = setTimeout(()=> {
-            zombie.Visible = true
-            this.playerCtrl.add(zCtrl.phybox)
-            this.game.add(zombie.meshs, zCtrl.phybox)
+            zSet.monModel.Visible = true
+            this.playerCtrl.add(zSet.monCtrl.MonsterBox)
+            this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)
 
             this.keytimeout = setTimeout(() => {
                 this.randomSpawning()
@@ -137,29 +143,39 @@ export class Zombies {
         */
     }
 
-    ReleaseZombie() {
-        this.zombies.forEach((z) => {
-            z.zombie.Visible = false
-            this.game.remove(z.zombie.Meshs, z.zCtrl.phybox)
-        })
-        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
-    }
-    async randomSpawning(){
+    async CreateZombie(): Promise<MonsterSet> {
         const zombie = new Zombie(this.loader, this.eventCtrl, this.gphysic, this.loader.ZombieAsset)
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
                 new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
 
         const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic,
             this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
-        this.zombies.push({ zombie: zombie, zCtrl: zCtrl, live: true })
+        return { monModel: zombie, monCtrl: zCtrl, live: true }
+    }
+
+    ReleaseZombie() {
+        this.zombies.forEach((z) => {
+            z.monModel.Visible = false
+            this.game.remove(z.monModel.Meshs, z.monCtrl.MonsterBox)
+        })
+        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
+    }
+    async randomSpawning(){
+        const zSet = await this.CreateZombie()
+        this.zombies.push(zSet)
 
 
-        zombie.Visible = true
-        zombie.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
-        zombie.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
+        zSet.monModel.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
+        zSet.monModel.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
 
-        this.playerCtrl.add(zCtrl.phybox)
-        this.game.add(zombie.meshs, zCtrl.phybox)
+        while (this.gphysic.Check(zSet.monModel)) {
+            zSet.monModel.CannonPos.y += 0.5
+        }
+
+        zSet.monModel.Visible = true
+
+        this.playerCtrl.add(zSet.monCtrl.MonsterBox)
+        this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)
 
         if (this.zombies.length < 30) {
             this.keytimeout = setTimeout(() => {

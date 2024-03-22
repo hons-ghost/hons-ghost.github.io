@@ -62,7 +62,7 @@ export class Item implements IItem {
     get Mesh() { return this.property.meshs }
     get AttackType() { return this.property.weapon }
     get Stackable() { return this.property.stackable }
-    constructor(protected property: ItemProperty) {}
+    constructor(public property: ItemProperty) {}
 
     MakeInformation() {
         const infos = new Array<{k?: string, v: string}>()
@@ -96,7 +96,8 @@ export class Item implements IItem {
     async Loader() {
         const asset = this.property.asset
         if (asset == undefined) return
-        const meshs = await asset.CloneModel()
+        const [meshs, exist] = await asset.UniqModel(this.property.name)
+        //const meshs = await asset.CloneModel()
         this.property.meshs = meshs
     }
 }

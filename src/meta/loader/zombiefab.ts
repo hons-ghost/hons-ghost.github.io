@@ -21,12 +21,15 @@ export class ZombieFab extends AssetModel implements IAsset {
                 child.castShadow = true
                 child.receiveShadow = true
             })
+            const scale = 0.024
+            this.meshs.children[0].scale.set(scale, scale, scale)
+            this.meshs.children[0].position.set(0, -2.5, 0)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
             this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "ZombieIdle"))
-            this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "ZombieWalk"))
+            this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Walking"))
             this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "ZombieAttack"))
             this.clips.set(Ani.MonBiting, gltf.animations.find((clip) => clip.name == "ZombieBiting"))
-            this.clips.set(Ani.Dying, gltf.animations.find((clip) => clip.name == "ZombieDeath"))
+            this.clips.set(Ani.Dying, gltf.animations.find((clip) => clip.name == "ZombieDying"))
             this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "ZombieScream"))
         })
     }

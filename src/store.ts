@@ -1,4 +1,4 @@
-import { Inventory } from "./meta/inventory/inventory";
+import { InvenData, Inventory } from "./meta/inventory/inventory";
 import { HonEntry, ModelsEntry, ProfileEntry } from "./models/param";
 import { GlobalLoadListTx, GlobalLoadTx, GlobalSaveTxId, HonTxId } from "./models/tx";
 
@@ -9,6 +9,7 @@ export class BlockStore {
     profiles = new Map<string, ProfileEntry>()
     models = new Map<string, ModelsEntry>()
     honviews = new Map<string, string>()
+    invens = new Map<string, InvenData>()
 
     public constructor() { }
 
@@ -19,17 +20,28 @@ export class BlockStore {
     LoadHonView(key: string): string | undefined {
         return this.honviews.get(key)
     }
-    FetchCharacter(masterAddr: string, id: string) {
+    FetchInventory(masterAddr: string, id: string) {
+        const inven = this.invens.get(id)
+        if (inven != undefined) {
+            return Promise.resolve(inven)
+        }
         const addr = masterAddr + "/glambda?txid=" + 
-            encodeURIComponent(GlobalSaveTxId) + "&table=inventory&key=" + id;
+            encodeURIComponent(GlobalLoadTx) + "&table=inventory&key=" + id;
         return fetch(addr)
             .then((response) => response.json())
-            .then((inven: Inventory) => {
-                if ("json" in inven) {
-                    return inven
+            .then((ret) => {
+                if ("data" in ret) {
+                    const data = JSON.parse(ret.data as string);
+                    return data;
                 }
                 return undefined
             })
+    }
+    UpdateInventory(data: InvenData, key: string) {
+        this.invens.set(key, data)
+    }
+    GetInventory(key: string) {
+        return this.invens.get(key)
     }
     UpdateModels(model: ModelsEntry, key: string) {
         this.models.set(key, model)

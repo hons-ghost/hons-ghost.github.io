@@ -22,8 +22,69 @@ class State {
             return this.zCtrl.RunSt
         }
     }
+    CheckGravity() {
+        this.zombie.Meshs.position.y -= 0.5
+        if (!this.gphysic.Check(this.zombie)) {
+            this.zombie.Meshs.position.y += 0.5
+            this.zCtrl.JumpSt.Init()
+            this.zCtrl.JumpSt.velocity_y = 0
+            return this.zCtrl.JumpSt
+        }
+        this.zombie.Meshs.position.y += 0.5
+    }
 }
+export class JumpZState implements IPlayerAction {
+    speed = 10
+    velocity_y = 16
+    dirV = new THREE.Vector3(0, 0, 0)
+    ZeroV = new THREE.Vector3(0, 0, 0)
+    YV = new THREE.Vector3(0, 1, 0)
+    MX = new THREE.Matrix4()
+    QT = new THREE.Quaternion()
 
+    constructor(private ctrl: ZombieCtrl, private zombie: Zombie, private gphysic: GPhysics) { }
+    Init(): void {
+        console.log("Jump Init!!")
+        this.velocity_y = 16
+    }
+    Uninit(): void {
+        this.velocity_y = 16
+    }
+    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+        const movX = v.x * delta * this.speed
+        const movZ = v.z * delta * this.speed
+        const movY = this.velocity_y * delta
+
+        this.zombie.Meshs.position.x += movX
+        this.zombie.Meshs.position.z += movZ
+
+        if (movX || movZ) {
+            this.dirV.copy(v)
+            this.dirV.y = 0
+            const mx = this.MX.lookAt(this.dirV, this.ZeroV, this.YV)
+            const qt = this.QT.setFromRotationMatrix(mx)
+            this.zombie.Meshs.quaternion.copy(qt)
+        }
+
+        if (this.gphysic.Check(this.zombie)) {
+            this.zombie.Meshs.position.x -= movX
+            this.zombie.Meshs.position.z -= movZ
+        }
+
+        this.zombie.Meshs.position.y += movY
+
+        if (this.gphysic.Check(this.zombie)) {
+            this.zombie.Meshs.position.y -= movY
+
+            this.Uninit()
+            this.ctrl.IdleSt.Init()
+            return this.ctrl.IdleSt
+        }
+        this.velocity_y -= 9.8 * 3 *delta
+
+        return this
+    }
+}
 export class AttackZState extends State implements IPlayerAction {
     keytimeout?:NodeJS.Timeout
     attackSpeed = this.property.attackSpeed
@@ -129,6 +190,9 @@ export class RunZState extends State implements IPlayerAction {
     QT = new THREE.Quaternion()
 
     Update(delta: number, v: THREE.Vector3, dist: number): IPlayerAction {
+        const checkGravity = this.CheckGravity()
+        if (checkGravity != undefined) return checkGravity
+
         if(dist < this.attackDist) {
             this.zCtrl.AttackSt.Init()
             return this.zCtrl.AttackSt

@@ -2,30 +2,32 @@ import * as THREE from "three";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics"
 import { Player } from "../models/player"
 import { Zombie } from "../models/zombie"
-import { AttackZState, DyingZState, IdleZState, RunZState } from "./zombiestate"
+import { AttackZState, DyingZState, IdleZState, JumpZState, RunZState } from "./zombiestate"
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
-import { IPlayerAction, MonsterBox } from "../zombies";
+import { IMonsterCtrl, IPlayerAction, MonsterBox } from "../zombies";
 import { EventController } from "../../event/eventctrl";
 import { MonsterProperty } from "../monsterdb";
 import { EffectType } from "../../effects/effector";
 
 
 
-export class ZombieCtrl implements IGPhysic {
+export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
     IdleSt = new IdleZState(this, this.zombie, this.gphysic)
     AttackSt = new AttackZState(this, this.zombie, this.gphysic, this.eventCtrl, this.property)
     RunSt = new RunZState(this, this.zombie, this.gphysic, this.property)
     DyingSt = new DyingZState(this, this.zombie, this.gphysic, this.eventCtrl)
+    JumpSt = new JumpZState(this, this.zombie, this.gphysic)
 
     currentState: IPlayerAction = this.IdleSt
     raycast = new THREE.Raycaster()
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
     health = this.property.health
-    phybox: MonsterBox
+    private phybox: MonsterBox
     get Drop() { return this.property.drop }
+    get MonsterBox() { return this.phybox }
 
     constructor(
         private id: number,
@@ -42,11 +44,13 @@ export class ZombieCtrl implements IGPhysic {
         const geometry = new THREE.BoxGeometry(size.x * 3, size.y, size.z * 3)
         const material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
-            transparent: true,
-            opacity: 0,
+            //transparent: true,
+            //opacity: 0,
             color: 0xff0000,
+            depthWrite: false,
         })
         this.phybox = new MonsterBox(id, "Zombie", geometry, material)
+        this.phybox.visible = false
         this.phybox.position.copy(this.zombie.CannonPos)
     }
     Respawning() {

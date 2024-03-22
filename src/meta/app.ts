@@ -9,12 +9,13 @@ import { Char } from "./loader/assetmodel";
 import { BrickOption } from "./scenes/bricks";
 import { Inventory } from "./inventory/inventory";
 import { IBuffItem } from "./buff/buff";
+import { GameOptions } from "./scenes/gamecenter";
 
 export enum AppMode {
     Long,
     Close,
     Play,
-    Edit,
+    EditPlay,
     Brick,
     Locate,
     Face,
@@ -106,6 +107,9 @@ export default class App {
             this.factory.Helper?.CheckStateEnd()
             this.loop()
         })       
+    }
+    Setup(opt: GameOptions) {
+        this.factory.GameCenter.Setup(opt)
     }
 
     render() {

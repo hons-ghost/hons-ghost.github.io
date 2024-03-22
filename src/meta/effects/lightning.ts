@@ -1,17 +1,18 @@
 import * as THREE from "three";
 import { IEffect } from "./effector";
+import SConf from "../configs/staticconf";
 
 export class Lightning implements IEffect {
     process = false
     points: THREE.Points;
     startTime = 0
-    constructor(
-        private start: THREE.Vector3, 
-        private end: THREE.Vector3,
-        private count: number,
-    ) {
+    start = SConf.StartPosition.clone()
+    end = this.start.clone()
+    count = 10
+    constructor() {
+        this.end.y += 10
         const particlesGeometry = new THREE.BufferGeometry()
-        const lineVertex = this.lightning(start, end, THREE.MathUtils.randInt(5, 8), count)
+        const lineVertex = this.lightning(this.start, this.end, THREE.MathUtils.randInt(5, 8), this.count)
         particlesGeometry.setFromPoints(lineVertex)
 
         const colors = []

@@ -47,6 +47,7 @@ export class TextStatus extends THREE.Sprite implements IEffect {
 
         this.params_ = params;
         this.visible_ = true;
+        this.visible = false
     }
 
     Destroy() {

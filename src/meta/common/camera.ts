@@ -95,7 +95,8 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         this.focusAt(this.target.position)
                     }
                     break;
-                case AppMode.Edit:
+                    /*
+                case AppMode.EditPlay:
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Edit
                         this.controls.enabled = false
@@ -105,6 +106,16 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         if (this.owner == undefined) return
                         this.target = this.owner.Meshs
                         this.focusAt(this.owner.CannonPos)
+                    }
+                    break;
+                    */
+                case AppMode.EditPlay:
+                    if (e == EventFlag.Start) {
+                        this.viewMode = ViewMode.Target
+                        this.controls.enabled = false
+                        this.target = this.player.Meshs
+                        if (this.animate != undefined) this.animate.kill()
+                        this.focusAt(this.target.position)
                     }
                     break;
                 case AppMode.Play:

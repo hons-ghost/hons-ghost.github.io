@@ -40,6 +40,8 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     ) {
         super(asset)
         this.text = new FloatingName("Zombie")
+        this.effector.Enable(EffectType.Damage, 0, 1, 0)
+        this.effector.Enable(EffectType.Status)
     }
 
     async Init(text: string) {
@@ -54,7 +56,6 @@ export class Zombie extends GhostModel implements IPhysicsObject {
         const [meshs, exist] = await asset.UniqModel(text + id)
         this.meshs = meshs
 
-        console.log(this.meshs)
         this.meshs.position.set(position.x, position.y, position.z)
 
         if (this.text != undefined) {

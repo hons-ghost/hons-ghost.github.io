@@ -5,7 +5,8 @@ import { Char } from "../loader/assetmodel";
 import { BrickShapeType } from "../scenes/legos";
 import { Npc } from "../scenes/models/npc";
 import { Player } from "../scenes/models/player";
-import { Inventory } from "../inventory/inventory";
+import { InvenData, Inventory } from "../inventory/inventory";
+import { InvenFactory } from "../inventory/invenfactory";
 
 type Lego = {
     position: THREE.Vector3
@@ -57,10 +58,17 @@ export class ModelStore {
     get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
+    set Owner(v: THREE.Vector3 | undefined) {
+        if (v && this.data.owner != undefined) {
+            this.data.owner.x = v.x
+            this.data.owner.y = v.y
+            this.data.owner.z = v.z
+        }
+    }
     get OwnerModel() { return this.data.ownerModel }
     get PlayerModel() { return this.playerModel }
     get Name() {return this.name}
-    constructor(private eventCtrl: EventController, private inven: Inventory) {
+    constructor(private eventCtrl: EventController, private invenFab: InvenFactory) {
         this.eventCtrl.RegisterReloadEvent(async () => {
             const promise = this.mgrs.map(async (mgr) => {
                 await mgr.Reload()
@@ -87,16 +95,27 @@ export class ModelStore {
         })
     }
     StoreInventory(): string {
-        const json = JSON.stringify(this.inven)
+        const json = JSON.stringify(this.invenFab.invenHouse.data)
         return json
     }
-    LoadInventory(inven: Inventory | undefined) {
+    LoadInventory(inven: InvenData | undefined) {
         if (inven != undefined) {
-            this.inven.Copy(inven)
-            this.eventCtrl.OnChangeEquipmentEvent(inven)
+            this.invenFab.invenHouse.Copy(inven)
+            this.eventCtrl.OnChangeEquipmentEvent(this.invenFab.invenHouse)
         }
-        return this.inven
+        return this.invenFab.invenHouse
     }
+    ChangeInventory(inven: InvenData | undefined) {
+        if (inven != undefined) {
+            this.invenFab.inven.Copy(inven)
+            this.eventCtrl.OnChangeEquipmentEvent(this.invenFab.inven)
+        }
+        return this.invenFab.inven
+    }
+    GetEmptyInventory() {
+        return this.invenFab.inven
+    }
+
 
     StoreModels() {
         this.data.owner = this.owner?.Meshs.position

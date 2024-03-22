@@ -7,66 +7,77 @@ export type InventorySlot = {
     count: number,
 }
 
+export type InvenData = {
+    bodySlot: IItem []
+    inventroySlot: InventorySlot []
+}
+
+const maxSlot = 15
+
 export class Inventory {
-    bodySlot: IItem [] = []
-    inventroySlot: InventorySlot [] = []
-    maxSlot = 15
+    data: InvenData = {
+        bodySlot: [],
+        inventroySlot: []
+    }
 
     constructor(private itemDb: ItemDb, private alarm: Alarm) {
     }
     InsertInventory(item: IItem) {
-        const find = this.inventroySlot.find((slot) => slot.item.Id == item.Id)
+        const find = this.data.inventroySlot.find((slot) => slot.item.Id == item.Id)
         if (find && item.Stackable) {
            find.count++ 
            return
         }
-        this.inventroySlot.push({ item: item, count: 1 })
+        this.data.inventroySlot.push({ item: item, count: 1 })
     }
     async NewItem(key: symbol) {
-        if(this.inventroySlot.length == this.maxSlot) {
+        if(this.data.inventroySlot.length == maxSlot) {
             this.alarm.NotifyInfo("인벤토리가 가득찼습니다.", AlarmType.Warning)
             return 
         }
         const item = new Item(this.itemDb.GetItem(key))
         await item.Loader()
 
-        const find = this.inventroySlot.find((slot) => slot.item.Id == item.Id)
+        const find = this.data.inventroySlot.find((slot) => slot.item.Id == item.Id)
         if (find && find.item.Stackable) {
            find.count++ 
            return item
         }
 
-        this.inventroySlot.push({ item: item, count: 1 })
+        this.data.inventroySlot.push({ item: item, count: 1 })
         return item
     }
     MoveToInvenFromBindItem(pos: Bind) {
-        const item = this.bodySlot[pos]
-        const index = this.bodySlot.indexOf(item)
+        const item = this.data.bodySlot[pos]
+        const index = this.data.bodySlot.indexOf(item)
         if (index < 0) throw new Error("there is no item");
-        this.bodySlot.splice(index, 1)
+        this.data.bodySlot.splice(index, 1)
 
-        this.inventroySlot.push({ item: item, count: 1 })
+        this.data.inventroySlot.push({ item: item, count: 1 })
     }
     MoveToBindFromInvenItem(pos: Bind, item:IItem) {
-        const find = this.inventroySlot.find((slot) => slot.item.Id == item.Id)
+        const find = this.data.inventroySlot.find((slot) => slot.item.Id == item.Id)
         if (find == undefined) throw new Error("there is no item");
-        const index = this.inventroySlot.indexOf(find)
-        this.inventroySlot.splice(index, 1)
+        const index = this.data.inventroySlot.indexOf(find)
+        this.data.inventroySlot.splice(index, 1)
         
-        this.bodySlot[pos] = item
+        this.data.bodySlot[pos] = item
     }
-    GetInventory(i :number) {
-        return this.inventroySlot[i]
+    GetInventory(i: number): InventorySlot {
+        return this.data.inventroySlot[i]
     }
 
     GetBindItem(pos: Bind) {
-        return this.bodySlot[pos]
+        return this.data.bodySlot[pos]
     }
     GetItemInfo(key: symbol) {
         return this.itemDb.GetItem(key)
     }
-    Copy(inven: Inventory) {
-        this.bodySlot = inven.bodySlot
-        this.inventroySlot = inven.inventroySlot
+    Copy(inven: InvenData) {
+        this.data = inven
+    }
+    Clear() {
+        this.data.bodySlot.length = 0
+        this.data.inventroySlot.length = 0
     }
 }

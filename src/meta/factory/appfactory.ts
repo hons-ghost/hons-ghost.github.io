@@ -31,6 +31,7 @@ import { Drop } from "../drop/drop";
 import { MonsterDb } from "../scenes/monsterdb";
 import { Alarm } from "../common/alarm";
 import { Materials } from "../scenes/materials";
+import { GameCenter } from "../scenes/gamecenter";
 
 
 export class AppFactory {
@@ -41,6 +42,7 @@ export class AppFactory {
     private eventCtrl = new EventController()
     private canvas = new Canvas()
     private loader = new Loader(this.eventCtrl)
+    private gameCenter: GameCenter
 
     private store: ModelStore
     private input: Input
@@ -85,6 +87,7 @@ export class AppFactory {
     get ModelStore() { return this.store }
     get Player() { return this.player }
     get Buff() { return this.buff }
+    get GameCenter() { return this.gameCenter }
 
     constructor() {
         this.worldSize = 300
@@ -95,7 +98,7 @@ export class AppFactory {
         this.invenFab = new InvenFactory(this.loader, this.alarm)
         this.monDb = new MonsterDb(this.loader)
 
-        this.store = new ModelStore(this.eventCtrl, this.invenFab.inven)
+        this.store = new ModelStore(this.eventCtrl, this.invenFab)
         this.input = new Input(this.eventCtrl)
         this.light = new Light(this.canvas)
         this.game = new Game(this.light)
@@ -115,6 +118,8 @@ export class AppFactory {
         this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
         this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb, this.gphysics)
+
+        this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.zombies, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)

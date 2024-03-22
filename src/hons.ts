@@ -52,7 +52,7 @@ export class Hons extends Page{
             this.blockStore.SaveHonView(id, html)
         }
         const feedstag = document.getElementById("feeds") as HTMLDivElement
-        feedstag.insertAdjacentHTML("beforeend", html)
+        if (feedstag) feedstag.insertAdjacentHTML("beforeend", html)
     }
     public async RequestHon(keys: string[]) {
         await Promise.all(keys.map(async (key) => {
@@ -96,7 +96,7 @@ export class Hons extends Page{
     }
     public ViewLoadingSpinner(onoff: boolean){
         const printTag = document.getElementById("loading") as HTMLDivElement;
-        printTag.innerHTML = (onoff) ? `
+        if(printTag) printTag.innerHTML = (onoff) ? `
             <div class="spinner-grow text-primary" role="status">
                 <span class="visually-hidden"></span>
             </div>

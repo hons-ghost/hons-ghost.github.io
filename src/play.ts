@@ -1,6 +1,6 @@
 import { SubtractiveBlending } from "three";
 import App, { AppMode } from "./meta/app";
-import { Inventory } from "./meta/inventory/inventory";
+import { InvenData, Inventory } from "./meta/inventory/inventory";
 import { Bind, IItem } from "./meta/inventory/items/item";
 import { ItemId } from "./meta/inventory/items/itemdb";
 import { PlayerStatus } from "./meta/scenes/player/playerctrl";
@@ -9,12 +9,12 @@ import { Page } from "./page";
 import { UiInven } from "./play_inven";
 import { Session } from "./session";
 import { BlockStore } from "./store";
+import { GlobalSaveTxId } from "./models/tx";
 
 
 export class Play extends Page {
     m_masterAddr: string = ""
     ui = new Ui(this.meta, AppMode.Play)
-    inven = new UiInven(this.meta)
 
     alarm = document.getElementById("alarm-msg") as HTMLDivElement
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
@@ -25,6 +25,7 @@ export class Play extends Page {
         private blockStore: BlockStore,
         private session: Session, 
         private meta: App, 
+        private inven: UiInven,
         url: string
     ) {
         super(url)
@@ -62,6 +63,15 @@ export class Play extends Page {
         lvTag.style.display = "block"
         const startBtn = document.getElementById("startBtn") as HTMLButtonElement
         startBtn.onclick = () => {
+            this.meta.Setup({
+                OnEnd: () => { },
+                OnSaveInven: (data: InvenData) => {
+                    if (!this.session.CheckLogin() || data.inventroySlot.length < 1) return
+
+                    const json = this.meta.store.StoreInventory()
+                    this.SaveInventory(data, json)
+                }
+            })
             lvTag.style.display = "none"
             this.ui.UiOff(AppMode.Play)
             this.LevelUp()
@@ -74,9 +84,11 @@ export class Play extends Page {
         canvas.style.display = "block"
         this.meta.init()
             .then((inited) => {
-                this.blockStore.FetchCharacter(this.m_masterAddr, this.session.UserId)
-                    .then((inven: Inventory | undefined) => {
-                        this.inven.LoadInven(this.meta.store.LoadInventory(inven))
+                this.blockStore.FetchInventory(this.m_masterAddr, this.session.UserId)
+                    .then((inven: InvenData | undefined) => {
+                        console.log(inven)
+                        this.meta.store.LoadInventory(inven)
+                        this.inven.LoadInven(this.meta.store.GetEmptyInventory())
                         this.inven.loadSlot()
                     })
                 if (email == null) {
@@ -114,6 +126,7 @@ export class Play extends Page {
             const spBar = document.getElementById("special-bar") as HTMLProgressElement
             const expBar = document.getElementById("exp-bar") as HTMLProgressElement
             const lv = document.getElementById("level") as HTMLDivElement
+            if (!hpBar) return
             hpBar.value = status.health / status.maxHealth * 100
             spBar.value = status.mana / status.maxMana * 100
             expBar.value = status.exp / status.maxExp * 100
@@ -197,6 +210,32 @@ export class Play extends Page {
             }
         })
     }
+    public SaveInventory(data: InvenData, json: string) {
+        const masterAddr = this.m_masterAddr;
+        const user = this.session.GetHonUser();
+        const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(GlobalSaveTxId);
+
+        const formData = new FormData()
+        formData.append("key", encodeURIComponent(user.Email))
+        formData.append("email", encodeURIComponent(user.Email))
+        formData.append("id", user.Nickname)
+        formData.append("password", user.Password)
+        formData.append("data", json)
+        const time = (new Date()).getTime()
+        formData.append("table", "inventory")
+        fetch(addr, {
+            method: "POST",
+            cache: "no-cache",
+            headers: {},
+            body: formData
+        })
+            .then((response) => response.json())
+            .then((ret) => {
+                console.log(ret)
+                this.blockStore.UpdateInventory(data, user.Email)
+                this.alarm.style.display = "none"
+            })
+    }
     
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
@@ -215,7 +254,7 @@ export class Play extends Page {
     }
 
     public Release(): void {
-        this.inven.Clear()
+        this.defaultLv = 1
         this.ReleaseHtml()
     }
 }

@@ -54,15 +54,16 @@ export class UiInven {
     toInvenItem(bind: Bind) {
         if (this.inven == undefined) throw new Error("inventory undefined");
         this.inven.MoveToInvenFromBindItem(bind)
-        this.inven = this.meta.store.LoadInventory(this.inven)
+        this.inven = this.meta.store.ChangeInventory(this.inven.data)
 
         this.reloadSlot()
     }
     equipmentItem(item: IItem) {
         if (item.Bind == undefined) return
+        if (this.inven == undefined) throw new Error("inventory undefined");
 
         this.inven?.MoveToBindFromInvenItem(item.Bind, item)
-        this.inven = this.meta.store.LoadInventory(this.inven)
+        this.inven = this.meta.store.ChangeInventory(this.inven.data)
 
         this.reloadSlot()
     }
@@ -133,7 +134,10 @@ export class UiInven {
                 const id = j + i * this.colCont
                 const slotTag = document.getElementById(`slot${id}`) as HTMLDivElement
                 const slot = this.inven.GetInventory(id)
-                if(slot == undefined) continue
+                if(slot == undefined) {
+                    slotTag.innerText = ""
+                    continue
+                }
                 let htmlImg = `<img src="assets/icons/${slot.item.IconPath}">`
                 htmlImg += (slot.count > 1) ? `<span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-secondary"
                                     id="slot${id}count">
@@ -172,8 +176,9 @@ export class UiInven {
         const invenBtn = document.getElementById("invenBtn") as HTMLDivElement
         const invenCont = document.getElementById("invenContent") as HTMLDivElement
         invenBtn.onclick = () => {
+            if (this.inven == undefined) throw new Error("inventory undefined");
             if (invenCont.style.display == "none" || invenCont.style.display == "") {
-                this.inven = this.meta.store.LoadInventory(this.inven)
+                this.inven = this.meta.store.ChangeInventory(this.inven.data)
                 this.reloadSlot()
                 invenCont.style.display = "block"
             } else {

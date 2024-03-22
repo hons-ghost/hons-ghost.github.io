@@ -100,7 +100,7 @@ export class HonDetail extends Page {
             htmlString += data.html
         });
         const feedstag = document.getElementById("feeds") as HTMLDivElement
-        feedstag.innerHTML = htmlString
+        if(feedstag) feedstag.innerHTML = htmlString
     }
     public RequestHons(email: string) {
         this.m_masterAddr = window.MasterAddr;

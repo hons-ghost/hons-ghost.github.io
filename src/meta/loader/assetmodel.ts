@@ -85,16 +85,13 @@ export class AssetModel {
     }
 
     async UniqModel(id: string): Promise<[THREE.Group, boolean]> {
-        console.log("CALL UNIQ: ", id)
         const has = this.models.get(id)
         if (has != undefined) {
-        console.log(this.models, id)
             return [has, true]
         }
 
         const ret = await this.NewModel()
         this.models.set(id, ret)
-        console.log(this.models, id)
         return [ret, false]
     }
     async LoadAnimation(url: string, type: Ani) {
@@ -126,7 +123,6 @@ export class AssetModel {
         return await new Promise(async (resolve) => {
             await this.loader.FBXLoader.load(this.path, async (obj) => {
                 await this.afterLoad(obj)
-                console.log(this)
                 resolve(obj)
             })
         })

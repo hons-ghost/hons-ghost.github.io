@@ -495,5 +495,14 @@ display: inline-block;
     transform: translate(-50%, -50%);
     color:#fff;
     text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;
-
+}
+.timer {
+    position: absolute;
+    display: none;
+    width:fit-content;
+    top: 60px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color:#fff;
+    text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;
 }

@@ -65,7 +65,7 @@ export class Drop implements IViewer {
                 b.droped = true
                 b.items = itemIds
                 points.setX(b.id, pos.x)
-                points.setY(b.id, pos.y)
+                points.setY(b.id, 5)
                 points.setZ(b.id, pos.z)
                 this.activeDropBox.push(b)
                 break;

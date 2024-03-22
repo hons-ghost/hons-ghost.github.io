@@ -120,19 +120,24 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         if (rightId == undefined) return
 
         const mesh = this.meshs.getObjectByName(rightId)
+        if (!mesh) return
         const prev = this.bindMesh[bind]
 
         if (prev) {
-            mesh?.remove(prev)
+            //mesh.remove(prev)
+            prev.visible = false
             this.bindMesh.splice(this.bindMesh.indexOf(prev), 1)
         }
 
         const rItem = inven.GetBindItem(bind)
-        if (rItem) {
-            if (rItem.Mesh != undefined) {
-                mesh?.add(rItem.Mesh)
-                this.bindMesh[bind] = rItem.Mesh
+        if (rItem && rItem.Mesh != undefined) {
+            const find = mesh.getObjectById(rItem.Mesh.id)
+            if(find) {
+                find.visible = true
+            } else {
+                mesh.add(rItem.Mesh)
             }
+            this.bindMesh[bind] = rItem.Mesh
         }
     }
 

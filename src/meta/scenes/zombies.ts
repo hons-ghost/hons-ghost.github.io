@@ -105,10 +105,14 @@ export class Zombies {
             this.drop.DropItem(z.monModel.CannonPos, z.monCtrl.Drop)
             this.playerCtrl.remove(z.monCtrl.MonsterBox)
             this.respawntimeout = setTimeout(() => {
-                z.monModel.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
-                z.monModel.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
+                z.monModel.CannonPos.x = this.player.CannonPos.x + Math.floor(math.rand_int(-20, 20))
+                z.monModel.CannonPos.z = this.player.CannonPos.z + Math.floor(math.rand_int(-20, 20))
                 z.live = true
                 z.monCtrl.Respawning()
+
+                while (this.gphysic.Check(z.monModel)) {
+                    z.monModel.CannonPos.y += 0.5
+                }
                 this.playerCtrl.add(z.monCtrl.MonsterBox)
             }, THREE.MathUtils.randInt(4000, 8000))
         }
@@ -160,9 +164,15 @@ export class Zombies {
         const zSet = await this.CreateZombie()
         this.zombies.push(zSet)
 
-        zSet.monModel.Visible = true
+
         zSet.monModel.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
         zSet.monModel.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
+
+        while (this.gphysic.Check(zSet.monModel)) {
+            zSet.monModel.CannonPos.y += 0.5
+        }
+
+        zSet.monModel.Visible = true
 
         this.playerCtrl.add(zSet.monCtrl.MonsterBox)
         this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)

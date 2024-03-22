@@ -25,7 +25,6 @@ export class ZombieFab extends AssetModel implements IAsset {
             this.meshs.children[0].scale.set(scale, scale, scale)
             this.meshs.children[0].position.set(0, -2.5, 0)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
-            console.log(gltf.animations)
             this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "ZombieIdle"))
             this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Walking"))
             this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "ZombieAttack"))

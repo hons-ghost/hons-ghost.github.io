@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics"
 import { Player } from "../models/player"
 import { Zombie } from "../models/zombie"
-import { AttackZState, DyingZState, IdleZState, RunZState } from "./zombiestate"
+import { AttackZState, DyingZState, IdleZState, JumpZState, RunZState } from "./zombiestate"
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
@@ -18,6 +18,7 @@ export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
     AttackSt = new AttackZState(this, this.zombie, this.gphysic, this.eventCtrl, this.property)
     RunSt = new RunZState(this, this.zombie, this.gphysic, this.property)
     DyingSt = new DyingZState(this, this.zombie, this.gphysic, this.eventCtrl)
+    JumpSt = new JumpZState(this, this.zombie, this.gphysic)
 
     currentState: IPlayerAction = this.IdleSt
     raycast = new THREE.Raycaster()

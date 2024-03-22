@@ -15,6 +15,7 @@ import { Main } from "./main";
 import App from "./meta/app";
 import { EditHome } from "./edithome";
 import { Play } from "./play";
+import { UiInven } from "./play_inven";
 
 
 interface IPage {
@@ -38,6 +39,7 @@ class Index {
     blockStore = new BlockStore();
     session = new Session(this.blockStore);
     meta = new App()
+    inven = new UiInven(this.meta)
     ipc = new Socket
     router = new Router(this.ipc)
     newHon = new NewHon(this.blockStore, this.session, this.ipc, "views/newhon.html")
@@ -54,8 +56,8 @@ class Index {
         "uploadhon": new UploadHon(this.blockStore, this.session, "views/uploadhon.html"),
         "profile": this.profile,
         "main": new Main(this.blockStore, this.session, "views/main.html"),
-        "edithome": new EditHome(this.blockStore, this.session, this.meta, "views/edithome.html"),
-        "play": new Play(this.blockStore, this.session, this.meta, "views/play.html"),
+        "edithome": new EditHome(this.blockStore, this.session, this.meta, this.inven, "views/edithome.html"),
+        "play": new Play(this.blockStore, this.session, this.meta, this.inven, "views/play.html"),
     };
 
     urlToFileMap: UrlMap = {

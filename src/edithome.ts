@@ -7,6 +7,7 @@ import { BlockStore } from "./store";
 import ColorPicker from "@thednp/color-picker";
 import { Page } from "./page";
 import { Ui } from "./models/ui";
+import { UiInven } from "./play_inven";
 
 export class EditHome extends Page {
     m_masterAddr = ""
@@ -26,6 +27,7 @@ export class EditHome extends Page {
         private blockStore: BlockStore,
         private session: Session, 
         private meta: App, 
+        private inven: UiInven,
         url: string
     ) {
         super(url)

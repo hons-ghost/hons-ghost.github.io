@@ -56,7 +56,6 @@ export class Zombie extends GhostModel implements IPhysicsObject {
         const [meshs, exist] = await asset.UniqModel(text + id)
         this.meshs = meshs
 
-        console.log(this.meshs)
         this.meshs.position.set(position.x, position.y, position.z)
 
         if (this.text != undefined) {

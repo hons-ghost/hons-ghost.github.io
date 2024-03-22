@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { EventController, EventFlag } from '../../event/eventctrl'
 import { Joystick } from "./joystic";
 import { KeyAction1, KeyAction2, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "../../event/keycommand";
-import { AppMode } from "../../app";
+import App, { AppMode } from "../../app";
 
 export class Input {
     //dom = document.createElement("div")
@@ -66,6 +66,7 @@ export class Input {
                         this.ButtonHide()
                     }
                     break;
+                case AppMode.Edit:
                 case AppMode.Play:
                     if (e == EventFlag.Start) {
                         this.joystick.Show()

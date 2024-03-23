@@ -41,6 +41,10 @@ export class MaleFab extends AssetModel implements IAsset {
             await this.LoadAnimation("assets/male/Gunplay.fbx", Ani.Shooting)
             await this.LoadAnimation("assets/male/Dying Backwards.fbx", Ani.Dying)
  
+            await this.LoadAnimation("assets/female/PickFruit.fbx", Ani.PickFruit)
+            await this.LoadAnimation("assets/female/PickFruit_tree.fbx", Ani.PickFruitTree)
+            await this.LoadAnimation("assets/female/StandingMeleeAttackDownward.fbx", Ani.Hammering)
+            await this.LoadAnimation("assets/female/Watering.fbx", Ani.Wartering)
         })
     }
     CreateVectorGui(f: GUI, v: THREE.Vector3 | THREE.Euler, name: string, step: number) {

@@ -17,6 +17,9 @@ import { AppMode } from "../app";
 import { MinataurFab } from "./minataurfab";
 import { CrabFab } from "./crabfab";
 import { StoneFab } from "./stonefab";
+import { HammerFab, WarteringCanFab } from "./farmtoolsfab";
+import { BedFab } from "./funiturefab";
+import { AppleTreeFab } from "./plantfab";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -38,6 +41,13 @@ export class Loader {
     private bat = new BatFab(this)
     private gun = new GunFab(this)
     private stone = new StoneFab(this)
+    private bed = new BedFab(this)
+
+
+    private appleTree = new AppleTreeFab(this)
+
+    private wartercan = new WarteringCanFab(this)
+    private hammer = new HammerFab(this)
 
     get MaleAsset(): IAsset { return this.male }
     get FemaleAsset(): IAsset { return this.female }
@@ -53,6 +63,13 @@ export class Loader {
 
     get GunAsset(): IAsset { return this.gun }
     get BatAsset(): IAsset { return this.bat }
+    get BedAsset(): IAsset { return this.bed }
+    get WarteringCanAsset(): IAsset { return this.wartercan }
+    get HammerAsset(): IAsset { return this.hammer }
+
+    get AppleTreeAsset(): IAsset { return this.appleTree }
+
+
     get Load(): GLTFLoader { return this.loader }
     get LoadingManager(): THREE.LoadingManager { return this.loadingManager }
     get FBXLoader(): FBXLoader { return this.fbxLoader}
@@ -80,8 +97,13 @@ export class Loader {
 
         this.assets.set(Char.Bat, this.bat)
         this.assets.set(Char.Gun, this.gun)
+        this.assets.set(Char.WarteringCan, this.wartercan)
+        this.assets.set(Char.Hammer, this.hammer)
+
+        this.assets.set(Char.AppleTree, this.appleTree)
 
         this.assets.set(Char.Stone, this.stone)
+        this.assets.set(Char.Bed, this.bed)
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Play) return

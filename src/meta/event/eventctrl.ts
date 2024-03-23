@@ -9,6 +9,7 @@ import { Inventory } from "../inventory/inventory";
 
 export enum EventFlag {
     Start,
+    Message,
     End
 }
 

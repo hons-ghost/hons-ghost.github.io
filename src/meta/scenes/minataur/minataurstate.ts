@@ -3,7 +3,7 @@ import { GPhysics } from "../../common/physics/gphysics"
 import { ActionType } from "../models/player"
 import { MinataurCtrl } from "./minataurctrl";
 import { Minataur } from "../models/minataur";
-import { IPlayerAction } from "../zombies";
+import { IPlayerAction } from "../monsters";
 
 
 class State {
@@ -27,7 +27,7 @@ export class AttackMState extends State implements IPlayerAction {
         super(ctrl, monster, gphysic)
     }
     Init(): void {
-        this.obj.ChangeAction(ActionType.PunchAction)
+        this.obj.ChangeAction(ActionType.Punch)
     }
     Uninit(): void {
         
@@ -48,7 +48,7 @@ export class IdleMState extends State implements IPlayerAction {
         this.Init()
     }
     Init(): void {
-        this.obj.ChangeAction(ActionType.IdleAction)
+        this.obj.ChangeAction(ActionType.Idle)
     }
     Uninit(): void {
         
@@ -65,7 +65,7 @@ export class DyingMState extends State implements IPlayerAction {
         super(zCtrl, monster, gphysic)
     }
     Init(): void {
-        this.obj.ChangeAction(ActionType.DyingAction)
+        this.obj.ChangeAction(ActionType.Dying)
     }
     Uninit(): void {
         
@@ -80,7 +80,7 @@ export class RunMState extends State implements IPlayerAction {
         super(zCtrl, monster, gphysic)
     }
     Init(): void {
-        this.obj.ChangeAction(ActionType.RunAction)
+        this.obj.ChangeAction(ActionType.Run)
     }
     Uninit(): void {
         

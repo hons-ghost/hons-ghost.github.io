@@ -1,6 +1,7 @@
 import { Alarm } from "../common/alarm";
 import { Loader } from "../loader/loader";
 import { Inventory } from "./inventory";
+import { Item } from "./items/item";
 import { ItemDb } from "./items/itemdb";
 
 
@@ -26,5 +27,10 @@ export class InvenFactory {
             }
             d.inventroySlot.push(e)
         }
+    }
+    async GetNewItem(key: symbol) {
+        const item = new Item(this.itemDb.GetItem(key))
+        await item.Loader()
+        return item
     }
 }

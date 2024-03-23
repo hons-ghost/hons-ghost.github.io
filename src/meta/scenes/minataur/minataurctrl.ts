@@ -6,7 +6,7 @@ import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
 import { AttackMState, DyingMState, IdleMState, RunMState } from "./minataurstate";
 import { Minataur } from "../models/minataur";
-import { IPlayerAction, MonsterBox } from "../zombies";
+import { IPlayerAction, MonsterBox } from "../monsters";
 
 
 export class MinataurCtrl implements IGPhysic{

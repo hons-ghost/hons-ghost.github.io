@@ -21,6 +21,7 @@ export enum AppMode {
     Face,
     Weapon,
     Funiture,
+    Farmer,
     Portal,
     Lego,
     LegoDelete,
@@ -127,6 +128,9 @@ export default class App {
         this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.End)
         this.eventCtrl.OnAppModeEvent(mode, EventFlag.Start, arg)
         this.currentMode = mode
+    }
+    SendModeMessage(...arg: any[]) {
+        this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.Message, arg)
     }
 
     ModelStore() {

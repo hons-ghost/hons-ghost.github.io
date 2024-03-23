@@ -6,7 +6,7 @@ import { AttackZState, DyingZState, IdleZState, JumpZState, RunZState } from "./
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
-import { IMonsterCtrl, IPlayerAction, MonsterBox } from "../zombies";
+import { IMonsterCtrl, IPlayerAction, MonsterBox } from "../monsters";
 import { EventController } from "../../event/eventctrl";
 import { MonsterProperty } from "../monsterdb";
 import { EffectType } from "../../effects/effector";

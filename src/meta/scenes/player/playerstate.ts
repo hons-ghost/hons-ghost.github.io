@@ -86,7 +86,7 @@ export class MagicH2State extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Magic2!!")
-        const duration = this.player.ChangeAction(ActionType.MagicH2Action) ?? 2
+        const duration = this.player.ChangeAction(ActionType.MagicH2) ?? 2
         this.next = this
         this.keytimeout = setTimeout(() => {
             this.Uninit()
@@ -117,7 +117,7 @@ export class MagicH1State extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Magic!!")
-        const duration = this.player.ChangeAction(ActionType.MagicH1Action) ?? 2
+        const duration = this.player.ChangeAction(ActionType.MagicH1) ?? 2
         this.next = this
         this.keytimeout = setTimeout(() => {
             this.Uninit()
@@ -146,7 +146,7 @@ export class DeadState extends State implements IPlayerAction {
         this.Init()
     }
     Init(): void {
-        this.player.ChangeAction(ActionType.DyingAction)
+        this.player.ChangeAction(ActionType.Dying)
     }
     Uninit(): void {
         
@@ -161,7 +161,7 @@ export class IdleState extends State implements IPlayerAction {
         this.Init()
     }
     Init(): void {
-        this.player.ChangeAction(ActionType.IdleAction)
+        this.player.ChangeAction(ActionType.Idle)
         this.playerCtrl.RunSt.PreviousState(this)
     }
     Uninit(): void {
@@ -184,7 +184,7 @@ export class RunState extends State implements IPlayerAction {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
-        this.player.ChangeAction(ActionType.RunAction)
+        this.player.ChangeAction(ActionType.Run)
     }
     Uninit(): void { }
 
@@ -241,7 +241,7 @@ export class JumpState implements IPlayerAction {
     constructor(private playerCtrl: PlayerCtrl, private player: Player, private gphysic: GPhysics) { }
     Init(): void {
         console.log("Jump Init!!")
-        this.player.ChangeAction(ActionType.JumpAction)
+        this.player.ChangeAction(ActionType.Jump)
         this.velocity_y = 16
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
     }

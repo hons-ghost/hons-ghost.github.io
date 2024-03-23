@@ -62,10 +62,18 @@ export class Portal extends GhostModel implements IPhysicsObject, IModelReload {
         this.meshs.position.x += vx
         this.meshs.position.y = 4.7
         this.meshs.position.z += vz
-        if (this.gphysic.Check(this)) {
-            this.meshs.position.x -= vx
-            this.meshs.position.z -= vz
+
+       if (this.gphysic.Check(this)) {
+            do {
+                this.meshs.position.y += 0.2
+            } while (this.gphysic.Check(this))
+        } else {
+            do {
+                this.meshs.position.y -= 0.2
+            } while (!this.gphysic.Check(this) && this.meshs.position.y >= 4.7)
+            this.meshs.position.y += 0.2
         }
+
         this.store.Portal = this.meshs.position
         console.log(this.meshs.position)
     }

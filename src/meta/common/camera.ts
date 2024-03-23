@@ -210,7 +210,13 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
             case ViewMode.Target: {
                     const target = this.target?.position
                     if (target == undefined) return
-                    if (this.debugMode) return
+                    if (this.debugMode) {
+                        this.controls.enabled = true
+                        this.controls.update()
+                        return
+                    } else {
+                        this.controls.enabled = false
+                    }
                     this.rotation.x = -Math.PI / 4
                     this.position.set(
                         target.x + this.shortPos.x,

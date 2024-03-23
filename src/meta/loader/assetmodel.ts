@@ -15,6 +15,12 @@ export enum Ani {
     MagicH2,
     Dance0,
 
+    Wartering,
+    Hammering,
+    PickFruit,
+    PickFruitTree,
+    PlantAPlant,
+
     MonBiting,
     MonScream,
     MonHurt,
@@ -44,7 +50,11 @@ export enum Char{
 
     Bat,
     Gun,
+    WarteringCan,
+    Hammer,
+    AppleTree,
 
+    Bed,
     Stone,
 }
 export enum ModelType {

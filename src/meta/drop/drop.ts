@@ -8,6 +8,8 @@ import { ItemId } from "../inventory/items/itemdb";
 import { math } from "../../libs/math";
 import { Inventory } from "../inventory/inventory";
 import { Alarm, AlarmType } from "../common/alarm";
+import { EventController, EventFlag } from "../event/eventctrl";
+import { AppMode } from "../app";
 
 type DropBox = {
     id: number
@@ -32,7 +34,19 @@ export class Drop implements IViewer {
         private player: Player,
         canvas: Canvas,
         private scene: THREE.Scene,
+        private eventCtrl: EventController,
     ) {
+        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Play) return
+            switch (e) {
+                case EventFlag.Start:
+                    break
+                case EventFlag.End:
+                    this.Uninit()
+                    break
+            }
+        })
+
         canvas.RegisterViewer(this)
         //this.points = this.CreateInstancedMesh()//this.CreatePoints()
         this.points = this.CreatePoints()
@@ -40,6 +54,24 @@ export class Drop implements IViewer {
         this.points.frustumCulled = false
         this.points.renderOrder = 1
         this.scene.add(this.points)
+    }
+    Uninit() {
+        if (this.pointsGeometry == undefined) return
+        const points = this.pointsGeometry.attributes.position
+        for (let i = 0; i < this.dropBox.length; i++) {
+            const b = this.dropBox[this.head]
+            if (b.droped) {
+                b.droped = false
+                points.setX(b.id, this.resetPos.x)
+                points.setY(b.id, this.resetPos.y)
+                points.setZ(b.id, this.resetPos.z)
+            }
+            this.head++
+            this.head %= this.dropBox.length
+        }
+        this.head = 0
+        this.activeDropBox.length = 0
+        points.needsUpdate = true
     }
 
     DropItem(pos: THREE.Vector3, drop: MonDrop[] | undefined) {

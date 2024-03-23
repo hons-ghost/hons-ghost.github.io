@@ -6,7 +6,7 @@ import { IViewer } from "./models/iviewer";
 import { Player } from "./models/player";
 import { Portal } from "./models/portal";
 import { PlayerCtrl } from "./player/playerctrl";
-import { Zombies } from "./zombies";
+import { Monsters } from "./monsters";
 import { Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Alarm, AlarmType } from "../common/alarm";
@@ -46,7 +46,7 @@ export class GameCenter implements IViewer {
         private player: Player, 
         private playerCtrl: PlayerCtrl,
         private portal: Portal,
-        private monster: Zombies,
+        private monster: Monsters,
         private invenFab: InvenFactory,
         private canvas: Canvas,
         private alarm: Alarm,

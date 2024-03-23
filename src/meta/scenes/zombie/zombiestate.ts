@@ -3,7 +3,7 @@ import { GPhysics } from "../../common/physics/gphysics"
 import { ActionType } from "../models/player"
 import { Zombie } from "../models/zombie"
 import { ZombieCtrl } from "./zombiectrl";
-import { IPlayerAction } from "../zombies";
+import { IPlayerAction } from "../monsters";
 import { EventController } from "../../event/eventctrl";
 import { AttackType } from "../player/playerctrl";
 import { MonsterProperty } from "../monsterdb";
@@ -99,7 +99,7 @@ export class AttackZState extends State implements IPlayerAction {
         super(zCtrl, zombie, gphysic)
     }
     Init(): void {
-        const duration = this.zombie.ChangeAction(ActionType.PunchAction)
+        const duration = this.zombie.ChangeAction(ActionType.Punch)
         if (duration != undefined) this.attackSpeed = duration * 0.8
         this.attackTime = this.attackSpeed
     }
@@ -141,7 +141,7 @@ export class IdleZState extends State implements IPlayerAction {
         this.Init()
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.IdleAction)
+        this.zombie.ChangeAction(ActionType.Idle)
     }
     Uninit(): void {
         
@@ -158,7 +158,7 @@ export class DyingZState extends State implements IPlayerAction {
         super(zCtrl, zombie, gphysic)
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.DyingAction)
+        this.zombie.ChangeAction(ActionType.Dying)
 
         this.eventCtrl.OnAttackEvent("player", [{
             type: AttackType.Exp,
@@ -178,7 +178,7 @@ export class RunZState extends State implements IPlayerAction {
         super(zCtrl, zombie, gphysic)
     }
     Init(): void {
-        this.zombie.ChangeAction(ActionType.RunAction)
+        this.zombie.ChangeAction(ActionType.Run)
     }
     Uninit(): void {
         

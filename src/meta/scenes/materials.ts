@@ -8,7 +8,7 @@ import { AppMode } from "../app";
 import { Loader } from "../loader/loader";
 import { math } from "../../libs/math";
 import { GPhysics } from "../common/physics/gphysics";
-import { MonsterBox } from "./zombies";
+import { MonsterBox } from "./monsters";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { EffectType, Effector } from "../effects/effector";
 import { Player } from "./models/player";

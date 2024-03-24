@@ -8,6 +8,7 @@ export enum ItemType {
     Armor,
     Potion,
     Material,
+    Farm,
 }
 
 export enum AttackItemType {

@@ -24,6 +24,7 @@ export class GPhysics {
     pboxs = new Map<string, PhysicBox[]>()
 
     debugBox: THREE.LineSegments[] = []
+    get LandY() { return this.landPos.y }
 
     constructor(private scene: THREE.Scene, private eventCtrl: EventController) {
         eventCtrl.RegisterSceneClearEvent(() => {
@@ -118,7 +119,7 @@ export class GPhysics {
     }
     addLand(obj: IPhysicsObject) {
         this.landPos.y = obj.BoxPos.y + obj.Size.y - 0.3
-        console.log("Land: " + this.landPos)
+        console.log("Land: " , this.landPos)
     }
     optx = 10
     opty = 10

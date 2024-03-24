@@ -32,23 +32,23 @@ export class AttackState extends State implements IPlayerAction {
         this.attackDamageMin = this.spec.AttackDamageMin
         const handItem = this.playerCtrl.inventory.GetBindItem(Bind.Hands_R)
         if(handItem == undefined) {
-            this.player.ChangeAction(ActionType.PunchAction, this.attackSpeed)
+            this.player.ChangeAction(ActionType.Punch, this.attackSpeed)
         } else {
             switch(handItem.AttackType) {
                 case AttackItemType.Blunt:
                 case AttackItemType.Axe:
                 case AttackItemType.Sword:
                 case AttackItemType.Knife:
-                    this.player.ChangeAction(ActionType.SwordAction, this.attackSpeed)
+                    this.player.ChangeAction(ActionType.Sword, this.attackSpeed)
                     break;
                 case AttackItemType.Gun:
-                    this.player.ChangeAction(ActionType.GunAction, this.attackSpeed)
+                    this.player.ChangeAction(ActionType.Gun, this.attackSpeed)
                     break;
                 case AttackItemType.Bow:
-                    this.player.ChangeAction(ActionType.BowAction, this.attackSpeed)
+                    this.player.ChangeAction(ActionType.Bow, this.attackSpeed)
                     break;
                 case AttackItemType.Wand:
-                    this.player.ChangeAction(ActionType.WandAction, this.attackSpeed)
+                    this.player.ChangeAction(ActionType.Wand, this.attackSpeed)
                     break;
             }
         }
@@ -114,7 +114,7 @@ export class AttackIdleState extends State implements IPlayerAction {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
-        this.player.ChangeAction(ActionType.FightAction)
+        this.player.ChangeAction(ActionType.Fight)
     }
     Uninit(): void {
         

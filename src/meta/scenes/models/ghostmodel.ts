@@ -42,6 +42,7 @@ export class GhostModel {
         
         this.vFlag = flag
     }
+    get Asset() { return this.asset }
     get Box() {
         return this.asset.GetBox(this.meshs)
     }

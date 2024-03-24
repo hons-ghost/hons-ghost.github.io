@@ -10,6 +10,8 @@ import { AppMode } from "../../app";
 import { PlayerSpec } from "./playerspec";
 import { IBuffItem } from "../../buff/buff";
 import { EffectType } from "../../effects/effector";
+import { InvenFactory } from "../../inventory/invenfactory";
+import { BuildingState, PickFruitState, PlantAPlantState, WateringState } from "./farmstate";
 
 export enum AttackType {
     NormalSwing,
@@ -61,12 +63,18 @@ export class PlayerCtrl implements IGPhysic {
     JumpSt = new JumpState(this, this.player, this.gphysic)
     IdleSt = new IdleState(this, this.player, this.gphysic)
     DyingSt = new DeadState(this, this.player, this.gphysic)
+    PickFruitSt = new PickFruitState(this, this.player, this.gphysic)
+    PickFruitTreeSt = new PickFruitState(this, this.player, this.gphysic)
+    PlantASt = new PlantAPlantState(this, this.player, this.gphysic)
+    WarteringSt = new WateringState(this, this.player, this.gphysic, this.invenFab)
+    BuildingSt = new BuildingState(this, this.player, this.gphysic, this.invenFab)
     currentState: IPlayerAction = this.IdleSt
 
 
     constructor(
         private player: Player,
         public inventory: Inventory,
+        public invenFab: InvenFactory,
         private gphysic: GPhysics,
         private eventCtrl: EventController
     ) {

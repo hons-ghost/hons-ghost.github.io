@@ -24,7 +24,7 @@ import { Helper } from "../common/helper";
 import { Legos } from "../scenes/legos";
 import { Input } from "../common/inputs/input";
 import { RayViwer } from "../common/raycaster";
-import { Zombies } from "../scenes/zombies";
+import { Monsters } from "../scenes/monsters";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Buff } from "../buff/buff";
 import { Drop } from "../drop/drop";
@@ -32,6 +32,7 @@ import { MonsterDb } from "../scenes/monsterdb";
 import { Alarm } from "../common/alarm";
 import { Materials } from "../scenes/materials";
 import { GameCenter } from "../scenes/gamecenter";
+import { Farmer } from "../scenes/farmer";
 
 
 export class AppFactory {
@@ -57,8 +58,9 @@ export class AppFactory {
     private floor: Floor
     private portal: Portal
     private npcs: NpcManager
-    private zombies: Zombies
+    private monsters: Monsters
     private materials: Materials
+    private famer: Farmer
 
     private buff: Buff
     private playerCtrl : PlayerCtrl
@@ -108,18 +110,19 @@ export class AppFactory {
         this.portal = new Portal(this.loader, this.loader.PortalAsset, this.store, this.eventCtrl, this.gphysics)
 
         this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
-        this.playerCtrl = new PlayerCtrl(this.player, this.invenFab.inven, this.gphysics, this.eventCtrl)
+        this.playerCtrl = new PlayerCtrl(this.player, this.invenFab.inven, this.invenFab, this.gphysics, this.eventCtrl)
 
-        this.drop = new Drop(this.alarm, this.invenFab.inven, this.player, this.canvas, this.game)
+        this.drop = new Drop(this.alarm, this.invenFab.inven, this.player, this.canvas, this.game, this.eventCtrl)
 
         this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
-        this.zombies = new Zombies(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
+        this.monsters = new Monsters(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
         this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb, this.gphysics)
+        this.famer = new Farmer(this.loader, this.player, this.game, this.store, this.gphysics, this.eventCtrl)
 
-        this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.zombies, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl)
+        this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.monsters, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
@@ -175,6 +178,7 @@ export class AppFactory {
             this.MassDeadTreeLoader(),
             this.materials.MassLoader(),
             this.npcs.NpcLoader(),
+            this.famer.FarmLoader(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)

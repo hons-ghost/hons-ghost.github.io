@@ -4,6 +4,8 @@ import { AttackItemType, Bind, ItemType, Level } from "./item"
 
 export class ItemId {
     public static Hanhwasbat = Symbol("Hanhwa's Bat")
+    public static WarterCan = Symbol("Warter Can")
+    public static Hammer = Symbol("Hammer H3")
     public static DefaultGun = Symbol("DefaultGun")
     public static Leather = Symbol("Leather")
     public static Logs = Symbol("Logs")
@@ -52,6 +54,28 @@ export class ItemDb {
             icon: "WeaponTool/TopazStaff.png",
             stackable: false, binding: true,
             damageMax: 5, damageMin: 3, speed: 1,
+        })
+        this.itemDb.set(ItemId.WarterCan, {
+            id: ItemId.WarterCan,
+            type: ItemType.Farm,
+            bind: Bind.Hands_R,
+            asset: this.loader.WarteringCanAsset,
+            level: Level.Common,
+            name: "Wartering Can",
+            icon: "Misc/Lantern.png",
+            stackable: false, binding: true,
+            damageMax: 5, damageMin: 3, speed: 1,
+        })
+        this.itemDb.set(ItemId.Hammer, {
+            id: ItemId.Hammer,
+            type: ItemType.Attack,
+            bind: Bind.Hands_R,
+            asset: this.loader.HammerAsset,
+            level: Level.Common,
+            name: "Hammer H3",
+            icon: "WeaponTool/Hammer.png",
+            stackable: false, binding: true,
+            damageMax: 5, damageMin: 3, speed: 1.5,
         })
         this.itemDb.set(ItemId.Leather, {
             id: ItemId.Leather,

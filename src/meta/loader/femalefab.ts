@@ -13,6 +13,7 @@ export class FemaleFab extends AssetModel implements IAsset {
 
     constructor(loader: Loader) { 
         super(loader, ModelType.Gltf, "assets/female/female2.gltf", async (gltf: GLTF) => {
+        //super(loader, ModelType.Gltf, "assets/animals/Cow.gltf", async (gltf: GLTF) => {
         //super(loader, ModelType.Gltf, "assets/boy/child.gltf", async (gltf: GLTF) => {
             this.Gltf = gltf
             this.meshs = gltf.scene
@@ -27,7 +28,6 @@ export class FemaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Running"))
             this.clips.set(Ani.Jump, gltf.animations.find((clip) => clip.name == "JumpingUp"))
             this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "PunchCombo"))
-            //this.clips.set(Ani.Punch, gltf.animations[7])
             this.clips.set(Ani.FightIdle, gltf.animations.find((clip) => clip.name == "BouncingFightIdle"))
             this.clips.set(Ani.Dying, gltf.animations.find((clip) => clip.name == "Dying"))
             this.clips.set(Ani.Sword, gltf.animations.find((clip) => clip.name == "Sword"))
@@ -35,34 +35,23 @@ export class FemaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.MagicH1, gltf.animations.find((clip) => clip.name == "1HMagic"))
             this.clips.set(Ani.MagicH2, gltf.animations.find((clip) => clip.name == "2HMagic_1"))
 
-
-            /*
-            await this.LoadAnimation("assets/female/Idle.fbx", Ani.Idle)
-            await this.LoadAnimation("assets/male/Sword And Shield Slash.fbx", Ani.Punch)
-            //await this.LoadAnimation("assets/male/Punch Combo.fbx", Ani.Punch)
-            await this.LoadAnimation("assets/male/Running.fbx", Ani.Run)
-            await this.LoadAnimation("assets/male/Jumping Up.fbx", Ani.Jump)
-            await this.LoadAnimation("assets/male/Shooting.fbx", Ani.Shooting)
-            await this.LoadAnimation("assets/male/Standing 1H Magic Attack 01.fbx", Ani.MagicH1)
-            await this.LoadAnimation("assets/male/Standing 2H Magic Attack 01.fbx", Ani.MagicH2)
-            await this.LoadAnimation("assets/male/Standing 2H Magic Attack 01_.fbx", Ani.MagicH2)
-            await this.LoadAnimation("assets/male/Sword And Shield Slash.fbx", Ani.Sword)
-            await this.LoadAnimation("assets/male/Gunplay.fbx", Ani.Shooting)
-            await this.LoadAnimation("assets/male/Dying Backwards.fbx", Ani.Dying)
-            await this.LoadAnimation("assets/male/Bouncing Fight Idle.fbx", Ani.FightIdle)
-            //this.meshs.scale.set(0.03, 0.03, 0.03)
-            */
+            this.clips.set(Ani.PickFruit, gltf.animations.find((clip) => clip.name == "PickFruit"))
+            this.clips.set(Ani.PickFruitTree, gltf.animations.find((clip) => clip.name == "PickFruit_tree"))
+            this.clips.set(Ani.PlantAPlant, gltf.animations.find((clip) => clip.name == "PlantAPlant"))
+            this.clips.set(Ani.Hammering, gltf.animations.find((clip) => clip.name == "StandingMeleeAttackDownward"))
+            this.clips.set(Ani.Wartering, gltf.animations.find((clip) => clip.name == "Watering"))
 
             /*
             const right = this.meshs.getObjectByName("mixamorigRightHand")
-            const bat = await this.loader.Load.loadAsync("assets/weapon/bat.glb")
+            //const right = this.meshs
+            const bat = await this.loader.Load.loadAsync("assets/furniture/bed.glb")
             const meshs = bat.scene
 
-            const scale = 0.3
+            const scale = 1
             meshs.scale.set(scale, scale, scale)
-            meshs.position.set(0.1, 0.2, -0.1)
-            meshs.rotation.set(3, -0.5, -1.8)
-            const fp = gui.addFolder("bat")
+            meshs.position.set(0, 0, 0)
+            meshs.rotation.set(0, 0, 0)
+            const fp = gui.addFolder("tools")
             fp.close()
 
             this.CreateVectorGui(fp, meshs.position, "Pos", 0.1)

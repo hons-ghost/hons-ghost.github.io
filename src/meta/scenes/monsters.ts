@@ -44,7 +44,7 @@ export interface IPlayerAction {
     Update(delta: number, v: THREE.Vector3, dist: number): IPlayerAction
 }
 
-export class Zombies {
+export class Monsters {
     zombies: MonsterSet[] = []
     keytimeout?:NodeJS.Timeout
     respawntimeout?:NodeJS.Timeout
@@ -159,6 +159,7 @@ export class Zombies {
             this.game.remove(z.monModel.Meshs, z.monCtrl.MonsterBox)
         })
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
+        if (this.respawntimeout != undefined) clearTimeout(this.respawntimeout)
     }
     async randomSpawning(){
         const zSet = await this.CreateZombie()

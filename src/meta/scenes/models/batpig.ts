@@ -109,16 +109,16 @@ export class BatPig extends GhostModel implements IPhysicsObject {
     ChangeAction(action: ActionType) {
         let clip: THREE.AnimationClip | undefined
         switch(action) {
-            case ActionType.IdleAction:
+            case ActionType.Idle:
                 clip = this.idleClip
                 break
-            case ActionType.RunAction:
+            case ActionType.Run:
                 clip = this.runClip
                 break
-            case ActionType.PunchAction:
+            case ActionType.Punch:
                 clip = this.punchingClip
                 break
-            case ActionType.DyingAction:
+            case ActionType.Dying:
                 clip = this.dyingClip
                 break
 

@@ -9,6 +9,8 @@ import { Page } from "./page";
 import { Ui } from "./models/ui";
 import { UiInven } from "./play_inven";
 import { InvenData } from "./meta/inventory/inventory";
+import { EditPlant } from "./editplant";
+import { EditFurniture } from "./editfurniture";
 
 export class EditHome extends Page {
     m_masterAddr = ""
@@ -17,6 +19,8 @@ export class EditHome extends Page {
     brickSize = new THREE.Vector3(3, 3, 1)
     brickRotate = new THREE.Vector3()
     ui = new Ui(this.meta, AppMode.EditPlay)
+    plant = new EditPlant(this.meta, this)
+    furn = new EditFurniture()
 
     myPicker?: ColorPicker
     color: string = "#fff"
@@ -89,6 +93,7 @@ export class EditHome extends Page {
         z_value.innerText = this.brickSize.z.toString()
     }
     public UpdateMenu() {
+        console.log("current Mode", this.mode)
         const loc = document.getElementById("locatmode") as HTMLDivElement
         loc.style.backgroundColor = (this.mode == AppMode.Locate) ? "silver" : "transparent"
         const avr = document.getElementById("avatarmode") as HTMLDivElement
@@ -170,7 +175,7 @@ export class EditHome extends Page {
         const fun = document.getElementById("funituremode") as HTMLDivElement
         fun.onclick = () => {
             this.mode = (this.mode != AppMode.Funiture) ? AppMode.Funiture : AppMode.EditPlay
-            this.meta.ModeChange(this.mode)
+            //this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         const wea = document.getElementById("weaponmode") as HTMLDivElement
@@ -208,6 +213,16 @@ export class EditHome extends Page {
         eraser.onclick = () => {
             this.mode = (this.mode != AppMode.LegoDelete) ? AppMode.LegoDelete : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
+            this.UpdateMenu()
+        }
+        const plant = document.getElementById("tree") as HTMLDivElement
+        plant.onclick = () => {
+            this.plant.toggle()
+            this.UpdateMenu()
+        }
+        const furn = document.getElementById("chair") as HTMLDivElement
+        furn.onclick = () => {
+            this.furn.toggle()
             this.UpdateMenu()
         }
         const brickReset = document.getElementById("reset-brick") as HTMLDivElement

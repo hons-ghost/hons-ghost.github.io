@@ -89,7 +89,7 @@ export class EventController {
     }
 
     // GAME MODE
-    OnAppModeEvent(mode: AppMode, e: EventFlag, ...arg: any[]) {
+    OnAppModeEvent(mode: AppMode, e: EventFlag, ...arg: any) {
         this.eventEmitter.emit(SConf.AppMode, mode, e, ...arg)
     }
     RegisterAppModeEvent(callback: (...e: any[]) => void) {

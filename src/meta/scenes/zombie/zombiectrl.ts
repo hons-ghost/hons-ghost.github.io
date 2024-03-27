@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics"
-import { Player } from "../models/player"
-import { Zombie } from "../models/zombie"
+import { Player } from "../player/player"
+import { Zombie } from "./zombie"
 import { AttackZState, DyingZState, IdleZState, JumpZState, RunZState } from "./zombiestate"
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";

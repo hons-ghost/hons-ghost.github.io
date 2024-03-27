@@ -8,7 +8,7 @@ import { GhostModel } from "./ghostmodel";
 import { Ani, IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "./iobject";
 import { GPhysics } from "../../common/physics/gphysics";
-import { ActionType } from "./player";
+import { ActionType } from "../player/player";
 import { Damage } from "../../effects/damage";
 import { TextStatus } from "../../effects/status";
 

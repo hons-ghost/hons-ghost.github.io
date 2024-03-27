@@ -1,6 +1,7 @@
 import { EditHome } from "./edithome"
 import App, { AppMode } from "./meta/app"
 import { Char } from "./meta/loader/assetmodel"
+import { PlantId } from "./meta/scenes/plants/plantdb"
 
 
 
@@ -26,7 +27,7 @@ export class EditPlant {
         slot0.onclick = () => {
             ctrl.style.display = "none"
             this.editor.mode = (this.editor.mode != AppMode.Farmer) ? AppMode.Farmer : AppMode.EditPlay
-            this.meta.ModeChange(this.editor.mode, Char.AppleTree)
+            this.meta.ModeChange(this.editor.mode, PlantId.AppleTree)
             this.editor.UpdateMenu()
             this.visible = false
         }
@@ -34,7 +35,7 @@ export class EditPlant {
         slot1.onclick = () => {
             ctrl.style.display = "none"
             this.editor.mode = (this.editor.mode != AppMode.Farmer) ? AppMode.Farmer : AppMode.EditPlay
-            this.meta.ModeChange(this.editor.mode, Char.AppleTree)
+            this.meta.ModeChange(this.editor.mode, PlantId.AppleTree)
             this.editor.UpdateMenu()
             this.visible = false
         }

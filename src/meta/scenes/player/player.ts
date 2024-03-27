@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import { ICtrlObject, IPhysicsObject } from "./iobject";
+import { ICtrlObject, IPhysicsObject } from "../models/iobject";
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { Loader } from "../../loader/loader";
 import SConf from "../../configs/staticconf";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { Game } from "../game";
-import { GhostModel } from "./ghostmodel";
+import { GhostModel } from "../models/ghostmodel";
 import { Ani, Char, IAsset } from "../../loader/assetmodel";
-import { Portal } from "./portal";
+import { Portal } from "../models/portal";
 import { AppMode } from "../../app";
 import { Inventory } from "../../inventory/inventory";
 import { Bind } from "../../inventory/items/item";
@@ -196,24 +196,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.clipMap.set(ActionType.Watering, this.asset.GetAnimationClip(Ani.Wartering))
         this.clipMap.set(ActionType.Hammering, this.asset.GetAnimationClip(Ani.Hammering))
         this.clipMap.set(ActionType.Building, this.asset.GetAnimationClip(Ani.Hammering))
-        /*
-        this.idleClip = this.asset.GetAnimationClip(Ani.Idle)
-        this.runClip = this.asset.GetAnimationClip(Ani.Run)
-        this.jumpClip = this.asset.GetAnimationClip(Ani.Jump)
-        this.punchingClip = this.asset.GetAnimationClip(Ani.Punch)
-        this.swordClip = this.asset.GetAnimationClip(Ani.Sword)
-        this.fightIdleClip = this.asset.GetAnimationClip(Ani.FightIdle)
-        this.danceClip = this.asset.GetAnimationClip(Ani.Dance0)
-        this.magicH1Clip = this.asset.GetAnimationClip(Ani.MagicH1)
-        this.magicH2Clip = this.asset.GetAnimationClip(Ani.MagicH2)
-        this.dyingClip = this.asset.GetAnimationClip(Ani.Dying)
-        this.pickFruit = this.asset.GetAnimationClip(Ani.PickFruit)
-        this.pickFruitTree = this.asset.GetAnimationClip(Ani.PickFruitTree)
-        this.plantAPlant = this.asset.GetAnimationClip(Ani.PlantAPlant)
-        this.wartering = this.asset.GetAnimationClip(Ani.Wartering)
-        this.hammering = this.asset.GetAnimationClip(Ani.Hammering)
-        console.log(this.punchingClip)
-        */
+        
         this.changeAnimate(this.clipMap.get(ActionType.Idle))
 
         this.meshs.add(this.damageEffect.Mesh)
@@ -253,53 +236,6 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
 
     ChangeAction(action: ActionType, speed?: number) {
         let clip: THREE.AnimationClip | undefined
-        /*
-        switch(action) {
-            case ActionType.Idle:
-                clip = this.idleClip
-                break
-            case ActionType.Jump:
-                clip = this.jumpClip
-                break
-            case ActionType.Run:
-                clip = this.runClip
-                break
-            case ActionType.Punch:
-                clip = this.punchingClip
-                break
-            case ActionType.Sword:
-                clip = this.swordClip
-                break
-            case ActionType.Fight:
-                clip = this.fightIdleClip
-                console.log(clip)
-                break
-            case ActionType.MagicH1:
-                clip = this.magicH1Clip
-                break
-            case ActionType.MagicH2:
-                clip = this.magicH2Clip
-                break
-            case ActionType.Dying:
-                clip = this.dyingClip
-                break;
-            case ActionType.PickFruit:
-                clip = this.pickFruit
-                break;
-            case ActionType.PickFruitTree:
-                clip = this.pickFruitTree
-                break;
-            case ActionType.PlantAPlant:
-                clip = this.plantAPlant
-                break;
-            case ActionType.Hammering:
-                clip = this.hammering
-                break;
-            case ActionType.Watering:
-                clip = this.wartering
-                break;
-        }
-        */
         this.changeAnimate(this.clipMap.get(action), speed)
         return clip?.duration
     }

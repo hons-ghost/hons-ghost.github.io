@@ -3,7 +3,7 @@ import { AppMode } from "../app";
 import { Canvas } from "../common/canvas";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { IViewer } from "./models/iviewer";
-import { Player } from "./models/player";
+import { Player } from "./player/player";
 import { Portal } from "./models/portal";
 import { PlayerCtrl } from "./player/playerctrl";
 import { Monsters } from "./monsters";

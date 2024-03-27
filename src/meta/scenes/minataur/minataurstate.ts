@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { GPhysics } from "../../common/physics/gphysics"
-import { ActionType } from "../models/player"
+import { ActionType } from "../player/player"
 import { MinataurCtrl } from "./minataurctrl";
-import { Minataur } from "../models/minataur";
+import { Minataur } from "./minataur";
 import { IPlayerAction } from "../monsters";
 
 

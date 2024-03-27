@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics";
-import { Player } from "../models/player";
+import { Player } from "./player";
 import { DeadState, IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
 import { AttackIdleState, AttackState } from "./attackstate";
 import { Inventory } from "../../inventory/inventory";

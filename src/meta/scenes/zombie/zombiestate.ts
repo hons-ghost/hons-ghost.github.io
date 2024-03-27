@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { GPhysics } from "../../common/physics/gphysics"
-import { ActionType } from "../models/player"
-import { Zombie } from "../models/zombie"
+import { ActionType } from "../player/player"
+import { Zombie } from "./zombie"
 import { ZombieCtrl } from "./zombiectrl";
 import { IPlayerAction } from "../monsters";
 import { EventController } from "../../event/eventctrl";

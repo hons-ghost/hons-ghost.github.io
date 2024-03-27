@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
-import { IBuildingObject, IPhysicsObject } from "./iobject";
-import { GhostModel } from "./ghostmodel";
+import { IBuildingObject, IPhysicsObject } from "../models/iobject";
+import { GhostModel } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 import { GPhysics } from "../../common/physics/gphysics";
 

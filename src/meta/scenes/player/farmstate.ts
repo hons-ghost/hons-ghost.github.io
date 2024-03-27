@@ -2,7 +2,7 @@ import { GPhysics } from "../../common/physics/gphysics"
 import { InvenFactory } from "../../inventory/invenfactory"
 import { Bind, IItem } from "../../inventory/items/item"
 import { ItemId } from "../../inventory/items/itemdb"
-import { ActionType, Player } from "../models/player"
+import { ActionType, Player } from "./player"
 import { PlayerCtrl } from "./playerctrl"
 import { IPlayerAction, State } from "./playerstate"
 

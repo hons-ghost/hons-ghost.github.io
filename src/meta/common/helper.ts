@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { GUI } from "lil-gui"
-import { Player } from "../scenes/models/player"
+import { Player } from "../scenes/player/player"
 import { EventController } from "../event/eventctrl"
 import { Game } from "../scenes/game"
 import { IKeyCommand, KeyType } from "../event/keycommand"

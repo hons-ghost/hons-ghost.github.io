@@ -1,11 +1,11 @@
 import * as THREE from "three";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics"
-import { Player } from "../models/player"
+import { Player } from "../player/player"
 import { IPhysicsObject } from "../models/iobject";
 import { Legos } from "../legos";
 import { EventBricks } from "../eventbricks";
 import { AttackMState, DyingMState, IdleMState, RunMState } from "./minataurstate";
-import { Minataur } from "../models/minataur";
+import { Minataur } from "./minataur";
 import { IPlayerAction, MonsterBox } from "../monsters";
 
 

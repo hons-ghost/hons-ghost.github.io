@@ -10,6 +10,7 @@ import { UiInven } from "./play_inven";
 import { Session } from "./session";
 import { BlockStore } from "./store";
 import { GlobalSaveTxId } from "./models/tx";
+import { IBuffItem } from "./meta/buff/buff";
 
 
 export class Play extends Page {
@@ -174,15 +175,21 @@ export class Play extends Page {
             }
         })
     }
+    buffQ: IBuffItem[][] = []
     LevelUp() {
-        const lvView = document.getElementById("levelview") as HTMLDivElement
-        lvView.replaceChildren()
         if(this.defaultLv == 1) {
             this.FirstLevelUp()
             return
         }
-
         const buffs = this.meta.GetRandomBuff()
+        this.buffQ.push(buffs)
+        if(this.buffQ.length > 1) return
+
+        this.SelectBuff(buffs)
+    }
+    SelectBuff(buffs: IBuffItem[]) {
+        const lvView = document.getElementById("levelview") as HTMLDivElement
+        lvView.replaceChildren()
         let htmlString = `
         <div class="row pb-2">
             <div class="col xxx-large text-white text-center h2">Level Up!!</div>
@@ -207,6 +214,12 @@ export class Play extends Page {
                 this.meta.SelectRandomBuff(b)
                 const lvTag = document.getElementById("levelup") as HTMLDivElement
                 lvTag.style.display = "none"
+                this.buffQ.shift()
+                if (this.buffQ.length) {
+                    const buffs = this.buffQ[0]
+                    if (buffs == undefined) return
+                    this.SelectBuff(buffs)
+                }
             }
         })
     }

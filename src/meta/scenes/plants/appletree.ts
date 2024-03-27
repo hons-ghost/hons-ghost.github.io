@@ -1,11 +1,17 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
-import { GhostModel } from "./ghostmodel";
+import { GhostModel, GhostModel2 } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
+import { IPhysicsObject } from "../models/iobject";
+import { ProgressBar } from "../models/progressbar";
 
-export class AppleTree extends GhostModel {
+export class AppleTree extends GhostModel implements IPhysicsObject {
+    get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
+    gauge = new ProgressBar(2, 2, 4)
+
     constructor(private loader: Loader, asset: IAsset) {
         super(asset)
+
     }
 
     async Init() {
@@ -23,5 +29,6 @@ export class AppleTree extends GhostModel {
         })
         this.meshs.visible = false
         this.meshs.position.y -= 2.5
+        this.meshs.add(this.gauge)
     }
 }

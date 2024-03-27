@@ -5,14 +5,14 @@ import { Game } from "./game"
 import { GPhysics } from "../common/physics/gphysics";
 import { Char } from "../loader/assetmodel";
 import { AppMode } from "../app";
-import { Zombie } from "./models/zombie";
+import { Zombie } from "./zombie/zombie";
 import { Legos } from "./legos";
 import { EventBricks } from "./eventbricks";
 import { ZombieCtrl } from "./zombie/zombiectrl";
-import { Player } from "./models/player";
+import { Player } from "./player/player";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { math } from "../../libs/math";
-import { Minataur } from "./models/minataur";
+import { Minataur } from "./minataur/minataur";
 import { Drop } from "../drop/drop";
 import { MonDrop, MonsterDb, MonsterId } from "./monsterdb";
 import { EffectType } from "../effects/effector";

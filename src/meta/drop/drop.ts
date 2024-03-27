@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { IViewer } from "../scenes/models/iviewer";
-import { Player } from "../scenes/models/player";
+import { Player } from "../scenes/player/player";
 import { Canvas } from "../common/canvas";
 import SConf from "../configs/staticconf";
 import { MonDrop } from "../scenes/monsterdb";

@@ -124,9 +124,9 @@ export default class App {
     ChangeBrickInfo(opt: BrickOption) {
         this.eventCtrl.OnChangeBrickInfo(opt)
     }
-    ModeChange(mode: AppMode, ...arg: any[]) {
+    ModeChange(mode: AppMode, ...arg: any) {
         this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.End)
-        this.eventCtrl.OnAppModeEvent(mode, EventFlag.Start, arg)
+        this.eventCtrl.OnAppModeEvent(mode, EventFlag.Start, ...arg)
         this.currentMode = mode
     }
     SendModeMessage(...arg: any[]) {

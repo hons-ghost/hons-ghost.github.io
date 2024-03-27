@@ -4,7 +4,7 @@ import { EventController } from "../event/eventctrl";
 import { Char } from "../loader/assetmodel";
 import { BrickShapeType } from "../scenes/legos";
 import { Npc } from "../scenes/models/npc";
-import { Player } from "../scenes/models/player";
+import { Player } from "../scenes/player/player";
 import { InvenData, Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
 

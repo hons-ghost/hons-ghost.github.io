@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ActionType, Player } from "../models/player"
+import { ActionType, Player } from "./player"
 import { PlayerCtrl } from "./playerctrl";
 import { KeyType } from "../../event/keycommand";
 import { GPhysics } from "../../common/physics/gphysics";

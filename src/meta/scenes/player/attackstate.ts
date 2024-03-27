@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { IPlayerAction, State } from "./playerstate"
 import { AttackType, PlayerCtrl } from "./playerctrl";
-import { ActionType, Player } from "../models/player";
+import { ActionType, Player } from "./player";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController } from "../../event/eventctrl";
 import { AttackItemType, Bind } from "../../inventory/items/item";

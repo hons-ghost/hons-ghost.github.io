@@ -7,9 +7,9 @@ import { Renderer } from "../common/renderer";
 import { IScene } from "../scenes/models/iviewer";
 import { Light } from "../common/light";
 import { EventController } from "../event/eventctrl";
-import { Player as Player } from "../scenes/models/player";
+import { Player as Player } from "../scenes/player/player";
 import { Loader } from "../loader/loader";
-import { Tree } from "../scenes/models/tree";
+import { Tree } from "../scenes/plants/tree";
 import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
@@ -60,7 +60,7 @@ export class AppFactory {
     private npcs: NpcManager
     private monsters: Monsters
     private materials: Materials
-    private famer: Farmer
+    private farmer: Farmer
 
     private buff: Buff
     private playerCtrl : PlayerCtrl
@@ -120,11 +120,11 @@ export class AppFactory {
         this.monsters = new Monsters(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
         this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb, this.gphysics)
-        this.famer = new Farmer(this.loader, this.player, this.game, this.store, this.gphysics, this.eventCtrl)
+        this.farmer = new Farmer(this.loader, this.player, this.game, this.store, this.gphysics, this.eventCtrl)
 
         this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.monsters, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl)
 
-        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.eventCtrl)
+        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.farmer, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.currentScene = this.game
@@ -178,7 +178,7 @@ export class AppFactory {
             this.MassDeadTreeLoader(),
             this.materials.MassLoader(),
             this.npcs.NpcLoader(),
-            this.famer.FarmLoader(),
+            this.farmer.FarmLoader(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)

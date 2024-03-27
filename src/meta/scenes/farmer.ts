@@ -1,20 +1,36 @@
 import * as THREE from "three";
 import { AppMode } from "../app";
 import { EventController, EventFlag } from "../event/eventctrl";
-import { IKeyCommand } from "../event/keycommand";
+import { IKeyCommand, KeyType } from "../event/keycommand";
 import { GPhysics } from "../common/physics/gphysics";
 import { IPhysicsObject } from "./models/iobject";
 import { IModelReload, ModelStore } from "../common/modelstore";
 import SConf from "../configs/staticconf";
-import { AppleTree } from "./models/appletree";
+import { AppleTree } from "./plants/appletree";
 import { Loader } from "../loader/loader";
 import { Game } from "./game";
 import { Char } from "../loader/assetmodel";
-import { Player } from "./models/player";
+import { Player } from "./player/player";
+import { PlantId, PlantType } from "./plants/plantdb";
+
+export enum PlantState {
+    NeedSeed,
+    Enough,
+    NeedWartering,
+    Death,
+}
+export type PlantEntry = {
+    type: PlantType
+    createTime: number // ms, 0.001 sec
+    lv: number // tree age
+    state: PlantState
+    lastWarteringTime: number
+    position: THREE.Vector3
+}
 
 export class Farmer implements IModelReload {
     target?: IPhysicsObject
-    appleTree = new AppleTree(this.loader, this.loader.AppleTreeAsset)
+    plants = new Map<symbol, IPhysicsObject>()
 
     constructor(
         private loader: Loader,
@@ -25,27 +41,39 @@ export class Farmer implements IModelReload {
         private eventCtrl: EventController,
     ){
         store.RegisterStore(this)
+        this.plants.set(PlantId.AppleTree, new AppleTree(this.loader, this.loader.AppleTreeAsset))
 
-        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, tree: Char) => {
+        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: symbol) => {
             if(mode != AppMode.Farmer) return
+            const plant = this.plants.get(id)
+            if (!plant) return
+
             switch (e) {
                 case EventFlag.Start:
-                    this.game.add(this.appleTree.Meshs)
-                    this.appleTree.Visible = true
-                    this.appleTree.CannonPos.x = this.player.CannonPos.x
-                    this.appleTree.CannonPos.z = this.player.CannonPos.z
-                    console.log(tree)
+                    this.game.add(plant.Meshs)
+                    plant.Visible = true
+                    plant.CannonPos.x = this.player.CannonPos.x
+                    plant.CannonPos.z = this.player.CannonPos.z
+                    this.target = plant
+                    this.eventCtrl.OnChangeCtrlObjEvent(this.target)
+                    console.log(id)
                     break
                 case EventFlag.End:
-                    this.appleTree.Visible = false
-                    this.game.remove(this.appleTree.Meshs)
+                    plant.Visible = false
+                    this.game.remove(plant.Meshs)
                     break
             }
         })
 
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
-            const position = keyCommand.ExecuteKeyDown()
-            this.moveEvent(position)
+            switch(keyCommand.Type) {
+                case KeyType.Action0:
+                    break;
+                default:
+                    const position = keyCommand.ExecuteKeyDown()
+                    this.moveEvent(position)
+                    break;
+            }
         })
     }
 
@@ -55,9 +83,11 @@ export class Farmer implements IModelReload {
     }
     async FarmLoader() {
         const p = SConf.DefaultPortalPosition
+        // TODO need refac
+        const tree = this.plants.get(PlantId.AppleTree) as AppleTree
         const meshs = await this.loader.AppleTreeAsset.CloneModel()
         const ret = await Promise.all([
-            this.appleTree.MassLoader(meshs, 1, p)
+            tree.MassLoader(meshs, 1, p)
         ])
         return ret
     }
@@ -72,14 +102,9 @@ export class Farmer implements IModelReload {
         this.target.Meshs.position.z += vz
 
         if (this.gphysic.Check(this.target)) {
-            do {
-                this.target.Meshs.position.y += 0.2
-            } while (this.gphysic.Check(this.target))
-        } else {
-            do {
-                this.target.Meshs.position.y -= 0.2
-            } while (!this.gphysic.Check(this.target) && this.target.Meshs.position.y >= 4.7)
-            this.target.Meshs.position.y += 0.2
+            this.target.Meshs.position.x -= vx
+            this.target.Meshs.position.z -= vz
         }
+        // Check Collision Plant
     }
 }

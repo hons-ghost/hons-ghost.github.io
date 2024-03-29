@@ -2,7 +2,7 @@ import * as THREE from "three";
 import SConf from "../configs/staticconf";
 import { EventController } from "../event/eventctrl";
 import { Char } from "../loader/assetmodel";
-import { BrickShapeType } from "../scenes/legos";
+import { BrickShapeType } from "../scenes/bricks/legos";
 import { Npc } from "../scenes/models/npc";
 import { Player } from "../scenes/player/player";
 import { InvenData, Inventory } from "../inventory/inventory";

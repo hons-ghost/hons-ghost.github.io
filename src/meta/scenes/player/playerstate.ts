@@ -3,6 +3,7 @@ import { ActionType, Player } from "./player"
 import { PlayerCtrl } from "./playerctrl";
 import { KeyType } from "../../event/keycommand";
 import { GPhysics } from "../../common/physics/gphysics";
+import { AppMode } from "../../app";
 
 export interface IPlayerAction {
     Init(): void
@@ -42,20 +43,35 @@ export class State {
     }
     CheckAttack() {
         if (this.playerCtrl.KeyState[KeyType.Action1]) {
-            this.playerCtrl.AttackSt.Init()
-            return this.playerCtrl.AttackSt
+            if (this.playerCtrl.mode == AppMode.Play) {
+                this.playerCtrl.AttackSt.Init()
+                return this.playerCtrl.AttackSt
+            } else {
+                this.playerCtrl.PlantASt.Init()
+                return this.playerCtrl.PlantASt
+            }
         }
     }
     CheckMagic() {
         if (this.playerCtrl.KeyState[KeyType.Action2]) {
-            this.playerCtrl.MagicH1St.Init()
-            return this.playerCtrl.MagicH1St
+            if (this.playerCtrl.mode == AppMode.Play) {
+                this.playerCtrl.MagicH1St.Init()
+                return this.playerCtrl.MagicH1St
+            } else {
+                this.playerCtrl.WarteringSt.Init()
+                return this.playerCtrl.WarteringSt
+            }
         }
     }
-    CheckMagic2() {
+    CheckMagic2(): IPlayerAction | undefined {
         if (this.playerCtrl.KeyState[KeyType.Action3]) {
-            this.playerCtrl.MagicH2St.Init()
-            return this.playerCtrl.MagicH2St
+            if (this.playerCtrl.mode == AppMode.Play) {
+                this.playerCtrl.MagicH2St.Init()
+                return this.playerCtrl.MagicH2St
+            } else {
+                this.playerCtrl.PickFruitTreeSt.Init()
+                return this.playerCtrl.PickFruitTreeSt
+            }
         }
     }
     CheckJump() {

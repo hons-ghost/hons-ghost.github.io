@@ -11,7 +11,7 @@ import { PlayerSpec } from "./playerspec";
 import { IBuffItem } from "../../buff/buff";
 import { EffectType } from "../../effects/effector";
 import { InvenFactory } from "../../inventory/invenfactory";
-import { BuildingState, PickFruitState, PlantAPlantState, WateringState } from "./farmstate";
+import { BuildingState, PickFruitState, PickFruitTreeState, PlantAPlantState, WarteringState } from "./farmstate";
 
 export enum AttackType {
     NormalSwing,
@@ -20,6 +20,11 @@ export enum AttackType {
     Heal,
     AOE, // Area of effect
     Buff,
+
+    PlantAPlant,
+    Wartering,
+
+    Building,
 }
 
 export type AttackOption = {
@@ -42,7 +47,7 @@ export type PlayerStatus = {
 
 
 export class PlayerCtrl implements IGPhysic {
-
+    mode: AppMode = AppMode.Play
     keyDownQueue: IKeyCommand[] = []
     keyUpQueue: IKeyCommand[] = []
     inputVQueue: THREE.Vector3[] = []
@@ -64,10 +69,10 @@ export class PlayerCtrl implements IGPhysic {
     IdleSt = new IdleState(this, this.player, this.gphysic)
     DyingSt = new DeadState(this, this.player, this.gphysic)
     PickFruitSt = new PickFruitState(this, this.player, this.gphysic)
-    PickFruitTreeSt = new PickFruitState(this, this.player, this.gphysic)
-    PlantASt = new PlantAPlantState(this, this.player, this.gphysic)
-    WarteringSt = new WateringState(this, this.player, this.gphysic, this.invenFab)
-    BuildingSt = new BuildingState(this, this.player, this.gphysic, this.invenFab)
+    PickFruitTreeSt = new PickFruitTreeState(this, this.player, this.gphysic)
+    PlantASt = new PlantAPlantState(this, this.player, this.gphysic, this.eventCtrl)
+    WarteringSt = new WarteringState(this, this.player, this.gphysic, this.invenFab, this.eventCtrl)
+    BuildingSt = new BuildingState(this, this.player, this.gphysic, this.invenFab, this.eventCtrl)
     currentState: IPlayerAction = this.IdleSt
 
 
@@ -81,6 +86,7 @@ export class PlayerCtrl implements IGPhysic {
         gphysic.Register(this)
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            this.mode = mode
             if(mode == AppMode.EditPlay) {
                 while (this.gphysic.Check(player)) {
                     player.CannonPos.y += 0.2

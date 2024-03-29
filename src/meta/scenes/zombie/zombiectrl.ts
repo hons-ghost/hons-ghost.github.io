@@ -4,8 +4,8 @@ import { Player } from "../player/player"
 import { Zombie } from "./zombie"
 import { AttackZState, DyingZState, IdleZState, JumpZState, RunZState } from "./zombiestate"
 import { IPhysicsObject } from "../models/iobject";
-import { Legos } from "../legos";
-import { EventBricks } from "../eventbricks";
+import { Legos } from "../bricks/legos";
+import { EventBricks } from "../bricks/eventbricks";
 import { IMonsterCtrl, IPlayerAction, MonsterBox } from "../monsters";
 import { EventController } from "../../event/eventctrl";
 import { MonsterProperty } from "../monsterdb";

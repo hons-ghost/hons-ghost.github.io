@@ -13,11 +13,11 @@ export class AppleTreeFab extends AssetModel implements IAsset {
             this.gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
-
             const scale = 0
             this.meshs.scale.set(scale, scale, scale)
             this.meshs.position.set(0, 0, 0)
             this.meshs.rotation.set(0, 0, 0)
+            this.meshs.children[0].position.y -= 2.5
         })
     }
     GetBodyMeshId() { return "mixamorigRightHand" }
@@ -39,7 +39,7 @@ export class AppleTreeFab extends AssetModel implements IAsset {
         // Don't Use mesh
 
         if (this.size != undefined) return this.size
-        const bbox = new THREE.Box3().setFromObject(this.meshs)
+        const bbox = new THREE.Box3().setFromObject(this.meshs.children[0])
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)

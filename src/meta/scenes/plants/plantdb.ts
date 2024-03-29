@@ -34,4 +34,7 @@ export class PlantDb {
             warteringTime: 1000 * 60 * 60, // an hour
         })
     }
+    get(id: symbol) {
+        return this.plantDb.get(id)
+    }
 }

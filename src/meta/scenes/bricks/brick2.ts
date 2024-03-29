@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { GhostModel2 } from "./ghostmodel";
-import { IBuildingObject } from "./iobject";
+import { GhostModel2 } from "../models/ghostmodel";
+import { IBuildingObject } from "../models/iobject";
 
 
 export class Brick2 extends GhostModel2 {

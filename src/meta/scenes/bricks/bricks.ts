@@ -1,12 +1,12 @@
 import * as THREE from "three";
-import { BrickGuide, BrickGuideType } from "./models/brickguide";
-import { Brick2 } from "./models/brick2";
-import { EventController, EventFlag } from "../event/eventctrl";
-import { ModelStore } from "../common/modelstore";
-import { GPhysics } from "../common/physics/gphysics";
-import { IKeyCommand } from "../event/keycommand";
-import { IBuildingObject } from "./models/iobject";
-import SConf from "../configs/staticconf";
+import { BrickGuide, BrickGuideType } from "./brickguide";
+import { Brick2 } from "./brick2";
+import { EventController, EventFlag } from "../../event/eventctrl";
+import { ModelStore } from "../../common/modelstore";
+import { GPhysics } from "../../common/physics/gphysics";
+import { IKeyCommand } from "../../event/keycommand";
+import { IBuildingObject } from "../models/iobject";
+import SConf from "../../configs/staticconf";
 
 export type BrickOption = {
     v?: THREE.Vector3, 

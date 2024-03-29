@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import { IModelReload, ModelStore } from "../common/modelstore";
-import { GPhysics } from "../common/physics/gphysics";
-import { EventController, EventFlag } from "../event/eventctrl";
-import { IKeyCommand } from "../event/keycommand";
-import { Brick2 } from "./models/brick2";
-import { BrickGuide, BrickGuideType } from "./models/brickguide";
+import { IModelReload, ModelStore } from "../../common/modelstore";
+import { GPhysics } from "../../common/physics/gphysics";
+import { EventController, EventFlag } from "../../event/eventctrl";
+import { IKeyCommand } from "../../event/keycommand";
+import { Brick2 } from "./brick2";
+import { BrickGuide, BrickGuideType } from "./brickguide";
 import { BrickOption, Bricks, EventBrick } from "./bricks";
-import { AppMode } from "../app";
-import { IBuildingObject } from "./models/iobject";
+import { AppMode } from "../../app";
+import { IBuildingObject } from "../models/iobject";
 
 export enum BrickShapeType {
     Rectangle,

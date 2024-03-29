@@ -59,6 +59,7 @@ export class Input {
                 case AppMode.Locate:
                 case AppMode.Portal:
                 case AppMode.Farmer:
+                case AppMode.Furniture:
                     if (e == EventFlag.Start) {
                         this.LegacyButtonShow()
                         this.ButtonShow()

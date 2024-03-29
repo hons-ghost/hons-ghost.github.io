@@ -1,10 +1,12 @@
+import * as THREE from "three";
 import { GPhysics } from "../../common/physics/gphysics"
 import { InvenFactory } from "../../inventory/invenfactory"
 import { Bind, IItem } from "../../inventory/items/item"
 import { ItemId } from "../../inventory/items/itemdb"
 import { ActionType, Player } from "./player"
-import { PlayerCtrl } from "./playerctrl"
+import { AttackOption, AttackType, PlayerCtrl } from "./playerctrl"
 import { IPlayerAction, State } from "./playerstate"
+import { EventController } from "../../event/eventctrl";
 
 export class PickFruitState extends State implements IPlayerAction {
     next: IPlayerAction = this
@@ -52,30 +54,88 @@ export class PickFruitTreeState extends State implements IPlayerAction {
 }
 export class PlantAPlantState extends State implements IPlayerAction {
     next: IPlayerAction = this
+    attackDist = 3
+    attackDir = new THREE.Vector3()
+    raycast = new THREE.Raycaster()
+    target?: string
+    targetMsg?: AttackOption
+    trigger = false
 
-    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
+    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics, private eventCtrl: EventController) {
         super(playerPhy, player, gphysic)
     }
     Init(): void {
         console.log("Plant a Plant!!")
         const duration = this.player.ChangeAction(ActionType.PlantAPlant) ?? 2
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
+        this.trigger = true
     }
-    Uninit(): void { }
+    plant() {
+        if(!this.trigger) return
+        this.trigger = false
+        this.player.Meshs.getWorldDirection(this.attackDir)
+        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
+        if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
+            for(let i = 0; i < intersects.length; i++) {
+                const obj = intersects[i]
+                if (obj.distance> this.attackDist) return 
+                const k = obj.object.name
+                if (k == "furniture") {
+                    this.playerCtrl.BuildingSt.Init()
+                    return this.playerCtrl.BuildingSt
+                }
+                const msg = {
+                    type: AttackType.PlantAPlant,
+                    damage: 1,
+                    obj: obj.object
+                }
+                this.eventCtrl.OnAttackEvent(k, [msg])
+                this.target = k
+                this.targetMsg = msg
+            }
+        } else {
+            this.playerCtrl.IdleSt.Init()
+            return this.playerCtrl.IdleSt
+        }
+    }
+    Uninit(): void {
+        if(!this.target || !this.targetMsg) return
+        this.targetMsg.damage = 0
+        this.eventCtrl.OnAttackEvent(this.target, [this.targetMsg])
+    }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
             return d
         }
+        const p = this.plant()
+        if(p != undefined) {
+            this.Uninit()
+            return p
+        }
 
         return this.next
     }
 }
-export class WateringState extends State implements IPlayerAction {
+export class WarteringState extends State implements IPlayerAction {
     warteringCan?: IItem
+    attackDist = 3
+    attackDir = new THREE.Vector3()
+    raycast = new THREE.Raycaster()
+    target?: string
+    targetMsg?: AttackOption
+    
+    trigger = false
 
-    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics, private invenFab: InvenFactory) {
+    constructor(
+        playerPhy: PlayerCtrl, 
+        player: Player, 
+        gphysic: GPhysics, 
+        private invenFab: InvenFactory, 
+        private eventCtrl: EventController
+    ) {
         super(playerPhy, player, gphysic)
     }
     async Init() {
@@ -96,9 +156,38 @@ export class WateringState extends State implements IPlayerAction {
             }
         }
         this.warteringCan = item
+        this.trigger = true
     }
     Uninit(): void {
         if (this.warteringCan && this.warteringCan.Mesh) this.warteringCan.Mesh.visible = false
+        1
+        if (!this.target || !this.targetMsg) return
+        this.targetMsg.damage = 0
+        this.eventCtrl.OnAttackEvent(this.target, [this.targetMsg])
+    }
+    wartering() {
+        if(!this.trigger) return
+        this.trigger = false
+        this.player.Meshs.getWorldDirection(this.attackDir)
+        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
+        if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
+            intersects.forEach((obj) => {
+                if (obj.distance> this.attackDist) return false
+                const k = obj.object.name
+                const msg = {
+                    type: AttackType.Wartering,
+                    damage: 1,
+                    obj: obj.object
+                }
+                this.eventCtrl.OnAttackEvent(k, [msg])
+                this.target = k
+                this.targetMsg = msg
+            })
+        } else {
+            this.playerCtrl.IdleSt.Init()
+            return this.playerCtrl.IdleSt
+        }
     }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
@@ -106,13 +195,32 @@ export class WateringState extends State implements IPlayerAction {
             this.Uninit()
             return d
         }
+        const p = this.wartering()
+        if(p != undefined) {
+            this.Uninit()
+            return p
+        }
 
         return this
     }
 }
 export class BuildingState extends State implements IPlayerAction {
     hammer?: IItem
-    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics, private invenFab: InvenFactory) {
+    attackDist = 3
+    attackDir = new THREE.Vector3()
+    raycast = new THREE.Raycaster()
+    target?: string
+    targetMsg?: AttackOption
+    
+    trigger = false
+
+    constructor(
+        playerPhy: PlayerCtrl, 
+        player: Player, 
+        gphysic: GPhysics, 
+        private invenFab: InvenFactory, 
+        private eventCtrl: EventController
+    ) {
         super(playerPhy, player, gphysic)
     }
     async Init() {
@@ -133,15 +241,45 @@ export class BuildingState extends State implements IPlayerAction {
             }
         }
         this.hammer = item
+        this.trigger = true
     }
     Uninit(): void { 
         if (this.hammer && this.hammer.Mesh) this.hammer.Mesh.visible = false
+    }
+    building() {
+        if(!this.trigger) return
+        this.trigger = false
+        this.player.Meshs.getWorldDirection(this.attackDir)
+        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
+        if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
+            intersects.forEach((obj) => {
+                if (obj.distance> this.attackDist) return false
+                const k = obj.object.name
+                const msg = {
+                    type: AttackType.Building,
+                    damage: 1,
+                    obj: obj.object
+                }
+                this.eventCtrl.OnAttackEvent(k, [msg])
+                this.target = k
+                this.targetMsg = msg
+            })
+        } else {
+            this.playerCtrl.IdleSt.Init()
+            return this.playerCtrl.IdleSt
+        }
     }
     Update(delta: number, v: THREE.Vector3): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
             return d
+        }
+        const b = this.building()
+        if (b != undefined) {
+            this.Uninit()
+            return b
         }
 
         return this

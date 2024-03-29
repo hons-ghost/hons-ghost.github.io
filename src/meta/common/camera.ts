@@ -7,9 +7,9 @@ import { OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import { Npc } from "../scenes/models/npc";
 import { NpcManager } from "../scenes/npcmanager";
 import { EventController, EventFlag } from "../event/eventctrl";
-import { EventBricks } from "../scenes/eventbricks";
+import { EventBricks } from "../scenes/bricks/eventbricks";
 import { Portal } from "../scenes/models/portal";
-import { Legos } from "../scenes/legos";
+import { Legos } from "../scenes/bricks/legos";
 import { AppMode } from "../app";
 import { Farmer } from "../scenes/farmer";
 import { Carpenter } from "../scenes/carpenter";
@@ -42,6 +42,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         private legos: Legos,
         private portal: Portal,
         private farmer: Farmer,
+        private carp: Carpenter,
         private eventCtrl: EventController
     ) {
         super(75, canvas.Width / canvas.Height, 0.1, 800)
@@ -77,6 +78,16 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         this.focusAt(this.owner.CannonPos)
                     }
                     break;
+                case AppMode.Furniture:
+                    if (e == EventFlag.Start) {
+                        this.viewMode = ViewMode.Target
+                        this.controls.enabled = false
+                        this.target = this.carp.target?.Meshs
+                        if (!this.target) break;
+
+                        this.focusAt(this.target.position)
+                    }
+                    break;
                 case AppMode.Farmer:
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
@@ -102,7 +113,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
                         this.controls.enabled = false
-                        this.target = this.brick.GetBrickGuide(this.npcs.Owner.CannonPos)
+                        this.target = this.brick.GetBrickGuide(this.player.CannonPos)
                         if (this.animate != undefined) this.animate.kill()
 
                         this.focusAt(this.target.position)

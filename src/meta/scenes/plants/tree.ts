@@ -5,7 +5,7 @@ import { GhostModel } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 import { GPhysics } from "../../common/physics/gphysics";
 
-export class Tree extends GhostModel implements IBuildingObject {
+export class Tree extends GhostModel implements IPhysicsObject {
     constructor(private loader: Loader, asset: IAsset, private gphysics: GPhysics) {
         super(asset)
     }

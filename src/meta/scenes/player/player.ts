@@ -45,25 +45,6 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     currentAni?: THREE.AnimationAction
     currentClip?: THREE.AnimationClip
 
-    /*
-    idleClip?: THREE.AnimationClip
-    runClip?: THREE.AnimationClip
-    jumpClip?: THREE.AnimationClip
-    punchingClip?: THREE.AnimationClip
-    swordClip?: THREE.AnimationClip
-    fightIdleClip?: THREE.AnimationClip
-    magicH1Clip?: THREE.AnimationClip
-    magicH2Clip?: THREE.AnimationClip
-    danceClip?: THREE.AnimationClip
-    dyingClip?: THREE.AnimationClip
-
-    pickFruit?: THREE.AnimationClip
-    pickFruitTree?: THREE.AnimationClip
-    plantAPlant?: THREE.AnimationClip
-    hammering?: THREE.AnimationClip
-    wartering?: THREE.AnimationClip
-    */
-
     private playerModel: Char = Char.Male
     bindMesh: THREE.Group[] = []
 

@@ -9,7 +9,7 @@ import { NpcManager } from "../scenes/npcmanager";
 import { Portal } from "../scenes/models/portal";
 import { Floor } from "../scenes/models/floor";
 import { GPhysics } from "./physics/gphysics";
-import { Legos } from "../scenes/legos";
+import { Legos } from "../scenes/bricks/legos";
 import { Camera } from "./camera";
 import { RayViwer } from "./raycaster";
 import { IViewer } from "../scenes/models/iviewer";

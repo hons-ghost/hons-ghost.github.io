@@ -1,15 +1,15 @@
 import * as THREE from "three";
-import { Loader } from "../loader/loader";
-import { EventController, EventFlag } from "../event/eventctrl";
-import { Brick } from "./models/brick";
-import { BrickGuide, BrickGuideType } from "./models/brickguide";
-import { Brick2 } from "./models/brick2";
-import { IKeyCommand } from "../event/keycommand";
-import { IModelReload, ModelStore } from "../common/modelstore";
-import { GPhysics } from "../common/physics/gphysics";
+import { Loader } from "../../loader/loader";
+import { EventController, EventFlag } from "../../event/eventctrl";
+import { Brick } from "./brick";
+import { BrickGuide, BrickGuideType } from "./brickguide";
+import { Brick2 } from "./brick2";
+import { IKeyCommand } from "../../event/keycommand";
+import { IModelReload, ModelStore } from "../../common/modelstore";
+import { GPhysics } from "../../common/physics/gphysics";
 import { Bricks, EventBrick } from "./bricks";
-import App, { AppMode } from "../app";
-import { IBuildingObject } from "./models/iobject";
+import App, { AppMode } from "../../app";
+import { IBuildingObject } from "../models/iobject";
 
 
 
@@ -76,10 +76,8 @@ export class EventBricks extends Bricks implements IModelReload{
         this.ClearBlock()
 
         const userBricks = this.store.Legos
-        const subV = new THREE.Vector3(0.1, 0.1, 0.1)
-        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
-
         const collidingBoxSize = new THREE.Vector3()
+
         userBricks.forEach((brick) => {
             const b = new Brick2(brick.position, brick.size, brick.color)
             b.rotation.copy(brick.rotation)

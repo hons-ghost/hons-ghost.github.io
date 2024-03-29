@@ -14,14 +14,14 @@ import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
 import { Portal } from "../scenes/models/portal";
-import { EventBricks } from "../scenes/eventbricks";
+import { EventBricks } from "../scenes/bricks/eventbricks";
 import { NpcManager } from "../scenes/npcmanager";
 import { ModelStore } from "../common/modelstore";
 import SConf from "../configs/staticconf";
 import { GPhysics } from "../common/physics/gphysics";
 import { PlayerCtrl } from "../scenes/player/playerctrl";
 import { Helper } from "../common/helper";
-import { Legos } from "../scenes/legos";
+import { Legos } from "../scenes/bricks/legos";
 import { Input } from "../common/inputs/input";
 import { RayViwer } from "../common/raycaster";
 import { Monsters } from "../scenes/monsters";
@@ -33,6 +33,7 @@ import { Alarm } from "../common/alarm";
 import { Materials } from "../scenes/materials";
 import { GameCenter } from "../scenes/gamecenter";
 import { Farmer } from "../scenes/farmer";
+import { Carpenter } from "../scenes/carpenter";
 
 
 export class AppFactory {
@@ -61,6 +62,7 @@ export class AppFactory {
     private monsters: Monsters
     private materials: Materials
     private farmer: Farmer
+    private carp: Carpenter
 
     private buff: Buff
     private playerCtrl : PlayerCtrl
@@ -120,11 +122,12 @@ export class AppFactory {
         this.monsters = new Monsters(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
         this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb, this.gphysics)
-        this.farmer = new Farmer(this.loader, this.player, this.game, this.store, this.gphysics, this.eventCtrl)
+        this.farmer = new Farmer(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
+        this.carp = new Carpenter(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
 
         this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.monsters, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl)
 
-        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.farmer, this.eventCtrl)
+        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.farmer, this.carp, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.currentScene = this.game
@@ -179,6 +182,7 @@ export class AppFactory {
             this.materials.MassLoader(),
             this.npcs.NpcLoader(),
             this.farmer.FarmLoader(),
+            this.carp.FurnLoader(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)

@@ -6,7 +6,7 @@ import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
-import { BrickOption } from "./scenes/bricks";
+import { BrickOption } from "./scenes/bricks/bricks";
 import { Inventory } from "./inventory/inventory";
 import { IBuffItem } from "./buff/buff";
 import { GameOptions } from "./scenes/gamecenter";
@@ -20,7 +20,7 @@ export enum AppMode {
     Locate,
     Face,
     Weapon,
-    Funiture,
+    Furniture,
     Farmer,
     Portal,
     Lego,

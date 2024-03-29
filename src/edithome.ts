@@ -20,7 +20,7 @@ export class EditHome extends Page {
     brickRotate = new THREE.Vector3()
     ui = new Ui(this.meta, AppMode.EditPlay)
     plant = new EditPlant(this.meta, this)
-    furn = new EditFurniture()
+    furn = new EditFurniture(this.meta, this)
 
     myPicker?: ColorPicker
     color: string = "#fff"
@@ -94,6 +94,8 @@ export class EditHome extends Page {
     }
     public UpdateMenu() {
         console.log("current Mode", this.mode)
+        const play = document.getElementById("editplaymode") as HTMLDivElement
+        play.style.backgroundColor = (this.mode == AppMode.EditPlay) ? "silver" : "transparent"
         const loc = document.getElementById("locatmode") as HTMLDivElement
         loc.style.backgroundColor = (this.mode == AppMode.Locate) ? "silver" : "transparent"
         const avr = document.getElementById("avatarmode") as HTMLDivElement
@@ -103,9 +105,9 @@ export class EditHome extends Page {
         const div = document.getElementById("brickmode") as HTMLDivElement
         div.style.backgroundColor = (this.mode == AppMode.Brick) ? "silver" : "transparent"
         const fun = document.getElementById("funituremode") as HTMLDivElement
-        fun.style.backgroundColor = (this.mode == AppMode.Funiture) ? "silver" : "transparent"
+        fun.style.backgroundColor = (this.mode == AppMode.Furniture) ? "silver" : "transparent"
         const fun2 = document.getElementById("funiture-second") as HTMLDivElement
-        fun2.style.display = (this.mode == AppMode.Funiture) ? "block" : "none"
+        fun2.style.display = (this.mode == AppMode.Furniture) ? "block" : "none"
         const wea = document.getElementById("weaponmode") as HTMLDivElement
         wea.style.backgroundColor = (this.mode == AppMode.Weapon) ? "silver" : "transparent"
         const brickctrl = document.getElementById("brickctrl") as HTMLDivElement
@@ -154,6 +156,11 @@ export class EditHome extends Page {
             const models = this.meta.ModelStore()
             this.RequestNewMeta(models)
         }
+        const play = document.getElementById("editplaymode") as HTMLDivElement
+        play.onclick = () => {
+            this.meta.ModeChange(AppMode.EditPlay)
+            this.UpdateMenu()
+        }
         const div = document.getElementById("brickmode") as HTMLDivElement
         div.onclick = () => {
             this.mode = (this.mode != AppMode.Brick) ? AppMode.Brick : AppMode.EditPlay
@@ -174,7 +181,7 @@ export class EditHome extends Page {
         }
         const fun = document.getElementById("funituremode") as HTMLDivElement
         fun.onclick = () => {
-            this.mode = (this.mode != AppMode.Funiture) ? AppMode.Funiture : AppMode.EditPlay
+            this.mode = (this.mode != AppMode.Furniture) ? AppMode.Furniture : AppMode.EditPlay
             //this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
@@ -309,6 +316,7 @@ export class EditHome extends Page {
         this.ui.UiOff(AppMode.EditPlay)
         this.MenuEvent(email)
         this.inven.binding()
+        this.UpdateMenu()
 
         return true;
     }

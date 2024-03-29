@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { IPhysicsObject } from "../scenes/models/iobject";
 import { Camera } from "./camera";
-import { Legos } from "../scenes/legos";
-import { EventBricks } from "../scenes/eventbricks";
+import { Legos } from "../scenes/bricks/legos";
+import { EventBricks } from "../scenes/bricks/eventbricks";
 import { Canvas } from "./canvas";
 import { IViewer } from "../scenes/models/iviewer";
 import { EventController } from "../event/eventctrl";

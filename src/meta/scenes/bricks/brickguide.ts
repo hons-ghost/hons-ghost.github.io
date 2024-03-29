@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import { EventController } from "../../event/eventctrl";
 import { IKeyCommand } from "../../event/keycommand";
-import { GhostModel2 } from "./ghostmodel";
-import { BrickShapeType } from "../legos";
-import { IPhysicsObject } from "./iobject";
+import { GhostModel2 } from "../models/ghostmodel";
+import { BrickShapeType } from "./legos";
+import { IPhysicsObject } from "../models/iobject";
 
 export enum BrickGuideType {
     Lego,

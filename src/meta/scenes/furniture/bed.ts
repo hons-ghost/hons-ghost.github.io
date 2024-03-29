@@ -1,52 +1,31 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
-import { GhostModel, GhostModel2 } from "../models/ghostmodel";
+import { GhostModel } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "../models/iobject";
+import { IFurnMotions } from "./furnctrl";
 import { ProgressBar } from "../models/progressbar";
 import { FloatingName } from "../../common/floatingtxt";
-import { ITreeMotions } from "./treectrl";
 
-export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotions {
-    get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
+export class Bed extends GhostModel implements IPhysicsObject, IFurnMotions {
     gauge = new ProgressBar(0.1, 0.1, 2)
-
+    get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
     constructor(private loader: Loader, asset: IAsset) {
         super(asset)
-        this.text = new FloatingName("나무를 심어주세요")
+        this.text = new FloatingName("제작을 시작해주세요")
     }
 
     async Init() {
     }
-    SetLevel(lv: number): void {
-    }
+    
     SetProgress(ratio: number): void {
         this.gauge.SetProgress(ratio)
     }
-    Enough(): void {
-        if (this.text != undefined) {
-            this.text.visible = false
-        }
+    Building(): void {
+        
     }
-    NeedWarter(): void {
-        if (this.text != undefined) {
-            this.text.visible = true
-            this.text.SetText("물을 주세요")
-        }
-    }
-    Death(): void {
-        this.meshs.children[0].traverse(child => {
-            if('material' in child) {
-                const material = child.material as THREE.MeshStandardMaterial
-                material.transparent = true;
-                material.depthWrite = false;
-                material.opacity = .5;
-                material.color = new THREE.Color("#ff0000")
-            }
-        })
-    }
-    Plant(): void {
-        this.meshs.children[0].traverse(child => {
+    Done(): void {
+        this.meshs.traverse(child => {
             if('material' in child) {
                 const material = child.material as THREE.MeshStandardMaterial
                 material.transparent = false;
@@ -54,27 +33,20 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
                 material.opacity = 1;
             }
         })
-
         if (this.text != undefined) {
-            this.text.SetText("물을 주세요")
+            this.text.visible = false
         }
-        this.gauge.Meshs.traverse((child) => {
-            if('material' in child) {
-                const material = child.material as THREE.MeshStandardMaterial;
-                material.color = new THREE.Color("#008DDA")
-            }
-        })
-        this.gauge.SetProgress(0.01)
+        this.gauge.Visible = false
     }
-
     SetText(text: string) {
         this.text?.SetText(text)
     }
      
     Create() {
         this.meshs.add(this.gauge)
-        this.gauge.position.x += 1
-        this.gauge.position.z += 2
+        this.gauge.position.y += 3
+        this.gauge.rotation.x = this.meshs.rotation.y
+        console.log(this.gauge.rotation, this.meshs.rotation)
 
         if (this.text != undefined) {
             this.text.position.y = 4
@@ -91,12 +63,11 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
         this.meshs.traverse(child => {
             child.castShadow = true
             child.receiveShadow = true
-            if('material' in child) {
+            if ('material' in child) {
                 (child.material as THREE.MeshStandardMaterial).transparent = true;
                 (child.material as THREE.MeshStandardMaterial).depthWrite = false;
                 (child.material as THREE.MeshStandardMaterial).opacity = 0.3;
             }
         })
-        this.meshs.visible = false
     }
 }

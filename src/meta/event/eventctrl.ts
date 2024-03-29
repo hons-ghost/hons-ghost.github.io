@@ -1,7 +1,7 @@
 import * as EventEmitter from "eventemitter3";
 import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
-import { BrickOption } from "../scenes/bricks";
+import { BrickOption } from "../scenes/bricks/bricks";
 import { AppMode } from "../app";
 import { IPhysicsObject } from "../scenes/models/iobject";
 import { AttackOption, PlayerStatus } from "../scenes/player/playerctrl";

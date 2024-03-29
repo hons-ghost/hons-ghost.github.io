@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Loader } from "../../loader/loader";
-import { GhostModel } from "./ghostmodel";
+import { GhostModel } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 
 export class Brick extends GhostModel{

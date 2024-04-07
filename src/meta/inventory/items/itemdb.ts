@@ -1,6 +1,6 @@
-import { IAsset } from "../../loader/assetmodel"
+import { Bind, IAsset } from "../../loader/assetmodel"
 import { Loader } from "../../loader/loader"
-import { AttackItemType, Bind, ItemType, Level } from "./item"
+import { AttackItemType, ItemType, Level } from "./item"
 
 export class ItemId {
     public static Hanhwasbat = Symbol("Hanhwa's Bat")

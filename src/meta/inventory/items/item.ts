@@ -1,5 +1,5 @@
 import { Lang } from "../../lang/lang"
-import { IAsset } from "../../loader/assetmodel"
+import { Bind, IAsset } from "../../loader/assetmodel"
 import { ItemProperty } from "./itemdb"
 
 export enum ItemType {
@@ -21,14 +21,6 @@ export enum AttackItemType {
     Wand,
 }
 
-export enum Bind {
-    Body, // chainmail, platemail, wizard robe
-    Hands_L, //Gloves
-    Hands_R, //Gloves
-    Head,
-    Legs,
-    Feet,
-}
 
 export enum Level {
     Common,

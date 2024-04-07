@@ -13,7 +13,7 @@ export class AppleTreeFab extends AssetModel implements IAsset {
             this.gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
-            const scale = 0
+            const scale = 1
             this.meshs.scale.set(scale, scale, scale)
             this.meshs.position.set(0, 0, 0)
             this.meshs.rotation.set(0, 0, 0)

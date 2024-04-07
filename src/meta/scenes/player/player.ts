@@ -6,11 +6,10 @@ import SConf from "../../configs/staticconf";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { Game } from "../game";
 import { GhostModel } from "../models/ghostmodel";
-import { Ani, Char, IAsset } from "../../loader/assetmodel";
+import { Ani, Bind, Char, IAsset } from "../../loader/assetmodel";
 import { Portal } from "../models/portal";
 import { AppMode } from "../../app";
 import { Inventory } from "../../inventory/inventory";
-import { Bind } from "../../inventory/items/item";
 import { Damage } from "../../effects/damage";
 import { TextStatus } from "../../effects/status";
 

@@ -43,7 +43,7 @@ export class AppFactory {
 
     private eventCtrl = new EventController()
     private canvas = new Canvas()
-    private loader = new Loader(this.eventCtrl)
+    private loader = new Loader()
     private gameCenter: GameCenter
 
     private store: ModelStore
@@ -92,6 +92,7 @@ export class AppFactory {
     get Player() { return this.player }
     get Buff() { return this.buff }
     get GameCenter() { return this.gameCenter }
+    get LoadingManager() { return this.loader.LoadingManager }
 
     constructor() {
         this.worldSize = 300

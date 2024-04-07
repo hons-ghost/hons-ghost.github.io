@@ -1,7 +1,6 @@
 import { SubtractiveBlending } from "three";
 import App, { AppMode } from "./meta/app";
 import { InvenData, Inventory } from "./meta/inventory/inventory";
-import { Bind, IItem } from "./meta/inventory/items/item";
 import { ItemId } from "./meta/inventory/items/itemdb";
 import { PlayerStatus } from "./meta/scenes/player/playerctrl";
 import { Ui } from "./models/ui";

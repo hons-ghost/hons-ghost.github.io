@@ -4,8 +4,9 @@ import { AttackType, PlayerCtrl } from "./playerctrl";
 import { ActionType, Player } from "./player";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController } from "../../event/eventctrl";
-import { AttackItemType, Bind } from "../../inventory/items/item";
+import { AttackItemType } from "../../inventory/items/item";
 import { PlayerSpec } from "./playerspec";
+import { Bind } from "../../loader/assetmodel";
 
 export class AttackState extends State implements IPlayerAction {
     raycast = new THREE.Raycaster()

@@ -12,8 +12,6 @@ import { TestFab } from "./testfab";
 import { ZombieFab } from "./zombiefab";
 import { BatFab } from "./batfab";
 import { GunFab } from "./gunfab";
-import { EventController, EventFlag } from "../event/eventctrl";
-import { AppMode } from "../app";
 import { MinataurFab } from "./minataurfab";
 import { CrabFab } from "./crabfab";
 import { StoneFab } from "./stonefab";
@@ -77,9 +75,8 @@ export class Loader {
     get StoneAsset(): IAsset { return this.stone }
 
     assets = new Map<Char, IAsset>()
-    loadingVisible = true
 
-    constructor(private eventCtrl: EventController) {
+    constructor() {
         THREE.Cache.enabled = true
 
         this.assets.set(Char.Male, this.male)
@@ -105,33 +102,20 @@ export class Loader {
         this.assets.set(Char.Stone, this.stone)
         this.assets.set(Char.Bed, this.bed)
 
-        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
-            if(mode != AppMode.Play) return
-            switch (e) {
-                case EventFlag.Start:
-                    this.loadingVisible = false
-                    break
-                case EventFlag.End:
-                    this.loadingVisible = true
-                    break
-            }
-        })
-
         const progressBar = document.querySelector('#progress-bar') as HTMLProgressElement
-        const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
         this.LoadingManager.onProgress = (url, loaded, total) => {
-            if(!this.loadingVisible) return
             progressBar.value = (loaded / total) * 100
         }
+        /*
+        const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
         this.LoadingManager.onStart = () => {
-            if(!this.loadingVisible) return
             const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
             progressBarContainer.style.display = "flex"
         }
         this.LoadingManager.onLoad = () => {
-            if(!this.loadingVisible) return
-            progressBarContainer.style.display ='none'
+            progressBarContainer.style.display = 'none'
         }
+        */
     }
 
     GetAssets(id: Char): IAsset{

@@ -1,5 +1,6 @@
 import { Alarm, AlarmType } from "../common/alarm";
-import { Bind, IItem, Item } from "./items/item";
+import { Bind } from "../loader/assetmodel";
+import { IItem, Item } from "./items/item";
 import { ItemDb } from "./items/itemdb";
 
 export type InventorySlot = {

@@ -1,8 +1,7 @@
 import * as THREE from "three";
 import { Loader } from "./loader";
-import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
+import { Ani, AssetModel, Bind, Char, IAsset, ModelType } from "./assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
-import { Bind } from "../inventory/items/item";
 
 
 export class TestFab extends AssetModel implements IAsset {

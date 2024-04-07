@@ -33,13 +33,13 @@ export class FurnCtrl {
         const geometry = new THREE.BoxGeometry(size.x / 2, size.y, size.z / 2)
         const material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
-            //transparent: true,
-            //opacity: .5,
-            //color: 0xff0000,
-            //depthWrite: false,
+            transparent: true,
+            opacity: .5,
+            color: 0xff0000,
+            depthWrite: false,
         })
         this.phybox = new FurnBox(id, "furniture", geometry, material)
-        this.phybox.visible = false
+        //this.phybox.visible = false
         this.phybox.position.copy(this.tree.CannonPos)
     }
     BuildingStart() {

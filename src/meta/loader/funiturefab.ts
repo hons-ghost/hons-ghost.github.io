@@ -18,6 +18,8 @@ export class BedFab extends AssetModel implements IAsset {
                 child.castShadow = true
                 child.receiveShadow = true
             })
+            const scale = .7
+            this.meshs.scale.set(scale, scale, scale)
         })
     }
     

@@ -1,6 +1,14 @@
 import * as THREE from "three";
 import { Loader } from "./loader";
-import { Bind } from "../inventory/items/item";
+
+export enum Bind {
+    Body, // chainmail, platemail, wizard robe
+    Hands_L, //Gloves
+    Hands_R, //Gloves
+    Head,
+    Legs,
+    Feet,
+}
 
 export enum Ani {
     Idle,
@@ -64,6 +72,7 @@ export enum ModelType {
 
 export interface IAsset {
     get Id(): Char
+    get Clips(): Map<Ani, THREE.AnimationClip | undefined>
     GetAnimationClip(id: Ani): THREE.AnimationClip | undefined 
     GetBox(mesh: THREE.Group): THREE.Box3
     GetBoxPos(mesh: THREE.Group): THREE.Vector3
@@ -82,6 +91,7 @@ export class AssetModel {
     private models = new Map<string, THREE.Group>()
     private mixers = new Map<string, THREE.AnimationMixer>()
 
+    get Clips() { return this.clips }
     get Mixer() { return this.mixer }
     constructor(
         protected loader: Loader, 

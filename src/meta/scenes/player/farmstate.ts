@@ -1,12 +1,13 @@
 import * as THREE from "three";
 import { GPhysics } from "../../common/physics/gphysics"
 import { InvenFactory } from "../../inventory/invenfactory"
-import { Bind, IItem } from "../../inventory/items/item"
+import { IItem } from "../../inventory/items/item"
 import { ItemId } from "../../inventory/items/itemdb"
 import { ActionType, Player } from "./player"
 import { AttackOption, AttackType, PlayerCtrl } from "./playerctrl"
 import { IPlayerAction, State } from "./playerstate"
 import { EventController } from "../../event/eventctrl";
+import { Bind } from "../../loader/assetmodel";
 
 export class PickFruitState extends State implements IPlayerAction {
     next: IPlayerAction = this

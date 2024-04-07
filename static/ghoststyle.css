@@ -214,7 +214,7 @@ header {
     align-items: center;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
 }
 
@@ -369,8 +369,8 @@ display: inline-block;
 #editmenu {
     max-width: 64px;
 	position: absolute;
-	top: 70;
-    left: 10;
+	top: 50px;
+    left: 10px;
 }
 
 .popmenu-wrap {

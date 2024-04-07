@@ -152,7 +152,7 @@ export class Carpenter implements IModelReload, IViewer {
         if (!furn || !meshs || !this.target) return
 
         meshs.rotation.y = this.target.Meshs.rotation.y
-        await furn.MassLoader(meshs, 1, pos)
+        await furn.MassLoader(meshs, pos)
         furn.Create()
         furn.Visible = true
         const treeCtrl = new FurnCtrl(this.furnitures.length, furn, furn, property) 
@@ -167,7 +167,7 @@ export class Carpenter implements IModelReload, IViewer {
         const tree = this.furnFab.get(FurnId.DefaultBed) as Bed
         const meshs = await this.loader.BedAsset.CloneModel()
         const ret = await Promise.all([
-            tree.MassLoader(meshs, 1, p)
+            tree.MassLoader(meshs, p)
         ])
         return ret
     }
@@ -180,6 +180,7 @@ export class Carpenter implements IModelReload, IViewer {
         this.target.Meshs.position.x += vx
         //this.meshs.position.y = 4.7
         this.target.Meshs.position.z += vz
+        console.log(this.target.Meshs.position)
 
         // Check Collision Furniture
         if (this.gphysic.Check(this.target)) {

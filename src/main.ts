@@ -69,7 +69,7 @@ export class Main extends Page {
         }
         if (this.targetloadCnt == this.currenloadCnt) {
             const tag = document.getElementById("loadspinner") as HTMLSpanElement
-            tag.style.display = "none"
+            if (tag) tag.style.display = "none"
         }
     }
     drawHtmlUserInfo() {

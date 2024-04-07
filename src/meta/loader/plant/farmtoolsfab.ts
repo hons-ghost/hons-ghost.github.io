@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { Loader } from "./loader";
-import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
+import { Loader } from "../loader";
+import { Ani, AssetModel, Char, IAsset, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 export class WarteringCanFab extends AssetModel implements IAsset {
@@ -21,13 +21,12 @@ export class WarteringCanFab extends AssetModel implements IAsset {
         })
     }
     GetBodyMeshId() { return "mixamorigRightHand" }
-    box?: THREE.Mesh
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         // Don't Use this.meshs
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
         }
 
         const p = this.GetBoxPos(mesh)
@@ -70,7 +69,6 @@ export class HammerFab extends AssetModel implements IAsset {
         })
     }
     GetBodyMeshId() { return "mixamorigRightHand" }
-    box?: THREE.Mesh
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         // Don't Use this.meshs

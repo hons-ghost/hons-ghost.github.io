@@ -21,11 +21,15 @@ export class PortalFab extends AssetModel implements IAsset {
     }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
-        const s = this.GetSize(mesh)
+        // Don't Use this.meshs
+        if (this.box == undefined) {
+            const s = this.GetSize(mesh)
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+        }
+
         const p = this.GetBoxPos(mesh)
-        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
-        box.position.set(p.x, p.y, p.z)
-        return new THREE.Box3().setFromObject(box)
+        this.box.position.set(p.x, p.y, p.z)
+        return new THREE.Box3().setFromObject(this.box)
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         const bbox = new THREE.Box3().setFromObject(mesh)

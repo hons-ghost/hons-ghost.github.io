@@ -1,15 +1,15 @@
 import * as THREE from "three";
-import { Loader } from "./loader";
-import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
+import { Loader } from "../loader";
+import { Ani, AssetModel, Char, IAsset, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-export class BilbyFab extends AssetModel implements IAsset {
+export class MinataurFab extends AssetModel implements IAsset {
     Gltf?:GLTF
 
     get Id() {return Char.Female}
 
     constructor(loader: Loader) { 
-        super(loader, ModelType.Gltf, "assets/monster/bilby_animated.glb", async (gltf: GLTF) => {
+        super(loader, ModelType.Gltf, "assets/monster/minataur_low_poly.glb", async (gltf: GLTF) => {
             this.Gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
@@ -18,10 +18,9 @@ export class BilbyFab extends AssetModel implements IAsset {
                 child.castShadow = true
                 child.receiveShadow = true
             })
-            const scale = 1
+            const scale = 0.02
             this.meshs.scale.set(scale, scale, scale)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
-            console.log(gltf.animations)
             this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "Armature|idle"))
             this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Armature|Walk"))
             this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "Armature|Attack"))
@@ -30,14 +29,13 @@ export class BilbyFab extends AssetModel implements IAsset {
             this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "Armature|Jump"))
         })
     }
-    box?: THREE.Mesh
-    
     GetBodyMeshId() { return "mixamorigRightHand" }
+    
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
         }
 
         const p = this.GetBoxPos(mesh)

@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { Loader } from "./loader";
-import { AssetModel, Char, ModelType } from "./assetmodel";
+import { Loader } from "../loader";
+import { AssetModel, Char, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 
@@ -20,15 +20,14 @@ export class TreeFab extends AssetModel {
     GetBodyMeshId() { return "" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
-        const s = this.GetSize(mesh)
-        const p = this.GetBoxPos(mesh)
-        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
-        box.position.set(p.x, p.y, p.z)
-        const ret =  new THREE.Box3().setFromObject(box)
-        box.geometry.dispose()
-        box.material.dispose()
+        if (this.box == undefined) {
+            const s = this.GetSize(mesh)
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+        }
 
-        return ret
+        const p = this.GetBoxPos(mesh)
+        this.box.position.set(p.x, p.y, p.z)
+        return new THREE.Box3().setFromObject(this.box)
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         const bbox = new THREE.Box3().setFromObject(mesh)

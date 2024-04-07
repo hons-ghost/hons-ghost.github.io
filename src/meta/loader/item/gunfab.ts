@@ -1,26 +1,25 @@
 import * as THREE from "three";
-import { Loader } from "./loader";
-import { AssetModel, Char, IAsset, ModelType } from "./assetmodel";
+import { Loader } from "../loader";
+import { Ani, AssetModel, Char, IAsset, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
+export class GunFab extends AssetModel implements IAsset {
+    gltf?:GLTF
 
-export class StoneFab extends AssetModel implements IAsset {
-    id = Char.Stone
-
-    get Id() {return this.id}
+    get Id() {return Char.Male}
 
     constructor(loader: Loader) { 
-        super(loader, ModelType.Gltf, "assets/rocks/stylized_lowpoly_rock.glb", (gltf: GLTF) => {
+        super(loader, ModelType.Gltf, "assets/weapon/gun.glb", async (gltf: GLTF) => {
+            this.gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
-            this.meshs.receiveShadow = true
-            this.meshs.traverse(child => {
-                child.castShadow = true
-                child.receiveShadow = true
-            })
+
+            const scale = 0.05
+            this.meshs.scale.set(scale, scale, scale)
+            this.meshs.position.set(0.2, 0.8, 0.2)
+            this.meshs.rotation.set(3.5, -0.1, -1.6)
         })
     }
-    
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         // Don't Use this.meshs
@@ -34,18 +33,20 @@ export class StoneFab extends AssetModel implements IAsset {
         return new THREE.Box3().setFromObject(this.box)
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
-        const bbox = new THREE.Box3().setFromObject(mesh)
+        if (this.meshs == undefined) this.meshs = mesh
+        // Don't Use mesh
+
+        if (this.size != undefined) return this.size
+        const bbox = new THREE.Box3().setFromObject(this.meshs)
         this.size = bbox.getSize(new THREE.Vector3)
-        this.size.x = Math.ceil(this.size.x - 2)
-        this.size.y = Math.ceil(this.size.y - 3)
-        this.size.z = Math.ceil(this.size.z - 1)
+        this.size.x = Math.ceil(this.size.x)
+        this.size.z = Math.ceil(this.size.z)
         return this.size 
     }
-
     GetBoxPos(mesh: THREE.Group) {
+        // Don't Use this.meshs
         const v = mesh.position
         return new THREE.Vector3(v.x, v.y, v.z)
     }
-
     GetBodyMeshId() { return "mixamorigRightHand" }
 }

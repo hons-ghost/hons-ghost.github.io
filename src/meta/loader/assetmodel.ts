@@ -73,6 +73,7 @@ export enum ModelType {
 export interface IAsset {
     get Id(): Char
     get Clips(): Map<Ani, THREE.AnimationClip | undefined>
+    get BoxMesh(): THREE.Mesh | undefined
     GetAnimationClip(id: Ani): THREE.AnimationClip | undefined 
     GetBox(mesh: THREE.Group): THREE.Box3
     GetBoxPos(mesh: THREE.Group): THREE.Vector3
@@ -84,6 +85,7 @@ export interface IAsset {
 }
 
 export class AssetModel {
+    box?: THREE.Mesh
     protected meshs?: THREE.Group
     protected size?: THREE.Vector3
     protected mixer?: THREE.AnimationMixer
@@ -93,6 +95,7 @@ export class AssetModel {
 
     get Clips() { return this.clips }
     get Mixer() { return this.mixer }
+    get BoxMesh() { return this.box }
     constructor(
         protected loader: Loader, 
         private loaderType: ModelType,

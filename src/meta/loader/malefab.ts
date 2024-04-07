@@ -21,7 +21,7 @@ export class MaleFab extends AssetModel implements IAsset {
                 child.receiveShadow = true
             })
 
-            this.meshs.scale.set(1, 1, 1)
+            //this.meshs.scale.set(1, 1, 1)
 
             this.clips.set(Ani.Idle, gltf.animations[0])
             this.clips.set(Ani.Run, gltf.animations[1])
@@ -57,13 +57,12 @@ export class MaleFab extends AssetModel implements IAsset {
             case Bind.Hands_L: return "mixamorigLeftHand";
         }
     }
-    box?: THREE.Mesh
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         // Don't Use this.meshs
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
         }
 
         const p = this.GetBoxPos(mesh)
@@ -84,7 +83,8 @@ export class MaleFab extends AssetModel implements IAsset {
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
         this.size.x /= 3
-        this.size.y *= 0.75
+        console.log(this.meshs, this.size)
+        //this.size.y *= 0.75
         return this.size 
     }
     GetBoxPos(mesh: THREE.Group) {

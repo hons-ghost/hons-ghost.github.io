@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { Loader } from "./loader";
-import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
+import { Loader } from "../loader";
+import { Ani, AssetModel, Char, IAsset, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 export class ZombieFab extends AssetModel implements IAsset {
@@ -31,14 +31,13 @@ export class ZombieFab extends AssetModel implements IAsset {
             this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "ZombieScream"))
         })
     }
-    box?: THREE.Mesh
     GetBodyMeshId() { return "mixamorigRightHand" }
 
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}))
         }
 
         const p = this.GetBoxPos(mesh)
@@ -56,6 +55,7 @@ export class ZombieFab extends AssetModel implements IAsset {
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
         this.size.x /= 3
+        console.log(this.meshs, this.size)
         return this.size 
     }
     GetBoxPos(mesh: THREE.Group) {

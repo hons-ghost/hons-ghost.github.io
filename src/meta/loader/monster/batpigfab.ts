@@ -1,15 +1,15 @@
 import * as THREE from "three";
-import { Loader } from "./loader";
-import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
+import { Loader } from "../loader";
+import { Ani, AssetModel, Char, IAsset, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
-export class BirdMonFab extends AssetModel implements IAsset {
+export class BatPigFab extends AssetModel implements IAsset {
     Gltf?:GLTF
 
     get Id() {return Char.Female}
 
     constructor(loader: Loader) { 
-        super(loader, ModelType.Gltf, "assets/monster/bird_monster_animated.glb", async (gltf: GLTF) => {
+        super(loader, ModelType.Gltf, "assets/monster/bat_pig.glb", async (gltf: GLTF) => {
             this.Gltf = gltf
             this.meshs = gltf.scene
             this.meshs.castShadow = true
@@ -30,14 +30,13 @@ export class BirdMonFab extends AssetModel implements IAsset {
             this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "Armature|Jump"))
         })
     }
-    box?: THREE.Mesh
     
     GetBodyMeshId() { return "mixamorigRightHand" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
         }
 
         const p = this.GetBoxPos(mesh)

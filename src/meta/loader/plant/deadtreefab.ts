@@ -1,32 +1,29 @@
 import * as THREE from "three";
-import { Loader } from "./loader";
-import { AssetModel, Char, IAsset, ModelType } from "./assetmodel";
+import { Loader } from "../loader";
+import { AssetModel, Char, IAsset, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 
-export class MushroomFab extends AssetModel implements IAsset {
-    id = Char.Mushroom1
-
-    get Id() {return this.id}
-
-    constructor(loader: Loader, type: number) { 
-        super(loader, ModelType.Gltf, "assets/custom_island/mushroom" + type + ".glb", (gltf: GLTF) => {
+export class DeadtreeFab extends AssetModel implements IAsset {
+    get Id() {return Char.DeadTree}
+    
+    constructor(loader: Loader) { 
+        super(loader, ModelType.Gltf, "assets/custom_island/tree2.glb", (gltf: GLTF) => {
             this.meshs = gltf.scene
-            this.meshs.castShadow = true
+            this.meshs.castShadow = false
             this.meshs.receiveShadow = true
             this.meshs.traverse(child => {
-                child.castShadow = true
+                child.castShadow = false
                 child.receiveShadow = true
             })
         })
-        this.id = (type == 1)? Char.Mushroom1: Char.Mushroom2
     }
     
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         const s = this.GetSize(mesh)
         const p = this.GetBoxPos(mesh)
-        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
         box.position.set(p.x, p.y, p.z)
         return new THREE.Box3().setFromObject(box)
     }
@@ -37,11 +34,9 @@ export class MushroomFab extends AssetModel implements IAsset {
         this.size.z = Math.ceil(this.size.z)
         return this.size 
     }
-
     GetBoxPos(mesh: THREE.Group) {
         const v = mesh.position
         return new THREE.Vector3(v.x, v.y, v.z)
     }
-
     GetBodyMeshId() { return "mixamorigRightHand" }
 }

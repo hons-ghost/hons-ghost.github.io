@@ -64,7 +64,6 @@ export class FemaleFab extends AssetModel implements IAsset {
         f.add(v, "y", -100, 100, step).listen().name(name + "Y")
         f.add(v, "z", -100, 100, step).listen().name(name + "Z")
     }
-    box?: THREE.Mesh
     
     GetBodyMeshId(bind: Bind) { 
         switch(bind) {
@@ -76,7 +75,7 @@ export class FemaleFab extends AssetModel implements IAsset {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
         }
 
         const p = this.GetBoxPos(mesh)
@@ -94,6 +93,7 @@ export class FemaleFab extends AssetModel implements IAsset {
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
         this.size.x /= 3
+        console.log(this.meshs, this.size)
         return this.size 
     }
     GetBoxPos(mesh: THREE.Group) {

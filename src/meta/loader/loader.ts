@@ -1,23 +1,25 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js"
-import { DeadtreeFab } from "./deadtreefab";
+import { DeadtreeFab } from "./plant/deadtreefab";
 import { Char, IAsset } from "./assetmodel";
 import { MaleFab } from "./malefab";
 import { FemaleFab } from "./femalefab";
-import { MushroomFab } from "./mushroomfab";
-import { TreeFab } from "./treefab";
+import { MushroomFab } from "./plant/mushroomfab";
+import { TreeFab } from "./plant/treefab";
 import { PortalFab } from "./portalfab";
 import { TestFab } from "./testfab";
-import { ZombieFab } from "./zombiefab";
-import { BatFab } from "./batfab";
-import { GunFab } from "./gunfab";
-import { MinataurFab } from "./minataurfab";
-import { CrabFab } from "./crabfab";
+import { ZombieFab } from "./monster/zombiefab";
+import { BatFab } from "./item/batfab";
+import { GunFab } from "./item/gunfab";
+import { MinataurFab } from "./monster/minataurfab";
+import { CrabFab } from "./monster/crabfab";
 import { StoneFab } from "./stonefab";
-import { HammerFab, WarteringCanFab } from "./farmtoolsfab";
+import { HammerFab, WarteringCanFab } from "./plant/farmtoolsfab";
 import { BedFab } from "./funiturefab";
-import { AppleTreeFab } from "./plantfab";
+import { AppleTreeFab } from "./plant/plantfab";
+import { BatPigFab } from "./monster/batpigfab";
+import { BirdMonFab } from "./monster/birdmonfab";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -35,6 +37,8 @@ export class Loader {
     private zombie = new ZombieFab(this)
     private minatuar = new MinataurFab(this)
     private crab = new CrabFab(this)
+    private batpig = new BatPigFab(this)
+    private birdmon = new BirdMonFab(this)
 
     private bat = new BatFab(this)
     private gun = new GunFab(this)
@@ -91,6 +95,7 @@ export class Loader {
         this.assets.set(Char.Zombie, this.zombie)
         this.assets.set(Char.Minataur, this.minatuar)
         this.assets.set(Char.CrabMon, this.crab)
+        this.assets.set(Char.BatPig, this.crab)
 
         this.assets.set(Char.Bat, this.bat)
         this.assets.set(Char.Gun, this.gun)

@@ -6,7 +6,7 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 export class ZombieFab extends AssetModel implements IAsset {
     Gltf?:GLTF
 
-    get Id() {return Char.Female}
+    get Id() {return Char.Zombie}
 
     constructor(loader: Loader) { 
         super(loader, ModelType.Gltf, "assets/monster/zombie.gltf", async (gltf: GLTF) => {
@@ -21,7 +21,7 @@ export class ZombieFab extends AssetModel implements IAsset {
             })
             const scale = 0.024
             this.meshs.children[0].scale.set(scale, scale, scale)
-            this.meshs.children[0].position.set(0, -2.5, 0)
+            this.meshs.children[0].position.set(0, 0, 0)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
             this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "ZombieIdle"))
             this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Walking"))
@@ -37,7 +37,7 @@ export class ZombieFab extends AssetModel implements IAsset {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}))
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
         }
 
         const p = this.GetBoxPos(mesh)
@@ -46,6 +46,8 @@ export class ZombieFab extends AssetModel implements IAsset {
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         if (this.meshs == undefined) this.meshs = mesh
+        if (this.size) return this.size
+
         const effector = this.meshs.getObjectByName("effector")
         if(effector != undefined) this.meshs.remove(effector)
         const bbox = new THREE.Box3().setFromObject(this.meshs)
@@ -58,9 +60,4 @@ export class ZombieFab extends AssetModel implements IAsset {
         console.log(this.meshs, this.size)
         return this.size 
     }
-    GetBoxPos(mesh: THREE.Group) {
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
-    }
-    
 }

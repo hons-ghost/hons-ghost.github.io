@@ -41,6 +41,7 @@ export class MinataurCtrl implements IGPhysic{
         })
         this.phybox = new MonsterBox(id, "Minataur", geometry, material)
         this.phybox.position.copy(this.monster.CannonPos)
+        this.phybox.position.y += size.y / 2
     }
 
     update(delta: number): void {

@@ -22,7 +22,7 @@ export class TreeFab extends AssetModel {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
         }
 
         const p = this.GetBoxPos(mesh)
@@ -30,6 +30,8 @@ export class TreeFab extends AssetModel {
         return new THREE.Box3().setFromObject(this.box)
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
+        if (this.meshs == undefined) this.meshs = mesh
+        if (this.size) return this.size
         const bbox = new THREE.Box3().setFromObject(mesh)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)

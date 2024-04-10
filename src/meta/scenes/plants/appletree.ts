@@ -74,6 +74,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
     Create() {
         this.meshs.add(this.gauge)
         this.gauge.position.x += 1
+        this.gauge.position.y = this.gauge.CenterPos.y
         this.gauge.position.z += 2
 
         if (this.text != undefined) {

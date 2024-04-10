@@ -60,7 +60,7 @@ export class Portal extends GhostModel implements IPhysicsObject, IModelReload {
 
 
         this.meshs.position.x += vx
-        this.meshs.position.y = 4.7
+        this.meshs.position.y = 0
         this.meshs.position.z += vz
 
        if (this.gphysic.Check(this)) {

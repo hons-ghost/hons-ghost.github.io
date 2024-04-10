@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { FurnBox, FurnState } from "../carpenter"
+import { FurnBox, FurnEntry, FurnState } from "../carpenter"
 import { IPhysicsObject } from "../models/iobject"
 import { FurnProperty } from "./furndb"
+import { GPhysics } from "../../common/physics/gphysics";
 
 
 export interface IFurnMotions {
@@ -13,7 +14,6 @@ export interface IFurnMotions {
 
 
 export class FurnCtrl {
-    state = FurnState.NeedBuilding
     position: THREE.Vector3
     lv = 1 // tree age
     timer = 0 // ms, 0.001 sec
@@ -22,25 +22,35 @@ export class FurnCtrl {
     phybox: FurnBox
 
     constructor(
-        private id: number, 
-        private tree: IPhysicsObject, 
+        id: number, 
+        private funi: IPhysicsObject, 
         private treeMotion: IFurnMotions,
-        private property: FurnProperty
+        private property: FurnProperty,
+        private gphysic: GPhysics,
+        private save: FurnEntry[],
+        private state: FurnState,
     ) {
-        this.position = tree.CannonPos
-        const size = tree.Size
+        this.position = funi.CannonPos
+        const size = funi.Size
         console.log(size)
-        const geometry = new THREE.BoxGeometry(size.x / 2, size.y, size.z / 2)
+        const geometry = new THREE.BoxGeometry(size.x , size.y, size.z)
         const material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
-            transparent: true,
-            opacity: .5,
+            //transparent: true,
+            //opacity: .5,
             color: 0xff0000,
             depthWrite: false,
         })
         this.phybox = new FurnBox(id, "furniture", geometry, material)
-        //this.phybox.visible = false
-        this.phybox.position.copy(this.tree.CannonPos)
+        this.phybox.visible = false
+        const scale = 1.2
+        this.phybox.scale.set(scale, 1, scale)
+        this.phybox.position.copy(this.funi.BoxPos)
+        this.phybox.rotation.copy(this.funi.Meshs.rotation)
+        if(state == FurnState.Done) {
+            this.treeMotion.Done()
+        }
+        console.log(this.phybox)
     }
     BuildingStart() {
         this.timer = 0
@@ -54,17 +64,28 @@ export class FurnCtrl {
     }
 
     BuildingDone() {
-        console.log("done")
         this.state = FurnState.Done
         this.timer = 0 
         this.lastBuildingTime = new Date().getTime() // ms, 0.001 sec
         this.treeMotion.Done()
+        this.save.push({
+            id: this.property.id, 
+            createTime: this.lastBuildingTime, 
+            state: this.state,
+            position: this.funi.CannonPos,
+            rotation: this.funi.Meshs.rotation
+        })
+        console.log("done", this.save, JSON.stringify(this.save))
     }
 
     update(delta: number) {
         this.checktime += delta
         if( Math.floor(this.checktime) < 1)  return
         this.checktime = 0
+        do {
+            this.funi.CannonPos.y -= 0.2
+        } while (!this.gphysic.Check(this.funi) && this.funi.CannonPos.y >= 0)
+        this.funi.CannonPos.y += 0.2
 
         switch(this.state) {
             case FurnState.NeedBuilding:

@@ -20,6 +20,7 @@ import { BedFab } from "./funiturefab";
 import { AppleTreeFab } from "./plant/plantfab";
 import { BatPigFab } from "./monster/batpigfab";
 import { BirdMonFab } from "./monster/birdmonfab";
+import { BilbyFab } from "./monster/bilbyfab";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -34,11 +35,14 @@ export class Loader {
     private deadtree = new DeadtreeFab(this)
     private portal = new PortalFab(this)
     private test = new TestFab(this)
+
+    // Monster //
     private zombie = new ZombieFab(this)
     private minatuar = new MinataurFab(this)
     private crab = new CrabFab(this)
     private batpig = new BatPigFab(this)
     private birdmon = new BirdMonFab(this)
+    private bilby = new BilbyFab(this)
 
     private bat = new BatFab(this)
     private gun = new GunFab(this)
@@ -59,9 +63,13 @@ export class Loader {
     get TreeAsset(): IAsset { return this.tree }
     get DeadTreeAsset(): IAsset { return this.deadtree }
     get PortalAsset(): IAsset { return this.portal }
+
     get ZombieAsset(): IAsset { return this.zombie }
     get MinatuarAsset(): IAsset { return this.minatuar }
     get CrabAsset(): IAsset { return this.crab }
+    get BatPigAsset(): IAsset { return this.batpig }
+    get BirdMonAsset(): IAsset { return this.birdmon }
+    get BilbyAsset(): IAsset { return this.bilby }
 
     get GunAsset(): IAsset { return this.gun }
     get BatAsset(): IAsset { return this.bat }
@@ -92,10 +100,13 @@ export class Loader {
         this.assets.set(Char.Mushroom2, this.mushroom2)
         this.assets.set(Char.Portal, this.portal)
         this.assets.set(Char.Test, this.test)
+
         this.assets.set(Char.Zombie, this.zombie)
         this.assets.set(Char.Minataur, this.minatuar)
         this.assets.set(Char.CrabMon, this.crab)
-        this.assets.set(Char.BatPig, this.crab)
+        this.assets.set(Char.BatPig, this.batpig)
+        this.assets.set(Char.BirdMon, this.birdmon)
+        this.assets.set(Char.Bilby, this.bilby)
 
         this.assets.set(Char.Bat, this.bat)
         this.assets.set(Char.Gun, this.gun)

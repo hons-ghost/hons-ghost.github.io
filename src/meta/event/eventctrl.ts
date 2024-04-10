@@ -88,9 +88,15 @@ export class EventController {
         this.eventEmitter.on("reload", callback)
     }
 
+    curMode = AppMode.Long
     // GAME MODE
-    OnAppModeEvent(mode: AppMode, e: EventFlag, ...arg: any) {
-        this.eventEmitter.emit(SConf.AppMode, mode, e, ...arg)
+    OnAppModeEvent(mode: AppMode, ...arg: any) {
+        this.eventEmitter.emit(SConf.AppMode, this.curMode, EventFlag.End, ...arg)
+        this.eventEmitter.emit(SConf.AppMode, mode, EventFlag.Start, ...arg)
+        this.curMode = mode
+    }
+    OnAppModeMessage(...arg: any) {
+        this.eventEmitter.emit(SConf.AppMode, this.curMode, EventFlag.Message, ...arg)
     }
     RegisterAppModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.AppMode, callback)

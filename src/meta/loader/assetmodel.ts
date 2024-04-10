@@ -85,13 +85,14 @@ export interface IAsset {
 }
 
 export class AssetModel {
-    box?: THREE.Mesh
+    protected box?: THREE.Mesh
     protected meshs?: THREE.Group
     protected size?: THREE.Vector3
     protected mixer?: THREE.AnimationMixer
         protected clips = new Map<Ani, THREE.AnimationClip | undefined>()
     private models = new Map<string, THREE.Group>()
     private mixers = new Map<string, THREE.AnimationMixer>()
+    protected boxMat = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true})
 
     get Clips() { return this.clips }
     get Mixer() { return this.mixer }
@@ -161,5 +162,11 @@ export class AssetModel {
             */
         }
         return await this.NewModel()
+    }
+    GetBoxPos(mesh: THREE.Group) {
+        // Don't Use this.meshs
+        const v = mesh.position
+        const Y = (this.size)? v.y + this.size.y / 2: v.y
+        return new THREE.Vector3(v.x, Y, v.z)
     }
 }

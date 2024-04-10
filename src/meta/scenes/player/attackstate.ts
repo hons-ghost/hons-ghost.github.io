@@ -63,7 +63,7 @@ export class AttackState extends State implements IPlayerAction {
     }
     attack() {
         this.player.Meshs.getWorldDirection(this.attackDir)
-        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        this.raycast.set(this.player.CenterPos, this.attackDir.normalize())
     
         const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
         if (intersects.length > 0 && intersects[0].distance < this.attackDist) {

@@ -10,6 +10,7 @@ export interface IPhysicsObject {
     get Size() : THREE.Vector3
     get BoxPos() : THREE.Vector3
     get Box(): THREE.Box3
+    get CenterPos(): THREE.Vector3
     get CannonPos(): THREE.Vector3
     set CannonPos(v: THREE.Vector3)
     set Visible(flag: boolean)

@@ -60,7 +60,7 @@ export class Helper implements IViewer {
         const bp = this.CreateMeshGui(legos.brickfield, "Brick Field")
         bp.add(legos.brickfield, 'visible').listen().name("visible")
 
-        const ffp = this.gui.addFolder("floor")
+        const ffp = this.CreateMeshGui(floor, "floor")
         ffp.add(floor, 'visible').listen().name("visible")
 
         this.arrowHelper = new THREE.ArrowHelper(rayViewer.ray.direction, rayViewer.ray.origin, 300, 0x00ff00)

@@ -39,7 +39,6 @@ export default class App {
     store: ModelStore
     initFlag: boolean = false
     renderFlag: boolean = false
-    currentMode = AppMode.Long
     loadingVisible = true
 
     constructor() {
@@ -145,12 +144,10 @@ export default class App {
         this.eventCtrl.OnChangeBrickInfo(opt)
     }
     ModeChange(mode: AppMode, ...arg: any) {
-        this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.End)
-        this.eventCtrl.OnAppModeEvent(mode, EventFlag.Start, ...arg)
-        this.currentMode = mode
+        this.eventCtrl.OnAppModeEvent(mode, ...arg)
     }
     SendModeMessage(...arg: any[]) {
-        this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.Message, arg)
+        this.eventCtrl.OnAppModeMessage(arg)
     }
 
     ModelStore() {

@@ -26,7 +26,7 @@ export enum PlantState {
     Death,
 }
 export type PlantEntry = {
-    type: PlantType
+    id: string
     createTime: number // ms, 0.001 sec
     lv: number // tree age
     state: PlantState
@@ -50,10 +50,11 @@ export class PlantBox extends THREE.Mesh {
 export class Farmer implements IModelReload, IViewer {
     controllable = false
     target?: IPhysicsObject
-    targetId?: symbol
+    targetId?: string
     plantDb = new PlantDb(this.loader)
-    plantsFab = new Map<symbol, IPhysicsObject>()
+    plantsFab = new Map<string, IPhysicsObject>()
     plants: PlantSet[] = []
+    saveData = this.store.Plants
 
     constructor(
         private loader: Loader,
@@ -69,7 +70,7 @@ export class Farmer implements IModelReload, IViewer {
         store.RegisterStore(this)
         this.plantsFab.set(PlantId.AppleTree, new AppleTree(this.loader, this.loader.AppleTreeAsset))
 
-        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: symbol) => {
+        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: string) => {
             if(mode != AppMode.Farmer) return
 
             switch (e) {
@@ -99,7 +100,16 @@ export class Farmer implements IModelReload, IViewer {
             switch(keyCommand.Type) {
                 case KeyType.Action0:
                     if (!this.target || !this.targetId) return
-                    this.CreatePlant(this.target?.CannonPos, this.targetId)
+                    const e: PlantEntry = {
+                        position: this.target.CannonPos, 
+                        id: this.targetId, 
+                        state: PlantState.NeedSeed,
+                        lastWarteringTime: 0,
+                        lv: 1,
+                        createTime: 0
+                    }
+                    this.saveData.push(e)
+                    this.CreatePlant(e)
                     break;
                 default:
                     const position = keyCommand.ExecuteKeyDown()
@@ -140,14 +150,18 @@ export class Farmer implements IModelReload, IViewer {
 
     async Massload(): Promise<void> { }
     async Reload(): Promise<void> {
+        this.saveData = this.store.Plants
+        if (this.saveData) this.saveData.forEach((e) => {
+            this.CreatePlant(e)
+        })
         
     }
-    async CreatePlant(pos: THREE.Vector3, id: symbol) {
-        const property = this.plantDb.get(id)
+    async CreatePlant(plantEntry: PlantEntry) {
+        const property = this.plantDb.get(plantEntry.id)
         if (!property) return
         let tree;
         let meshs;
-        switch (id) {
+        switch (plantEntry.id) {
             case PlantId.AppleTree:
                 tree = new AppleTree(this.loader, this.loader.AppleTreeAsset)
                 const [_meshs, exist] = await this.loader.AppleTreeAsset.UniqModel("appletree" + this.plants.length)
@@ -156,10 +170,10 @@ export class Farmer implements IModelReload, IViewer {
         }
         if (!tree || !meshs) return
 
-        await tree.MassLoader(meshs, 1, pos)
+        await tree.MassLoader(meshs, 1, plantEntry.position)
         tree.Create()
         tree.Visible = true
-        const treeCtrl = new TreeCtrl(this.plants.length, tree, tree, property) 
+        const treeCtrl = new TreeCtrl(this.plants.length, tree, tree, property, plantEntry) 
         
         this.plants.push({ plant: tree, plantCtrl: treeCtrl})
         this.playerCtrl.add(treeCtrl.phybox)

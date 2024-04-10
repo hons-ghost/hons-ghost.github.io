@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { PlantBox, PlantState } from "../farmer";
+import { PlantBox, PlantEntry, PlantState } from "../farmer";
 import { AppleTree } from "./appletree";
 import { PlantProperty } from "./plantdb";
 import { IPhysicsObject } from "../models/iobject";
@@ -16,19 +16,19 @@ export interface ITreeMotions {
 
 
 export class TreeCtrl {
-    state = PlantState.NeedSeed
     position: THREE.Vector3
     lv = 1 // tree age
     timer = 0 // ms, 0.001 sec
-    lastWarteringTime = 0
     checktime = 0
     phybox: PlantBox
+    mySaveData?: PlantEntry
 
     constructor(
         private id: number, 
         private tree: IPhysicsObject, 
         private treeMotion: ITreeMotions,
-        private property: PlantProperty
+        private property: PlantProperty,
+        private save: PlantEntry,
     ) {
         this.position = tree.CannonPos
         const size = tree.Size
@@ -44,51 +44,52 @@ export class TreeCtrl {
         this.phybox = new PlantBox(id, "farmtree", geometry, material)
         this.phybox.visible = false
         this.phybox.position.copy(this.tree.CannonPos)
+        this.phybox.position.y += size.y / 2
     }
     SeedStart() {
         this.timer = 0
-        this.state = PlantState.Seeding
+        this.save.state = PlantState.Seeding
     }
     SeedCancel() {
-        if(this.state == PlantState.Seeding)
-            this.state = PlantState.NeedSeed
+        if(this.save.state == PlantState.Seeding)
+            this.save.state = PlantState.NeedSeed
     }
     WarteringStart() {
-        if(this.state != PlantState.Enough && this.state != PlantState.NeedWartering) return
+        if(this.save.state != PlantState.Enough && this.save.state != PlantState.NeedWartering) return
         this.timer = 0
-        this.state = PlantState.Wartering
+        this.save.state = PlantState.Wartering
     }
     WarteringCancel() {
-        if(this.state == PlantState.Wartering) this.CheckWartering()
+        if(this.save.state == PlantState.Wartering) this.CheckWartering()
     }
 
     WaterDone() {
-        this.state = PlantState.Enough
+        this.save.state = PlantState.Enough
         this.timer = 0 
-        this.lastWarteringTime = new Date().getTime() // ms, 0.001 sec
+        this.save.lastWarteringTime = new Date().getTime() // ms, 0.001 sec
     }
 
     StartGrow() {
-        this.state = PlantState.NeedWartering
+        this.save.state = PlantState.NeedWartering
         const now = new Date().getTime() // ms, 0.001 sec
-        this.lastWarteringTime = now - this.property.warteringTime
+        this.save.lastWarteringTime = now - this.property.warteringTime
         this.treeMotion.Plant()
     }
 
     CheckWartering() {
         const curr = new Date().getTime()
-        const remainTime = curr - this.lastWarteringTime
+        const remainTime = curr - this.save.lastWarteringTime
         const remainRatio = 1 - remainTime / this.property.warteringTime
         this.treeMotion.SetProgress(remainRatio)
         // draw
         if( remainRatio < -1) {
-            this.state = PlantState.Death
+            this.save.state = PlantState.Death
             this.treeMotion.Death()
         } else if (remainRatio > .5) {
-            this.state = PlantState.Enough
+            this.save.state = PlantState.Enough
             this.treeMotion.Enough()
         } else {
-            this.state = PlantState.NeedWartering
+            this.save.state = PlantState.NeedWartering
             this.treeMotion.NeedWarter()
         }
     }
@@ -98,7 +99,7 @@ export class TreeCtrl {
         if( Math.floor(this.checktime) < 1)  return
         this.checktime = 0
 
-        switch(this.state) {
+        switch(this.save.state) {
             case PlantState.NeedSeed:
             case PlantState.Death:
                 return;

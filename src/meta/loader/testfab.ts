@@ -46,8 +46,4 @@ export class TestFab extends AssetModel implements IAsset {
         this.size.z = Math.ceil(this.size.z)
         return this.size 
     }
-    GetBoxPos(mesh: THREE.Group) {
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
-    }
 }

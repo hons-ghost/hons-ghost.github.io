@@ -17,7 +17,6 @@ export class AppleTreeFab extends AssetModel implements IAsset {
             this.meshs.scale.set(scale, scale, scale)
             this.meshs.position.set(0, 0, 0)
             this.meshs.rotation.set(0, 0, 0)
-            this.meshs.children[0].position.y -= 2.5
         })
     }
     GetBodyMeshId() { return "mixamorigRightHand" }
@@ -26,7 +25,7 @@ export class AppleTreeFab extends AssetModel implements IAsset {
         // Don't Use this.meshs
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
         }
 
         const p = this.GetBoxPos(mesh)
@@ -42,11 +41,7 @@ export class AppleTreeFab extends AssetModel implements IAsset {
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
+        console.log(this.meshs)
         return this.size 
-    }
-    GetBoxPos(mesh: THREE.Group) {
-        // Don't Use this.meshs
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
     }
 }

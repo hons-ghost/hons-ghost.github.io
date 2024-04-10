@@ -25,7 +25,7 @@ export class GunFab extends AssetModel implements IAsset {
         // Don't Use this.meshs
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
         }
 
         const p = this.GetBoxPos(mesh)
@@ -42,11 +42,6 @@ export class GunFab extends AssetModel implements IAsset {
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
         return this.size 
-    }
-    GetBoxPos(mesh: THREE.Group) {
-        // Don't Use this.meshs
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
     }
     GetBodyMeshId() { return "mixamorigRightHand" }
 }

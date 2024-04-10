@@ -75,7 +75,7 @@ export class PlantAPlantState extends State implements IPlayerAction {
         if(!this.trigger) return
         this.trigger = false
         this.player.Meshs.getWorldDirection(this.attackDir)
-        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        this.raycast.set(this.player.CenterPos, this.attackDir.normalize())
         const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
         if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
             for(let i = 0; i < intersects.length; i++) {
@@ -170,7 +170,7 @@ export class WarteringState extends State implements IPlayerAction {
         if(!this.trigger) return
         this.trigger = false
         this.player.Meshs.getWorldDirection(this.attackDir)
-        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        this.raycast.set(this.player.CenterPos, this.attackDir.normalize())
         const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
         if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
             intersects.forEach((obj) => {
@@ -251,7 +251,7 @@ export class BuildingState extends State implements IPlayerAction {
         if(!this.trigger) return
         this.trigger = false
         this.player.Meshs.getWorldDirection(this.attackDir)
-        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        this.raycast.set(this.player.CenterPos, this.attackDir.normalize())
         const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
         if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
             intersects.forEach((obj) => {

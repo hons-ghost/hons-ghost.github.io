@@ -54,9 +54,10 @@ export class Bed extends GhostModel implements IPhysicsObject, IFurnMotions {
         }
     }
 
-    async MassLoader(meshs:THREE.Group, position: THREE.Vector3) {
+    async MassLoader(meshs: THREE.Group, position: THREE.Vector3, rotation?: THREE.Euler) {
         this.meshs = meshs.clone()
         this.meshs.position.set(position.x, position.y, position.z)
+        if (rotation) this.meshs.rotation.copy(rotation)
         this.meshs.castShadow = true
         this.meshs.receiveShadow = true
         this.meshs.traverse(child => {

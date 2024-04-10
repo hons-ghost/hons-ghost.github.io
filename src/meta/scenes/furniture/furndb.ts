@@ -4,13 +4,14 @@ import { MonDrop } from "../monsterdb"
 
 
 export class FurnId {
-    public static DefaultBed = Symbol("defaultbed")
+    public static DefaultBed = "defaultbed"
 }
 export enum FurnType {
     Bed,
 }
 
 export type FurnProperty = {
+    id: string
     type: FurnType
     assetId: Char
     name: string
@@ -19,16 +20,17 @@ export type FurnProperty = {
 }
 
 export class FurnDb {
-    plantDb = new Map<symbol, FurnProperty>()
+    plantDb = new Map<string, FurnProperty>()
     constructor(private loader: Loader) {
         this.plantDb.set(FurnId.DefaultBed, {
+            id: FurnId.DefaultBed,
             type: FurnType.Bed,
             assetId: Char.Bed,
             name: "Bed",
             buildingTime: 1000 * 60, // a min
         })
     }
-    get(id: symbol) {
+    get(id: string) {
         return this.plantDb.get(id)
     }
 }

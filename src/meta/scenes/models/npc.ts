@@ -71,7 +71,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
         } else {
             do {
                 this.meshs.position.y -= 0.2
-            } while (!this.gphysic.Check(this) && this.meshs.position.y >= 4.7)
+            } while (!this.gphysic.Check(this) && this.meshs.position.y >= 0)
             this.meshs.position.y += 0.2
         }
     }

@@ -39,6 +39,7 @@ export class FemaleFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Hammering, gltf.animations.find((clip) => clip.name == "StandingMeleeAttackDownward"))
             this.clips.set(Ani.Wartering, gltf.animations.find((clip) => clip.name == "Watering"))
 
+            this.meshs.children[0].children[0].position.y = 0
             /*
             const right = this.meshs.getObjectByName("mixamorigRightHand")
             //const right = this.meshs
@@ -75,7 +76,7 @@ export class FemaleFab extends AssetModel implements IAsset {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
         }
 
         const p = this.GetBoxPos(mesh)
@@ -84,6 +85,7 @@ export class FemaleFab extends AssetModel implements IAsset {
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         if (this.meshs == undefined) this.meshs = mesh
+        if (this.size) return this.size
 
         const effector = this.meshs.getObjectByName("effector")
         if(effector != undefined) this.meshs.remove(effector)
@@ -95,9 +97,5 @@ export class FemaleFab extends AssetModel implements IAsset {
         this.size.x /= 3
         console.log(this.meshs, this.size)
         return this.size 
-    }
-    GetBoxPos(mesh: THREE.Group) {
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
     }
 }

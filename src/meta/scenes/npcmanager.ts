@@ -43,7 +43,12 @@ export class NpcManager implements IModelReload {
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             switch(mode) {
+                case AppMode.Farmer:
+                case AppMode.Furniture:
                 case AppMode.EditPlay:
+                case AppMode.Brick:
+                case AppMode.Lego:
+                case AppMode.LegoDelete:
                     switch (e) {
                         case EventFlag.Start:
                             this.owner.Visible = false
@@ -55,7 +60,6 @@ export class NpcManager implements IModelReload {
                             break
                     }
                     break;
-                case AppMode.Brick:
                 case AppMode.Close:
                 case AppMode.Face:
                     this.eventCtrl.OnChangeCtrlObjEvent(this.owner)
@@ -117,9 +121,9 @@ export class NpcManager implements IModelReload {
     async NpcLoader() {
         const p = SConf.DefaultPortalPosition
         return await Promise.all([
-            this.helper.Loader(this.loader.MaleAsset, new THREE.Vector3(p.x - 6, 4.7, p.z + 10), "Adam"),
-            this.helper2.Loader(this.loader.FemaleAsset, new THREE.Vector3(p.x - 4, 4.7, p.z + 10), "Eve"),
-            this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 5, 15), "unknown")
+            this.helper.Loader(this.loader.MaleAsset, new THREE.Vector3(p.x - 6, 0, p.z + 10), "Adam"),
+            this.helper2.Loader(this.loader.FemaleAsset, new THREE.Vector3(p.x - 4, 0, p.z + 10), "Eve"),
+            this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 0, 15), "unknown")
         ])
     }
     async Massload(): Promise<void> {

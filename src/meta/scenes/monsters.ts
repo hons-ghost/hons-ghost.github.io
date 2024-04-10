@@ -102,7 +102,7 @@ export class Monsters {
     ReceiveDemage(z: MonsterSet, damage: number, effect?: EffectType) {
         if (z && !z.monCtrl.ReceiveDemage(damage, effect)) {
             z.live = false
-            this.drop.DropItem(z.monModel.CannonPos, z.monCtrl.Drop)
+            this.drop.DropItem(z.monModel.CenterPos, z.monCtrl.Drop)
             this.playerCtrl.remove(z.monCtrl.MonsterBox)
             this.respawntimeout = setTimeout(() => {
                 z.monModel.CannonPos.x = this.player.CannonPos.x + Math.floor(math.rand_int(-20, 20))
@@ -146,7 +146,7 @@ export class Monsters {
     async CreateZombie(): Promise<MonsterSet> {
         const zombie = new Zombie(this.loader, this.eventCtrl, this.gphysic, this.loader.ZombieAsset)
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
-                new THREE.Vector3(10, 5, 15), "Zombie", this.zombies.length)
+                new THREE.Vector3(10, 0, 15), "Zombie", this.zombies.length)
 
         const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic,
             this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))

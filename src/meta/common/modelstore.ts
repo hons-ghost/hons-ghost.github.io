@@ -7,6 +7,8 @@ import { Npc } from "../scenes/models/npc";
 import { Player } from "../scenes/player/player";
 import { InvenData, Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
+import { PlantEntry } from "../scenes/farmer";
+import { FurnEntry } from "../scenes/carpenter";
 
 type Lego = {
     position: THREE.Vector3
@@ -22,6 +24,8 @@ type Brick = {
 }
 
 type StoreData = {
+    furn: FurnEntry[]
+    plants: PlantEntry[]
     bricks: Brick[]
     legos: Lego[]
     owner: THREE.Vector3 | undefined
@@ -40,6 +44,8 @@ export class ModelStore {
     private player: Player | undefined
     private playerModel: Char = Char.Male
     private data: StoreData = { 
+        furn: [],
+        plants: [],
         bricks: [], 
         legos: [], 
         owner: undefined, 
@@ -55,6 +61,8 @@ export class ModelStore {
             new THREE.Vector3().copy(pos) : this.data.portal.copy(pos)
     }
     get Portal(): THREE.Vector3 | undefined { return this.data.portal }
+    get Plants() { return (this.data.plants) ? this.data.plants : this.data.plants = [] }
+    get Furn() { return (this.data.furn) ? this.data.furn : this.data.furn = [] }
     get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
@@ -148,6 +156,7 @@ export class ModelStore {
         }
         this.name = name
         this.data = JSON.parse(data)
+        this.data.portal = new THREE.Vector3(this.data.portal?.x, this.data.portal?.y, this.data.portal?.z)
         const promise = this.mgrs.map(async (mgr) => {
                 await mgr.Reload()
             })
@@ -173,6 +182,7 @@ export class ModelStore {
                 lego.position.x -= SConf.LegoFieldW * i
             })
             this.data.legos.push(...data.legos)
+            this.data.portal = new THREE.Vector3(data.portal?.x, data.portal?.y, data.portal?.z)
             this.owners.push(data.owner)
             this.ownerModels.push(data.ownerModel)
         })

@@ -38,7 +38,7 @@ export class RayViwer extends THREE.Raycaster implements IViewer {
             return
         }
 
-        this.dir.subVectors(this.target.CannonPos, this._camera.position)
+        this.dir.subVectors(this.target.CenterPos, this._camera.position)
         this.set(this._camera.position, this.dir.normalize())
 
         if (this.legos.instancedBlock != undefined)
@@ -52,7 +52,7 @@ export class RayViwer extends THREE.Raycaster implements IViewer {
     }
     CheckVisible(physBox: THREE.InstancedMesh) {
         const intersects = this.intersectObject(physBox, false)
-        const dis = this.target.CannonPos.distanceTo(this._camera.position)
+        const dis = this.target.CenterPos.distanceTo(this._camera.position)
         if (intersects.length > 0 && intersects[0].distance < dis) {
             (physBox.material as THREE.MeshStandardMaterial).opacity = 0.5;
         } else {
@@ -62,7 +62,7 @@ export class RayViwer extends THREE.Raycaster implements IViewer {
     opacityBox: THREE.Mesh[] = []
     CheckVisibleMeshs(physBox: THREE.Mesh[]) {
         const intersects = this.intersectObjects(physBox, false)
-        const dis = this.target.CannonPos.distanceTo(this._camera.position)
+        const dis = this.target.CenterPos.distanceTo(this._camera.position)
         if (intersects.length > 0 && intersects[0].distance < dis) {
             intersects.forEach((obj) => {
                 if (obj.distance > dis) return false

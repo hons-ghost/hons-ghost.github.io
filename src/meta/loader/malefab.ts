@@ -22,6 +22,7 @@ export class MaleFab extends AssetModel implements IAsset {
             })
 
             //this.meshs.scale.set(1, 1, 1)
+            this.meshs.children[0].position.y = 0
 
             this.clips.set(Ani.Idle, gltf.animations[0])
             this.clips.set(Ani.Run, gltf.animations[1])
@@ -62,7 +63,7 @@ export class MaleFab extends AssetModel implements IAsset {
         // Don't Use this.meshs
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
         }
 
         const p = this.GetBoxPos(mesh)
@@ -86,10 +87,5 @@ export class MaleFab extends AssetModel implements IAsset {
         console.log(this.meshs, this.size)
         //this.size.y *= 0.75
         return this.size 
-    }
-    GetBoxPos(mesh: THREE.Group) {
-        // Don't Use this.meshs
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
     }
 }

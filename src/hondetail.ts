@@ -224,7 +224,9 @@ export class HonDetail extends Page {
                     this.meta.ModeChange(AppMode.Close)
                 })
         })
-        this.meta.render()
+        .then(() => {
+            this.meta.render()
+        })
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"

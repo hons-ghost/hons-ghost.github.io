@@ -14,7 +14,7 @@ import { IViewer } from "./models/iviewer";
 import { Canvas } from "../common/canvas";
 import { AttackOption, AttackType, PlayerCtrl } from "./player/playerctrl";
 import { FurnCtrl } from "./furniture/furnctrl";
-import { FurnDb, FurnId } from "./furniture/furndb";
+import { FurnDb, FurnId, FurnType } from "./furniture/furndb";
 import { Bed } from "./furniture/bed";
 
 export enum FurnState {
@@ -23,13 +23,12 @@ export enum FurnState {
     Suspend,
     Done,
 }
-export type PlantEntry = {
-    type: PlantType
+export type FurnEntry = {
+    id: string
     createTime: number // ms, 0.001 sec
-    lv: number // tree age
     state: FurnState
-    lastWarteringTime: number
     position: THREE.Vector3
+    rotation: THREE.Euler
 }
 
 export type FurnSet = {
@@ -48,10 +47,11 @@ export class FurnBox extends THREE.Mesh {
 export class Carpenter implements IModelReload, IViewer {
     controllable = false
     target?: IPhysicsObject
-    targetId?: symbol
+    targetId?: string
     furnDb = new FurnDb(this.loader)
-    furnFab = new Map<symbol, IPhysicsObject>()
+    furnFab = new Map<string, IPhysicsObject>()
     furnitures: FurnSet[] = []
+    saveData = this.store.Furn
 
     constructor(
         private loader: Loader,
@@ -65,9 +65,10 @@ export class Carpenter implements IModelReload, IViewer {
     ){
         canvas.RegisterViewer(this)
         store.RegisterStore(this)
+
         this.furnFab.set(FurnId.DefaultBed, new Bed(this.loader, this.loader.BedAsset))
 
-        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: symbol) => {
+        eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: string) => {
             if(mode != AppMode.Furniture) return
 
             switch (e) {
@@ -78,8 +79,7 @@ export class Carpenter implements IModelReload, IViewer {
                     this.controllable = true
                     this.game.add(this.target.Meshs)
                     this.target.Visible = true
-                    this.target.CannonPos.x = this.player.CannonPos.x
-                    this.target.CannonPos.z = this.player.CannonPos.z
+                    this.target.CannonPos.copy(this.player.CannonPos)
                     this.eventCtrl.OnChangeCtrlObjEvent(this.target)
                     console.log(id)
                     break
@@ -97,7 +97,9 @@ export class Carpenter implements IModelReload, IViewer {
             switch(keyCommand.Type) {
                 case KeyType.Action0:
                     if (!this.target || !this.targetId) return
-                    this.CreateFurn(this.target?.CannonPos, this.targetId)
+                    this.CreateFurn(this.target.CannonPos, this.target.Meshs.rotation, this.targetId,
+                        FurnState.NeedBuilding)
+                    eventCtrl.OnAppModeEvent(AppMode.EditPlay)
                     break;
                 case KeyType.Action1:
                     if (!this.target || !this.targetId) return
@@ -133,11 +135,17 @@ export class Carpenter implements IModelReload, IViewer {
         }
     }
 
-    async Massload(): Promise<void> { }
-    async Reload(): Promise<void> {
-        
+    async Massload(): Promise<void> {
+
     }
-    async CreateFurn(pos: THREE.Vector3, id: symbol) {
+    async Reload(): Promise<void> {
+        this.saveData = this.store.Furn
+        if (this.saveData) this.saveData.forEach((e) => {
+            this.CreateFurn(e.position, e.rotation, e.id, e.state)
+        })
+
+    }
+    async CreateFurn(pos: THREE.Vector3, rot: THREE.Euler, id: string, state: FurnState) {
         const property = this.furnDb.get(id)
         if (!property) return
         let furn;
@@ -149,13 +157,13 @@ export class Carpenter implements IModelReload, IViewer {
                 meshs = _meshs
                 break;
         }
-        if (!furn || !meshs || !this.target) return
+        if (!furn || !meshs) return
 
-        meshs.rotation.y = this.target.Meshs.rotation.y
-        await furn.MassLoader(meshs, pos)
+        await furn.MassLoader(meshs, pos, rot)
         furn.Create()
         furn.Visible = true
-        const treeCtrl = new FurnCtrl(this.furnitures.length, furn, furn, property) 
+        const treeCtrl = new FurnCtrl(this.furnitures.length, furn, furn, property, 
+            this.gphysic, this.saveData, state) 
         
         this.furnitures.push({ furn: furn, furnCtrl: treeCtrl})
         this.playerCtrl.add(treeCtrl.phybox)
@@ -178,20 +186,25 @@ export class Carpenter implements IModelReload, IViewer {
         const vz = (v.z > 0) ? 1 : (v.z < 0) ? - 1 : 0
 
         this.target.Meshs.position.x += vx
-        //this.meshs.position.y = 4.7
         this.target.Meshs.position.z += vz
         console.log(this.target.Meshs.position)
 
+        if (this.gphysic.Check(this.target)) {
+            this.target.Meshs.position.x -= vx
+            this.target.Meshs.position.z -= vz
+        }
         // Check Collision Furniture
+        /*
         if (this.gphysic.Check(this.target)) {
             do {
                 this.target.CannonPos.y += 0.2
             } while (this.gphysic.Check(this.target))
         } else {
+            */
             do {
                 this.target.CannonPos.y -= 0.2
-            } while (!this.gphysic.Check(this.target) && this.target.CannonPos.y >= 4.7)
+            } while (!this.gphysic.Check(this.target) && this.target.CannonPos.y >= 0)
             this.target.CannonPos.y += 0.2
-        }
+        //}
     }
 }

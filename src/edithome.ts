@@ -282,8 +282,11 @@ export class EditHome extends Page {
                         this.meta.ModeChange(AppMode.EditPlay)
                     })
             }
+        }).then(() => {
+            this.ui.UiOff(AppMode.EditPlay)
+            this.meta.render()
         })
-        this.meta.render()
+
     }
     getParam(): string | null {
         const urlParams = new URLSearchParams(window.location.search);
@@ -313,7 +316,6 @@ export class EditHome extends Page {
         if(email == null) return false;
         this.loadHelper()
         this.CanvasRenderer(email)
-        this.ui.UiOff(AppMode.EditPlay)
         this.MenuEvent(email)
         this.inven.binding()
         this.UpdateMenu()

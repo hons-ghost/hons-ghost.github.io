@@ -80,7 +80,7 @@ export class Materials implements IViewer {
                 const r = Math.random()
                 if (r < .7) return
                 this.dropPos.copy(obj.position)
-                this.dropPos.y = 5
+                this.dropPos.y = this.player.CenterPos.y
                 this.dropPos.z += 5
                 this.drop.DropItem(this.dropPos, this.monDb.GetItem(MonsterId.Tree).drop)
             })
@@ -114,7 +114,7 @@ export class Materials implements IViewer {
             const r = THREE.MathUtils.randFloat(radius * 0.3, radius * .6)
             pos.set(
                 r * Math.cos(phi),
-                4,
+                0,
                 r * Math.sin(phi)
             )
             const stone = new Stone(this.loader, this.loader.StoneAsset)
@@ -142,7 +142,7 @@ export class Materials implements IViewer {
             const r = THREE.MathUtils.randFloat(radius * 0.5, radius * 1.5)
             pos.set(
                 r * Math.cos(phi),
-                2,
+                0,
                 r * Math.sin(phi)
             )
             
@@ -153,14 +153,13 @@ export class Materials implements IViewer {
 
             const size = this.loader.TreeAsset.GetSize(tree.Meshs)
             const box = new MonsterBox(i, "tree", new THREE.BoxGeometry(), this.material)
-            size.x /= 2
-            size.z /= 2
-            box.scale.copy(size)
+            box.scale.set(size.x / 2, size.y, size.z / 2)
             box.position.copy(pos)
             box.visible = false
             this.treeBoxes.push(box)
             this.playerCtrl.add(box)
             this.game.add(box, tree.meshs)
         }
+        console.log("trea load complete")
     }
 }

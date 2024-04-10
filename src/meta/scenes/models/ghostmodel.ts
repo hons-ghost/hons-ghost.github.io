@@ -12,9 +12,14 @@ export class GhostModel {
     helper?: THREE.BoxHelper
 
     protected text?: FloatingName
+    protected centerPos = new THREE.Vector3()
 
     get Velocity() {return this.velocity}
     set Velocity(n: number) { this.velocity = n }
+    get CenterPos(): THREE.Vector3 { 
+        this.centerPos.copy(this.meshs.position).y += this.Size.y / 2
+        return this.centerPos
+    }
     get CannonPos(): THREE.Vector3 { return this.meshs.position }
     set CannonPos(v: THREE.Vector3) { this.meshs.position.copy(v) }
     set Quaternion(q: THREE.Quaternion) { this.meshs.quaternion.copy(q) }
@@ -52,11 +57,16 @@ export class GhostModel {
 export class GhostModel2 extends THREE.Mesh {
     protected size?: THREE.Vector3
     protected velocity = 0
+    protected centerPos = new THREE.Vector3()
 
     get Velocity() {return this.velocity}
     set Velocity(n: number) { this.velocity = n }
     get Box() {
         return new THREE.Box3().setFromObject(this)
+    }
+    get CenterPos(): THREE.Vector3 { 
+        this.centerPos.copy(this.position).y += this.Size.y / 2
+        return this.centerPos
     }
     get CannonPos(): THREE.Vector3 { return this.position}
     set CannonPos(v: THREE.Vector3) { this.position.copy(v) }

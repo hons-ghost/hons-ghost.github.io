@@ -6,7 +6,7 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 export class BatPigFab extends AssetModel implements IAsset {
     Gltf?:GLTF
 
-    get Id() {return Char.Female}
+    get Id() {return Char.BatPig}
 
     constructor(loader: Loader) { 
         super(loader, ModelType.Gltf, "assets/monster/bat_pig.glb", async (gltf: GLTF) => {
@@ -18,16 +18,16 @@ export class BatPigFab extends AssetModel implements IAsset {
                 child.castShadow = true
                 child.receiveShadow = true
             })
-            const scale = 1
+            const scale = 0.01
             this.meshs.scale.set(scale, scale, scale)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
             console.log(gltf.animations)
-            this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "Armature|idle"))
+            this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "Armature|Idle"))
             this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Armature|Walk"))
-            this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "Armature|Attack"))
-            this.clips.set(Ani.MonBiting, gltf.animations.find((clip) => clip.name == "Armature|Attack Double"))
-            this.clips.set(Ani.Dying, gltf.animations.find((clip) => clip.name == "Armature|Death"))
-            this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "Armature|Jump"))
+            this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "Armature|Desh"))
+            this.clips.set(Ani.MonBiting, gltf.animations.find((clip) => clip.name == "Armature|Shoot"))
+            this.clips.set(Ani.MonScream, gltf.animations.find((clip) => clip.name == "Pig Enemy|Desh"))
+
         })
     }
     
@@ -36,7 +36,7 @@ export class BatPigFab extends AssetModel implements IAsset {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.box == undefined) {
             const s = this.GetSize(mesh)
-            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshBasicMaterial())
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
         }
 
         const p = this.GetBoxPos(mesh)
@@ -45,14 +45,12 @@ export class BatPigFab extends AssetModel implements IAsset {
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
         if (this.meshs == undefined) this.meshs = mesh
+        if (this.size) return this.size
+
         const bbox = new THREE.Box3().setFromObject(this.meshs)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
         return this.size 
-    }
-    GetBoxPos(mesh: THREE.Group) {
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
     }
 }

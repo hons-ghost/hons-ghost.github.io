@@ -111,13 +111,13 @@ export class Hons extends Page{
             .then(() => {
                 //this.meta.ModeChange(AppMode.Long, false)
                 this.ui.UiOn()
+                this.meta.render()
             })
         const myModel = this.blockStore.GetModel(this.session.UserId)
         this.blockStore.FetchModels(this.m_masterAddr)
             .then(async (result) => {
                 await this.meta.LoadVillage(result, myModel?.models)
             })
-        this.meta.render()
 
         const play = document.getElementById("playBtn") as HTMLButtonElement
         play.onclick = () => { 

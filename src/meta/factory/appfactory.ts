@@ -96,7 +96,7 @@ export class AppFactory {
 
     constructor() {
         this.worldSize = 300
-        this.floor = new Floor(this.worldSize, this.worldSize, 5, new THREE.Vector3(0, 0, 0))
+        this.floor = new Floor(this.worldSize, this.worldSize, 1, new THREE.Vector3(0, 0, 0))
         this.mushrooms = []
         this.deadtrees = []
 
@@ -144,7 +144,7 @@ export class AppFactory {
         for (let i = 0; i < 50; i++) {
             pos.set(
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                2.2,
+                0,
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
             )
             const scale = math.rand_int(5, 9)
@@ -173,17 +173,17 @@ export class AppFactory {
 
     async GltfLoad() {
         const ret = await Promise.all([
-            this.player.Loader(this.loader.MaleAsset,
+            await this.player.Loader(this.loader.MaleAsset,
                 new THREE.Vector3(SConf.StartPosition.x, SConf.StartPosition.y, SConf.StartPosition.z),
                 "player"),
-            this.portal.Loader(SConf.DefaultPortalPosition),
-            this.MassMushroomLoader(1),
-            this.MassMushroomLoader(2),
-            this.MassDeadTreeLoader(),
-            this.materials.MassLoader(),
-            this.npcs.NpcLoader(),
-            this.farmer.FarmLoader(),
-            this.carp.FurnLoader(),
+            await this.portal.Loader(SConf.DefaultPortalPosition),
+            await this.MassMushroomLoader(1),
+            await this.MassMushroomLoader(2),
+            await this.MassDeadTreeLoader(),
+            await this.materials.MassLoader(),
+            await this.npcs.NpcLoader(),
+            await this.farmer.FarmLoader(),
+            await this.carp.FurnLoader(),
         ]).then(() => {
             this.gphysics.addPlayer(this.player)
             this.gphysics.add(this.npcs.Owner)

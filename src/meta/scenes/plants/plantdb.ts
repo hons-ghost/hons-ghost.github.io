@@ -3,7 +3,7 @@ import { Loader } from "../../loader/loader"
 import { MonDrop } from "../monsterdb"
 
 export class PlantId {
-    public static AppleTree = Symbol("appletree")
+    public static AppleTree = "appletree"
 }
 
 export enum PlantType {
@@ -23,7 +23,7 @@ export type PlantProperty = {
 }
 
 export class PlantDb {
-    plantDb = new Map<symbol, PlantProperty>()
+    plantDb = new Map<string, PlantProperty>()
     constructor(private loader: Loader) {
         this.plantDb.set(PlantId.AppleTree, {
             type: PlantType.Tree,
@@ -34,7 +34,7 @@ export class PlantDb {
             warteringTime: 1000 * 60 * 60, // an hour
         })
     }
-    get(id: symbol) {
+    get(id: string) {
         return this.plantDb.get(id)
     }
 }

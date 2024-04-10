@@ -78,7 +78,7 @@ export class Bricks {
             })
         )
         this.brickfield.position.z += this.fieldHeight / 2
-        this.brickfield.position.y = 2.6
+        this.brickfield.position.y = 0.01
         this.brickfield.rotation.x = Math.PI / 2
         this.brickfield.visible = false
         this.scene.add(this.brickfield)
@@ -209,19 +209,18 @@ export class Bricks {
         let box = this.brickGuide.Box
         if (this.physics.CheckBox(this.brickGuide.position, box)) {
             do {
-                this.brickGuide.position.y += 1
+                this.brickGuide.position.y += .5
                 box = this.brickGuide.Box
             } while (this.physics.CheckBox(this.brickGuide.position, box))
         } else {
             do {
-                this.brickGuide.position.y -= 1
+                this.brickGuide.position.y -= .5
                 box = this.brickGuide.Box
             } while (!this.physics.CheckBox(this.brickGuide.position, box)
-                && this.brickGuide.position.y >= 3)
+                && this.brickGuide.position.y >= this.brickGuide.Size.y / 2)
 
-            this.brickGuide.position.y += 1
+            this.brickGuide.position.y += .5
         }
-        this.brickGuide.position.y = Math.round(this.brickGuide.position.y)
         if (this.checkEx) this.checkEx()
     }
     ClearEventBrick() {

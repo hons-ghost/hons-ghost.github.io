@@ -15,8 +15,8 @@ export default class SConf {
     public static PortalMode = Symbol("portalmode")
     public static LegoMode = Symbol("legomode")
 
-    public static StartPosition = new Vector3(0, 5, 6)
-    public static DefaultPortalPosition = new Vector3(21, 4.71, 17)
+    public static StartPosition = new Vector3(0, 0, 6)
+    public static DefaultPortalPosition = new Vector3(21, 0, 17)
 
     public static LegoFieldW = 18
     public static LegoFieldH = 24

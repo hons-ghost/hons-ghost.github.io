@@ -31,6 +31,6 @@ export class Tree extends GhostModel implements IPhysicsObject {
             child.castShadow = true
             child.receiveShadow = true
         })
-        this.gphysics.addMeshBuilding(this)
+        //this.gphysics.addMeshBuilding(this)
     }
 }

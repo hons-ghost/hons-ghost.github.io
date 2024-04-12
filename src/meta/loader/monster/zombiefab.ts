@@ -48,10 +48,13 @@ export class ZombieFab extends AssetModel implements IAsset {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.size) return this.size
 
+        const bbox = new THREE.Box3().setFromObject(this.meshs.children[0])
+        /*
         const effector = this.meshs.getObjectByName("effector")
         if(effector != undefined) this.meshs.remove(effector)
         const bbox = new THREE.Box3().setFromObject(this.meshs)
         if(effector != undefined) this.meshs.add(effector)
+        */
 
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)

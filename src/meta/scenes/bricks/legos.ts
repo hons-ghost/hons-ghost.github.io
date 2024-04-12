@@ -8,6 +8,7 @@ import { BrickGuide, BrickGuideType } from "./brickguide";
 import { BrickOption, Bricks, EventBrick } from "./bricks";
 import { AppMode } from "../../app";
 import { IBuildingObject } from "../models/iobject";
+import { Player } from "../player/player";
 
 export enum BrickShapeType {
     Rectangle,
@@ -21,9 +22,10 @@ export class Legos extends Bricks implements IModelReload {
         scene: THREE.Scene,
         eventCtrl: EventController,
         store: ModelStore,
-        physics: GPhysics
+        physics: GPhysics,
+        player: Player
     ) {
-        super(scene, eventCtrl, store, physics)
+        super(scene, eventCtrl, store, physics, player)
         store.RegisterStore(this)
         this.brickType = BrickGuideType.Lego
 
@@ -62,13 +64,13 @@ export class Legos extends Bricks implements IModelReload {
 
             if (mode == AppMode.Lego || mode == AppMode.LegoDelete) {
                 if (this.brickGuide == undefined) {
-                    this.brickGuide = this.GetBrickGuide()
+                    this.brickGuide = this.GetBrickGuide(this.player.CannonPos)
                 }
                 switch (e) {
                     case EventFlag.Start:
                         this.brickGuide.ControllerEnable = true
                         this.brickGuide.Visible = true
-                        this.brickGuide.position.copy(this.brickfield.position)
+                        this.brickGuide.position.copy(this.player.CannonPos)
                         this.brickfield.visible = true
                         if (this.deleteMode) {
                             this.brickGuide.scale.set(1, 1, 1)

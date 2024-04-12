@@ -114,7 +114,7 @@ export class Materials implements IViewer {
             const r = THREE.MathUtils.randFloat(radius * 0.3, radius * .6)
             pos.set(
                 r * Math.cos(phi),
-                0,
+                2,
                 r * Math.sin(phi)
             )
             const stone = new Stone(this.loader, this.loader.StoneAsset)

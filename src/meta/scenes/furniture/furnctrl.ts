@@ -32,7 +32,6 @@ export class FurnCtrl {
     ) {
         this.position = funi.CannonPos
         const size = funi.Size
-        console.log(size)
         const geometry = new THREE.BoxGeometry(size.x , size.y, size.z)
         const material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
@@ -50,7 +49,6 @@ export class FurnCtrl {
         if(state == FurnState.Done) {
             this.treeMotion.Done()
         }
-        console.log(this.phybox)
     }
     BuildingStart() {
         this.timer = 0

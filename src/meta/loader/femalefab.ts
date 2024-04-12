@@ -87,14 +87,19 @@ export class FemaleFab extends AssetModel implements IAsset {
         if (this.meshs == undefined) this.meshs = mesh
         if (this.size) return this.size
 
+        
+        const bbox = new THREE.Box3().setFromObject(this.meshs.children[0])
+        /*
         const effector = this.meshs.getObjectByName("effector")
         if(effector != undefined) this.meshs.remove(effector)
         const bbox = new THREE.Box3().setFromObject(this.meshs)
         if(effector != undefined) this.meshs.add(effector)
+        */
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
         this.size.x /= 3
+        this.size.z /= 3
         console.log(this.meshs, this.size)
         return this.size 
     }

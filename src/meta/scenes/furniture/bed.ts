@@ -46,7 +46,6 @@ export class Bed extends GhostModel implements IPhysicsObject, IFurnMotions {
         this.meshs.add(this.gauge)
         this.gauge.position.y += 3
         this.gauge.rotation.x = this.meshs.rotation.y
-        console.log(this.gauge.rotation, this.meshs.rotation)
 
         if (this.text != undefined) {
             this.text.position.y = 4

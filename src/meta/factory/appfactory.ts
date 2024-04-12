@@ -117,8 +117,8 @@ export class AppFactory {
 
         this.drop = new Drop(this.alarm, this.invenFab.inven, this.player, this.canvas, this.game, this.eventCtrl)
 
-        this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics)
-        this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics)
+        this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics, this.player)
+        this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics, this.player)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
         this.monsters = new Monsters(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)

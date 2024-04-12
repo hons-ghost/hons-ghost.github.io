@@ -27,7 +27,7 @@ export class GPhysics {
             transparent: true,
             opacity: .5,
             color: 0xff0000,
-            depthWrite: false,
+            //depthWrite: false,
         })
 
     debugBox: THREE.Mesh[] = []
@@ -44,6 +44,16 @@ export class GPhysics {
     }
 
     DebugMode(flag: boolean) {
+        console.log("movingBox: ", this.movingBoxs.length)
+        console.log("buildingBox: ", this.debugBox.length)
+        console.log("pbox: ", this.pboxs.size)
+        /*
+        this.pboxs.forEach((vs, k) => {
+            vs.forEach((v) => {
+                console.log(k, v.pos)
+            })
+        })
+        */
         if(flag) {
             this.movingBoxs.forEach((box) => {
                 if (!box.box) return
@@ -64,6 +74,7 @@ export class GPhysics {
     }
 
     PBoxDispose() {
+        console.log("Physical Box Clear")
         this.pboxs.clear()
         this.debugBox.forEach((box) => {
             this.scene.remove(box)
@@ -92,7 +103,6 @@ export class GPhysics {
             const p = model.BoxPos
             box.position.set(p.x, p.y, p.z)
             this.debugBox.push(box)
-            console.log("mesh building", box, p, model.Size)
 
             this.addBoxs({
                 pos: p,
@@ -106,9 +116,9 @@ export class GPhysics {
         const box = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), this.debugBoxMat)
         box.position.copy(pos)
         box.scale.copy(size)
+        //box.scale.set(size.x * 1.1, size.y * 1.1, size.z * 1.1)
         if (rotation) box.rotation.copy(rotation)
 
-        console.log("brick", box, pos, size)
         this.debugBox.push(box)
 
         this.addBoxs({ 
@@ -155,11 +165,9 @@ export class GPhysics {
     }
     Check(obj: IPhysicsObject): boolean {
         const pos = obj.BoxPos
-
         if (pos.y - obj.Size.y / 2 < this.landPos.y) return true
 
         const keys = this.makeHash(pos, obj.Size)
-
         const ret = keys.some((key) => {
             const boxs = this.pboxs.get(key)
             if (boxs == undefined) return false

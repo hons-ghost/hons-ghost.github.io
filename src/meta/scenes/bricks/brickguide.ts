@@ -49,6 +49,7 @@ export class BrickGuide extends GhostModel2 implements IPhysicsObject{
     Init(pos: THREE.Vector3) { 
         const x = pos.x - pos.x % this.Size.x
         const z = pos.z - pos.z % this.Size.z
-        this.position.set(x, this.CenterPos.y, z)
+        this.position.set(x, pos.y, z)
+        this.position.y = this.CenterPos.y
     }
 }

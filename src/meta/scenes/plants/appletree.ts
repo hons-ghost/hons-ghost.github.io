@@ -41,7 +41,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
                 material.transparent = true;
                 material.depthWrite = false;
                 material.opacity = .5;
-                material.color = new THREE.Color("#ff0000")
+                material.color = new THREE.Color("#ffffff")
             }
         })
     }

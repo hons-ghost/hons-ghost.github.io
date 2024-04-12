@@ -10,6 +10,7 @@ import { GPhysics } from "../../common/physics/gphysics";
 import { Bricks, EventBrick } from "./bricks";
 import App, { AppMode } from "../../app";
 import { IBuildingObject } from "../models/iobject";
+import { Player } from "../player/player";
 
 
 
@@ -23,9 +24,10 @@ export class EventBricks extends Bricks implements IModelReload{
         scene: THREE.Scene,
         eventCtrl: EventController,
         store: ModelStore,
-        physics: GPhysics
+        physics: GPhysics,
+        player: Player
     ) {
-        super(scene, eventCtrl, store, physics)
+        super(scene, eventCtrl, store, physics, player)
         this.brickType = BrickGuideType.Event
         this.brickSize.set(3, 3, 3)
 

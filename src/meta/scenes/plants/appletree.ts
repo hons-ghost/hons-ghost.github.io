@@ -45,6 +45,16 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
             }
         })
     }
+    Disapeare(opacity: number) {
+        this.meshs.children[0].traverse(child => {
+            if('material' in child) {
+                const material = child.material as THREE.MeshStandardMaterial
+                material.transparent = false;
+                material.depthWrite = true;
+                material.opacity = opacity;
+            }
+        })
+    }
     Plant(): void {
         this.meshs.children[0].traverse(child => {
             if('material' in child) {

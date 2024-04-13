@@ -10,7 +10,7 @@ import { AppleTree } from "./plants/appletree";
 import { Loader } from "../loader/loader";
 import { Game } from "./game";
 import { Char } from "../loader/assetmodel";
-import { Player } from "./player/player";
+import { ActionType, Player } from "./player/player";
 import { PlantDb, PlantId, PlantType } from "./plants/plantdb";
 import { IViewer } from "./models/iviewer";
 import { Canvas } from "../common/canvas";
@@ -24,6 +24,7 @@ export enum PlantState {
     NeedWartering,
     Wartering,
     Death,
+    Delete,
 }
 export type PlantEntry = {
     id: string
@@ -37,10 +38,11 @@ export type PlantEntry = {
 export type PlantSet = {
     plant: IPhysicsObject
     plantCtrl: TreeCtrl
+    used: boolean
 }
 export class PlantBox extends THREE.Mesh {
     constructor(public Id: number, public ObjName: string,
-        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
+        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial, public ctrl: TreeCtrl
     ) {
         super(geo, mat)
         this.name = ObjName
@@ -54,6 +56,7 @@ export class Farmer implements IModelReload, IViewer {
     plantDb = new PlantDb(this.loader)
     plantsFab = new Map<string, IPhysicsObject>()
     plants: PlantSet[] = []
+    recycle: PlantSet[] = []
     saveData = this.store.Plants
 
     constructor(
@@ -130,13 +133,14 @@ export class Farmer implements IModelReload, IViewer {
                     } else {
                         z.plantCtrl.SeedCancel()
                     }
-                }
-                if(opt.type == AttackType.Wartering) {
+                } else if(opt.type == AttackType.Wartering) {
                     if (opt.damage) {
                         z.plantCtrl.WarteringStart()
                     } else {
                         z.plantCtrl.WarteringCancel()
                     }
+                } else if(opt.type == AttackType.Delete) {
+                    if (!z.plantCtrl.Delete()) this.DeletePlant(obj.Id)
                 }
             })
         })
@@ -155,6 +159,12 @@ export class Farmer implements IModelReload, IViewer {
             this.CreatePlant(e)
         })
         
+    }
+    DeletePlant(id: number) {
+        const plantset = this.plants[id];
+        plantset.used = false
+        this.playerCtrl.remove(plantset.plantCtrl.phybox)
+        this.game.remove(plantset.plant.Meshs, plantset.plantCtrl.phybox)
     }
     async CreatePlant(plantEntry: PlantEntry) {
         const property = this.plantDb.get(plantEntry.id)
@@ -175,7 +185,7 @@ export class Farmer implements IModelReload, IViewer {
         tree.Visible = true
         const treeCtrl = new TreeCtrl(this.plants.length, tree, tree, property, plantEntry) 
         
-        this.plants.push({ plant: tree, plantCtrl: treeCtrl})
+        this.plants.push({ plant: tree, plantCtrl: treeCtrl, used: true })
         this.playerCtrl.add(treeCtrl.phybox)
         this.game.add(tree.Meshs, treeCtrl.phybox)
     }

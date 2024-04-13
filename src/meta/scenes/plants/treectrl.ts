@@ -7,6 +7,7 @@ import { IPhysicsObject } from "../models/iobject";
 export interface ITreeMotions {
     SetProgress(ratio: number): void
     SetLevel(lv: number): void
+    Disapeare(opacity: number): void
     Death(): void
     Plant(): void
     Enough(): void
@@ -22,6 +23,8 @@ export class TreeCtrl {
     checktime = 0
     phybox: PlantBox
     mySaveData?: PlantEntry
+    health = 5
+    get State() { return this.save.state }
 
     constructor(
         private id: number, 
@@ -41,12 +44,13 @@ export class TreeCtrl {
             //color: 0xff0000,
             //depthWrite: false,
         })
-        this.phybox = new PlantBox(id, "farmtree", geometry, material)
+        this.phybox = new PlantBox(id, "farmtree", geometry, material, this)
         this.phybox.visible = false
         this.phybox.position.copy(this.tree.CannonPos)
         this.phybox.position.y += size.y / 2
     }
     SeedStart() {
+        if(this.save.state == PlantState.Death) return
         this.timer = 0
         this.save.state = PlantState.Seeding
     }
@@ -55,6 +59,7 @@ export class TreeCtrl {
             this.save.state = PlantState.NeedSeed
     }
     WarteringStart() {
+        if(this.save.state == PlantState.Death) return
         if(this.save.state != PlantState.Enough && this.save.state != PlantState.NeedWartering) return
         this.timer = 0
         this.save.state = PlantState.Wartering
@@ -70,10 +75,17 @@ export class TreeCtrl {
     }
 
     StartGrow() {
+        if(this.save.state == PlantState.Death) return
         this.save.state = PlantState.NeedWartering
         const now = new Date().getTime() // ms, 0.001 sec
         this.save.lastWarteringTime = now - this.property.warteringTime
         this.treeMotion.Plant()
+    }
+    Delete():number {
+        this.health --
+        this.treeMotion.Disapeare(this.health / 5)
+
+        return this.health
     }
 
     CheckWartering() {
@@ -121,6 +133,9 @@ export class TreeCtrl {
                     this.StartGrow()
                 }
                 return;
+            case PlantState.Enough:
+                this.treeMotion.Enough()
+                break;
         }
         this.CheckWartering()
     }

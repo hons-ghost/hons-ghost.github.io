@@ -11,7 +11,7 @@ import { PlayerSpec } from "./playerspec";
 import { IBuffItem } from "../../buff/buff";
 import { EffectType } from "../../effects/effector";
 import { InvenFactory } from "../../inventory/invenfactory";
-import { BuildingState, PickFruitState, PickFruitTreeState, PlantAPlantState, WarteringState } from "./farmstate";
+import { BuildingState, DeleteState, PickFruitState, PickFruitTreeState, PlantAPlantState, WarteringState } from "./farmstate";
 
 export enum AttackType {
     NormalSwing,
@@ -25,6 +25,8 @@ export enum AttackType {
     Wartering,
 
     Building,
+
+    Delete,
 }
 
 export type AttackOption = {
@@ -73,6 +75,7 @@ export class PlayerCtrl implements IGPhysic {
     PlantASt = new PlantAPlantState(this, this.player, this.gphysic, this.eventCtrl)
     WarteringSt = new WarteringState(this, this.player, this.gphysic, this.invenFab, this.eventCtrl)
     BuildingSt = new BuildingState(this, this.player, this.gphysic, this.invenFab, this.eventCtrl)
+    DeleteSt = new DeleteState(this, this.player, this.gphysic, this.eventCtrl)
     currentState: IPlayerAction = this.IdleSt
 
 

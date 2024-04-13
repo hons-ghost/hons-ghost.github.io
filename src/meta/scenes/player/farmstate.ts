@@ -8,6 +8,7 @@ import { AttackOption, AttackType, PlayerCtrl } from "./playerctrl"
 import { IPlayerAction, State } from "./playerstate"
 import { EventController } from "../../event/eventctrl";
 import { Bind } from "../../loader/assetmodel";
+import { PlantBox, PlantState } from "../farmer";
 
 export class PickFruitState extends State implements IPlayerAction {
     next: IPlayerAction = this
@@ -85,6 +86,13 @@ export class PlantAPlantState extends State implements IPlayerAction {
                 if (k == "furniture") {
                     this.playerCtrl.BuildingSt.Init()
                     return this.playerCtrl.BuildingSt
+                }
+                if (k == "farmtree") {
+                    const ctrl = (obj.object as PlantBox).ctrl
+                    if(ctrl.State == PlantState.Death) {
+                        this.playerCtrl.DeleteSt.Init()
+                        return this.playerCtrl.DeleteSt
+                    }
                 }
                 const msg = {
                     type: AttackType.PlantAPlant,
@@ -205,6 +213,73 @@ export class WarteringState extends State implements IPlayerAction {
         return this
     }
 }
+export class DeleteState extends State implements IPlayerAction {
+    next: IPlayerAction = this
+    attackDist = 3
+    attackDir = new THREE.Vector3()
+    raycast = new THREE.Raycaster()
+    target?: string
+    targetMsg?: AttackOption
+    attackTime = 0
+    attackSpeed = 2
+    keytimeout?:NodeJS.Timeout
+
+    constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics, private eventCtrl: EventController) {
+        super(playerPhy, player, gphysic)
+    }
+    Init(): void {
+        console.log("Delete!!")
+        this.player.ChangeAction(ActionType.Hammering, this.attackSpeed) 
+        this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
+    }
+    plant() {
+        this.player.Meshs.getWorldDirection(this.attackDir)
+        this.raycast.set(this.player.CenterPos, this.attackDir.normalize())
+        const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
+        if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
+            for(let i = 0; i < intersects.length; i++) {
+                const obj = intersects[i]
+                if (obj.distance> this.attackDist) return 
+                const k = obj.object.name
+                const msg = {
+                    type: AttackType.Delete,
+                    damage: 1,
+                    obj: obj.object
+                }
+                this.eventCtrl.OnAttackEvent(k, [msg])
+                this.target = k
+                this.targetMsg = msg
+            }
+        } else {
+            this.playerCtrl.IdleSt.Init()
+            return this.playerCtrl.IdleSt
+        }
+        return this
+    }
+    Uninit(): void {
+        if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
+    }
+    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+        const d = this.DefaultCheck()
+        if (d != undefined) {
+            this.Uninit()
+            return d
+        }
+        this.attackTime += delta
+
+        if(this.attackTime / this.attackSpeed < 1) {
+            return this
+        }
+        this.attackTime -= this.attackSpeed
+
+        this.keytimeout = setTimeout(() => {
+            this.plant()
+        }, this.attackSpeed * 1000 * 0.6)
+
+        return this
+    }
+}
+
 export class BuildingState extends State implements IPlayerAction {
     hammer?: IItem
     attackDist = 3
@@ -226,7 +301,7 @@ export class BuildingState extends State implements IPlayerAction {
     }
     async Init() {
         console.log("Building!!")
-        const duration = this.player.ChangeAction(ActionType.Building) ?? 2
+        this.player.ChangeAction(ActionType.Building) ?? 2
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
         const id = this.player.Asset.GetBodyMeshId(Bind.Hands_R)
         if (id == undefined) return

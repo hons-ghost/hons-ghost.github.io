@@ -1,21 +1,21 @@
 import * as THREE from "three";
-import { AppMode } from "../app";
-import { EventController, EventFlag } from "../event/eventctrl";
-import { IKeyCommand, KeyType } from "../event/keycommand";
-import { GPhysics } from "../common/physics/gphysics";
-import { IPhysicsObject } from "./models/iobject";
-import { IModelReload, ModelStore } from "../common/modelstore";
-import SConf from "../configs/staticconf";
-import { AppleTree } from "./plants/appletree";
-import { Loader } from "../loader/loader";
-import { Game } from "./game";
-import { Char } from "../loader/assetmodel";
-import { ActionType, Player } from "./player/player";
-import { PlantDb, PlantId, PlantType } from "./plants/plantdb";
-import { IViewer } from "./models/iviewer";
-import { Canvas } from "../common/canvas";
-import { TreeCtrl } from "./plants/treectrl";
-import { AttackOption, AttackType, PlayerCtrl } from "./player/playerctrl";
+import { AppMode } from "../../app";
+import { EventController, EventFlag } from "../../event/eventctrl";
+import { IKeyCommand, KeyType } from "../../event/keycommand";
+import { GPhysics } from "../../common/physics/gphysics";
+import { IPhysicsObject } from "../models/iobject";
+import { IModelReload, ModelStore } from "../../common/modelstore";
+import SConf from "../../configs/staticconf";
+import { AppleTree } from "./appletree";
+import { Loader } from "../../loader/loader";
+import { Game } from "../game";
+import { Char } from "../../loader/assetmodel";
+import { ActionType, Player } from "../player/player";
+import { PlantDb, PlantId, PlantType } from "./plantdb";
+import { IViewer } from "../models/iviewer";
+import { Canvas } from "../../common/canvas";
+import { TreeCtrl } from "./treectrl";
+import { AttackOption, AttackType, PlayerCtrl } from "../player/playerctrl";
 
 export enum PlantState {
     NeedSeed,
@@ -113,6 +113,7 @@ export class Farmer implements IModelReload, IViewer {
                     }
                     this.saveData.push(e)
                     this.CreatePlant(e)
+                    eventCtrl.OnAppModeEvent(AppMode.EditPlay)
                     break;
                 default:
                     const position = keyCommand.ExecuteKeyDown()
@@ -163,6 +164,8 @@ export class Farmer implements IModelReload, IViewer {
     DeletePlant(id: number) {
         const plantset = this.plants[id];
         plantset.used = false
+        const idx = this.saveData.findIndex((item) => item.position.x == plantset.plant.CannonPos.x && item.position.z == plantset.plant.CannonPos.z)
+        if (idx > -1) this.saveData.splice(idx, 1)
         this.playerCtrl.remove(plantset.plantCtrl.phybox)
         this.game.remove(plantset.plant.Meshs, plantset.plantCtrl.phybox)
     }

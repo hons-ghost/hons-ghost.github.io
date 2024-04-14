@@ -44,6 +44,10 @@ export class Buff {
                     this.userBuff.length = 0
                     break
                 case EventFlag.End:
+                    this.buffItem.forEach(b => {
+                        b.lv = 0
+                    })
+                    this.userBuff.length = 0
                     break
             }
         })

@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { GPhysics } from "../../common/physics/gphysics"
-import { ActionType } from "../player/player"
+import { GPhysics } from "../../../common/physics/gphysics"
+import { ActionType } from "../../player/player"
 import { Zombie } from "./zombie"
 import { ZombieCtrl } from "./zombiectrl";
 import { IPlayerAction } from "../monsters";
-import { EventController } from "../../event/eventctrl";
-import { AttackType } from "../player/playerctrl";
+import { EventController } from "../../../event/eventctrl";
+import { AttackType } from "../../player/playerctrl";
 import { MonsterProperty } from "../monsterdb";
 
 class State {

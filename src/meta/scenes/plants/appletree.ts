@@ -27,12 +27,26 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
         if (this.text != undefined) {
             this.text.visible = false
         }
+        this.SetOpacity(1)
+        this.gauge.Meshs.traverse((child) => {
+            if('material' in child) {
+                const material = child.material as THREE.MeshStandardMaterial;
+                material.color = new THREE.Color("#008DDA")
+            }
+        })
     }
     NeedWarter(): void {
         if (this.text != undefined) {
             this.text.visible = true
             this.text.SetText("물을 주세요")
         }
+        this.SetOpacity(1)
+        this.gauge.Meshs.traverse((child) => {
+            if('material' in child) {
+                const material = child.material as THREE.MeshStandardMaterial;
+                material.color = new THREE.Color("#008DDA")
+            }
+        })
     }
     Death(): void {
         this.meshs.children[0].traverse(child => {
@@ -45,7 +59,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
             }
         })
     }
-    Disapeare(opacity: number) {
+    SetOpacity(opacity: number) {
         this.meshs.children[0].traverse(child => {
             if('material' in child) {
                 const material = child.material as THREE.MeshStandardMaterial

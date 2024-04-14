@@ -1,14 +1,14 @@
 import * as THREE from "three";
-import { Loader } from "../../loader/loader";
-import { FloatingName } from "../../common/floatingtxt";
-import { EventController } from "../../event/eventctrl";
-import { GhostModel } from "../models/ghostmodel";
-import { Ani, IAsset } from "../../loader/assetmodel";
-import { IPhysicsObject } from "../models/iobject";
-import { GPhysics } from "../../common/physics/gphysics";
-import { ActionType } from "../player/player";
-import { Damage } from "../../effects/damage";
-import { TextStatus } from "../../effects/status";
+import { Loader } from "../../../loader/loader";
+import { FloatingName } from "../../../common/floatingtxt";
+import { EventController } from "../../../event/eventctrl";
+import { GhostModel } from "../../models/ghostmodel";
+import { Ani, IAsset } from "../../../loader/assetmodel";
+import { IPhysicsObject } from "../../models/iobject";
+import { GPhysics } from "../../../common/physics/gphysics";
+import { ActionType } from "../../player/player";
+import { Damage } from "../../../effects/damage";
+import { TextStatus } from "../../../effects/status";
 
 export class Minataur extends GhostModel implements IPhysicsObject {
     mixer?: THREE.AnimationMixer

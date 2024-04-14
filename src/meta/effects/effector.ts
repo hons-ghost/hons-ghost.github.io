@@ -35,6 +35,7 @@ export class Effector {
             case EffectType.Damage:
                 const damage = new Damage(arg[0], arg[1], arg[2])
                 this.effects[EffectType.Damage] = damage
+                damage.Mesh.position.y += 2
                 this.meshs.add(damage.Mesh)
                 break;
         }

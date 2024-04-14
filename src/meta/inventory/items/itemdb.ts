@@ -3,17 +3,19 @@ import { Loader } from "../../loader/loader"
 import { AttackItemType, ItemType, Level } from "./item"
 
 export class ItemId {
-    public static Hanhwasbat = Symbol("Hanhwa's Bat")
-    public static WarterCan = Symbol("Warter Can")
-    public static Hammer = Symbol("Hammer H3")
-    public static DefaultGun = Symbol("DefaultGun")
-    public static Leather = Symbol("Leather")
-    public static Logs = Symbol("Logs")
-    public static Rocks = Symbol("Rocks")
+    public static Hanhwasbat = "Hanhwasbat"//Symbol("Hanhwa's Bat")
+    public static WarterCan = "WarterCan"//Symbol("Warter Can")
+    public static Hammer = "Hammer"//Symbol("Hammer H3")
+    public static DefaultGun = "DefaultGun"//Symbol("DefaultGun")
+    public static Leather = "Leather"//Symbol("Leather")
+    public static Logs = "Logs"//Symbol("Logs")
+    public static Rocks = "Rocks"//Symbol("Rocks")
+    public static ZombieDeck = "ZombieDeck"
 }
 
+
 export type ItemProperty = {
-    id: symbol
+    id: string
     type: ItemType
     weapon?: AttackItemType
     bind?: Bind
@@ -40,7 +42,7 @@ export type ItemProperty = {
 }
 
 export class ItemDb {
-    itemDb = new Map<symbol, ItemProperty>()
+    itemDb = new Map<string, ItemProperty>()
 
     constructor(private loader: Loader) {
         this.itemDb.set(ItemId.Hanhwasbat, {
@@ -104,8 +106,17 @@ export class ItemDb {
             binding: false,
             price: 1,
         })
+        this.itemDb.set(ItemId.ZombieDeck, {
+            id: ItemId.ZombieDeck,
+            type: ItemType.Deck,
+            name: "Zombie Deck",
+            icon: "Misc/Book.png",
+            stackable: false,
+            binding: false,
+            price: 1,
+        })
     }
-    GetItem(key: symbol): ItemProperty  {
+    GetItem(key: string): ItemProperty  {
         const ret = this.itemDb.get(key)
         if(ret == undefined)
             throw new Error("unkown key");

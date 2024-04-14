@@ -412,7 +412,7 @@ display: inline-block;
     display: none;
     top: 15px;
     left: 50%;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0%);
 }
 
 .health {
@@ -490,11 +490,12 @@ display: inline-block;
     position: absolute;
     display: none;
     width:fit-content;
-    top: 60px;
+    top: 15%;
     left: 50%;
     transform: translate(-50%, -50%);
     color:#fff;
     text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;
+    text-align: center;
 }
 .timer {
     position: absolute;

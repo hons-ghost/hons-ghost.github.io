@@ -90,21 +90,32 @@ export class PlayerCtrl implements IGPhysic {
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             this.mode = mode
-            if(mode == AppMode.EditPlay) {
-                while (this.gphysic.Check(player)) {
-                    player.CannonPos.y += 0.2
+            if (mode == AppMode.EditPlay || mode == AppMode.Weapon) {
+                switch (e) {
+                    case EventFlag.Start:
+                        while (this.gphysic.Check(player)) {
+                            player.CannonPos.y += 0.2
+                        }
+                        this.currentState = this.IdleSt
+                        this.currentState.Init()
+                        break
+                    case EventFlag.End:
+                        this.currentState.Uninit()
+                        break
                 }
             }
-            if(mode != AppMode.Play) return
-            switch (e) {
-                case EventFlag.Start:
-                    this.spec.ResetStatus()
-                    eventCtrl.OnChangePlayerStatusEvent(this.spec.Status)
-                    this.currentState = this.IdleSt
-                    this.currentState.Init()
-                    break
-                case EventFlag.End:
-                    break
+            if (mode == AppMode.Play) {
+                switch (e) {
+                    case EventFlag.Start:
+                        this.spec.ResetStatus()
+                        eventCtrl.OnChangePlayerStatusEvent(this.spec.Status)
+                        this.currentState = this.IdleSt
+                        this.currentState.Init()
+                        break
+                    case EventFlag.End:
+                        this.currentState.Uninit()
+                        break
+                }
             }
         })
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {

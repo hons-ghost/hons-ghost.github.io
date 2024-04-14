@@ -9,6 +9,7 @@ export enum ItemType {
     Potion,
     Material,
     Farm,
+    Deck,
 }
 
 export enum AttackItemType {
@@ -32,9 +33,11 @@ export enum Level {
 }
 
 export interface IItem {
-    get Id(): symbol
+    get Id(): string
+    get Name(): string
     get DamageMin(): number
     get DamageMax(): number
+    get ItemType(): ItemType
     get Speed(): number
     get IconPath(): string
     get Bindable(): boolean
@@ -48,11 +51,13 @@ export class Item implements IItem {
     get Id() { return this.property.id }
     get DamageMin() { return (this.property.damageMin == undefined) ? 0 : this.property.damageMin }
     get DamageMax() { return (this.property.damageMax == undefined) ? 0 : this.property.damageMax }
+    get ItemType() { return this.property.type }
     get Speed() { return (this.property.speed == undefined) ? 0 : this.property.speed }
     get IconPath() { return this.property.icon }
     get Bindable() { return this.property.binding }
     get Bind() { return this.property.bind }
     get Mesh() { return this.property.meshs }
+    get Name() { return this.property.name }
     get AttackType() { return this.property.weapon }
     get Stackable() { return this.property.stackable }
     constructor(public property: ItemProperty) {}

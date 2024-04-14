@@ -56,7 +56,6 @@ export class Input {
                 case AppMode.Brick:
                 case AppMode.LegoDelete:
                 case AppMode.Lego:
-                case AppMode.Locate:
                 case AppMode.Portal:
                 case AppMode.Farmer:
                 case AppMode.Furniture:
@@ -68,6 +67,7 @@ export class Input {
                         this.ButtonHide()
                     }
                     break;
+                case AppMode.Weapon:
                 case AppMode.EditPlay:
                 case AppMode.Play:
                     if (e == EventFlag.Start) {

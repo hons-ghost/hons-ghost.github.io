@@ -24,16 +24,16 @@ import { Helper } from "../common/helper";
 import { Legos } from "../scenes/bricks/legos";
 import { Input } from "../common/inputs/input";
 import { RayViwer } from "../common/raycaster";
-import { Monsters } from "../scenes/monsters";
+import { Monsters } from "../scenes/monsters/monsters";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Buff } from "../buff/buff";
 import { Drop } from "../drop/drop";
-import { MonsterDb } from "../scenes/monsterdb";
+import { MonsterDb } from "../scenes/monsters/monsterdb";
 import { Alarm } from "../common/alarm";
 import { Materials } from "../scenes/materials";
 import { GameCenter } from "../scenes/gamecenter";
-import { Farmer } from "../scenes/farmer";
-import { Carpenter } from "../scenes/carpenter";
+import { Farmer } from "../scenes/plants/farmer";
+import { Carpenter } from "../scenes/furniture/carpenter";
 
 
 export class AppFactory {

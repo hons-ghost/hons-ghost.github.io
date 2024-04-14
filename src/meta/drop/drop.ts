@@ -3,7 +3,7 @@ import { IViewer } from "../scenes/models/iviewer";
 import { Player } from "../scenes/player/player";
 import { Canvas } from "../common/canvas";
 import SConf from "../configs/staticconf";
-import { MonDrop } from "../scenes/monsterdb";
+import { MonDrop } from "../scenes/monsters/monsterdb";
 import { ItemId } from "../inventory/items/itemdb";
 import { math } from "../../libs/math";
 import { Inventory } from "../inventory/inventory";
@@ -14,7 +14,7 @@ import { AppMode } from "../app";
 type DropBox = {
     id: number
     droped: boolean
-    items?: symbol[]
+    items?: string[]
 }
 
 export class Drop implements IViewer {
@@ -81,7 +81,7 @@ export class Drop implements IViewer {
 
     dropPoint(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
         if (this.pointsGeometry == undefined) return
-        const itemIds: symbol[] = []
+        const itemIds: string[] = []
         if (drop != undefined) {
             const ticket = Math.random()
             drop.forEach((item) => {

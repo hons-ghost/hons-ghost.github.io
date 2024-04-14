@@ -4,11 +4,11 @@ import { EventController } from "../event/eventctrl";
 import { Char } from "../loader/assetmodel";
 import { BrickShapeType } from "../scenes/bricks/legos";
 import { Npc } from "../scenes/models/npc";
-import { Player } from "../scenes/player/player";
+import { ActionType, Player } from "../scenes/player/player";
 import { InvenData, Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
-import { PlantEntry } from "../scenes/farmer";
-import { FurnEntry } from "../scenes/carpenter";
+import { PlantEntry } from "../scenes/plants/farmer";
+import { FurnEntry } from "../scenes/furniture/carpenter";
 
 type Lego = {
     position: THREE.Vector3
@@ -30,6 +30,7 @@ type StoreData = {
     legos: Lego[]
     owner: THREE.Vector3 | undefined
     ownerModel: Char | undefined
+    ownerAction: ActionType
     portal: THREE.Vector3 | undefined
 }
 
@@ -50,6 +51,7 @@ export class ModelStore {
         legos: [], 
         owner: undefined, 
         ownerModel: Char.Male, 
+        ownerAction: ActionType.Idle,
         portal: undefined,
     }
     private owners = new Array<THREE.Vector3 | undefined>()
@@ -74,6 +76,7 @@ export class ModelStore {
         }
     }
     get OwnerModel() { return this.data.ownerModel }
+    get OwnerAction() { return this.data.ownerAction }
     get PlayerModel() { return this.playerModel }
     get Name() {return this.name}
     constructor(private eventCtrl: EventController, private invenFab: InvenFactory) {
@@ -126,8 +129,9 @@ export class ModelStore {
 
 
     StoreModels() {
-        this.data.owner = this.owner?.Meshs.position
-        this.data.ownerModel = this.owner?.Model
+        this.data.owner = this.player?.Meshs.position
+        this.data.ownerModel = this.player?.Model
+        this.data.ownerAction = (this.player) ? this.player.ActionType : ActionType.Idle
 
         const json = JSON.stringify(this.data)
         return json

@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import { PlantBox, PlantEntry, PlantState } from "../farmer";
+import { PlantBox, PlantEntry, PlantState } from "./farmer";
 import { AppleTree } from "./appletree";
-import { PlantProperty } from "./plantdb";
+import { PlantProperty, PlantType } from "./plantdb";
 import { IPhysicsObject } from "../models/iobject";
 
 export interface ITreeMotions {
     SetProgress(ratio: number): void
     SetLevel(lv: number): void
-    Disapeare(opacity: number): void
+    SetOpacity(opacity: number): void
     Death(): void
     Plant(): void
     Enough(): void
@@ -48,9 +48,10 @@ export class TreeCtrl {
         this.phybox.visible = false
         this.phybox.position.copy(this.tree.CannonPos)
         this.phybox.position.y += size.y / 2
+        this.CheckWartering()
     }
     SeedStart() {
-        if(this.save.state == PlantState.Death) return
+        if (this.save.state != PlantState.NeedSeed) return
         this.timer = 0
         this.save.state = PlantState.Seeding
     }
@@ -83,12 +84,14 @@ export class TreeCtrl {
     }
     Delete():number {
         this.health --
-        this.treeMotion.Disapeare(this.health / 5)
+        this.treeMotion.SetOpacity(this.health / 5)
 
         return this.health
     }
 
     CheckWartering() {
+        if(this.save.state == PlantState.NeedSeed) return
+
         const curr = new Date().getTime()
         const remainTime = curr - this.save.lastWarteringTime
         const remainRatio = 1 - remainTime / this.property.warteringTime

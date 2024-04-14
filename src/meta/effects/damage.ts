@@ -61,7 +61,7 @@ export class Damage implements IEffect {
         this.processFlag = false
         // this.scene.remove(this.points)
     }
-    v = 0.001
+    v = 0.1
     Update(delta: number) {
         if (this.material.opacity <= 0 || !this.processFlag) return 
         const positions = this.points.geometry.attributes.position
@@ -76,8 +76,8 @@ export class Damage implements IEffect {
             positions.setZ(i, z - (Math.abs(this.delta[i].z * this.v)) * delta)
 //            console.log(positions.getX(i), positions.getY(i), positions.getZ(i))
         }
-        this.v += 0.01
-        this.material.opacity -= (1 * delta)
+        this.v += 0.1
+        this.material.opacity -= (2 * delta)
         if (this.material.opacity <= 0) {
             this.Complet()
         }

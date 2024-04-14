@@ -22,13 +22,14 @@ export class GPhysics {
 
     objs: IGPhysic[] = []
     pboxs = new Map<string, PhysicBox[]>()
-    //debugBoxMat = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true})
-    debugBoxMat = new THREE.MeshBasicMaterial({ 
+    debugBoxMat = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true})
+    /*debugBoxMat = new THREE.MeshBasicMaterial({ 
             transparent: true,
             opacity: .5,
             color: 0xff0000,
             //depthWrite: false,
         })
+        */
 
     debugBox: THREE.Mesh[] = []
     get LandY() { return this.landPos.y }

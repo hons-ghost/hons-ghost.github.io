@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { FurnBox, FurnEntry, FurnState } from "../carpenter"
+import { FurnBox, FurnEntry, FurnState } from "./carpenter"
 import { IPhysicsObject } from "../models/iobject"
 import { FurnProperty } from "./furndb"
 import { GPhysics } from "../../common/physics/gphysics";

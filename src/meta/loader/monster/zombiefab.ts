@@ -58,8 +58,8 @@ export class ZombieFab extends AssetModel implements IAsset {
 
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
+        this.size.y *= 1.1
         this.size.z = Math.ceil(this.size.z)
-        this.size.x /= 3
         console.log(this.meshs, this.size)
         return this.size 
     }

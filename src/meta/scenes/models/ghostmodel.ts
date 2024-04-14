@@ -76,6 +76,7 @@ export class GhostModel2 extends THREE.Mesh {
         const bbox = new THREE.Box3().setFromObject(this)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
+        this.size.y = Math.round(this.size.y)
         this.size.z = Math.ceil(this.size.z)
         return this.size
     }

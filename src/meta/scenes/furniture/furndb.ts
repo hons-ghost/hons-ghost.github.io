@@ -1,6 +1,6 @@
 import { Char } from "../../loader/assetmodel"
 import { Loader } from "../../loader/loader"
-import { MonDrop } from "../monsterdb"
+import { MonDrop } from "../monsters/monsterdb"
 
 
 export class FurnId {

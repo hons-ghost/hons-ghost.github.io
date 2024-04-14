@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { GPhysics } from "../../common/physics/gphysics"
-import { ActionType } from "../player/player"
+import { GPhysics } from "../../../common/physics/gphysics"
+import { ActionType } from "../../player/player"
 import { MinataurCtrl } from "./minataurctrl";
 import { Minataur } from "./minataur";
-import { IPlayerAction } from "../monsters";
+import { IPlayerAction } from "../../monsters/monsters";
 
 
 class State {

@@ -6,7 +6,7 @@ import { IViewer } from "./models/iviewer";
 import { Player } from "./player/player";
 import { Portal } from "./models/portal";
 import { PlayerCtrl } from "./player/playerctrl";
-import { Monsters } from "./monsters";
+import { Monsters } from "./monsters/monsters";
 import { Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Alarm, AlarmType } from "../common/alarm";
@@ -57,6 +57,7 @@ export class GameCenter implements IViewer {
             if(mode != AppMode.Play) return
             switch (e) {
                 case EventFlag.Start:
+                    this.invenFab.inven.Clear()
                     this.createTimer()
                     this.timer = 0
                     this.playing = true
@@ -95,7 +96,7 @@ export class GameCenter implements IViewer {
         this.currentSec = Math.floor(this.timer)
         const min = Math.floor(this.currentSec / 60)
         const sec = this.currentSec % 60
-        this.dom.innerText = min + ":" + sec
+        this.dom.innerText = ((min < 10) ? "0" + min : min) + ":" + ((sec < 10) ? "0" + sec : sec)
     }
     Setup(opt: GameOptions) {
         this.opt = opt

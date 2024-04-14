@@ -8,7 +8,7 @@ import { AttackOption, AttackType, PlayerCtrl } from "./playerctrl"
 import { IPlayerAction, State } from "./playerstate"
 import { EventController } from "../../event/eventctrl";
 import { Bind } from "../../loader/assetmodel";
-import { PlantBox, PlantState } from "../farmer";
+import { PlantBox, PlantState } from "../plants/farmer";
 
 export class PickFruitState extends State implements IPlayerAction {
     next: IPlayerAction = this

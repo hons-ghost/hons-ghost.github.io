@@ -1,5 +1,5 @@
-import { ItemId } from "../inventory/items/itemdb"
-import { Loader } from "../loader/loader"
+import { ItemId } from "../../inventory/items/itemdb"
+import { Loader } from "../../loader/loader"
 
 export class MonsterId {
     public static Zombie = Symbol("zombie")
@@ -16,7 +16,7 @@ export enum MonsterType {
 }
 
 export type MonDrop = {
-    itemId: symbol,
+    itemId: string,
     ratio: number
 }
 
@@ -42,7 +42,8 @@ export class MonsterDb {
             damageMax: 5,
             attackSpeed: 2,
             drop: [
-                { itemId: ItemId.Leather, ratio: 0.5 }
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.ZombieDeck, ratio: 0.5 }
             ]
         })
         this.monDb.set(MonsterId.Stone, {

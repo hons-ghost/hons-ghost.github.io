@@ -8,12 +8,12 @@ import { AppMode } from "../app";
 import { Loader } from "../loader/loader";
 import { math } from "../../libs/math";
 import { GPhysics } from "../common/physics/gphysics";
-import { MonsterBox } from "./monsters";
+import { MonsterBox } from "./monsters/monsters";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { EffectType, Effector } from "../effects/effector";
 import { Player } from "./player/player";
 import { Drop } from "../drop/drop";
-import { MonsterDb, MonsterId } from "./monsterdb";
+import { MonsterDb, MonsterId } from "./monsters/monsterdb";
 import { IViewer } from "./models/iviewer";
 
 

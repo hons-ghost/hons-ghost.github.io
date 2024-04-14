@@ -11,6 +11,7 @@ import { UiInven } from "./play_inven";
 import { InvenData } from "./meta/inventory/inventory";
 import { EditPlant } from "./editplant";
 import { EditFurniture } from "./editfurniture";
+import { EditGame } from "./editgame";
 
 export class EditHome extends Page {
     m_masterAddr = ""
@@ -21,6 +22,7 @@ export class EditHome extends Page {
     ui = new Ui(this.meta, AppMode.EditPlay)
     plant = new EditPlant(this.meta, this)
     furn = new EditFurniture(this.meta, this)
+    game = new EditGame()
 
     myPicker?: ColorPicker
     color: string = "#fff"
@@ -95,9 +97,7 @@ export class EditHome extends Page {
     public UpdateMenu() {
         console.log("current Mode", this.mode)
         const play = document.getElementById("editplaymode") as HTMLDivElement
-        play.style.backgroundColor = (this.mode == AppMode.EditPlay) ? "silver" : "transparent"
-        const loc = document.getElementById("locatmode") as HTMLDivElement
-        loc.style.backgroundColor = (this.mode == AppMode.Locate) ? "silver" : "transparent"
+        if(play) play.style.backgroundColor = (this.mode == AppMode.EditPlay) ? "silver" : "transparent"
         const avr = document.getElementById("avatarmode") as HTMLDivElement
         avr.style.backgroundColor = (this.mode == AppMode.Face) ? "silver" : "transparent"
         const avr2 = document.getElementById("avatar-second") as HTMLDivElement
@@ -112,6 +112,8 @@ export class EditHome extends Page {
         wea.style.backgroundColor = (this.mode == AppMode.Weapon) ? "silver" : "transparent"
         const brickctrl = document.getElementById("brickctrl") as HTMLDivElement
         brickctrl.style.display = (this.mode == AppMode.Lego) ? "block" : "none"
+
+        this.game.OnOff(this.mode == AppMode.Weapon, this.inven.inven)
     }
     public RequestNewMeta(models: string) {
         const masterAddr = this.m_masterAddr;
@@ -157,19 +159,13 @@ export class EditHome extends Page {
             this.RequestNewMeta(models)
         }
         const play = document.getElementById("editplaymode") as HTMLDivElement
-        play.onclick = () => {
+        if(play) play.onclick = () => {
             this.meta.ModeChange(AppMode.EditPlay)
             this.UpdateMenu()
         }
         const div = document.getElementById("brickmode") as HTMLDivElement
         div.onclick = () => {
             this.mode = (this.mode != AppMode.Brick) ? AppMode.Brick : AppMode.EditPlay
-            this.meta.ModeChange(this.mode)
-            this.UpdateMenu()
-        }
-        const loc = document.getElementById("locatmode") as HTMLDivElement
-        loc.onclick = () => {
-            this.mode = (this.mode != AppMode.Locate) ? AppMode.Locate : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
@@ -295,7 +291,6 @@ export class EditHome extends Page {
         return email;
     }
     loadHelper() {
-
         fetch("views/edithelp.html")
             .then(response => { return response.text(); })
             .then((res) => {
@@ -307,6 +302,7 @@ export class EditHome extends Page {
     }
     public async Run(masterAddr: string): Promise<boolean> {
         await this.LoadHtml()
+        this.game.LoadHtml()
 
         this.GetElement()
         this.UpdateBrickUI()

@@ -1,21 +1,21 @@
 import * as THREE from "three";
-import { AppMode } from "../app";
-import { EventController, EventFlag } from "../event/eventctrl";
-import { IKeyCommand, KeyType } from "../event/keycommand";
-import { GPhysics } from "../common/physics/gphysics";
-import { IPhysicsObject } from "./models/iobject";
-import { IModelReload, ModelStore } from "../common/modelstore";
-import SConf from "../configs/staticconf";
-import { Loader } from "../loader/loader";
-import { Game } from "./game";
-import { Player } from "./player/player";
-import { PlantDb, PlantId, PlantType } from "./plants/plantdb";
-import { IViewer } from "./models/iviewer";
-import { Canvas } from "../common/canvas";
-import { AttackOption, AttackType, PlayerCtrl } from "./player/playerctrl";
-import { FurnCtrl } from "./furniture/furnctrl";
-import { FurnDb, FurnId, FurnType } from "./furniture/furndb";
-import { Bed } from "./furniture/bed";
+import { AppMode } from "../../app";
+import { EventController, EventFlag } from "../../event/eventctrl";
+import { IKeyCommand, KeyType } from "../../event/keycommand";
+import { GPhysics } from "../../common/physics/gphysics";
+import { IPhysicsObject } from "../models/iobject";
+import { IModelReload, ModelStore } from "../../common/modelstore";
+import SConf from "../../configs/staticconf";
+import { Loader } from "../../loader/loader";
+import { Game } from "../game";
+import { Player } from "../player/player";
+import { PlantDb, PlantId, PlantType } from "../plants/plantdb";
+import { IViewer } from "../models/iviewer";
+import { Canvas } from "../../common/canvas";
+import { AttackOption, AttackType, PlayerCtrl } from "../player/playerctrl";
+import { FurnCtrl } from "./furnctrl";
+import { FurnDb, FurnId, FurnType } from "./furndb";
+import { Bed } from "./bed";
 
 export enum FurnState {
     NeedBuilding,

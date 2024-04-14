@@ -43,6 +43,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     mixer?: THREE.AnimationMixer
     currentAni?: THREE.AnimationAction
     currentClip?: THREE.AnimationClip
+    currentActionType = ActionType.Idle
 
     private playerModel: Char = Char.Male
     bindMesh: THREE.Group[] = []
@@ -55,6 +56,8 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         return this.asset.GetBoxPos(this.meshs)
     }
     set Model(model: Char) { this.playerModel = model }
+    get Model() { return this.playerModel }
+    get ActionType() { return this.currentActionType }
  
     constructor(
         private loader: Loader, 
@@ -69,7 +72,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.store.RegisterPlayer(this, this)
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
-            if (mode == AppMode.Play || mode == AppMode.EditPlay) {
+            if (mode == AppMode.Play || mode == AppMode.EditPlay || mode == AppMode.Weapon) {
                 switch (e) {
                     case EventFlag.Start:
                         this.eventCtrl.OnChangeCtrlObjEvent(this)
@@ -130,6 +133,8 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         pos.z += 4
         if (mode == AppMode.EditPlay) {
             pos = this.store.Owner ?? pos
+        } else if( mode == AppMode.Weapon) {
+            pos = this.meshs.position
         }
         pos.y = this.meshs.position.y
         this.meshs.position.copy(pos)
@@ -156,7 +161,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.asset = asset
         const [meshs, exist] = await asset.UniqModel(name)
         this.meshs = meshs
-        this.meshs.position.set(position.x, position.y, position.z)
+        this.meshs.position.copy(position)
 
         this.mixer = this.asset.GetMixer(name)
 
@@ -177,7 +182,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         this.clipMap.set(ActionType.Hammering, this.asset.GetAnimationClip(Ani.Hammering))
         this.clipMap.set(ActionType.Building, this.asset.GetAnimationClip(Ani.Hammering))
         
-        this.changeAnimate(this.clipMap.get(ActionType.Idle))
+        this.changeAnimate(this.clipMap.get(this.currentActionType))
 
         this.meshs.add(this.damageEffect.Mesh)
         this.damageEffect.Mesh.visible = false
@@ -216,6 +221,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
 
     ChangeAction(action: ActionType, speed?: number) {
         let clip: THREE.AnimationClip | undefined
+        this.currentActionType = action
         this.changeAnimate(this.clipMap.get(action), speed)
         return clip?.duration
     }

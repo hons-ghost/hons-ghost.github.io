@@ -11,8 +11,8 @@ import { EventBricks } from "../scenes/bricks/eventbricks";
 import { Portal } from "../scenes/models/portal";
 import { Legos } from "../scenes/bricks/legos";
 import { AppMode } from "../app";
-import { Farmer } from "../scenes/farmer";
-import { Carpenter } from "../scenes/carpenter";
+import { Farmer } from "../scenes/plants/farmer";
+import { Carpenter } from "../scenes/furniture/carpenter";
 
 enum ViewMode {
     Close,
@@ -65,17 +65,6 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
 
                         this.target = this.portal.Meshs
                         this.focusAt(this.portal.CannonPos, new THREE.Vector3(0, 30, 30))
-                    }
-                    break;
-                case AppMode.Locate:
-                    if (e == EventFlag.Start) {
-                        this.viewMode = ViewMode.Target
-                        this.controls.enabled = false
-                        this.owner = this.npcs.Owner
-                        if (this.owner == undefined) return
-
-                        this.target = this.owner.Meshs
-                        this.focusAt(this.owner.CannonPos)
                     }
                     break;
                 case AppMode.Furniture:

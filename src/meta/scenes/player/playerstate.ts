@@ -159,7 +159,7 @@ export class MagicH1State extends State implements IPlayerAction {
 export class DeadState extends State implements IPlayerAction {
     constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
-        this.Init()
+        //this.Init()
     }
     Init(): void {
         this.player.ChangeAction(ActionType.Dying)

@@ -118,8 +118,10 @@ export class Play extends Page {
                         })
                 }
             })
+            .then(() => {
+                this.meta.render()
+            })
 
-        this.meta.render()
 
         this.meta.RegisterChangePlayerStatusEvent((status: PlayerStatus) => {
             const hpBar = document.getElementById("hp-bar") as HTMLProgressElement

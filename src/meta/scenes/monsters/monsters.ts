@@ -1,22 +1,22 @@
 import * as THREE from "three";
-import { Loader } from "../loader/loader"
-import { EventController, EventFlag } from "../event/eventctrl"
-import { Game } from "./game"
-import { GPhysics } from "../common/physics/gphysics";
-import { Char } from "../loader/assetmodel";
-import { AppMode } from "../app";
+import { Loader } from "../../loader/loader"
+import { EventController, EventFlag } from "../../event/eventctrl"
+import { Game } from "../game"
+import { GPhysics } from "../../common/physics/gphysics";
+import { Char } from "../../loader/assetmodel";
+import { AppMode } from "../../app";
 import { Zombie } from "./zombie/zombie";
-import { Legos } from "./bricks/legos";
-import { EventBricks } from "./bricks/eventbricks";
+import { Legos } from "../bricks/legos";
+import { EventBricks } from "../bricks/eventbricks";
 import { ZombieCtrl } from "./zombie/zombiectrl";
-import { Player } from "./player/player";
-import { AttackOption, PlayerCtrl } from "./player/playerctrl";
-import { math } from "../../libs/math";
+import { Player } from "../player/player";
+import { AttackOption, PlayerCtrl } from "../player/playerctrl";
+import { math } from "../../../libs/math";
 import { Minataur } from "./minataur/minataur";
-import { Drop } from "../drop/drop";
+import { Drop } from "../../drop/drop";
 import { MonDrop, MonsterDb, MonsterId } from "./monsterdb";
-import { EffectType } from "../effects/effector";
-import { IPhysicsObject } from "./models/iobject";
+import { EffectType } from "../../effects/effector";
+import { IPhysicsObject } from "../models/iobject";
 
 type MonsterSet = {
     monModel: IPhysicsObject,
@@ -48,6 +48,7 @@ export class Monsters {
     zombies: MonsterSet[] = []
     keytimeout?:NodeJS.Timeout
     respawntimeout?:NodeJS.Timeout
+    mode = AppMode.Close
 
     constructor(
         private loader: Loader,
@@ -62,6 +63,7 @@ export class Monsters {
         private monDb: MonsterDb
     ) {
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            this.mode = mode
             if(mode != AppMode.Play) return
             switch (e) {
                 case EventFlag.Start:
@@ -73,6 +75,7 @@ export class Monsters {
             }
         })
         eventCtrl.RegisterAttackEvent("Zombie", (opts: AttackOption[]) => {
+            if(this.mode != AppMode.Play) return
             opts.forEach((opt) => {
                 let obj = opt.obj as MonsterBox
                 if (obj == null) return
@@ -84,6 +87,7 @@ export class Monsters {
             })
         })
         eventCtrl.RegisterAttackEvent("monster", (opts: AttackOption[]) => {
+            if(this.mode != AppMode.Play) return
             const pos = this.player.CannonPos
             const dist = opts[0].distance
             const damage = opts[0].damage

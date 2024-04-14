@@ -18,7 +18,6 @@ export enum AppMode {
     Play,
     EditPlay,
     Brick,
-    Locate,
     Face,
     Weapon,
     Furniture,

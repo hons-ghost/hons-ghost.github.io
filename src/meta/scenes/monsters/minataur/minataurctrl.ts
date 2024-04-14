@@ -1,72 +1,57 @@
 import * as THREE from "three";
-import { GPhysics, IGPhysic } from "../../common/physics/gphysics"
-import { Player } from "../player/player"
-import { Zombie } from "./zombie"
-import { AttackZState, DyingZState, IdleZState, JumpZState, RunZState } from "./zombiestate"
-import { IPhysicsObject } from "../models/iobject";
-import { Legos } from "../bricks/legos";
-import { EventBricks } from "../bricks/eventbricks";
-import { IMonsterCtrl, IPlayerAction, MonsterBox } from "../monsters";
-import { EventController } from "../../event/eventctrl";
-import { MonsterProperty } from "../monsterdb";
-import { EffectType } from "../../effects/effector";
+import { GPhysics, IGPhysic } from "../../../common/physics/gphysics"
+import { Player } from "../../player/player"
+import { IPhysicsObject } from "../../models/iobject";
+import { Legos } from "../../bricks/legos";
+import { EventBricks } from "../../bricks/eventbricks";
+import { AttackMState, DyingMState, IdleMState, RunMState } from "./minataurstate";
+import { Minataur } from "./minataur";
+import { IPlayerAction, MonsterBox } from "../../monsters/monsters";
 
 
-
-export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
-    IdleSt = new IdleZState(this, this.zombie, this.gphysic)
-    AttackSt = new AttackZState(this, this.zombie, this.gphysic, this.eventCtrl, this.property)
-    RunSt = new RunZState(this, this.zombie, this.gphysic, this.property)
-    DyingSt = new DyingZState(this, this.zombie, this.gphysic, this.eventCtrl)
-    JumpSt = new JumpZState(this, this.zombie, this.gphysic)
+export class MinataurCtrl implements IGPhysic{
+    IdleSt = new IdleMState(this, this.monster, this.gphysic)
+    AttackSt = new AttackMState(this, this.monster, this.gphysic)
+    RunSt = new RunMState(this, this.monster, this.gphysic)
+    DyingSt = new DyingMState(this, this.monster, this.gphysic)
 
     currentState: IPlayerAction = this.IdleSt
     raycast = new THREE.Raycaster()
     dir = new THREE.Vector3(0, 0, 0)
     moveDirection = new THREE.Vector3()
-    health = this.property.health
-    private phybox: MonsterBox
-    get Drop() { return this.property.drop }
-    get MonsterBox() { return this.phybox }
+    health = 10
+    phybox: MonsterBox
 
     constructor(
         private id: number,
         private player: IPhysicsObject, 
-        private zombie: Zombie, 
+        private monster: Minataur, 
         private legos: Legos,
         private eventBricks: EventBricks,
-        private gphysic: GPhysics,
-        private eventCtrl: EventController,
-        private property: MonsterProperty
+        private gphysic: GPhysics
     ) {
         gphysic.Register(this)
-        const size = zombie.Size
+        const size = monster.Size
         const geometry = new THREE.BoxGeometry(size.x * 3, size.y, size.z * 3)
         const material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
             transparent: true,
-            opacity: .5,
+            opacity: 0,
             color: 0xff0000,
-            depthWrite: false,
         })
-        this.phybox = new MonsterBox(id, "Zombie", geometry, material)
-        this.phybox.visible = true
-        this.phybox.position.copy(this.zombie.CannonPos)
-    }
-    Respawning() {
-        this.health = 10
-        this.currentState = this.IdleSt
-        this.currentState.Init()
+        this.phybox = new MonsterBox(id, "Minataur", geometry, material)
+        this.phybox.position.copy(this.monster.CannonPos)
+        this.phybox.position.y += size.y / 2
     }
 
     update(delta: number): void {
-        if (!this.zombie.Visible) return
+        if (!this.monster.Visible) return
 
-        const dist = this.zombie.CannonPos.distanceTo(this.player.CannonPos)
+        const dist = this.monster.CannonPos.distanceTo(this.player.CannonPos)
 
         if (this.health > 0) {
-            this.dir.subVectors(this.player.CannonPos, this.zombie.CannonPos)
-            this.raycast.set(this.zombie.CannonPos, this.dir.normalize())
+            this.dir.subVectors(this.player.CannonPos, this.monster.CannonPos)
+            this.raycast.set(this.monster.CannonPos, this.dir.normalize())
 
             let find = false
             if (this.legos.instancedBlock != undefined)
@@ -87,15 +72,13 @@ export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
         }
 
         this.currentState = this.currentState.Update(delta, this.moveDirection, dist)
-        this.zombie.update()
+        this.monster.update()
 
-        this.phybox.position.copy(this.zombie.CannonPos)
-        this.phybox.position.y += this.zombie.Size.y / 2
+        this.phybox.position.copy(this.monster.CannonPos)
     }
-    
-    ReceiveDemage(demage: number, effect?: EffectType): boolean {
+    ReceiveDemage(demage: number): boolean {
         if (this.health <= 0) return false
-        this.zombie.DamageEffect(demage, effect)
+        this.monster.DamageEffect(demage)
         this.health -= demage
         if (this.health <= 0) {
             this.DyingSt.Init()

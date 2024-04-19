@@ -96,7 +96,7 @@ export class EventController {
         this.curMode = mode
     }
     OnAppModeMessage(...arg: any) {
-        this.eventEmitter.emit(SConf.AppMode, this.curMode, EventFlag.Message, ...arg)
+        this.eventEmitter.emit(SConf.AppMode, this.curMode, EventFlag.Message, arg)
     }
     RegisterAppModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.AppMode, callback)

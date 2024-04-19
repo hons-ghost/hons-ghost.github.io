@@ -92,7 +92,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
                         this.controls.enabled = false
-                        this.target = this.legos.GetBrickGuide(this.player.CannonPos)
+                        this.target = this.legos.GetBrickGuide(this.player.CenterPos)
                         if (this.animate != undefined) this.animate.kill()
 
                         this.focusAt(this.target.position)
@@ -102,7 +102,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
                         this.controls.enabled = false
-                        this.target = this.brick.GetBrickGuide(this.player.CannonPos)
+                        this.target = this.brick.GetBrickGuide(this.player.CenterPos)
                         if (this.animate != undefined) this.animate.kill()
 
                         this.focusAt(this.target.position)
@@ -187,7 +187,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         })
                         */
                         this.animate = gsap.to(this.longPos, {
-                            x: 16, y: 6.5, z: 36,
+                            x: 16, y: 4, z: 36,
                             duration: 4, ease: "power1.inOut", onUpdate: () => {
                                 this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
                                 this.position.set(this.longPos.x, this.longPos.y,

@@ -122,9 +122,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     }
 
     Uninit(mode: AppMode) {
-        if (mode == AppMode.EditPlay) {
-            this.store.Owner = this.CannonPos
-        }
+        this.store.Owner = this.CannonPos
     }
 
     Init(mode: AppMode) {

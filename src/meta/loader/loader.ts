@@ -6,7 +6,7 @@ import { Char, IAsset } from "./assetmodel";
 import { MaleFab } from "./malefab";
 import { FemaleFab } from "./femalefab";
 import { MushroomFab } from "./plant/mushroomfab";
-import { TreeFab } from "./plant/treefab";
+import { DeadTree2Fab, TreeFab } from "./plant/treefab";
 import { PortalFab } from "./portalfab";
 import { TestFab } from "./testfab";
 import { ZombieFab } from "./monster/zombiefab";
@@ -21,6 +21,14 @@ import { AppleTreeFab } from "./plant/plantfab";
 import { BatPigFab } from "./monster/batpigfab";
 import { BirdMonFab } from "./monster/birdmonfab";
 import { BilbyFab } from "./monster/bilbyfab";
+import { WereWolfFab } from "./monster/werewolffab";
+import { BigGolemFab, GolemFab } from "./monster/golemfab";
+import { SnakeFab } from "./monster/snakefab";
+import { VikingFab } from "./monster/vikingfab";
+import { BuilderFab } from "./monster/builderfab";
+import { ToadMageFab } from "./monster/toadmagefab";
+import { KittenMonkFab } from "./monster/kittenmonk";
+import { SkeletonFab } from "./monster/skeleton";
 
 export class Loader {
     private fbxLoader = new FBXLoader()
@@ -43,6 +51,15 @@ export class Loader {
     private batpig = new BatPigFab(this)
     private birdmon = new BirdMonFab(this)
     private bilby = new BilbyFab(this)
+    private werewolf = new WereWolfFab(this)
+    private golem = new GolemFab(this)
+    private biggolem = new BigGolemFab(this)
+    private snake = new SnakeFab(this)
+    private viking = new VikingFab(this)
+    private builder = new BuilderFab(this)
+    private toadmage = new ToadMageFab(this)
+    private kittenmonk = new KittenMonkFab(this)
+    private skeleton = new SkeletonFab(this)
 
     private bat = new BatFab(this)
     private gun = new GunFab(this)
@@ -51,6 +68,7 @@ export class Loader {
 
 
     private appleTree = new AppleTreeFab(this)
+    private deadTree2 = new DeadTree2Fab(this)
 
     private wartercan = new WarteringCanFab(this)
     private hammer = new HammerFab(this)
@@ -70,6 +88,7 @@ export class Loader {
     get BatPigAsset(): IAsset { return this.batpig }
     get BirdMonAsset(): IAsset { return this.birdmon }
     get BilbyAsset(): IAsset { return this.bilby }
+    get WereWolfAsset(): IAsset { return this.werewolf }
 
     get GunAsset(): IAsset { return this.gun }
     get BatAsset(): IAsset { return this.bat }
@@ -107,6 +126,15 @@ export class Loader {
         this.assets.set(Char.BatPig, this.batpig)
         this.assets.set(Char.BirdMon, this.birdmon)
         this.assets.set(Char.Bilby, this.bilby)
+        this.assets.set(Char.WereWolf, this.werewolf)
+        this.assets.set(Char.Golem, this.golem)
+        this.assets.set(Char.BigGolem, this.biggolem)
+        this.assets.set(Char.Snake, this.snake)
+        this.assets.set(Char.Viking, this.viking)
+        this.assets.set(Char.Builder, this.builder)
+        this.assets.set(Char.ToadMage, this.toadmage)
+        this.assets.set(Char.KittenMonk, this.kittenmonk)
+        this.assets.set(Char.Skeleton, this.skeleton)
 
         this.assets.set(Char.Bat, this.bat)
         this.assets.set(Char.Gun, this.gun)
@@ -114,6 +142,7 @@ export class Loader {
         this.assets.set(Char.Hammer, this.hammer)
 
         this.assets.set(Char.AppleTree, this.appleTree)
+        this.assets.set(Char.DeadTree2, this.deadTree2)
 
         this.assets.set(Char.Stone, this.stone)
         this.assets.set(Char.Bed, this.bed)

@@ -12,6 +12,7 @@ export enum Bind {
 
 export enum Ani {
     Idle,
+    Walk,
     Run,
     Jump,
     Punch,
@@ -39,6 +40,7 @@ export enum Char{
     Female,
     Tree,
     DeadTree,
+    DeadTree2,
     Mushroom1,
     Mushroom2,
     Portal,
@@ -55,6 +57,15 @@ export enum Char{
     PantherBlue,
     PantherRed,
     AnimalPack,
+    WereWolf,
+    Golem,
+    BigGolem,
+    Snake,
+    Viking,
+    Builder,
+    ToadMage,
+    KittenMonk,
+    Skeleton,
 
     Bat,
     Gun,
@@ -67,6 +78,7 @@ export enum Char{
 }
 export enum ModelType {
     Gltf,
+    GltfParser,
     Fbx
 }
 
@@ -142,6 +154,10 @@ export class AssetModel {
                     await this.afterLoad(gltf)
                     resolve(gltf.scene)
                 })
+            })
+        } else if (this.loaderType == ModelType.GltfParser) {
+            return await new Promise(async (resolve) => {
+                await this.afterLoad(resolve)
             })
         }
         return await new Promise(async (resolve) => {

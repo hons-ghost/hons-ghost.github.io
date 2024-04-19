@@ -9,6 +9,7 @@ import { IPlayerAction, State } from "./playerstate"
 import { EventController } from "../../event/eventctrl";
 import { Bind } from "../../loader/assetmodel";
 import { PlantBox, PlantState } from "../plants/farmer";
+import { FurnBox, FurnState } from "../furniture/carpenter";
 
 export class PickFruitState extends State implements IPlayerAction {
     next: IPlayerAction = this
@@ -93,6 +94,10 @@ export class PlantAPlantState extends State implements IPlayerAction {
                         this.playerCtrl.DeleteSt.Init()
                         return this.playerCtrl.DeleteSt
                     }
+                }
+                if (k == "deck") {
+                    this.playerCtrl.DeckSt.Init()
+                    return this.playerCtrl.DeckSt
                 }
                 const msg = {
                     type: AttackType.PlantAPlant,
@@ -332,6 +337,11 @@ export class BuildingState extends State implements IPlayerAction {
             intersects.forEach((obj) => {
                 if (obj.distance> this.attackDist) return false
                 const k = obj.object.name
+                const ctrl = (obj.object as FurnBox).ctrl
+                if (ctrl.State == FurnState.Done) {
+                    this.playerCtrl.DeleteSt.Init()
+                    return this.playerCtrl.DeleteSt
+                }
                 const msg = {
                     type: AttackType.Building,
                     damage: 1,

@@ -39,6 +39,10 @@ export class EditPlant {
             this.editor.UpdateMenu()
             this.visible = false
         }
+        const exit = document.getElementById("plantctrlexit")
+        if(exit) exit.onclick = () => {
+            this.unbinding()
+        }
     }
     unbinding() {
         const plantCtrl = document.getElementById("plantctrl") as HTMLDivElement

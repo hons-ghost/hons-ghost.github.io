@@ -33,6 +33,7 @@ export class GhostModel {
             this.meshs, new THREE.Color(0, 255, 0)
         )
     }
+    get UUID() { return this.meshs.uuid }
 
     get Visible() { return this.vFlag }
     set Visible(flag: boolean) {
@@ -72,6 +73,7 @@ export class GhostModel2 extends THREE.Mesh {
     set CannonPos(v: THREE.Vector3) { this.position.copy(v) }
     set Quaternion(q: THREE.Quaternion) { this.quaternion.copy(q) }
     get Meshs() { return this }
+    get UUID() { return this.uuid }
     get Size() {
         const bbox = new THREE.Box3().setFromObject(this)
         this.size = bbox.getSize(new THREE.Vector3)

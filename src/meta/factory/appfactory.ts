@@ -34,6 +34,8 @@ import { Materials } from "../scenes/materials";
 import { GameCenter } from "../scenes/gamecenter";
 import { Farmer } from "../scenes/plants/farmer";
 import { Carpenter } from "../scenes/furniture/carpenter";
+import { Deck } from "../inventory/items/deck";
+import { MonDeck } from "../scenes/mondeck";
 
 
 export class AppFactory {
@@ -44,6 +46,7 @@ export class AppFactory {
     private eventCtrl = new EventController()
     private canvas = new Canvas()
     private loader = new Loader()
+    private deckDb = new Deck()
     private gameCenter: GameCenter
 
     private store: ModelStore
@@ -54,6 +57,7 @@ export class AppFactory {
     private invenFab: InvenFactory
     private drop : Drop
     private monDb: MonsterDb
+    private monDeck: MonDeck
 
     private player: Player
     private floor: Floor
@@ -125,6 +129,7 @@ export class AppFactory {
         this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb, this.gphysics)
         this.farmer = new Farmer(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
         this.carp = new Carpenter(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
+        this.monDeck = new MonDeck(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.canvas, this.store, this.monDb)
 
         this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.monsters, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl)
 

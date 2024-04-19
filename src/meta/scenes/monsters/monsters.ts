@@ -148,7 +148,7 @@ export class Monsters {
     }
 
     async CreateZombie(): Promise<MonsterSet> {
-        const zombie = new Zombie(this.loader, this.eventCtrl, this.gphysic, this.loader.ZombieAsset)
+        const zombie = new Zombie(this.loader.ZombieAsset)
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
                 new THREE.Vector3(10, 0, 15), "Zombie", this.zombies.length)
 

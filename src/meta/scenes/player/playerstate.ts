@@ -46,10 +46,13 @@ export class State {
             if (this.playerCtrl.mode == AppMode.Play) {
                 this.playerCtrl.AttackSt.Init()
                 return this.playerCtrl.AttackSt
+            } else if(this.playerCtrl.mode == AppMode.Weapon) {
+                this.playerCtrl.DeckSt.Init()
+                return this.playerCtrl.DeckSt
             } else {
                 this.playerCtrl.PlantASt.Init()
                 return this.playerCtrl.PlantASt
-            }
+            } 
         }
     }
     CheckMagic() {

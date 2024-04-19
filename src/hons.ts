@@ -7,7 +7,7 @@ import App, { AppMode } from "./meta/app";
 import { Page } from "./page";
 import { Ui } from "./models/ui";
 
-export class Hons extends Page{
+export class Hons extends Page {
     m_masterAddr: string;
     loadedCount: number
     targetLoadCount: number

@@ -10,6 +10,7 @@ import { Monsters } from "./monsters/monsters";
 import { Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Alarm, AlarmType } from "../common/alarm";
+import { CircleEffect } from "./models/circle";
 
 export enum GameType {
     VamSer,
@@ -34,13 +35,7 @@ export class GameCenter implements IViewer {
     safe = false
     playing = false
     dom = document.createElement("div")
-    geometry = new THREE.TorusGeometry(10, .5, 2, 11)
-    material = new THREE.MeshBasicMaterial({
-        color: 0x00ff00, 
-        transparent: true,
-        opacity: 0.5
-    })
-    torus = new THREE.Mesh(this.geometry, this.material);
+    torus = new CircleEffect(10)
 
     constructor(
         private player: Player, 

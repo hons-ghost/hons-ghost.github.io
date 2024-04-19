@@ -15,6 +15,8 @@ export interface IPhysicsObject {
     set CannonPos(v: THREE.Vector3)
     set Visible(flag: boolean)
     get Meshs(): THREE.Group | THREE.Mesh
+    get UUID(): string
+    update?():void
 }
 export interface IBuildingObject {
     get Size() : THREE.Vector3

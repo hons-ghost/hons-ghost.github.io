@@ -22,7 +22,7 @@ export class EditHome extends Page {
     ui = new Ui(this.meta, AppMode.EditPlay)
     plant = new EditPlant(this.meta, this)
     furn = new EditFurniture(this.meta, this)
-    game = new EditGame()
+    game = new EditGame(this.meta)
 
     myPicker?: ColorPicker
     color: string = "#fff"
@@ -49,8 +49,9 @@ export class EditHome extends Page {
         const y_down = document.getElementById("y_down") as HTMLDivElement
         const z_up = document.getElementById("z_up") as HTMLDivElement
         const z_down = document.getElementById("z_down") as HTMLDivElement
-        const y_rotation = document.getElementById("y_rotation") as HTMLDivElement
-        const x_rotation = document.getElementById("x_rotation") as HTMLDivElement
+        const y_rotation = document.getElementById("y_rotation") as HTMLSpanElement
+        const x_rotation = document.getElementById("x_rotation") as HTMLSpanElement
+        const brickmodeExit = document.getElementById("brickmodeexit") as HTMLSpanElement
 
         x_up.onclick = () => this.ChangeBrickSize("x", 2)
         x_down.onclick = () => this.ChangeBrickSize("x", -2)
@@ -60,7 +61,11 @@ export class EditHome extends Page {
         z_down.onclick = () => this.ChangeBrickSize("z", -2)
         y_rotation.onclick = () => this.ChangeRotation(0, 90, 0)
         x_rotation.onclick = () => this.ChangeRotation(90, 0, 0)
-
+        brickmodeExit.onclick = () => {
+            this.mode = AppMode.EditPlay
+            this.meta.ModeChange(AppMode.EditPlay)
+            this.UpdateMenu()
+        }
         this.myPicker = new ColorPicker("#myPicker")
         this.myPicker.pointerMove = () => {
             const colorPick = document.getElementById("myPicker") as HTMLInputElement
@@ -178,7 +183,7 @@ export class EditHome extends Page {
         const fun = document.getElementById("funituremode") as HTMLDivElement
         fun.onclick = () => {
             this.mode = (this.mode != AppMode.Furniture) ? AppMode.Furniture : AppMode.EditPlay
-            //this.meta.ModeChange(this.mode)
+            if (this.mode == AppMode.EditPlay) this.meta.ModeChange(this.mode)
             this.UpdateMenu()
         }
         const wea = document.getElementById("weaponmode") as HTMLDivElement

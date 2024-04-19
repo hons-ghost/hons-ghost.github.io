@@ -20,6 +20,7 @@ export class FurnCtrl {
     lastBuildingTime = 0
     checktime = 0
     phybox: FurnBox
+    get State() { return this.state }
 
     constructor(
         id: number, 
@@ -40,7 +41,7 @@ export class FurnCtrl {
             color: 0xff0000,
             depthWrite: false,
         })
-        this.phybox = new FurnBox(id, "furniture", geometry, material)
+        this.phybox = new FurnBox(id, "furniture", geometry, material, this)
         this.phybox.visible = false
         const scale = 1.2
         this.phybox.scale.set(scale, 1, scale)
@@ -51,6 +52,7 @@ export class FurnCtrl {
         }
     }
     BuildingStart() {
+        if(this.state == FurnState.Done) return
         this.timer = 0
         this.state = FurnState.Building
         const now = new Date().getTime() // ms, 0.001 sec

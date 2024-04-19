@@ -76,10 +76,14 @@ export class Inventory {
     }
     Copy(inven: InvenData) {
         this.data = inven
-        this.data.inventroySlot.forEach((slot) => {
+        let index = this.data.inventroySlot.length - 1
+        while (index >= 0) {
+            const slot = this.data.inventroySlot[index]
             const id = (slot.item as Item).property.id
             if (id) slot.item = new Item(this.itemDb.GetItem(id))
-        })
+            else this.data.inventroySlot.splice(index, 1)
+            index --
+        }
     }
     Clear() {
         this.data.bodySlot.length = 0

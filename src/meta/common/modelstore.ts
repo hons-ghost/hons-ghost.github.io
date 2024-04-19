@@ -9,6 +9,7 @@ import { InvenData, Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
 import { PlantEntry } from "../scenes/plants/farmer";
 import { FurnEntry } from "../scenes/furniture/carpenter";
+import { DeckEntry } from "../scenes/mondeck";
 
 type Lego = {
     position: THREE.Vector3
@@ -26,6 +27,7 @@ type Brick = {
 type StoreData = {
     furn: FurnEntry[]
     plants: PlantEntry[]
+    monDeck: DeckEntry[]
     bricks: Brick[]
     legos: Lego[]
     owner: THREE.Vector3 | undefined
@@ -47,6 +49,7 @@ export class ModelStore {
     private data: StoreData = { 
         furn: [],
         plants: [],
+        monDeck: [],
         bricks: [], 
         legos: [], 
         owner: undefined, 
@@ -64,6 +67,7 @@ export class ModelStore {
     }
     get Portal(): THREE.Vector3 | undefined { return this.data.portal }
     get Plants() { return (this.data.plants) ? this.data.plants : this.data.plants = [] }
+    get Deck() { return (this.data.monDeck) ? this.data.monDeck : this.data.monDeck = [] }
     get Furn() { return (this.data.furn) ? this.data.furn : this.data.furn = [] }
     get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
     get Bricks() { return this.data.bricks }

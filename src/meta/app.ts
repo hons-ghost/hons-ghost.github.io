@@ -145,8 +145,8 @@ export default class App {
     ModeChange(mode: AppMode, ...arg: any) {
         this.eventCtrl.OnAppModeEvent(mode, ...arg)
     }
-    SendModeMessage(...arg: any[]) {
-        this.eventCtrl.OnAppModeMessage(arg)
+    SendModeMessage(...arg: any) {
+        this.eventCtrl.OnAppModeMessage(...arg)
     }
 
     ModelStore() {
@@ -179,5 +179,8 @@ export default class App {
     }
     SelectRandomBuff(buff: IBuffItem) {
         this.factory.Buff.SelectBuff(buff)
+    }
+    GetDeckInfo() {
+        return this.factory.ModelStore.Deck
     }
 }

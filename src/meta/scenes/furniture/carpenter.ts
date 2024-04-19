@@ -37,7 +37,7 @@ export type FurnSet = {
 }
 export class FurnBox extends THREE.Mesh {
     constructor(public Id: number, public ObjName: string,
-        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial
+        geo: THREE.BoxGeometry, mat: THREE.MeshBasicMaterial, public ctrl: FurnCtrl
     ) {
         super(geo, mat)
         this.name = ObjName

@@ -1,11 +1,8 @@
 import * as THREE from "three";
-import { Loader } from "../../../loader/loader";
 import { FloatingName } from "../../../common/floatingtxt";
-import { EventController } from "../../../event/eventctrl";
 import { GhostModel } from "../../models/ghostmodel";
 import { Ani, IAsset } from "../../../loader/assetmodel";
 import { IPhysicsObject } from "../../models/iobject";
-import { GPhysics } from "../../../common/physics/gphysics";
 import { ActionType } from "../../player/player";
 import { EffectType, Effector } from "../../../effects/effector";
 
@@ -31,9 +28,6 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     get ControllerEnable(): boolean { return this.controllerEnable }
 
     constructor(
-        private loader: Loader, 
-        private eventCtrl: EventController, 
-        private gphysic: GPhysics,
         asset: IAsset
     ) {
         super(asset)

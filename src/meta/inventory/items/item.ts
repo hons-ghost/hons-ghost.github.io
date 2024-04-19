@@ -1,5 +1,6 @@
 import { Lang } from "../../lang/lang"
 import { Bind, IAsset } from "../../loader/assetmodel"
+import { DeckType } from "./deck"
 import { ItemProperty } from "./itemdb"
 
 export enum ItemType {
@@ -45,6 +46,7 @@ export interface IItem {
     get Mesh(): THREE.Group | undefined
     get AttackType(): AttackItemType | undefined
     get Stackable(): boolean
+    get Deck(): DeckType | undefined
     MakeInformation(): Array<{k?: string, v: string}>
 }
 export class Item implements IItem {
@@ -60,6 +62,7 @@ export class Item implements IItem {
     get Name() { return this.property.name }
     get AttackType() { return this.property.weapon }
     get Stackable() { return this.property.stackable }
+    get Deck() { return this.property.deck }
     constructor(public property: ItemProperty) {}
 
     MakeInformation() {

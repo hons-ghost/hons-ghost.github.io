@@ -1,5 +1,6 @@
 import { Bind, IAsset } from "../../loader/assetmodel"
 import { Loader } from "../../loader/loader"
+import { Deck, DeckType } from "./deck"
 import { AttackItemType, ItemType, Level } from "./item"
 
 export class ItemId {
@@ -39,6 +40,8 @@ export type ItemProperty = {
     stamina?: number
     fireResistance?: number
     natureResistance?: number
+
+    deck?: DeckType
 }
 
 export class ItemDb {
@@ -114,6 +117,7 @@ export class ItemDb {
             stackable: false,
             binding: false,
             price: 1,
+            deck: Deck.Zombie
         })
     }
     GetItem(key: string): ItemProperty  {

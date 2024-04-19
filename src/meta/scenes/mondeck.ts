@@ -18,12 +18,11 @@ import { CircleEffect } from "./models/circle";
 import { IModelReload, ModelStore } from "../common/modelstore";
 
 export type DeckMsg = {
-    id?: DeckId,
-    time?: number,
+    id: DeckId,
+    time: number,
     locatOnOff: boolean,
-    enable?: boolean
-    rand?: boolean
-    func?: Function
+    enable: boolean
+    rand: boolean
 }
 
 export type DeckEntry = {
@@ -31,6 +30,7 @@ export type DeckEntry = {
     position: THREE.Vector3
     time: number
     enable: boolean
+    rand: boolean
 }
 
 export class DeckBox extends THREE.Mesh {
@@ -57,7 +57,7 @@ export class MonDeck implements IModelReload, IViewer {
     effector = new Effector()
     torus = new CircleEffect(2)
     deck?: DeckType
-    deckEable = false
+    lastDeckMsg?: DeckMsg
     material = new THREE.MeshBasicMaterial({ 
             //color: 0xD9AB61,
             transparent: true,
@@ -92,10 +92,11 @@ export class MonDeck implements IModelReload, IViewer {
                     console.log(args[0])
                     const deckMsg: DeckMsg = args[0]
                     this.controllable = deckMsg.locatOnOff
+                    this.lastDeckMsg = deckMsg
+                    this.UpdateSetup(deckMsg)
                     if (deckMsg.locatOnOff) {
                         if(deckMsg.id) this.deck = Deck.DeckDb.get(deckMsg.id)
                         if(deckMsg.enable) {
-                            this.deckEable = deckMsg.enable
                             this.DeckEnable(deckMsg.enable)
                         }
                     } 
@@ -119,14 +120,24 @@ export class MonDeck implements IModelReload, IViewer {
                     const e: DeckEntry = {
                         id: this.deck.id,
                         position: new THREE.Vector3().copy(this.player.CannonPos), 
-                        time: 0,
-                        enable: this.deckEable
+                        time: this.lastDeckMsg?.time ?? 0,
+                        enable: this.lastDeckMsg?.enable ?? false,
+                        rand: this.lastDeckMsg?.rand ?? true,
                     }
                     this.saveData.push(e)
                     this.CreateDeck(e)
                     break;
                 default:
                     break;
+            }
+        })
+    }
+    UpdateSetup(msg: DeckMsg) {
+        this.saveData.forEach((e) => {
+            if(e.id == msg.id) {
+                e.enable = msg.enable
+                e.rand = msg.rand
+                e.time = msg.time
             }
         })
     }
@@ -161,13 +172,17 @@ export class MonDeck implements IModelReload, IViewer {
     async CreateDeck(deckEntry: DeckEntry) {
         const deck = Deck.DeckDb.get(deckEntry.id)
         if(!deck) return
+        const idx = this.deckSet.findIndex((item) => item.monModel.CannonPos.x == deckEntry.position.x 
+            && item.monModel.CannonPos.z == deckEntry.position.z)
+        if (idx >= 0) return
+
         let mon: IPhysicsObject
         switch(deck.monId){
             case MonsterId.Zombie:
             default:
                 const zombie = new Zombie(this.loader.ZombieAsset)
                 await zombie.Loader(this.loader.GetAssets(Char.Zombie),
-                    deckEntry.position, "Zombie", this.deckSet.length)
+                    deckEntry.position, "ZombieDeck", this.deckSet.length)
                 mon = zombie
                 mon.Visible = true
                 break;

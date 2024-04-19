@@ -241,6 +241,8 @@ export class EditHome extends Page {
             if (document.fullscreenElement) {
                 document.exitFullscreen()
             }
+            this.mode = AppMode.EditPlay
+            this.UpdateMenu()
             window.ClickLoadPage("hondetail", false, "&email=" + email)
         }
     }
@@ -307,7 +309,7 @@ export class EditHome extends Page {
     }
     public async Run(masterAddr: string): Promise<boolean> {
         await this.LoadHtml()
-        this.game.LoadHtml()
+        await this.game.LoadHtml()
 
         this.GetElement()
         this.UpdateBrickUI()

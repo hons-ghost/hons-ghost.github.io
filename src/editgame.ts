@@ -35,7 +35,7 @@ export class EditGame {
         if(!inven) return
 
         const dom = document.getElementById("gamectrl") as HTMLDivElement
-        dom.style.display = (on) ? "block" : "none"
+        if (dom) dom.style.display = (on) ? "block" : "none"
 
         this.inven = inven
         if(on) {
@@ -43,7 +43,8 @@ export class EditGame {
         }
     }
     loadDeck() {
-        if(!this.inven || this.deckItem.length) return
+        if(!this.inven) return
+        this.deckItem.length = 0
 
         this.inven.data.inventroySlot.forEach((slot) => {
             if (slot.item.ItemType == ItemType.Deck) {
@@ -59,7 +60,7 @@ export class EditGame {
                 <img src="assets/icons/${deck.IconPath}">
             </div>
         </div>
-        <div class="col p-1 me-3"> ${deck.Name}</div>
+        <div class="col p-1 me-3 text-start"> ${deck.Name}</div>
         </div>
     </div>
             `
@@ -97,27 +98,35 @@ export class EditGame {
         this.location(dom, deck)
     }
     location(dom: HTMLElement, deck: DeckType) {
+        const deckinfo = this.meta.GetDeckInfo()
+        const deckEndty = deckinfo.find((e) => e.id == deck.id)
         const html = `
         <div class="input-group mb-1">
         <button class="btn btn-light" type="button">소환위치</button>
         <select id="decklocation" class="form-select" aria-label="Default select example">
-            <option selected value ="0">Random</option>
-            <option value="1">위치지정</option>
+            <option value="0" ${(deckEndty?.rand) ? "selected" : ""}>Random</option>
+            <option value="1" ${(deckEndty?.rand) ? "" : "selected"}>위치지정</option>
         </select>
         </div>
         <div class="input-group mb-1">
             <button class="btn btn-light" id="basic-addon1">소환시기</button>
-            <input type="text" class="form-control" id="decktime" placeholder="0" aria-label="decktime" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" id="decktime" placeholder="0" 
+            aria-label="decktime" aria-describedby="basic-addon1" value="${deckEndty?.time}">
         </div>
         <div class="form-check form-switch text-start">
-            <input class="form-check-input" type="checkbox" role="switch" id="deckenable">
+            <input class="form-check-input" type="checkbox" role="switch" id="deckenable" ${(deckEndty?.enable) ? "checked" : ""}>
             <label class="form-check-label">카드 사용</label>
         </div>
-        <div class="input-group mb-1">
+        <div class="input-group mb-1 text-end">
             <button class="btn btn-light" type="button" id="decksubmit">적용</button>
         </div>
         `
         dom.insertAdjacentHTML("beforeend", html)
+
+        const submit = document.getElementById("decksubmit")
+        if(submit) submit.onclick = () => {
+            this.changeSetup(deck)
+        }
 
         const decklocation = document.getElementById("decklocation") as HTMLSelectElement
         if (decklocation) decklocation.onchange = (ev) => {
@@ -172,7 +181,13 @@ export class EditGame {
         if (cardLocationExit) cardLocationExit.onclick = () => {
             gamedom.style.display = "block"
             dom.style.display = "none"
-            const deckMsg: DeckMsg = { locatOnOff: false }
+            const deckMsg: DeckMsg = {
+                id: deck.id,
+                time: Number(time),
+                locatOnOff: false,
+                rand: false,
+                enable: checkDom.checked
+            }
             this.meta.SendModeMessage(deckMsg)
         }
     }

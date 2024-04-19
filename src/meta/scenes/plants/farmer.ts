@@ -172,6 +172,9 @@ export class Farmer implements IModelReload, IViewer {
     async CreatePlant(plantEntry: PlantEntry) {
         const property = this.plantDb.get(plantEntry.id)
         if (!property) return
+        const idx = this.plants.findIndex((item) => item.plant.CannonPos.x == plantEntry.position.x 
+            && item.plant.CannonPos.z == plantEntry.position.z)
+        if (idx >= 0) return
         let tree;
         let meshs;
         switch (plantEntry.id) {

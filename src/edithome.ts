@@ -41,8 +41,8 @@ export class EditHome extends Page {
     }
 
     GetElement() {
-        const rect = document.getElementById("rect") as HTMLDivElement
-        const roun = document.getElementById("rounded_corner") as HTMLDivElement
+        //const rect = document.getElementById("rect") as HTMLDivElement
+        //const roun = document.getElementById("rounded_corner") as HTMLDivElement
         const x_up = document.getElementById("x_up") as HTMLDivElement
         const x_down = document.getElementById("x_down") as HTMLDivElement
         const y_up = document.getElementById("y_up") as HTMLDivElement

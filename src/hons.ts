@@ -1,6 +1,6 @@
 import { BlockStore } from "./store";
 import { Session } from "./session";
-import { HonReplyLinkTxId, HonTxId, HonsTxId } from "./models/tx";
+import { HonsTxId } from "./models/tx";
 import { HonEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import App, { AppMode } from "./meta/app";

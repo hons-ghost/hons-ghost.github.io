@@ -148,7 +148,7 @@ export class Loader {
         this.assets.set(Char.Bed, this.bed)
 
         const progressBar = document.querySelector('#progress-bar') as HTMLProgressElement
-        this.LoadingManager.onProgress = (url, loaded, total) => {
+        this.LoadingManager.onProgress = (_url, loaded, total) => {
             progressBar.value = (loaded / total) * 100
         }
         /*

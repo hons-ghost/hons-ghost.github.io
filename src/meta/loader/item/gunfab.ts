@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Loader } from "../loader";
-import { Ani, AssetModel, Char, IAsset, ModelType } from "../assetmodel";
+import { AssetModel, Char, IAsset, ModelType } from "../assetmodel";
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 export class GunFab extends AssetModel implements IAsset {

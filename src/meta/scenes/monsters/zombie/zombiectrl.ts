@@ -29,7 +29,7 @@ export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
     get MonsterBox() { return this.phybox }
 
     constructor(
-        private id: number,
+        id: number,
         private player: IPhysicsObject, 
         private zombie: Zombie, 
         private legos: Legos,

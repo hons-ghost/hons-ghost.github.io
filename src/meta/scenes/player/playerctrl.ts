@@ -129,7 +129,7 @@ export class PlayerCtrl implements IGPhysic {
             this.keyUpQueue.push(keyCommand)
         })
 
-        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
+        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3) => { 
             if (!this.contollerEnable) return
             if (e.type == "move") {
                 this.inputVQueue.push(new THREE.Vector3().copy(real))

@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { Loader } from "./loader";
 import { Ani, AssetModel, Bind, Char, IAsset, ModelType } from "./assetmodel";
-import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 
 
 export class TestFab extends AssetModel implements IAsset {
@@ -34,7 +33,7 @@ export class TestFab extends AssetModel implements IAsset {
             })
         })
     }
-    GetBodyMeshId(bind: Bind) { return "" }
+    GetBodyMeshId(_bind: Bind) { return "" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         return new THREE.Box3().setFromObject(this.meshs)

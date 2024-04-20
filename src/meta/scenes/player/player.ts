@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ICtrlObject, IPhysicsObject } from "../models/iobject";
+import { IPhysicsObject } from "../models/iobject";
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { Loader } from "../../loader/loader";
 import SConf from "../../configs/staticconf";
@@ -49,7 +49,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     bindMesh: THREE.Group[] = []
 
     damageEffect = new Damage(this.CannonPos.x, this.CannonPos.y, this.CannonPos.z)
-    txtStatus = new TextStatus("0", "#ff0000", true)
+    txtStatus = new TextStatus("0", "#ff0000")
     clipMap = new Map<ActionType, THREE.AnimationClip | undefined>()
 
     get BoxPos() {
@@ -80,7 +80,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
                         this.Visible = true
                         break
                     case EventFlag.End:
-                        this.Uninit(mode)
+                        this.Uninit()
                         this.Visible = false
                         break
                 }
@@ -121,7 +121,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         }
     }
 
-    Uninit(mode: AppMode) {
+    Uninit() {
         this.store.Owner = this.CannonPos
     }
 
@@ -139,7 +139,7 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
         console.log("player Init: ", pos)
     }
 
-    async Massload(): Promise<void> {
+    async Viliageload(): Promise<void> {
         await this.Reload()
     }
     async Reload(): Promise<void> {
@@ -157,7 +157,8 @@ export class Player extends GhostModel implements IPhysicsObject, IModelReload {
     async Loader(asset: IAsset, position: THREE.Vector3, name: string) {
         this.playerModel = asset.Id
         this.asset = asset
-        const [meshs, exist] = await asset.UniqModel(name)
+        const [meshs, _exist] = await asset.UniqModel(name)
+        
         this.meshs = meshs
         this.meshs.position.copy(position)
 

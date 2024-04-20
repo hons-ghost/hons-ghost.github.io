@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { BrickGuide, BrickGuideType } from "./brickguide";
 import { Brick2 } from "./brick2";
-import { EventController, EventFlag } from "../../event/eventctrl";
+import { EventController } from "../../event/eventctrl";
 import { ModelStore } from "../../common/modelstore";
 import { GPhysics } from "../../common/physics/gphysics";
 import { IKeyCommand } from "../../event/keycommand";
@@ -53,7 +53,7 @@ export class Bricks {
         protected player: Player
     ) {
 
-        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => {
+        eventCtrl.RegisterInputEvent((e: any, _real: THREE.Vector3, vir: THREE.Vector3) => {
             if (this.brickGuide == undefined) return
             if (!this.brickGuide.ControllerEnable) return
             if (e.type == "move") {

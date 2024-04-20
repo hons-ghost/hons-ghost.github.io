@@ -7,7 +7,6 @@ import { Stone } from "./models/stone";
 import { AppMode } from "../app";
 import { Loader } from "../loader/loader";
 import { math } from "../../libs/math";
-import { GPhysics } from "../common/physics/gphysics";
 import { MonsterBox } from "./monsters/monsters";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { EffectType, Effector } from "../effects/effector";
@@ -41,12 +40,11 @@ export class Materials implements IViewer {
         private playerCtrl: PlayerCtrl,
         private worldSize: number,
         private loader: Loader,
-        private eventCtrl: EventController,
+        eventCtrl: EventController,
         private game: Game,
         private canvas: Canvas,
         private drop: Drop,
         private monDb: MonsterDb,
-        private gphysics: GPhysics,
     ) {
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if (mode != AppMode.Play) return
@@ -90,7 +88,7 @@ export class Materials implements IViewer {
         this.game.add(this.effector.meshs)
     }
 
-    resize(width: number, height: number): void { }
+    resize(): void { }
     update(delta: number): void {
         this.effector.Update(delta)
     }
@@ -117,7 +115,7 @@ export class Materials implements IViewer {
                 2,
                 r * Math.sin(phi)
             )
-            const stone = new Stone(this.loader, this.loader.StoneAsset)
+            const stone = new Stone(this.loader.StoneAsset)
             const scale = math.rand_int(9, 15)
             await stone.MassLoader(meshs, scale, pos)
 
@@ -147,7 +145,7 @@ export class Materials implements IViewer {
             )
             
             const scale = math.rand_int(9, 15)
-            const tree = new Tree(this.loader, this.loader.TreeAsset, this.gphysics)
+            const tree = new Tree(this.loader.TreeAsset)
             tree.MassLoad(meshs, scale, pos)
             this.trees.push(tree)
 

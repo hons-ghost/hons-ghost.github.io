@@ -1,5 +1,4 @@
 import { ItemId } from "../../inventory/items/itemdb"
-import { Loader } from "../../loader/loader"
 
 export class MonsterId {
     public static Zombie = Symbol("zombie")
@@ -33,7 +32,7 @@ export type MonsterProperty = {
 
 export class MonsterDb {
     monDb = new Map<symbol, MonsterProperty>()
-    constructor(private loader: Loader) {
+    constructor() {
         this.monDb.set(MonsterId.Zombie, {
             type: MonsterType.Undead,
             health: 10,

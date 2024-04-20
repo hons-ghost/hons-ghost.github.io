@@ -2,12 +2,10 @@ import * as THREE from "three";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController, EventFlag } from "../../event/eventctrl";
-import { IKeyCommand } from "../../event/keycommand";
 import { Brick2 } from "./brick2";
-import { BrickGuide, BrickGuideType } from "./brickguide";
+import { BrickGuideType } from "./brickguide";
 import { BrickOption, Bricks, EventBrick } from "./bricks";
 import { AppMode } from "../../app";
-import { IBuildingObject } from "../models/iobject";
 import { Player } from "../player/player";
 
 export enum BrickShapeType {
@@ -121,8 +119,8 @@ export class Legos extends Bricks implements IModelReload {
     }
     CreateBricks() {
         const userBricks = this.store.Legos
-        const subV = new THREE.Vector3(0.1, 0.1, 0.1)
-        const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
+        //const subV = new THREE.Vector3(0.1, 0.1, 0.1)
+        //const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
 
         const collidingBoxSize = new THREE.Vector3()
         userBricks.forEach((brick) => {
@@ -167,7 +165,7 @@ export class Legos extends Bricks implements IModelReload {
         })
         this.scene.add(this.instancedBlock)
     }
-    async Massload(): Promise<void> {
+    async Viliageload(): Promise<void> {
         this.ClearBlock()
         this.ClearEventBrick()
         this.CreateInstacedMesh()

@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { IPlayerAction, State } from "./playerstate"
-import { AttackOption, AttackType, PlayerCtrl } from "./playerctrl";
+import { AttackType, PlayerCtrl } from "./playerctrl";
 import { ActionType, Player } from "./player";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController } from "../../event/eventctrl";
@@ -16,7 +16,7 @@ export class DeckState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("deck!!")
-        const duration = this.player.ChangeAction(ActionType.MagicH1) ?? 2
+        this.player.ChangeAction(ActionType.MagicH1) ?? 2
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
     }
     deckBuilding() {
@@ -42,7 +42,7 @@ export class DeckState extends State implements IPlayerAction {
     }
     Uninit(): void {
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()

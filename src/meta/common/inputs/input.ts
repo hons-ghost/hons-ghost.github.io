@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { EventController, EventFlag } from '../../event/eventctrl'
 import { Joystick } from "./joystic";
 import { KeyAction1, KeyAction2, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "../../event/keycommand";
-import App, { AppMode } from "../../app";
+import { AppMode } from "../../app";
 
 export class Input {
     //dom = document.createElement("div")

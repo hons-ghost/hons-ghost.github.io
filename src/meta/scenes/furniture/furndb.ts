@@ -1,5 +1,4 @@
 import { Char } from "../../loader/assetmodel"
-import { Loader } from "../../loader/loader"
 import { MonDrop } from "../monsters/monsterdb"
 
 
@@ -21,7 +20,7 @@ export type FurnProperty = {
 
 export class FurnDb {
     plantDb = new Map<string, FurnProperty>()
-    constructor(private loader: Loader) {
+    constructor() {
         this.plantDb.set(FurnId.DefaultBed, {
             id: FurnId.DefaultBed,
             type: FurnType.Bed,

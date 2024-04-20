@@ -11,7 +11,7 @@ export class Alarm {
         this.dom.className = "playalarm"
         document.body.appendChild(this.dom)
     }
-    NotifyInfo(text: string, type: AlarmType) {
+    NotifyInfo(text: string, _type: AlarmType) {
         this.dom.style.display = "block"
         this.dom.insertAdjacentHTML("beforeend", text + "<br>")
         gsap.fromTo('.playalarm', 2, { opacity: 1}, {

@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Loader } from "../../loader/loader";
 import { GhostModel } from "./ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 import { EventController, EventFlag } from "../../event/eventctrl";
@@ -18,17 +17,16 @@ export class Portal extends GhostModel implements IPhysicsObject, IModelReload {
     get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
 
     constructor(
-        private loader: Loader, 
         asset: IAsset, 
         private store: ModelStore,
-        private eventCtrl: EventController, 
+        eventCtrl: EventController, 
         private gphysic: GPhysics
     ) {
         super(asset)
 
         store.RegisterStore(this)
 
-        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
+        eventCtrl.RegisterInputEvent((e: any, _real: THREE.Vector3, vir: THREE.Vector3) => { 
             if(!this.controllerEnable) return
             if (e.type == "move") {
                 this.movePos.copy(vir)
@@ -77,7 +75,7 @@ export class Portal extends GhostModel implements IPhysicsObject, IModelReload {
         this.store.Portal = this.meshs.position
         console.log(this.meshs.position)
     }
-    async Massload(): Promise<void> {
+    async Viliageload(): Promise<void> {
         this.meshs.position.copy(SConf.DefaultPortalPosition)
         
     }

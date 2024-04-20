@@ -1,12 +1,10 @@
 import * as THREE from "three";
-import { Loader } from "../../loader/loader";
-import { IBuildingObject, IPhysicsObject } from "../models/iobject";
+import { IPhysicsObject } from "../models/iobject";
 import { GhostModel } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
-import { GPhysics } from "../../common/physics/gphysics";
 
 export class Tree extends GhostModel implements IPhysicsObject {
-    constructor(private loader: Loader, asset: IAsset, private gphysics: GPhysics) {
+    constructor(asset: IAsset) {
         super(asset)
     }
 

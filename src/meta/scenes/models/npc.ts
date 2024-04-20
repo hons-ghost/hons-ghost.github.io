@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Loader } from "../../loader/loader";
 import { FloatingName } from "../../common/floatingtxt";
 import { IViewer } from "./iviewer";
 import { EventController } from "../../event/eventctrl";
@@ -29,15 +28,14 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     get ControllerEnable(): boolean { return this.controllerEnable }
 
     constructor(
-        private loader: Loader, 
-        private eventCtrl: EventController, 
+        eventCtrl: EventController, 
         private gphysic: GPhysics,
         asset: IAsset
     ) {
         super(asset)
         this.text = new FloatingName("Welcome")
 
-        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
+        eventCtrl.RegisterInputEvent((e: any, _real: THREE.Vector3, vir: THREE.Vector3) => { 
             if (!this.controllerEnable) return
             if (e.type == "move") {
                 this.movePos.copy(vir)
@@ -144,7 +142,7 @@ export class Npc extends GhostModel implements IViewer, IPhysicsObject {
     }
     clock = new THREE.Clock()
 
-    resize(width: number, height: number) { }
+    resize() { }
     update() {
         const delta = this.clock.getDelta()
         this.mixer?.update(delta)

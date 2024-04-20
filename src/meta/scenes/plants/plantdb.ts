@@ -1,5 +1,4 @@
 import { Char } from "../../loader/assetmodel"
-import { Loader } from "../../loader/loader"
 import { MonDrop } from "../monsters/monsterdb"
 
 export class PlantId {
@@ -13,6 +12,7 @@ export enum PlantType {
 }
 
 export type PlantProperty = {
+    plantId: PlantId
     type: PlantType
     assetId: Char
     name: string
@@ -24,8 +24,9 @@ export type PlantProperty = {
 
 export class PlantDb {
     plantDb = new Map<string, PlantProperty>()
-    constructor(private loader: Loader) {
+    constructor() {
         this.plantDb.set(PlantId.AppleTree, {
+            plantId: PlantId.AppleTree,
             type: PlantType.Tree,
             assetId: Char.AppleTree,
             name: "Apple Tree",

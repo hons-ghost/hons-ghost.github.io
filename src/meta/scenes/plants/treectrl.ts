@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { PlantBox, PlantEntry, PlantState } from "./farmer";
-import { AppleTree } from "./appletree";
-import { PlantProperty, PlantType } from "./plantdb";
+import { PlantProperty } from "./plantdb";
 import { IPhysicsObject } from "../models/iobject";
 
 export interface ITreeMotions {
@@ -27,7 +26,7 @@ export class TreeCtrl {
     get State() { return this.save.state }
 
     constructor(
-        private id: number, 
+        id: number, 
         private tree: IPhysicsObject, 
         private treeMotion: ITreeMotions,
         private property: PlantProperty,

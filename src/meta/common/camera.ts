@@ -174,7 +174,6 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         this.viewMode = ViewMode.Long
                         if (this.animate != undefined) this.animate.kill()
 
-                        const h = this.npcs.Helper
                         this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
                         this.rotation.x = -Math.PI / 4
                         this.position.set(this.longPos.x, this.longPos.y, this.longPos.z)

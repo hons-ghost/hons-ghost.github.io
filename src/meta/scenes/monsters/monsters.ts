@@ -12,7 +12,6 @@ import { ZombieCtrl } from "./zombie/zombiectrl";
 import { Player } from "../player/player";
 import { AttackOption, PlayerCtrl } from "../player/playerctrl";
 import { math } from "../../../libs/math";
-import { Minataur } from "./minataur/minataur";
 import { Drop } from "../../drop/drop";
 import { MonDrop, MonsterDb, MonsterId } from "./monsterdb";
 import { EffectType } from "../../effects/effector";

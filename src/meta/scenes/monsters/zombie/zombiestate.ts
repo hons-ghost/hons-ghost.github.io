@@ -146,7 +146,7 @@ export class IdleZState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(_delta: number, v: THREE.Vector3): IPlayerAction {
         const checkRun = this.CheckRun(v)
         if (checkRun != undefined) return checkRun
 
@@ -168,7 +168,7 @@ export class DyingZState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         return this
     }
 }

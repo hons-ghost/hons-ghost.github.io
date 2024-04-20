@@ -4,8 +4,6 @@ import { Player } from "../scenes/player/player";
 import { Canvas } from "../common/canvas";
 import SConf from "../configs/staticconf";
 import { MonDrop } from "../scenes/monsters/monsterdb";
-import { ItemId } from "../inventory/items/itemdb";
-import { math } from "../../libs/math";
 import { Inventory } from "../inventory/inventory";
 import { Alarm, AlarmType } from "../common/alarm";
 import { EventController, EventFlag } from "../event/eventctrl";
@@ -35,7 +33,7 @@ export class Drop implements IViewer {
         private player: Player,
         canvas: Canvas,
         private scene: THREE.Scene,
-        private eventCtrl: EventController,
+        eventCtrl: EventController,
     ) {
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Play) return
@@ -148,7 +146,7 @@ export class Drop implements IViewer {
         points.needsUpdate = true
     }
 
-    resize(width: number, height: number): void { }
+    resize(): void { }
 
     speed = 1
     update(delta: number): void {

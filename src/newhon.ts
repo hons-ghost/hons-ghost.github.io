@@ -1,4 +1,3 @@
-import { BlockStore } from "./store";
 import { FetchResult } from "./models/param";
 import { Session } from "./session";
 import { NewHonTxId } from "./models/tx";
@@ -14,7 +13,6 @@ type AiMode = typeof AiMode[keyof typeof AiMode]
 
 export class NewHon extends Page{
     m_masterAddr: string;
-    m_session: Session
     m_model: string;
     m_img: Blob;
     m_srcImg: Blob;
@@ -24,12 +22,10 @@ export class NewHon extends Page{
     alarm = document.getElementById("alarm-msg") as HTMLDivElement
     alarmText = document.getElementById("alarm-msg-text") as HTMLDivElement
 
-    public constructor(private blockStore: BlockStore
-        , private session: Session, private ipc: Channel, url: string) {
+    public constructor(private session: Session, private ipc: Channel, url: string) {
         super(url)
         this.m_masterAddr = "";
         this.m_model = "toonyou_beta6-f16.gguf"
-        this.m_session = session;
         this.m_img = new Blob()
         this.m_srcImg = new Blob()
         this.mode = AiMode.Filter
@@ -98,7 +94,7 @@ export class NewHon extends Page{
     }
     public RequestNewHon() {
         const masterAddr = this.m_masterAddr;
-        const user = this.m_session.GetHonUser();
+        const user = this.session.GetHonUser();
         const inputContent = document.getElementById("inputContent") as HTMLTextAreaElement;
         const addr = masterAddr + "/glambda?txid=" + encodeURIComponent(NewHonTxId);
 
@@ -321,7 +317,7 @@ export class NewHon extends Page{
         window.scrollTo(0, 0)
 
         const btn = document.getElementById("feedBtn") as HTMLButtonElement
-        if (!this.m_session.CheckLogin()) {
+        if (!this.session.CheckLogin()) {
             btn.innerText = "체험만 가능 (Login 후 등록할 수 있습니다.)"
             btn.disabled = true
         } else {

@@ -61,6 +61,7 @@ export class AttackState extends State implements IPlayerAction {
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
+    
     attack() {
         this.player.Meshs.getWorldDirection(this.attackDir)
         this.raycast.set(this.player.CenterPos, this.attackDir.normalize())
@@ -88,7 +89,7 @@ export class AttackState extends State implements IPlayerAction {
         }
         this.attackProcess = false
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(delta: number): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
         if(this.clock == undefined) return  this
@@ -120,7 +121,7 @@ export class AttackIdleState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
 

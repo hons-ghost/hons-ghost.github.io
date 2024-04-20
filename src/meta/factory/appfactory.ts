@@ -9,7 +9,6 @@ import { Light } from "../common/light";
 import { EventController } from "../event/eventctrl";
 import { Player as Player } from "../scenes/player/player";
 import { Loader } from "../loader/loader";
-import { Tree } from "../scenes/plants/tree";
 import { math } from "../../libs/math";
 import { Mushroom } from "../scenes/models/mushroom";
 import { DeadTree } from "../scenes/models/deadtree";
@@ -46,18 +45,18 @@ export class AppFactory {
     private eventCtrl = new EventController()
     private canvas = new Canvas()
     private loader = new Loader()
-    private deckDb = new Deck()
+    deckDb = new Deck()
     private gameCenter: GameCenter
 
     private store: ModelStore
-    private input: Input
+    input: Input
     private game: Game
     private gphysics: GPhysics
 
     private invenFab: InvenFactory
     private drop : Drop
     private monDb: MonsterDb
-    private monDeck: MonDeck
+    monDeck: MonDeck
 
     private player: Player
     private floor: Floor
@@ -77,7 +76,7 @@ export class AppFactory {
 
     private camera: Camera
     private light: Light
-    private renderer: Renderer
+    renderer: Renderer
     private worldSize: number
     private brick: EventBricks
     private legos: Legos
@@ -100,38 +99,38 @@ export class AppFactory {
 
     constructor() {
         this.worldSize = 300
-        this.floor = new Floor(this.worldSize, this.worldSize, 1, new THREE.Vector3(0, 0, 0))
+        this.floor = new Floor(this.worldSize)
         this.mushrooms = []
         this.deadtrees = []
 
         this.invenFab = new InvenFactory(this.loader, this.alarm)
-        this.monDb = new MonsterDb(this.loader)
+        this.monDb = new MonsterDb()
 
         this.store = new ModelStore(this.eventCtrl, this.invenFab)
         this.input = new Input(this.eventCtrl)
-        this.light = new Light(this.canvas)
+        this.light = new Light()
         this.game = new Game(this.light)
         this.gphysics = new GPhysics(this.game, this.eventCtrl)
 
 
-        this.portal = new Portal(this.loader, this.loader.PortalAsset, this.store, this.eventCtrl, this.gphysics)
+        this.portal = new Portal(this.loader.PortalAsset, this.store, this.eventCtrl, this.gphysics)
 
         this.player = new Player(this.loader, this.eventCtrl, this.portal, this.store, this.game)
         this.playerCtrl = new PlayerCtrl(this.player, this.invenFab.inven, this.invenFab, this.gphysics, this.eventCtrl)
 
         this.drop = new Drop(this.alarm, this.invenFab.inven, this.player, this.canvas, this.game, this.eventCtrl)
 
-        this.brick = new EventBricks(this.loader, this.game, this.eventCtrl, this.store, this.gphysics, this.player)
+        this.brick = new EventBricks(this.game, this.eventCtrl, this.store, this.gphysics, this.player)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics, this.player)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
         this.monsters = new Monsters(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
-        this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb, this.gphysics)
+        this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb)
         this.farmer = new Farmer(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
         this.carp = new Carpenter(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
-        this.monDeck = new MonDeck(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.canvas, this.store, this.monDb)
+        this.monDeck = new MonDeck(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.canvas, this.store)
 
-        this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.monsters, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl)
+        this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.monsters, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl, this.store)
 
         this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.farmer, this.carp, this.eventCtrl)
         this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
@@ -153,7 +152,7 @@ export class AppFactory {
                 (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
             )
             const scale = math.rand_int(5, 9)
-            const mushroom = new Mushroom(this.loader, mushasset)
+            const mushroom = new Mushroom(mushasset)
             mushroom.MassLoader(meshs, scale, pos)
             this.mushrooms.push(mushroom)
         }
@@ -170,7 +169,7 @@ export class AppFactory {
             if (pos.z > 0 && pos.z < 7) pos.z += 7
             const type = math.rand_int(0, 2)
             const scale = math.rand_int(5, 9)
-            const tree = new DeadTree(this.loader, this.loader.DeadTreeAsset)
+            const tree = new DeadTree(this.loader.DeadTreeAsset)
             tree.MassLoader(meshs, scale, pos, type)
             this.deadtrees.push(tree)
         }
@@ -194,6 +193,7 @@ export class AppFactory {
             this.gphysics.add(this.npcs.Owner)
             this.gphysics.addLand(this.floor)
         })
+        return ret
     }
     InitScene() {
         this.game.add(

@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import { Loader } from "../../loader/loader";
-import { GhostModel, GhostModel2 } from "../models/ghostmodel";
+import { GhostModel } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "../models/iobject";
 import { ProgressBar } from "../models/progressbar";
@@ -10,8 +9,9 @@ import { ITreeMotions } from "./treectrl";
 export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotions {
     get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
     gauge = new ProgressBar(0.1, 0.1, 2)
+    lv = 0
 
-    constructor(private loader: Loader, asset: IAsset) {
+    constructor(asset: IAsset) {
         super(asset)
         this.text = new FloatingName("나무를 심어주세요")
     }
@@ -19,6 +19,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
     async Init() {
     }
     SetLevel(lv: number): void {
+        this.lv = lv
     }
     SetProgress(ratio: number): void {
         this.gauge.SetProgress(ratio)

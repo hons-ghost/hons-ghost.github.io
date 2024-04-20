@@ -9,9 +9,8 @@ import SConf from "../../configs/staticconf";
 import { AppleTree } from "./appletree";
 import { Loader } from "../../loader/loader";
 import { Game } from "../game";
-import { Char } from "../../loader/assetmodel";
-import { ActionType, Player } from "../player/player";
-import { PlantDb, PlantId, PlantType } from "./plantdb";
+import { Player } from "../player/player";
+import { PlantDb, PlantId, PlantProperty} from "./plantdb";
 import { IViewer } from "../models/iviewer";
 import { Canvas } from "../../common/canvas";
 import { TreeCtrl } from "./treectrl";
@@ -36,6 +35,7 @@ export type PlantEntry = {
 }
 
 export type PlantSet = {
+    plantId: PlantId
     plant: IPhysicsObject
     plantCtrl: TreeCtrl
     used: boolean
@@ -53,9 +53,9 @@ export class Farmer implements IModelReload, IViewer {
     controllable = false
     target?: IPhysicsObject
     targetId?: string
-    plantDb = new PlantDb(this.loader)
+    plantDb = new PlantDb()
     plantsFab = new Map<string, IPhysicsObject>()
-    plants: PlantSet[] = []
+    plantset: PlantSet[] = []
     recycle: PlantSet[] = []
     saveData = this.store.Plants
 
@@ -66,12 +66,12 @@ export class Farmer implements IModelReload, IViewer {
         private game: Game,
         private store: ModelStore,
         private gphysic: GPhysics,
-        private canvas: Canvas,
+        canvas: Canvas,
         private eventCtrl: EventController,
     ){
         canvas.RegisterViewer(this)
         store.RegisterStore(this)
-        this.plantsFab.set(PlantId.AppleTree, new AppleTree(this.loader, this.loader.AppleTreeAsset))
+        this.plantsFab.set(PlantId.AppleTree, new AppleTree(this.loader.AppleTreeAsset))
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: string) => {
             if(mode != AppMode.Farmer) return
@@ -126,7 +126,7 @@ export class Farmer implements IModelReload, IViewer {
             opts.forEach((opt) => {
                 let obj = opt.obj as PlantBox
                 if (obj == null) return
-                const z = this.plants[obj.Id]
+                const z = this.plantset[obj.Id]
 
                 if(opt.type == AttackType.PlantAPlant) {
                     if (opt.damage) {
@@ -146,15 +146,18 @@ export class Farmer implements IModelReload, IViewer {
             })
         })
     }
-    resize(width: number, height: number): void { }
+    resize(): void { }
     update(delta: number): void {
-        for (let i = 0; i < this.plants.length; i++) {
-            this.plants[i].plantCtrl.update(delta)
+        for (let i = 0; i < this.plantset.length; i++) {
+            this.plantset[i].plantCtrl.update(delta)
         }
     }
 
-    async Massload(): Promise<void> { }
+    async Viliageload(): Promise<void> {
+        this.ReleaseAllPlantPool()
+    }
     async Reload(): Promise<void> {
+        this.ReleaseAllPlantPool()
         this.saveData = this.store.Plants
         if (this.saveData) this.saveData.forEach((e) => {
             this.CreatePlant(e)
@@ -162,7 +165,7 @@ export class Farmer implements IModelReload, IViewer {
         
     }
     DeletePlant(id: number) {
-        const plantset = this.plants[id];
+        const plantset = this.plantset[id];
         plantset.used = false
         const idx = this.saveData.findIndex((item) => item.position.x == plantset.plant.CannonPos.x && item.position.z == plantset.plant.CannonPos.z)
         if (idx > -1) this.saveData.splice(idx, 1)
@@ -172,28 +175,11 @@ export class Farmer implements IModelReload, IViewer {
     async CreatePlant(plantEntry: PlantEntry) {
         const property = this.plantDb.get(plantEntry.id)
         if (!property) return
-        const idx = this.plants.findIndex((item) => item.plant.CannonPos.x == plantEntry.position.x 
-            && item.plant.CannonPos.z == plantEntry.position.z)
-        if (idx >= 0) return
-        let tree;
-        let meshs;
-        switch (plantEntry.id) {
-            case PlantId.AppleTree:
-                tree = new AppleTree(this.loader, this.loader.AppleTreeAsset)
-                const [_meshs, exist] = await this.loader.AppleTreeAsset.UniqModel("appletree" + this.plants.length)
-                meshs = _meshs
-                break;
-        }
-        if (!tree || !meshs) return
-
-        await tree.MassLoader(meshs, 1, plantEntry.position)
-        tree.Create()
-        tree.Visible = true
-        const treeCtrl = new TreeCtrl(this.plants.length, tree, tree, property, plantEntry) 
         
-        this.plants.push({ plant: tree, plantCtrl: treeCtrl, used: true })
-        this.playerCtrl.add(treeCtrl.phybox)
-        this.game.add(tree.Meshs, treeCtrl.phybox)
+        let plantset = this.AllocatePlantPool(property, plantEntry.position)
+        if (!plantset) plantset = await this.NewPlantEntryPool(plantEntry, property)
+        this.playerCtrl.add(plantset.plantCtrl.phybox)
+        this.game.add(plantset.plant.Meshs, plantset.plantCtrl.phybox)
     }
     async FarmLoader() {
         const p = SConf.DefaultPortalPosition
@@ -205,7 +191,6 @@ export class Farmer implements IModelReload, IViewer {
         ])
         return ret
     }
-    
     moveEvent(v: THREE.Vector3) {
         if(!this.target) return
         const vx = (v.x > 0) ? 1 : (v.x < 0) ? - 1 : 0
@@ -220,5 +205,48 @@ export class Farmer implements IModelReload, IViewer {
             this.target.Meshs.position.z -= vz
         }
         // Check Collision Plant
+    }
+    allocPos = 0
+    AllocatePlantPool(property: PlantProperty, pos: THREE.Vector3) {
+        for (let i = 0; i < this.plantset.length; i++, this.allocPos++) {
+            const e = this.plantset[i]
+            if(e.plantId == property.plantId && e.used == false) {
+                e.used = true
+                e.plant.CannonPos.copy(pos)
+                e.plantCtrl.phybox.position.copy(pos)
+                return e
+            }
+            this.allocPos %= this.plantset.length
+        }
+    }
+    ReleaseAllPlantPool() {
+        this.plantset.forEach((set) => {
+            set.used = false
+            this.playerCtrl.remove(set.plantCtrl.phybox)
+            this.game.remove(set.plant.Meshs, set.plantCtrl.phybox)
+        })
+    }
+    async NewPlantEntryPool(plantEntry: PlantEntry, property: PlantProperty): Promise<PlantSet> {
+        let tree;
+        let meshs;
+        switch (plantEntry.id) {
+            case PlantId.AppleTree:
+                tree = new AppleTree(this.loader.AppleTreeAsset)
+                const [_meshs, _exist] = await this.loader.AppleTreeAsset.UniqModel("appletree" + this.plantset.length)
+                
+                meshs = _meshs
+                break;
+        }
+        if (!tree || !meshs) {
+            throw new Error("unexpected allocation");
+        }
+
+        await tree.MassLoader(meshs, 1, plantEntry.position)
+        tree.Create()
+        tree.Visible = true
+        const treeCtrl = new TreeCtrl(this.plantset.length, tree, tree, property, plantEntry) 
+        const plantset: PlantSet = { plantId: plantEntry.id, plant: tree, plantCtrl: treeCtrl, used: true }
+        this.plantset.push(plantset)
+        return plantset
     }
 }

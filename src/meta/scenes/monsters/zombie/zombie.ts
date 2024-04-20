@@ -45,7 +45,8 @@ export class Zombie extends GhostModel implements IPhysicsObject {
     async Loader(asset: IAsset, position: THREE.Vector3, text: string, id: number) {
         this.asset = asset
 
-        const [meshs, exist] = await asset.UniqModel(text + id)
+        const [meshs, _exist] = await asset.UniqModel(text + id)
+        
         this.meshs = meshs
 
         this.meshs.position.set(position.x, position.y, position.z)

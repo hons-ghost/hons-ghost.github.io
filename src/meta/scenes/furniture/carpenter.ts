@@ -9,12 +9,11 @@ import SConf from "../../configs/staticconf";
 import { Loader } from "../../loader/loader";
 import { Game } from "../game";
 import { Player } from "../player/player";
-import { PlantDb, PlantId, PlantType } from "../plants/plantdb";
 import { IViewer } from "../models/iviewer";
 import { Canvas } from "../../common/canvas";
 import { AttackOption, AttackType, PlayerCtrl } from "../player/playerctrl";
 import { FurnCtrl } from "./furnctrl";
-import { FurnDb, FurnId, FurnType } from "./furndb";
+import { FurnDb, FurnId } from "./furndb";
 import { Bed } from "./bed";
 
 export enum FurnState {
@@ -48,7 +47,7 @@ export class Carpenter implements IModelReload, IViewer {
     controllable = false
     target?: IPhysicsObject
     targetId?: string
-    furnDb = new FurnDb(this.loader)
+    furnDb = new FurnDb()
     furnFab = new Map<string, IPhysicsObject>()
     furnitures: FurnSet[] = []
     saveData = this.store.Furn
@@ -60,13 +59,13 @@ export class Carpenter implements IModelReload, IViewer {
         private game: Game,
         private store: ModelStore,
         private gphysic: GPhysics,
-        private canvas: Canvas,
+        canvas: Canvas,
         private eventCtrl: EventController,
     ){
         canvas.RegisterViewer(this)
         store.RegisterStore(this)
 
-        this.furnFab.set(FurnId.DefaultBed, new Bed(this.loader, this.loader.BedAsset))
+        this.furnFab.set(FurnId.DefaultBed, new Bed(this.loader.BedAsset))
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: string) => {
             if(mode != AppMode.Furniture) return
@@ -128,14 +127,14 @@ export class Carpenter implements IModelReload, IViewer {
             })
         })
     }
-    resize(width: number, height: number): void { }
+    resize(): void { }
     update(delta: number): void {
         for (let i = 0; i < this.furnitures.length; i++) {
             this.furnitures[i].furnCtrl.update(delta)
         }
     }
 
-    async Massload(): Promise<void> {
+    async Viliageload(): Promise<void> {
 
     }
     async Reload(): Promise<void> {
@@ -152,8 +151,8 @@ export class Carpenter implements IModelReload, IViewer {
         let meshs;
         switch (id) {
             case FurnId.DefaultBed:
-                furn = new Bed(this.loader, this.loader.BedAsset)
-                const [_meshs, exist] = await this.loader.BedAsset.UniqModel("bed" + this.furnitures.length)
+                furn = new Bed(this.loader.BedAsset)
+                const [_meshs, _exist] = await this.loader.BedAsset.UniqModel("bed" + this.furnitures.length)
                 meshs = _meshs
                 break;
         }

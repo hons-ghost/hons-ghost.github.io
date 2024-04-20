@@ -1,11 +1,8 @@
 import * as THREE from "three";
-import { Loader } from "../../../loader/loader";
 import { FloatingName } from "../../../common/floatingtxt";
-import { EventController } from "../../../event/eventctrl";
 import { GhostModel } from "../../models/ghostmodel";
 import { Ani, IAsset } from "../../../loader/assetmodel";
 import { IPhysicsObject } from "../../models/iobject";
-import { GPhysics } from "../../../common/physics/gphysics";
 import { ActionType } from "../../player/player";
 import { Damage } from "../../../effects/damage";
 import { TextStatus } from "../../../effects/status";
@@ -32,15 +29,12 @@ export class Minataur extends GhostModel implements IPhysicsObject {
     get ControllerEnable(): boolean { return this.controllerEnable }
 
     constructor(
-        private loader: Loader, 
-        private eventCtrl: EventController, 
-        private gphysic: GPhysics,
         asset: IAsset
     ) {
         super(asset)
         this.text = new FloatingName("Minataur")
         this.damageEffect = new Damage(this.CannonPos.x, this.CannonPos.y, this.CannonPos.z)
-        this.txtStatus = new TextStatus("0", "#ff0000", true)
+        this.txtStatus = new TextStatus("0", "#ff0000")
     }
 
     async Init(text: string) {
@@ -52,7 +46,7 @@ export class Minataur extends GhostModel implements IPhysicsObject {
     async Loader(asset: IAsset, position: THREE.Vector3, text: string, id: number) {
         this.asset = asset
 
-        const [meshs, exist] = await asset.UniqModel(text + id)
+        const [meshs, _exist] = await asset.UniqModel(text + id)
         this.meshs = meshs
 
         console.log(this.meshs)

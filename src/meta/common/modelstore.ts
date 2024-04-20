@@ -3,9 +3,8 @@ import SConf from "../configs/staticconf";
 import { EventController } from "../event/eventctrl";
 import { Char } from "../loader/assetmodel";
 import { BrickShapeType } from "../scenes/bricks/legos";
-import { Npc } from "../scenes/models/npc";
 import { ActionType, Player } from "../scenes/player/player";
-import { InvenData, Inventory } from "../inventory/inventory";
+import { InvenData } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
 import { PlantEntry } from "../scenes/plants/farmer";
 import { FurnEntry } from "../scenes/furniture/carpenter";
@@ -38,12 +37,12 @@ type StoreData = {
 
 export interface IModelReload {
     Reload(): Promise<void>
-    Massload(): Promise<void>
+    Viliageload(): Promise<void>
 }
 
 export class ModelStore {
     private mgrs: IModelReload[] = []
-    private owner: Npc | undefined
+    //private owner: Npc | undefined
     private player: Player | undefined
     private playerModel: Char = Char.Male
     private data: StoreData = { 
@@ -95,10 +94,7 @@ export class ModelStore {
     RegisterStore(mgr: IModelReload) {
         this.mgrs.push(mgr)
     }
-    RegisterOwner(owner: Npc, mgr: IModelReload) {
-        this.owner = owner
-        this.mgrs.push(mgr)
-    }
+    
     RegisterPlayer(player: Player, mgr: IModelReload) {
         this.player = player
         this.mgrs.push(mgr)
@@ -179,7 +175,7 @@ export class ModelStore {
         this.data.legos.length = 0
         this.owners.length = 0
         this.ownerModels.length = 0
-        users.forEach((user, id) => {
+        users.forEach((user) => {
             i++
             const data = JSON.parse(user) as StoreData
             if(i == 0) {
@@ -195,7 +191,7 @@ export class ModelStore {
             this.ownerModels.push(data.ownerModel)
         })
         const promise = this.mgrs.map(async (mgr) => {
-            await mgr.Massload()
+            await mgr.Viliageload()
         })
         await Promise.all(promise)
     }

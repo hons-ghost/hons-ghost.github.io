@@ -1,4 +1,3 @@
-import App from "./meta/app"
 
 type SkillInfo = {
     name: string
@@ -10,11 +9,10 @@ export class UiSkill {
     archerSkills: SkillInfo[] = []
     wizardSkills: SkillInfo[] = []
 
-    constructor(private meta: App) {
+    constructor() {
         this.warriorSkills.push({
             name: "", 
             explain: ""
         })
-
     }
 }

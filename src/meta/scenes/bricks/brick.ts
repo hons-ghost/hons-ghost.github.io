@@ -10,13 +10,7 @@ export class Brick extends GhostModel{
         this.size = new THREE.Vector3()
     }
 
-        async Init() { }
-
-    resize(width: number, height: number): void { }
-
-    update(): void {
-        
-    }
+    async Init() { }
 
     async Loader(scale: number, position: THREE.Vector3) {
         return new Promise((resolve) => {

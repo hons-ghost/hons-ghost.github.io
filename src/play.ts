@@ -1,6 +1,5 @@
-import { SubtractiveBlending } from "three";
 import App, { AppMode } from "./meta/app";
-import { InvenData, Inventory } from "./meta/inventory/inventory";
+import { InvenData } from "./meta/inventory/inventory";
 import { ItemId } from "./meta/inventory/items/itemdb";
 import { PlayerStatus } from "./meta/scenes/player/playerctrl";
 import { Ui } from "./models/ui";
@@ -163,7 +162,7 @@ export class Play extends Page {
         const lvTag = document.getElementById("levelup") as HTMLDivElement
         lvTag.style.display = "block"
 
-        items.forEach((b, i) => {
+        items.forEach((_b, i) => {
             const buff = document.getElementById("buff_" + i) as HTMLDivElement
             buff.onclick = async () => {
                 if(this.inven.inven == undefined) return
@@ -236,6 +235,7 @@ export class Play extends Page {
         formData.append("password", user.Password)
         formData.append("data", json)
         const time = (new Date()).getTime()
+        formData.append("date", time.toString())
         formData.append("table", "inventory")
         fetch(addr, {
             method: "POST",

@@ -117,7 +117,7 @@ export class MagicH2State extends State implements IPlayerAction {
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) {
             this.Uninit()
@@ -148,7 +148,7 @@ export class MagicH1State extends State implements IPlayerAction {
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
@@ -170,7 +170,7 @@ export class DeadState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         return this
     }
 }
@@ -186,7 +186,7 @@ export class IdleState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
 

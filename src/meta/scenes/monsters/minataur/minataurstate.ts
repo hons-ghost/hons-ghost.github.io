@@ -32,7 +32,7 @@ export class AttackMState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3, dist: number): IPlayerAction {
+    Update(_delta: number, v: THREE.Vector3, dist: number): IPlayerAction {
         if (dist > this.attackDist) {
             const checkRun = this.CheckRun(v)
             if (checkRun != undefined) return checkRun
@@ -53,7 +53,7 @@ export class IdleMState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(_delta: number, v: THREE.Vector3): IPlayerAction {
         const checkRun = this.CheckRun(v)
         if (checkRun != undefined) return checkRun
 
@@ -70,7 +70,7 @@ export class DyingMState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         return this
     }
 }

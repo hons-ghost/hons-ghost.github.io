@@ -32,18 +32,18 @@ export class Helper implements IViewer {
 
     constructor(
         private scene: Game,
-        private player: Player,
+        player: Player,
         private playerCtrl: PlayerCtrl,
-        private npcs: NpcManager,
-        private portal: Portal,
-        private floor: Floor,
-        private legos: Legos,
-        private camera: Camera,
+        npcs: NpcManager,
+        portal: Portal,
+        floor: Floor,
+        legos: Legos,
+        camera: Camera,
         private rayViewer: RayViwer,
         private physics: GPhysics,
-        private canvas: Canvas,
-        private eventCtrl: EventController,
-        private drop: Drop
+        canvas: Canvas,
+        eventCtrl: EventController,
+        drop: Drop
     ) {
         this.gui.hide()
         this.gui.close()
@@ -75,7 +75,7 @@ export class Helper implements IViewer {
         })
         canvas.RegisterViewer(this)
     }
-    resize(width: number, height: number): void { }
+    resize(): void { }
     update(): void {
         this.arrowHelper.position.copy(this.rayViewer.ray.origin)
         this.arrowHelper.setDirection(this.rayViewer.ray.direction)

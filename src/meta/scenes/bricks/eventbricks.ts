@@ -1,15 +1,12 @@
 import * as THREE from "three";
-import { Loader } from "../../loader/loader";
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { Brick } from "./brick";
-import { BrickGuide, BrickGuideType } from "./brickguide";
+import { BrickGuideType } from "./brickguide";
 import { Brick2 } from "./brick2";
-import { IKeyCommand } from "../../event/keycommand";
 import { IModelReload, ModelStore } from "../../common/modelstore";
 import { GPhysics } from "../../common/physics/gphysics";
 import { Bricks, EventBrick } from "./bricks";
-import App, { AppMode } from "../../app";
-import { IBuildingObject } from "../models/iobject";
+import { AppMode } from "../../app";
 import { Player } from "../player/player";
 
 
@@ -20,7 +17,6 @@ export class EventBricks extends Bricks implements IModelReload{
     get Size(): THREE.Vector3 { return this.brickSize }
 
     constructor(
-        private loader: Loader,
         scene: THREE.Scene,
         eventCtrl: EventController,
         store: ModelStore,
@@ -103,7 +99,7 @@ export class EventBricks extends Bricks implements IModelReload{
         this.instancedBlock.receiveShadow = true
         return this.instancedBlock
     }
-    async Massload(): Promise<void> {
+    async Viliageload(): Promise<void> {
         this.ClearBlock()
         this.ClearEventBrick()
     }

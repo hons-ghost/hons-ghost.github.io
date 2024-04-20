@@ -18,8 +18,8 @@ export class RayViwer extends THREE.Raycaster implements IViewer {
         private _camera: Camera, 
         private legos: Legos,
         private eventBricks: EventBricks,
-        private canvas: Canvas,
-        private eventCtrl: EventController
+        canvas: Canvas,
+        eventCtrl: EventController
     ) {
         super()
         canvas.RegisterViewer(this)
@@ -28,7 +28,7 @@ export class RayViwer extends THREE.Raycaster implements IViewer {
             this.target = obj
         })
     }
-    resize(width: number, height: number): void { }
+    resize(): void { }
 
     update(): void {
         if (this.target == undefined) {

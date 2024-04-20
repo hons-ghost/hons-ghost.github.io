@@ -7,7 +7,7 @@ import { Game } from "./game"
 import { UserInfo } from "../common/param"
 import { IModelReload, ModelStore } from "../common/modelstore"
 import { GPhysics } from "../common/physics/gphysics";
-import { Char, IAsset } from "../loader/assetmodel";
+import { Char } from "../loader/assetmodel";
 import SConf from "../configs/staticconf";
 import { AppMode } from "../app";
 
@@ -29,13 +29,13 @@ export class NpcManager implements IModelReload {
         private game: Game,
         private canvas: Canvas,
         private store: ModelStore,
-        private gphysic: GPhysics,
+        gphysic: GPhysics,
     ) {
-        this.helper = new Npc(loader, eventCtrl, gphysic, loader.MaleAsset)
-        this.helper2 = new Npc(loader, eventCtrl, gphysic, loader.FemaleAsset)
-        this.owner = new Npc(loader, eventCtrl, gphysic, loader.MaleAsset)
+        this.helper = new Npc(eventCtrl, gphysic, loader.MaleAsset)
+        this.helper2 = new Npc(eventCtrl, gphysic, loader.FemaleAsset)
+        this.owner = new Npc(eventCtrl, gphysic, loader.MaleAsset)
 
-        this.store.RegisterOwner(this.owner, this)
+        this.store.RegisterStore(this)
 
         this.canvas.RegisterViewer(this.helper)
         this.canvas.RegisterViewer(this.helper2)
@@ -114,7 +114,7 @@ export class NpcManager implements IModelReload {
             this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 0, 15), "unknown")
         ])
     }
-    async Massload(): Promise<void> {
+    async Viliageload(): Promise<void> {
         this.game.remove(this.owner.Meshs)
     }
     async Reload(): Promise<void> {

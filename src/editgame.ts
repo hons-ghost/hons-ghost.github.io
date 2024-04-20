@@ -129,7 +129,7 @@ export class EditGame {
         }
 
         const decklocation = document.getElementById("decklocation") as HTMLSelectElement
-        if (decklocation) decklocation.onchange = (ev) => {
+        if (decklocation) decklocation.onchange = () => {
             switch (decklocation.value) {
                 case "1":
                     this.locator(deck)

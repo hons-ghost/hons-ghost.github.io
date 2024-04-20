@@ -1,5 +1,4 @@
-import { Lang } from "../../lang/lang"
-import { Bind, IAsset } from "../../loader/assetmodel"
+import { Bind } from "../../loader/assetmodel"
 import { DeckType } from "./deck"
 import { ItemProperty } from "./itemdb"
 
@@ -97,7 +96,7 @@ export class Item implements IItem {
     async Loader() {
         const asset = this.property.asset
         if (asset == undefined) return
-        const [meshs, exist] = await asset.UniqModel(this.property.name)
+        const [meshs, _exist] = await asset.UniqModel(this.property.name)
         //const meshs = await asset.CloneModel()
         this.property.meshs = meshs
     }

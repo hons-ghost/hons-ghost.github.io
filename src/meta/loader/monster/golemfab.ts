@@ -79,7 +79,7 @@ export class BigGolemFab extends AssetModel implements IAsset {
             this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "metarig|3_Attack"))
             this.clips.set(Ani.Dying, gltf.animations.find((clip) => clip.name == "metarig|5_Die"))
 
-            const size = this.GetSize(this.meshs)
+            this.GetSize(this.meshs)
             this.meshs.children[0].position.y = 190
         })
     }

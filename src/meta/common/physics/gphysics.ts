@@ -34,7 +34,7 @@ export class GPhysics {
     debugBox: THREE.Mesh[] = []
     get LandY() { return this.landPos.y }
 
-    constructor(private scene: THREE.Scene, private eventCtrl: EventController) {
+    constructor(private scene: THREE.Scene, eventCtrl: EventController) {
         eventCtrl.RegisterSceneClearEvent(() => {
             this.PBoxDispose()
         })
@@ -130,7 +130,7 @@ export class GPhysics {
     }
     addLand(obj: IPhysicsObject) {
         this.landPos.y = 0
-        console.log("Land: " , this.landPos)
+        console.log("Land: " , this.landPos, obj)
     }
     optx = 10
     opty = 10

@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { GPhysics, IGPhysic } from "../../../common/physics/gphysics"
-import { Player } from "../../player/player"
 import { IPhysicsObject } from "../../models/iobject";
 import { Legos } from "../../bricks/legos";
 import { EventBricks } from "../../bricks/eventbricks";
@@ -23,7 +22,7 @@ export class MinataurCtrl implements IGPhysic{
     phybox: MonsterBox
 
     constructor(
-        private id: number,
+        id: number,
         private player: IPhysicsObject, 
         private monster: Minataur, 
         private legos: Legos,

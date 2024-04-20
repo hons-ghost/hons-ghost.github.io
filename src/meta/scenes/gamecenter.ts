@@ -7,10 +7,10 @@ import { Player } from "./player/player";
 import { Portal } from "./models/portal";
 import { PlayerCtrl } from "./player/playerctrl";
 import { Monsters } from "./monsters/monsters";
-import { Inventory } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
 import { Alarm, AlarmType } from "../common/alarm";
 import { CircleEffect } from "./models/circle";
+import { IModelReload, ModelStore } from "../common/modelstore";
 
 export enum GameType {
     VamSer,
@@ -21,7 +21,7 @@ export type GameOptions = {
     OnSaveInven: Function
 }
 
-export class GameCenter implements IViewer {
+export class GameCenter implements IViewer, IModelReload {
     // TODO
     // Start Game or Init or Exit
     // Game Info Load and Save (include Inven)
@@ -43,11 +43,14 @@ export class GameCenter implements IViewer {
         private portal: Portal,
         private monster: Monsters,
         private invenFab: InvenFactory,
-        private canvas: Canvas,
+        canvas: Canvas,
         private alarm: Alarm,
         private game: THREE.Scene,
         private eventCtrl: EventController,
+        store: ModelStore,
     ) {
+        console.log(this.playerCtrl, this.monster)
+        store.RegisterStore(this)
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Play) return
             switch (e) {
@@ -73,7 +76,6 @@ export class GameCenter implements IViewer {
         this.game.add(this.torus)
         this.torus.visible = false
         this.torus.position.copy(this.portal.CannonPos)
-        this.torus.rotateX(Math.PI / 2)
         this.dom.className = "timer h2"
     }
 
@@ -116,10 +118,13 @@ export class GameCenter implements IViewer {
             this.safe = false
         }
     }
-    resize(width: number, height: number): void { }
+    resize(): void { }
     update(delta: number): void {
         if (!this.playing) return
         this.updateTimer(delta)
         this.CheckPortal(delta)
+    }
+    async Viliageload(): Promise<void> { }
+    async Reload(): Promise<void> {
     }
 }

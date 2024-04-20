@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { Loader } from "../../loader/loader";
 import { GhostModel } from "../models/ghostmodel";
 import { IAsset } from "../../loader/assetmodel";
 import { IPhysicsObject } from "../models/iobject";
@@ -10,7 +9,7 @@ import { FloatingName } from "../../common/floatingtxt";
 export class Bed extends GhostModel implements IPhysicsObject, IFurnMotions {
     gauge = new ProgressBar(0.1, 0.1, 2)
     get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
-    constructor(private loader: Loader, asset: IAsset) {
+    constructor(asset: IAsset) {
         super(asset)
         this.text = new FloatingName("제작을 시작해주세요")
     }

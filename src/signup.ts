@@ -1,5 +1,3 @@
-import { BlockStore } from "./store";
-import { Session } from "./session";
 import { FetchResult } from "./models/param";
 import { SHA256 } from "./libs/sha256";
 import { SignupTxId } from "./models/tx";
@@ -8,12 +6,9 @@ import { Page } from "./page";
 
 export class Signup extends Page {
     m_masterAddr: string;
-    m_session: Session
-    public constructor(private blockStore: BlockStore
-        , private session: Session, url: string) {
+    public constructor(url: string) {
         super(url)
         this.m_masterAddr = "";
-        this.m_session = session;
     }
 
     warningMsg(msg: string) {

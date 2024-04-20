@@ -7,7 +7,6 @@ import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
 import { BrickOption } from "./scenes/bricks/bricks";
-import { Inventory } from "./inventory/inventory";
 import { IBuffItem } from "./buff/buff";
 import { GameOptions } from "./scenes/gamecenter";
 import { LoadingManager } from "three";
@@ -164,9 +163,6 @@ export default class App {
     async LoadVillage(users: Map<string, string>, playerModel: string | undefined) {
         this.eventCtrl.OnSceneClearEvent()
         await this.store.LoadVillage(users, playerModel)
-    }
-    async LoadInventory(inven: Inventory) {
-
     }
     resize() {
         this.canvas.resize()

@@ -20,7 +20,6 @@ export class CircleEffect extends GhostModel2 implements IObject, IPhysicsObject
         super(geometry, material)
         this.position.set(0, 0, 0)
         this.rotateX(-Math.PI / 2)
-        console.log(this)
         this.receiveShadow = true
     }
     update() {

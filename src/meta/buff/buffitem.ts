@@ -19,7 +19,7 @@ export class AttackUp implements IBuffItem {
     GetDamageMax(): number {
         return 1 + this.attack + (.01 * this.lv)
     }
-    Update(delta: number, status: PlayerStatus): void { }
+    Update(): void { }
 }
 
 export class AreaAttack implements IBuffItem {

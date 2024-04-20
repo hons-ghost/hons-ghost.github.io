@@ -1,6 +1,5 @@
 import { EditHome } from "./edithome"
 import App, { AppMode } from "./meta/app"
-import { Char } from "./meta/loader/assetmodel"
 import { PlantId } from "./meta/scenes/plants/plantdb"
 
 

@@ -1,8 +1,6 @@
-import { AlwaysStencilFunc } from "three";
-import { HonEntry, ProfileEntry } from "./models/param";
-import { GlobalLoadListTx, GlobalLoadTx, HonsTxId } from "./models/tx";
+import { ProfileEntry } from "./models/param";
+import { GlobalLoadListTx } from "./models/tx";
 import { Page } from "./page";
-import { Session } from "./session";
 import { BlockStore } from "./store";
 import * as bootstrap from "bootstrap"
 
@@ -12,8 +10,7 @@ export class Main extends Page {
     currenloadCnt = 0
     userlist: string[] = []
 
-    public constructor(private blockStore: BlockStore, 
-        private session: Session, url: string) {
+    public constructor(private blockStore: BlockStore, url: string) {
             super(url)
     }
 
@@ -133,7 +130,7 @@ export class Main extends Page {
         carousel?.cycle()
     }
 
-    public async Run(masterAddr: string): Promise<boolean> {
+    public async Run(): Promise<boolean> {
         await this.LoadHtml()
         this.disableMeta()
         this.bugfixCarousel()

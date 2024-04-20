@@ -19,11 +19,11 @@ export class PickFruitState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Pick!!")
-        const duration = this.player.ChangeAction(ActionType.PickFruit) ?? 2
+        this.player.ChangeAction(ActionType.PickFruit) ?? 2
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
     }
     Uninit(): void { }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
@@ -41,11 +41,11 @@ export class PickFruitTreeState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Pick Tree!!")
-        const duration = this.player.ChangeAction(ActionType.PickFruitTree) ?? 2
+        this.player.ChangeAction(ActionType.PickFruitTree) ?? 2
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
     }
     Uninit(): void { }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
@@ -69,7 +69,7 @@ export class PlantAPlantState extends State implements IPlayerAction {
     }
     Init(): void {
         console.log("Plant a Plant!!")
-        const duration = this.player.ChangeAction(ActionType.PlantAPlant) ?? 2
+        this.player.ChangeAction(ActionType.PlantAPlant) ?? 2
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
         this.trigger = true
     }
@@ -118,7 +118,7 @@ export class PlantAPlantState extends State implements IPlayerAction {
         this.targetMsg.damage = 0
         this.eventCtrl.OnAttackEvent(this.target, [this.targetMsg])
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
@@ -154,7 +154,7 @@ export class WarteringState extends State implements IPlayerAction {
     }
     async Init() {
         console.log("Wartering!!")
-        const duration = this.player.ChangeAction(ActionType.Watering) ?? 2
+        this.player.ChangeAction(ActionType.Watering) ?? 2
         this.playerCtrl.RunSt.PreviousState(this.playerCtrl.IdleSt)
         const id = this.player.Asset.GetBodyMeshId(Bind.Hands_R)
         if (id == undefined) return
@@ -203,7 +203,7 @@ export class WarteringState extends State implements IPlayerAction {
             return this.playerCtrl.IdleSt
         }
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
@@ -264,7 +264,7 @@ export class DeleteState extends State implements IPlayerAction {
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(delta: number): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
@@ -356,7 +356,7 @@ export class BuildingState extends State implements IPlayerAction {
             return this.playerCtrl.IdleSt
         }
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()

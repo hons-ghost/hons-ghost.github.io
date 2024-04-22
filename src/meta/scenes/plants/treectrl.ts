@@ -7,7 +7,7 @@ export interface ITreeMotions {
     SetProgress(ratio: number): void
     SetLevel(lv: number): void
     SetOpacity(opacity: number): void
-    Death(): void
+    Death(): Promise<void>
     Plant(): void
     Enough(): void
     NeedWarter(): void

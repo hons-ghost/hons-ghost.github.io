@@ -71,7 +71,7 @@ export class Farmer implements IModelReload, IViewer {
     ){
         canvas.RegisterViewer(this)
         store.RegisterStore(this)
-        this.plantsFab.set(PlantId.AppleTree, new AppleTree(this.loader.AppleTreeAsset))
+        this.plantsFab.set(PlantId.AppleTree, new AppleTree(this.loader.AppleTreeAsset, this.loader.DeadTree2Asset))
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag, id: string) => {
             if(mode != AppMode.Farmer) return
@@ -231,7 +231,7 @@ export class Farmer implements IModelReload, IViewer {
         let meshs;
         switch (plantEntry.id) {
             case PlantId.AppleTree:
-                tree = new AppleTree(this.loader.AppleTreeAsset)
+                tree = new AppleTree(this.loader.AppleTreeAsset, this.loader.DeadTree2Asset)
                 const [_meshs, _exist] = await this.loader.AppleTreeAsset.UniqModel("appletree" + this.plantset.length)
                 
                 meshs = _meshs

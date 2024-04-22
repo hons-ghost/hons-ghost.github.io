@@ -150,7 +150,7 @@ export class GameCenter implements IViewer, IModelReload {
         if(this.currentMin != nowMin) { this.currentMin = nowMin } else { return }
 
         this.deckInfo.forEach((e) => {
-            if(!e.execute && e.time * 60 > this.currentSec) {
+            if(!e.execute && e.time <= this.currentMin) {
                 //todo: execute
                 e.execute = true
                 if(e.rand) {

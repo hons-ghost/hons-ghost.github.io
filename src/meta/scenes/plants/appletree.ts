@@ -11,7 +11,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
     gauge = new ProgressBar(0.1, 0.1, 2)
     lv = 0
 
-    constructor(asset: IAsset) {
+    constructor(asset: IAsset, private deadtree: IAsset) {
         super(asset)
         this.text = new FloatingName("나무를 심어주세요")
     }
@@ -49,16 +49,9 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
             }
         })
     }
-    Death(): void {
-        this.meshs.children[0].traverse(child => {
-            if('material' in child) {
-                const material = child.material as THREE.MeshStandardMaterial
-                material.transparent = true;
-                material.depthWrite = false;
-                material.opacity = .5;
-                material.color = new THREE.Color("#ffffff")
-            }
-        })
+    async Death(): Promise<void> {
+        this.meshs.children[0].visible = false
+        this.meshs.add(await this.CreateDeadTree())
     }
     SetOpacity(opacity: number) {
         this.meshs.children[0].traverse(child => {
@@ -109,7 +102,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
     }
 
     async MassLoader(meshs:THREE.Group, scale: number, position: THREE.Vector3) {
-        this.meshs = meshs.clone()
+        this.meshs = meshs
         this.meshs.scale.set(scale, scale, scale)
         this.meshs.position.set(position.x, position.y, position.z)
         this.meshs.castShadow = true
@@ -124,5 +117,8 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
             }
         })
         this.meshs.visible = false
+    }
+    async CreateDeadTree() {
+        return await this.deadtree.CloneModel()
     }
 }

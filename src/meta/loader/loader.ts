@@ -80,6 +80,7 @@ export class Loader {
     get Mushroom2Asset(): IAsset { return this.mushroom2 }
     get TreeAsset(): IAsset { return this.tree }
     get DeadTreeAsset(): IAsset { return this.deadtree }
+    get DeadTree2Asset(): IAsset { return this.deadTree2 }
     get PortalAsset(): IAsset { return this.portal }
 
     get ZombieAsset(): IAsset { return this.zombie }

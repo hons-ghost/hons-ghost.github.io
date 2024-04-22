@@ -13,7 +13,7 @@ import { IViewer } from "../models/iviewer";
 import { Canvas } from "../../common/canvas";
 import { AttackOption, AttackType, PlayerCtrl } from "../player/playerctrl";
 import { FurnCtrl } from "./furnctrl";
-import { FurnDb, FurnId } from "./furndb";
+import { FurnDb, FurnId, FurnProperty } from "./furndb";
 import { Bed } from "./bed";
 
 export enum FurnState {
@@ -23,7 +23,7 @@ export enum FurnState {
     Done,
 }
 export type FurnEntry = {
-    id: string
+    id: FurnId
     createTime: number // ms, 0.001 sec
     state: FurnState
     position: THREE.Vector3
@@ -31,8 +31,10 @@ export type FurnEntry = {
 }
 
 export type FurnSet = {
+    id: FurnId
     furn: IPhysicsObject
     furnCtrl: FurnCtrl
+    used: boolean
 }
 export class FurnBox extends THREE.Mesh {
     constructor(public Id: number, public ObjName: string,
@@ -96,8 +98,14 @@ export class Carpenter implements IModelReload, IViewer {
             switch(keyCommand.Type) {
                 case KeyType.Action0:
                     if (!this.target || !this.targetId) return
-                    this.CreateFurn(this.target.CannonPos, this.target.Meshs.rotation, this.targetId,
-                        FurnState.NeedBuilding)
+                    const e: FurnEntry = {
+                        id: this.targetId,
+                        position: this.target.CannonPos,
+                        rotation: this.target.Meshs.rotation,
+                        state: FurnState.NeedBuilding,
+                        createTime: 0
+                    }
+                    this.CreateFurn(e)
                     eventCtrl.OnAppModeEvent(AppMode.EditPlay)
                     break;
                 case KeyType.Action1:
@@ -135,38 +143,25 @@ export class Carpenter implements IModelReload, IViewer {
     }
 
     async Viliageload(): Promise<void> {
-
+        this.ReleaseAllFurnPool()
     }
     async Reload(): Promise<void> {
+        this.ReleaseAllFurnPool()
         this.saveData = this.store.Furn
         if (this.saveData) this.saveData.forEach((e) => {
-            this.CreateFurn(e.position, e.rotation, e.id, e.state)
+            this.CreateFurn(e)
         })
 
     }
-    async CreateFurn(pos: THREE.Vector3, rot: THREE.Euler, id: string, state: FurnState) {
-        const property = this.furnDb.get(id)
+    async CreateFurn(furnEntry: FurnEntry) {
+        const property = this.furnDb.get(furnEntry.id)
         if (!property) return
-        let furn;
-        let meshs;
-        switch (id) {
-            case FurnId.DefaultBed:
-                furn = new Bed(this.loader.BedAsset)
-                const [_meshs, _exist] = await this.loader.BedAsset.UniqModel("bed" + this.furnitures.length)
-                meshs = _meshs
-                break;
-        }
-        if (!furn || !meshs) return
-
-        await furn.MassLoader(meshs, pos, rot)
-        furn.Create()
-        furn.Visible = true
-        const treeCtrl = new FurnCtrl(this.furnitures.length, furn, furn, property, 
-            this.gphysic, this.saveData, state) 
         
-        this.furnitures.push({ furn: furn, furnCtrl: treeCtrl})
-        this.playerCtrl.add(treeCtrl.phybox)
-        this.game.add(furn.Meshs, treeCtrl.phybox)
+        let furnset = this.AllocateFurnPool(property, furnEntry)
+        if (!furnset) furnset = await this.NewPlantEntryPool(furnEntry, property)
+
+        this.playerCtrl.add(furnset.furnCtrl.phybox)
+        this.game.add(furnset.furn.Meshs, furnset.furnCtrl.phybox)
     }
     async FurnLoader() {
         const p = SConf.DefaultPortalPosition
@@ -205,5 +200,49 @@ export class Carpenter implements IModelReload, IViewer {
             } while (!this.gphysic.Check(this.target) && this.target.CannonPos.y >= 0)
             this.target.CannonPos.y += 0.2
         //}
+    }
+    allocPos = 0
+    AllocateFurnPool(property: FurnProperty, furnEntry: FurnEntry) {
+        for (let i = 0; i < this.furnitures.length; i++, this.allocPos++) {
+            const e = this.furnitures[i]
+            if(e.id == property.id && e.used == false) {
+                e.used = true
+                e.furn.CannonPos.copy(furnEntry.position)
+                e.furn.Meshs.rotation.copy(furnEntry.rotation)
+                e.furnCtrl.phybox.position.copy(furnEntry.position)
+                return e
+            }
+            this.allocPos %= this.furnitures.length
+        }
+    }
+    ReleaseAllFurnPool() {
+        this.furnitures.forEach((set) => {
+            set.used = false
+            this.playerCtrl.remove(set.furnCtrl.phybox)
+            this.game.remove(set.furn.Meshs, set.furnCtrl.phybox)
+        })
+    }
+    async NewPlantEntryPool(furnEntry: FurnEntry, property: FurnProperty): Promise<FurnSet> {
+        let furn;
+        let meshs;
+        switch (furnEntry.id) {
+            case FurnId.DefaultBed:
+                furn = new Bed(this.loader.BedAsset)
+                const [_meshs, _exist] = await this.loader.BedAsset.UniqModel("bed" + this.furnitures.length)
+                meshs = _meshs
+                break;
+        }
+        if (!furn || !meshs) throw new Error("unexpected allocation fail");
+        
+
+        await furn.MassLoader(meshs, furnEntry.position, furnEntry.rotation)
+        furn.Create()
+        furn.Visible = true
+        const treeCtrl = new FurnCtrl(this.furnitures.length, furn, furn, property, 
+            this.gphysic, this.saveData, furnEntry.state) 
+        
+        const furnset: FurnSet = { id: furnEntry.id, furn: furn, furnCtrl: treeCtrl, used: true }
+        this.furnitures.push(furnset)
+        return furnset
     }
 }

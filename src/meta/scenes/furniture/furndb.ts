@@ -10,7 +10,7 @@ export enum FurnType {
 }
 
 export type FurnProperty = {
-    id: string
+    id: FurnId
     type: FurnType
     assetId: Char
     name: string
@@ -19,7 +19,7 @@ export type FurnProperty = {
 }
 
 export class FurnDb {
-    plantDb = new Map<string, FurnProperty>()
+    plantDb = new Map<FurnId, FurnProperty>()
     constructor() {
         this.plantDb.set(FurnId.DefaultBed, {
             id: FurnId.DefaultBed,
@@ -29,7 +29,7 @@ export class FurnDb {
             buildingTime: 1000 * 60, // a min
         })
     }
-    get(id: string) {
+    get(id: FurnId) {
         return this.plantDb.get(id)
     }
 }

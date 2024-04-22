@@ -17,6 +17,7 @@ export type DeckType = {
     minTime: number // 소환 가능한 최소 시간
     maxTime: number // 소환 가능한 최대 시간
     maxSpawn: number // 소환 가능한 몬스터 수
+    uniq: boolean
     monId: symbol
 }
 
@@ -32,6 +33,7 @@ export class Deck {
         minTime: 0,
         maxTime: 10,
         maxSpawn: 30,
+        uniq: false,
         monId: MonsterId.Zombie,
     }
     constructor() {

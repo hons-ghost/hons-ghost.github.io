@@ -11,6 +11,8 @@ import { InvenFactory } from "../inventory/invenfactory";
 import { Alarm, AlarmType } from "../common/alarm";
 import { CircleEffect } from "./models/circle";
 import { IModelReload, ModelStore } from "../common/modelstore";
+import { Deck, DeckId } from "../inventory/items/deck";
+import { MonsterId } from "./monsters/monsterdb";
 
 export enum GameType {
     VamSer,
@@ -19,6 +21,15 @@ export enum GameType {
 export type GameOptions = {
     OnEnd: Function
     OnSaveInven: Function
+}
+export type DeckInfo = {
+    id: DeckId,
+    monId: MonsterId,
+    position: THREE.Vector3[]
+    time: number
+    rand: boolean
+    uniq: boolean
+    execute: boolean
 }
 
 export class GameCenter implements IViewer, IModelReload {
@@ -36,6 +47,10 @@ export class GameCenter implements IViewer, IModelReload {
     playing = false
     dom = document.createElement("div")
     torus = new CircleEffect(10)
+    saveData = this.store.Deck
+    deckInfo: DeckInfo[] = []
+    keytimeout?:NodeJS.Timeout
+    deckEmpty = false
 
     constructor(
         private player: Player, 
@@ -47,7 +62,7 @@ export class GameCenter implements IViewer, IModelReload {
         private alarm: Alarm,
         private game: THREE.Scene,
         private eventCtrl: EventController,
-        store: ModelStore,
+        private store: ModelStore,
     ) {
         console.log(this.playerCtrl, this.monster)
         store.RegisterStore(this)
@@ -57,6 +72,7 @@ export class GameCenter implements IViewer, IModelReload {
                 case EventFlag.Start:
                     this.invenFab.inven.Clear()
                     this.createTimer()
+                    this.StartDeckParse()
                     this.timer = 0
                     this.playing = true
                     break
@@ -88,15 +104,74 @@ export class GameCenter implements IViewer, IModelReload {
     currentSec = 0
     updateTimer(delta: number) {
         this.timer += delta
-        if (this.currentSec == Math.floor(this.timer)) return
+        if (this.currentSec == Math.floor(this.timer)) return false
 
         this.currentSec = Math.floor(this.timer)
         const min = Math.floor(this.currentSec / 60)
         const sec = this.currentSec % 60
         this.dom.innerText = ((min < 10) ? "0" + min : min) + ":" + ((sec < 10) ? "0" + sec : sec)
+        return true
     }
     Setup(opt: GameOptions) {
         this.opt = opt
+    }
+    StartDeckParse() {
+        this.saveData.forEach((e) => {
+            if(!e.enable) return
+            const deck = this.deckInfo.find((info) => info.id == e.id)
+            if(deck) {
+                deck.position.push(e.position)
+            } else {
+                const deck = Deck.DeckDb.get(e.id)
+                if(!deck) throw new Error("unexpected data");
+                
+                this.deckInfo.push({
+                    id: e.id,
+                    monId: deck.monId,
+                    position: [e.position],
+                    time: e.time,
+                    rand: e.rand,
+                    uniq: deck?.uniq,
+                    execute: false,
+                })
+            }
+        })
+    }
+    currentMin = -1
+    ExecuteDeck() {
+        if(this.deckEmpty) return
+        if(this.deckInfo.length == 0) {
+            //todo: random deck execute
+            this.monster.InitMonster()
+            this.deckEmpty = true
+            return
+        }
+        const nowMin = Math.floor(this.currentSec / 60)
+        if(this.currentMin != nowMin) { this.currentMin = nowMin } else { return }
+
+        this.deckInfo.forEach((e) => {
+            if(!e.execute && e.time * 60 > this.currentSec) {
+                //todo: execute
+                e.execute = true
+                if(e.rand) {
+                    this.monster.CreateMonster(e.monId)
+                } else {
+                    const idx = THREE.MathUtils.randInt(0, e.position.length - 1)
+                    this.monster.CreateMonster(e.monId, e.position[idx])
+                } 
+                if(!e.uniq) {
+                    this.Respawning(e)
+                }
+            }
+        })
+    }
+    Respawning(deckInfo: DeckInfo) {
+        const interval = THREE.MathUtils.randInt(4000, 8000)
+        this.keytimeout = setTimeout(() => {
+            const idx = THREE.MathUtils.randInt(0, deckInfo.position.length - 1)
+            this.monster.CreateMonster(deckInfo.monId, deckInfo.position[idx])
+            this.Respawning(deckInfo)
+        }, interval)
     }
     CheckPortal(delta: number) {
         const pos1 = this.player.CannonPos
@@ -104,6 +179,7 @@ export class GameCenter implements IViewer, IModelReload {
         const dist = pos1.distanceTo(pos2)
         if(dist < 10) {
             this.torus.position.copy(this.portal.CannonPos)
+            this.torus.position.y += 2
             this.torus.visible = true
             this.torus.rotateZ(Math.PI * delta * .5)
             if (!this.safe) {
@@ -121,10 +197,16 @@ export class GameCenter implements IViewer, IModelReload {
     resize(): void { }
     update(delta: number): void {
         if (!this.playing) return
-        this.updateTimer(delta)
+        if(this.updateTimer(delta)) {
+            this.ExecuteDeck()
+        }
         this.CheckPortal(delta)
     }
-    async Viliageload(): Promise<void> { }
+    async Viliageload(): Promise<void> {
+        this.deckInfo.length = 0
+    }
     async Reload(): Promise<void> {
+        this.deckInfo.length = 0
+        this.saveData = this.store.Deck
     }
 }

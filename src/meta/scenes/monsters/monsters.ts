@@ -3,12 +3,9 @@ import { Loader } from "../../loader/loader"
 import { EventController, EventFlag } from "../../event/eventctrl"
 import { Game } from "../game"
 import { GPhysics } from "../../common/physics/gphysics";
-import { Char } from "../../loader/assetmodel";
 import { AppMode } from "../../app";
-import { Zombie } from "./zombie/zombie";
 import { Legos } from "../bricks/legos";
 import { EventBricks } from "../bricks/eventbricks";
-import { ZombieCtrl } from "./zombie/zombiectrl";
 import { Player } from "../player/player";
 import { AttackOption, PlayerCtrl } from "../player/playerctrl";
 import { math } from "../../../libs/math";
@@ -16,8 +13,9 @@ import { Drop } from "../../drop/drop";
 import { MonDrop, MonsterDb, MonsterId } from "./monsterdb";
 import { EffectType } from "../../effects/effector";
 import { IPhysicsObject } from "../models/iobject";
+import { CreateMon } from "./createmon";
 
-type MonsterSet = {
+export type MonsterSet = {
     monModel: IPhysicsObject,
     monCtrl: IMonsterCtrl
     live: boolean
@@ -44,10 +42,11 @@ export interface IPlayerAction {
 }
 
 export class Monsters {
-    zombies: MonsterSet[] = []
+    monsters: MonsterSet[] = []
     keytimeout?:NodeJS.Timeout
     respawntimeout?:NodeJS.Timeout
     mode = AppMode.Close
+    createMon = new CreateMon(this.loader, this.eventCtrl, this.player, this.legos, this.eventBricks, this.gphysic, this.monDb, this.monsters)
 
     constructor(
         private loader: Loader,
@@ -66,10 +65,10 @@ export class Monsters {
             if(mode != AppMode.Play) return
             switch (e) {
                 case EventFlag.Start:
-                    this.InitZombie()
+                    //this.InitMonster()
                     break
                 case EventFlag.End:
-                    this.ReleaseZombie()
+                    this.ReleaseMonster()
                     break
             }
         })
@@ -79,7 +78,7 @@ export class Monsters {
                 let obj = opt.obj as MonsterBox
                 if (obj == null) return
 
-                const z = this.zombies[obj.Id]
+                const z = this.monsters[obj.Id]
                 if (!z.live) return
 
                 this.ReceiveDemage(z, opt.damage, opt.effect)
@@ -92,8 +91,8 @@ export class Monsters {
             const damage = opts[0].damage
             const effect = opts[0].effect
             if(dist == undefined) return
-            for(let i = 0; i < this.zombies.length; i++) {
-                const z = this.zombies[i]
+            for(let i = 0; i < this.monsters.length; i++) {
+                const z = this.monsters[i]
                 if (!z.live) continue
                 const betw = z.monModel.CannonPos.distanceTo(pos)
                 if (betw < dist) {
@@ -120,9 +119,8 @@ export class Monsters {
             }, THREE.MathUtils.randInt(4000, 8000))
         }
     }
-    async InitZombie() {
-        const zSet = await this.CreateZombie()
-        this.zombies.push(zSet)
+    async InitMonster() {
+        const zSet = await this.createMon.Call(MonsterId.Zombie)
 
         this.keytimeout = setTimeout(()=> {
             zSet.monModel.Visible = true
@@ -133,31 +131,16 @@ export class Monsters {
                 this.randomSpawning()
             }, 5000)
         }, 5000)
-
-        /*
-        const ani = this.loader.GetAssets(Char.CrabMon)
-        const [meshs, exist] = await ani.UniqModel("test")
-        meshs.position.set(10, 2.5, 14)
-        this.game.add(meshs)
-        const minataur = new Minataur(this.loader, this.eventCtrl, this.gphysic, this.loader.MinatuarAsset)
-        await minataur.Loader(this.loader.GetAssets(Char.Minataur), new THREE.Vector3(10, 2.5, 16), "Minataur", 0)
-        minataur.Visible = true
-        this.game.add(minataur.Meshs)
-        */
     }
-
-    async CreateZombie(): Promise<MonsterSet> {
-        const zombie = new Zombie(this.loader.ZombieAsset)
-        await zombie.Loader(this.loader.GetAssets(Char.Zombie),
-                new THREE.Vector3(10, 0, 15), "Zombie", this.zombies.length)
-
-        const zCtrl = new ZombieCtrl(this.zombies.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic,
-            this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
-        return { monModel: zombie, monCtrl: zCtrl, live: true }
+    async CreateMonster(id: MonsterId, pos?: THREE.Vector3) {
+        const zSet = await this.createMon.Call(id)
+        if (pos) zSet.monModel.CannonPos.copy(pos)
+        zSet.monModel.Visible = true
+        this.playerCtrl.add(zSet.monCtrl.MonsterBox)
+        this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)
     }
-
-    ReleaseZombie() {
-        this.zombies.forEach((z) => {
+    ReleaseMonster() {
+        this.monsters.forEach((z) => {
             z.monModel.Visible = false
             this.game.remove(z.monModel.Meshs, z.monCtrl.MonsterBox)
         })
@@ -165,9 +148,8 @@ export class Monsters {
         if (this.respawntimeout != undefined) clearTimeout(this.respawntimeout)
     }
     async randomSpawning(){
-        const zSet = await this.CreateZombie()
-        this.zombies.push(zSet)
-
+        //const zSet = await this.CreateZombie()
+        const zSet = await this.createMon.Call(MonsterId.Zombie)
 
         zSet.monModel.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
         zSet.monModel.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
@@ -181,7 +163,7 @@ export class Monsters {
         this.playerCtrl.add(zSet.monCtrl.MonsterBox)
         this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)
 
-        if (this.zombies.length < 30) {
+        if (this.monsters.length < 30) {
             this.keytimeout = setTimeout(() => {
                 this.randomSpawning()
             }, 5000)

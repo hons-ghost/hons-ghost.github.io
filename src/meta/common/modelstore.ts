@@ -10,7 +10,7 @@ import { PlantEntry } from "../scenes/plants/farmer";
 import { FurnEntry } from "../scenes/furniture/carpenter";
 import { DeckEntry } from "../scenes/mondeck";
 
-type Lego = {
+export type Lego = {
     position: THREE.Vector3
     size: THREE.Vector3
     rotation: THREE.Euler
@@ -29,6 +29,7 @@ type StoreData = {
     monDeck: DeckEntry[]
     bricks: Brick[]
     legos: Lego[]
+    nonlegos: Lego[]
     owner: THREE.Vector3 | undefined
     ownerModel: Char | undefined
     ownerAction: ActionType
@@ -51,6 +52,7 @@ export class ModelStore {
         monDeck: [],
         bricks: [], 
         legos: [], 
+        nonlegos: [],
         owner: undefined, 
         ownerModel: Char.Male, 
         ownerAction: ActionType.Idle,
@@ -69,6 +71,7 @@ export class ModelStore {
     get Deck() { return (this.data.monDeck) ? this.data.monDeck : this.data.monDeck = [] }
     get Furn() { return (this.data.furn) ? this.data.furn : this.data.furn = [] }
     get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
+    get NonLegos() { return (this.data.nonlegos) ? this.data.nonlegos : this.data.nonlegos = [] }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
     set Owner(v: THREE.Vector3 | undefined) {

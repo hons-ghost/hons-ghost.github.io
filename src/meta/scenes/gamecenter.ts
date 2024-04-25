@@ -12,7 +12,7 @@ import { Alarm, AlarmType } from "../common/alarm";
 import { CircleEffect } from "./models/circle";
 import { IModelReload, ModelStore } from "../common/modelstore";
 import { Deck, DeckId } from "../inventory/items/deck";
-import { MonsterId } from "./monsters/monsterdb";
+import { MonsterId } from "./monsters/monsterid";
 
 export enum GameType {
     VamSer,
@@ -26,6 +26,7 @@ export type DeckInfo = {
     id: DeckId,
     monId: MonsterId,
     position: THREE.Vector3[]
+    title: string
     time: number
     rand: boolean
     uniq: boolean
@@ -71,10 +72,13 @@ export class GameCenter implements IViewer, IModelReload {
             switch (e) {
                 case EventFlag.Start:
                     this.invenFab.inven.Clear()
-                    this.createTimer()
                     this.StartDeckParse()
-                    this.timer = 0
-                    this.playing = true
+                    //delayed start
+                    setTimeout(() => {
+                        this.createTimer()
+                        this.timer = 0
+                        this.playing = true
+                    }, 3000)
                     break
                 case EventFlag.End:
                     this.playing = false
@@ -85,6 +89,7 @@ export class GameCenter implements IViewer, IModelReload {
                     if(this.safe) {
                         this.opt?.OnSaveInven(invenFab.invenHouse.data)
                     }
+                    if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
                     break
             }
         })
@@ -128,6 +133,7 @@ export class GameCenter implements IViewer, IModelReload {
                 this.deckInfo.push({
                     id: e.id,
                     monId: deck.monId,
+                    title: deck.title,
                     position: [e.position],
                     time: e.time,
                     rand: e.rand,
@@ -152,6 +158,7 @@ export class GameCenter implements IViewer, IModelReload {
         this.deckInfo.forEach((e) => {
             if(!e.execute && e.time <= this.currentMin) {
                 //todo: execute
+                this.alarm.NotifyInfo(`"${e.title}"이 발동되었습니다.`, AlarmType.Deck)
                 e.execute = true
                 if(e.rand) {
                     this.monster.CreateMonster(e.monId)

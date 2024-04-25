@@ -10,10 +10,12 @@ import { Player } from "../player/player";
 import { AttackOption, PlayerCtrl } from "../player/playerctrl";
 import { math } from "../../../libs/math";
 import { Drop } from "../../drop/drop";
-import { MonDrop, MonsterDb, MonsterId } from "./monsterdb";
+import { MonDrop, MonsterDb  } from "./monsterdb";
 import { EffectType } from "../../effects/effector";
 import { IPhysicsObject } from "../models/iobject";
 import { CreateMon } from "./createmon";
+import { MonsterId } from "./monsterid";
+import { NonLegos } from "../bricks/nonlegos";
 
 export type MonsterSet = {
     monModel: IPhysicsObject,
@@ -46,7 +48,7 @@ export class Monsters {
     keytimeout?:NodeJS.Timeout
     respawntimeout?:NodeJS.Timeout
     mode = AppMode.Close
-    createMon = new CreateMon(this.loader, this.eventCtrl, this.player, this.legos, this.eventBricks, this.gphysic, this.monDb, this.monsters)
+    createMon = new CreateMon(this.loader, this.eventCtrl, this.player, this.legos, this.nonlegos, this.eventBricks, this.gphysic, this.monDb, this.monsters)
 
     constructor(
         private loader: Loader,
@@ -55,6 +57,7 @@ export class Monsters {
         private player: Player,
         private playerCtrl: PlayerCtrl,
         private legos: Legos,
+        private nonlegos: NonLegos,
         private eventBricks: EventBricks,
         private gphysic: GPhysics,
         private drop: Drop,

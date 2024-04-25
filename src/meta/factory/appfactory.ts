@@ -35,6 +35,7 @@ import { Farmer } from "../scenes/plants/farmer";
 import { Carpenter } from "../scenes/furniture/carpenter";
 import { Deck } from "../inventory/items/deck";
 import { MonDeck } from "../scenes/mondeck";
+import { NonLegos } from "../scenes/bricks/nonlegos";
 
 
 export class AppFactory {
@@ -80,6 +81,7 @@ export class AppFactory {
     private worldSize: number
     private brick: EventBricks
     private legos: Legos
+    private nonLegos: NonLegos
     private rayViewer: RayViwer
 
     private currentScene: IScene
@@ -122,18 +124,19 @@ export class AppFactory {
 
         this.brick = new EventBricks(this.game, this.eventCtrl, this.store, this.gphysics, this.player)
         this.legos = new Legos(this.game, this.eventCtrl, this.store, this.Physics, this.player)
+        this.nonLegos = new NonLegos(this.game, this.eventCtrl, this.store, this.Physics, this.player)
         this.npcs = new NpcManager(this.loader, this.eventCtrl, this.game, this.canvas, this.store, this.gphysics)
-        this.monsters = new Monsters(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.brick, this.gphysics, this.drop, this.monDb)
+        this.monsters = new Monsters(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.legos, this.nonLegos, this.brick, this.gphysics, this.drop, this.monDb)
         this.buff = new Buff(this.eventCtrl, this.playerCtrl)
         this.materials = new Materials(this.player, this.playerCtrl, this.worldSize, this.loader, this.eventCtrl, this.game, this.canvas, this.drop, this.monDb)
-        this.farmer = new Farmer(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
+        this.farmer = new Farmer(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl, this.alarm)
         this.carp = new Carpenter(this.loader, this.player, this.playerCtrl, this.game, this.store, this.gphysics, this.canvas, this.eventCtrl)
         this.monDeck = new MonDeck(this.loader, this.eventCtrl, this.game, this.player, this.playerCtrl, this.canvas, this.store)
 
         this.gameCenter = new GameCenter(this.player, this.playerCtrl, this.portal, this.monsters, this.invenFab, this.canvas, this.alarm, this.game, this.eventCtrl, this.store)
 
-        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.portal, this.farmer, this.carp, this.eventCtrl)
-        this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.brick, this.canvas, this.eventCtrl)
+        this.camera = new Camera(this.canvas, this.player, this.npcs, this.brick, this.legos, this.nonLegos, this.portal, this.farmer, this.carp, this.eventCtrl)
+        this.rayViewer = new RayViwer(this.player, this.camera, this.legos, this.nonLegos, this.brick, this.canvas, this.eventCtrl)
         this.renderer = new Renderer(this.camera, this.game, this.canvas)
         this.currentScene = this.game
 
@@ -160,13 +163,15 @@ export class AppFactory {
     async MassDeadTreeLoader() {
         const meshs = await this.loader.DeadTreeAsset.CloneModel()
         const pos = new THREE.Vector3()
+        const radius = this.worldSize / 2
         for (let i = 0; i < 30; i++) {
+            const phi = Math.random() * Math.PI * 2
+            const r = THREE.MathUtils.randFloat(radius * 0.2, radius * 1.5)
             pos.set(
-                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
-                math.rand_int(1.5, 3),
-                (Math.random() * 2.0 - 1.0) * (this.worldSize / 1.5),
+                r * Math.cos(phi),
+                math.rand_int(0, 1.5),
+                r * Math.sin(phi),
             )
-            if (pos.z > 0 && pos.z < 7) pos.z += 7
             const type = math.rand_int(0, 2)
             const scale = math.rand_int(5, 9)
             const tree = new DeadTree(this.loader.DeadTreeAsset)

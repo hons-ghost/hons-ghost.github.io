@@ -102,7 +102,7 @@ export class EditGame {
         const deckEndty = deckinfo.find((e) => e.id == deck.id)
         const html = `
         <div class="input-group mb-1">
-        <button class="btn btn-light" type="button">소환위치</button>
+        <button class="btn btn-light" type="button" id="locationbtn">소환위치</button>
         <select id="decklocation" class="form-select" aria-label="Default select example">
             <option value="0" ${(deckEndty?.rand) ? "selected" : ""}>Random</option>
             <option value="1" ${(deckEndty?.rand) ? "" : "selected"}>위치지정</option>
@@ -129,8 +129,18 @@ export class EditGame {
         }
 
         const decklocation = document.getElementById("decklocation") as HTMLSelectElement
-        if (decklocation) decklocation.onchange = () => {
-            switch (decklocation.value) {
+        if (decklocation) {
+            decklocation.onchange = () => {
+                this.deckLocationChangeEvent(decklocation, deck)
+            }
+            const locationbtn = document.getElementById("locationbtn")
+            if(locationbtn) locationbtn.onclick = () => {
+                this.deckLocationChangeEvent(decklocation, deck)
+            }
+        }
+    }
+    deckLocationChangeEvent(dom: HTMLSelectElement, deck: DeckType) {
+        switch (dom.value) {
                 case "1":
                     this.locator(deck)
                     break;
@@ -138,7 +148,6 @@ export class EditGame {
                     this.changeSetup(deck)
                     break
             }
-        }
     }
     changeSetup(deck: DeckType) {
         const decklocation = document.getElementById("decklocation") as HTMLSelectElement

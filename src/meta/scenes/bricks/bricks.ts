@@ -2,12 +2,13 @@ import * as THREE from "three";
 import { BrickGuide, BrickGuideType } from "./brickguide";
 import { Brick2 } from "./brick2";
 import { EventController } from "../../event/eventctrl";
-import { ModelStore } from "../../common/modelstore";
+import { Lego, ModelStore } from "../../common/modelstore";
 import { GPhysics } from "../../common/physics/gphysics";
 import { IKeyCommand } from "../../event/keycommand";
 import { IBuildingObject } from "../models/iobject";
 import SConf from "../../configs/staticconf";
 import { Player } from "../player/player";
+import { AppMode } from "../../app";
 
 export type BrickOption = {
     v?: THREE.Vector3,
@@ -34,6 +35,7 @@ export class Bricks {
     bricks2: Brick2[] = []
     eventbricks: EventBrick[] = []
     deleteMode = false
+    currentMode?: AppMode
 
     protected brickType = BrickGuideType.Event
     protected brickSize: THREE.Vector3 = new THREE.Vector3(1, 1, 1)
@@ -50,12 +52,15 @@ export class Bricks {
         protected eventCtrl: EventController,
         protected store: ModelStore,
         protected physics: GPhysics,
-        protected player: Player
+        protected player: Player,
+        protected mode: AppMode,
+        protected save: Lego[]
     ) {
 
         eventCtrl.RegisterInputEvent((e: any, _real: THREE.Vector3, vir: THREE.Vector3) => {
-            if (this.brickGuide == undefined) return
-            if (!this.brickGuide.ControllerEnable) return
+            if (this.brickGuide == undefined ||
+                !this.brickGuide.ControllerEnable ||
+                this.mode != this.currentMode) return
             if (e.type == "move") {
                 this.movePos.copy(vir)
                 this.moveEvent(this.movePos)
@@ -66,8 +71,9 @@ export class Bricks {
 
 
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
-            if (this.brickGuide == undefined) return
-            if (!this.brickGuide.ControllerEnable) return
+            if (this.brickGuide == undefined ||
+                !this.brickGuide.ControllerEnable ||
+                this.mode != this.currentMode) return
             const position = keyCommand.ExecuteKeyDown()
             this.moveEvent(position)
         })
@@ -126,7 +132,7 @@ export class Bricks {
         }
     }
     DeleteLegos(b: Brick2) {
-        const l = this.store.Legos
+        const l = this.save
         for (let i = 0; i < l.length; i++) {
             if (this.VEqual(l[i].position, b.position)) {
                 l.splice(i, 1)
@@ -134,7 +140,6 @@ export class Bricks {
             }
         }
     }
-
 
     VEqual(v1: THREE.Vector3, v2: THREE.Vector3): boolean {
         return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z
@@ -145,7 +150,7 @@ export class Bricks {
         const b = new Brick2(this.brickGuide.position, this.brickSize, this.brickColor)
         b.rotation.copy(this.brickGuide.Meshs.rotation)
         if (this.brickType == BrickGuideType.Lego) {
-            this.store.Legos.push({
+            this.save.push({
                 position: b.position,
                 size: new THREE.Vector3().copy(this.brickSize),
                 rotation: b.rotation,
@@ -220,6 +225,7 @@ export class Bricks {
                 && this.brickGuide.CannonPos.y >= this.brickGuide.Size.y / 2)
             this.brickGuide.CannonPos.y += .5
         }
+        if(this.brickGuide.CannonPos.y < 1) this.brickGuide.CannonPos.y = 1
         /*
         if (this.physics.CheckBox(this.brickGuide.position, box)) {
             do {

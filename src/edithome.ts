@@ -108,7 +108,7 @@ export class EditHome extends Page {
         const avr2 = document.getElementById("avatar-second") as HTMLDivElement
         avr2.style.display = (this.mode == AppMode.Face) ? "block" : "none"
         const div = document.getElementById("brickmode") as HTMLDivElement
-        div.style.backgroundColor = (this.mode == AppMode.Brick) ? "silver" : "transparent"
+        div.style.backgroundColor = (this.mode == AppMode.NonLego) ? "silver" : "transparent"
         const fun = document.getElementById("funituremode") as HTMLDivElement
         fun.style.backgroundColor = (this.mode == AppMode.Furniture) ? "silver" : "transparent"
         const fun2 = document.getElementById("funiture-second") as HTMLDivElement
@@ -116,7 +116,7 @@ export class EditHome extends Page {
         const wea = document.getElementById("weaponmode") as HTMLDivElement
         wea.style.backgroundColor = (this.mode == AppMode.Weapon) ? "silver" : "transparent"
         const brickctrl = document.getElementById("brickctrl") as HTMLDivElement
-        brickctrl.style.display = (this.mode == AppMode.Lego) ? "block" : "none"
+        brickctrl.style.display = (this.mode == AppMode.Lego || this.mode == AppMode.NonLego) ? "block" : "none"
 
         this.game.OnOff(this.mode == AppMode.Weapon, this.inven.inven)
     }
@@ -168,12 +168,6 @@ export class EditHome extends Page {
             this.meta.ModeChange(AppMode.EditPlay)
             this.UpdateMenu()
         }
-        const div = document.getElementById("brickmode") as HTMLDivElement
-        div.onclick = () => {
-            this.mode = (this.mode != AppMode.Brick) ? AppMode.Brick : AppMode.EditPlay
-            this.meta.ModeChange(this.mode)
-            this.UpdateMenu()
-        }
         const avr = document.getElementById("avatarmode") as HTMLDivElement
         avr.onclick = () => {
             this.mode = (this.mode != AppMode.Face) ? AppMode.Face : AppMode.EditPlay
@@ -206,6 +200,16 @@ export class EditHome extends Page {
             this.mode = (this.mode != AppMode.Portal) ? AppMode.Portal : AppMode.EditPlay
             this.meta.ModeChange(this.mode)
             this.UpdateMenu()
+        }
+        const div = document.getElementById("brickmode") as HTMLDivElement
+        div.onclick = () => {
+            this.mode = (this.mode != AppMode.NonLego) ? AppMode.NonLego : AppMode.EditPlay
+            this.meta.ModeChange(this.mode)
+            this.UpdateMenu()
+            const colorPick = document.getElementById("myPicker") as HTMLInputElement
+            this.meta.ChangeBrickInfo({
+                v: this.brickSize, r: this.brickRotate, color: colorPick.value
+            })
         }
         const lego = document.getElementById("apart") as HTMLDivElement
         lego.onclick = () => {

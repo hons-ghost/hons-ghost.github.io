@@ -62,7 +62,7 @@ export class Input {
                     if (e == EventFlag.Start) {
                         this.LegacyButtonShow()
                         this.ButtonShow()
-                    } else {
+                    } else if (e == EventFlag.End) {
                         this.LegacyButtonHide()
                         this.ButtonHide()
                     }
@@ -73,7 +73,7 @@ export class Input {
                     if (e == EventFlag.Start) {
                         this.joystick.Show()
                         this.ButtonShow()
-                    } else {
+                    } else if (e == EventFlag.End) {
                         this.joystick.Hide()
                         this.ButtonHide()
                     }

@@ -18,10 +18,10 @@ export class GolemFab extends AssetModel implements IAsset {
                 child.castShadow = true
                 child.receiveShadow = true
             })
-            const scale = 1
+            const scale = 2
             this.meshs.scale.set(scale, scale, scale)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
-            console.log(gltf.animations)
+            console.log(this.meshs)
             this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "root|Idle"))
             this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "root|Walk"))
             this.clips.set(Ani.Punch, gltf.animations.find((clip) => clip.name == "root|Attack"))
@@ -48,8 +48,9 @@ export class GolemFab extends AssetModel implements IAsset {
 
         const bbox = new THREE.Box3().setFromObject(this.meshs.children[0])
         this.size = bbox.getSize(new THREE.Vector3)
-        this.size.x = Math.ceil(this.size.x)
-        this.size.z = Math.ceil(this.size.z)
+        this.size.x = Math.ceil(this.size.x) * 3
+        this.size.y = Math.ceil(this.size.y) * 5
+        this.size.z = Math.ceil(this.size.z) * 2
         return this.size 
     }
 }

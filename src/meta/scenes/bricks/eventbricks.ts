@@ -23,15 +23,16 @@ export class EventBricks extends Bricks implements IModelReload{
         physics: GPhysics,
         player: Player
     ) {
-        super(scene, eventCtrl, store, physics, player)
+        super(scene, eventCtrl, store, physics, player, AppMode.Brick, store.Legos)
         this.brickType = BrickGuideType.Event
         this.brickSize.set(3, 3, 3)
 
         store.RegisterStore(this)
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
-            if(mode != AppMode.Brick) return
-
+            this.currentMode = mode
+            this.deleteMode = (mode == AppMode.LegoDelete)
+            if (mode != AppMode.Brick) return
             if (this.brickGuide == undefined) return
             switch (e) {
                 case EventFlag.Start:
@@ -72,16 +73,17 @@ export class EventBricks extends Bricks implements IModelReload{
 
     EditMode() {
         this.ClearBlock()
+        this.ClearEventBrick()
 
-        const userBricks = this.store.Legos
+        const userBricks = this.store.Bricks
         const collidingBoxSize = new THREE.Vector3()
 
         userBricks.forEach((brick) => {
-            const b = new Brick2(brick.position, brick.size, brick.color)
-            b.rotation.copy(brick.rotation)
+            const b = new Brick2(brick.position, this.brickSize, brick.color)
+            //b.rotation.copy(brick.rotation)
             this.scene.add(b)
             this.bricks2.push(b)
-            collidingBoxSize.copy(brick.size).sub(this.subV)
+            collidingBoxSize.copy(this.brickSize).sub(this.subV)
             this.physics.addBuilding(b, brick.position, collidingBoxSize, b.rotation)
         })
     }

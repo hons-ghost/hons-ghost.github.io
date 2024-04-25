@@ -20,6 +20,7 @@ export class BirdMonFab extends AssetModel implements IAsset {
             })
             const scale = 1
             this.meshs.scale.set(scale, scale, scale)
+            this.meshs.rotateY(Math.PI)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
             console.log(gltf.animations)
             this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "idle"))
@@ -48,6 +49,7 @@ export class BirdMonFab extends AssetModel implements IAsset {
         const bbox = new THREE.Box3().setFromObject(this.meshs.children[0])
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
+        this.size.y = Math.ceil(this.size.y) * 2.5
         this.size.z = Math.ceil(this.size.z)
         return this.size 
     }

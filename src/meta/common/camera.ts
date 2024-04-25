@@ -13,6 +13,7 @@ import { Legos } from "../scenes/bricks/legos";
 import { AppMode } from "../app";
 import { Farmer } from "../scenes/plants/farmer";
 import { Carpenter } from "../scenes/furniture/carpenter";
+import { NonLegos } from "../scenes/bricks/nonlegos";
 
 enum ViewMode {
     Close,
@@ -40,6 +41,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         private npcs: NpcManager,
         private brick: EventBricks,
         private legos: Legos,
+        private nonlegos: NonLegos,
         private portal: Portal,
         private farmer: Farmer,
         private carp: Carpenter,
@@ -83,6 +85,16 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         this.controls.enabled = false
                         this.target = this.farmer.target?.Meshs
                         if (!this.target) break;
+
+                        this.focusAt(this.target.position)
+                    }
+                    break;
+                case AppMode.NonLego:
+                    if (e == EventFlag.Start) {
+                        this.viewMode = ViewMode.Target
+                        this.controls.enabled = false
+                        this.target = this.nonlegos.GetBrickGuide(this.player.CenterPos)
+                        if (this.animate != undefined) this.animate.kill()
 
                         this.focusAt(this.target.position)
                     }

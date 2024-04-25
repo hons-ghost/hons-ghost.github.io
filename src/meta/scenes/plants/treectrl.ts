@@ -8,6 +8,7 @@ export interface ITreeMotions {
     SetLevel(lv: number): void
     SetOpacity(opacity: number): void
     Death(): Promise<void>
+    Delete(opt: number): void
     Plant(): void
     Enough(): void
     NeedWarter(): void
@@ -22,7 +23,7 @@ export class TreeCtrl {
     checktime = 0
     phybox: PlantBox
     mySaveData?: PlantEntry
-    health = 5
+    health = 2
     get State() { return this.save.state }
 
     constructor(
@@ -83,7 +84,7 @@ export class TreeCtrl {
     }
     Delete():number {
         this.health --
-        this.treeMotion.SetOpacity(this.health / 5)
+        this.treeMotion.Delete(this.health / 5)
 
         return this.health
     }

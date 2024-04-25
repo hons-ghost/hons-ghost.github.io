@@ -13,7 +13,7 @@ export enum BrickShapeType {
     RoundCorner,
 }
 
-export class Legos extends Bricks implements IModelReload {
+export class NonLegos extends Bricks implements IModelReload {
     get Size(): THREE.Vector3 { return (this.brickGuide) ? this.brickGuide.Size : this.brickSize }
 
     constructor(
@@ -23,26 +23,11 @@ export class Legos extends Bricks implements IModelReload {
         physics: GPhysics,
         player: Player
     ) {
-        super(scene, eventCtrl, store, physics, player, AppMode.Lego, store.Legos)
+        super(scene, eventCtrl, store, physics, player, AppMode.NonLego, store.NonLegos)
         store.RegisterStore(this)
-        this.brickType = BrickGuideType.Lego
+        this.brickType = BrickGuideType.NonLego
 
         eventCtrl.RegisterBrickInfo((opt: BrickOption) => {
-            if (opt.clear) {
-                const legos = this.store.Legos
-                if (legos) {
-                    legos.length = 0
-                }
-                const nonLegos = this.store.NonLegos
-                if (nonLegos) {
-                    nonLegos.length = 0
-                }
-                const userBricks = this.store.Bricks
-                if (userBricks) {
-                    userBricks.length = 0
-                }
-            }
-
             if (this.brickGuide == undefined) return
 
             if (opt.v) {
@@ -65,7 +50,7 @@ export class Legos extends Bricks implements IModelReload {
             this.currentMode = mode
             this.deleteMode = (mode == AppMode.LegoDelete)
 
-            if (mode == AppMode.Lego || mode == AppMode.LegoDelete) {
+            if (mode == AppMode.NonLego || mode == AppMode.LegoDelete) {
                 if (this.brickGuide == undefined) {
                     this.brickGuide = this.GetBrickGuide(this.player.CannonPos)
                 }
@@ -105,25 +90,20 @@ export class Legos extends Bricks implements IModelReload {
             const s = this.brickGuide.Size // rotatio 이 적용된 형상
             p.x -= s.x / 2
             p.z -= s.z / 2
-            if (
-                p.x >= bfp.x && p.x + s.x <= bfp.x + this.fieldWidth &&
-                p.z >= bfp.z && p.z + s.z <= bfp.z + this.fieldHeight){
-                this.brickGuide.Creation = true
-            } else {
+            if ( p.x >= bfp.x && p.x <= bfp.x + this.fieldWidth &&
+                p.z >= bfp.z && p.z <= bfp.z + this.fieldHeight){
                 this.brickGuide.Creation = false
+            } else {
+                this.brickGuide.Creation = true
             }
         }
-    }
-
-    ChangeGuide() {
-        
     }
     EditMode() {
         this.ClearBlock()
         this.CreateBricks()
     }
     CreateBricks() {
-        const userBricks = this.store.Legos
+        const userBricks = this.store.NonLegos
         //const subV = new THREE.Vector3(0.1, 0.1, 0.1)
         //const size = new THREE.Vector3().copy(this.brickSize).sub(subV)
 
@@ -138,7 +118,7 @@ export class Legos extends Bricks implements IModelReload {
         })
     }
     CreateInstacedMesh() {
-        const userBricks = this.store.Legos
+        const userBricks = this.store.NonLegos
         if(!userBricks?.length) {
             return
         }

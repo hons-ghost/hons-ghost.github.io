@@ -10,10 +10,12 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
     get BoxPos() { return this.asset.GetBoxPos(this.meshs) }
     gauge = new ProgressBar(0.1, 0.1, 2)
     lv = 0
+    deadTree?: THREE.Group
 
     constructor(asset: IAsset, private deadtree: IAsset) {
         super(asset)
         this.text = new FloatingName("나무를 심어주세요")
+        this.text.position.y = 7
     }
 
     async Init() {
@@ -50,8 +52,23 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
         })
     }
     async Death(): Promise<void> {
+        if (this.text != undefined) {
+            this.text.visible = true
+            this.text.SetText("나무가 죽었습니다.")
+        }
         this.meshs.children[0].visible = false
-        this.meshs.add(await this.CreateDeadTree())
+        this.deadTree = await this.CreateDeadTree()
+        this.meshs.add(this.deadTree)
+    }
+    Delete(opt: number): void {
+        this.deadTree?.traverse(child => {
+            if('material' in child) {
+                const material = child.material as THREE.MeshStandardMaterial
+                material.transparent = false;
+                material.depthWrite = true;
+                material.opacity = opt;
+            }
+        })
     }
     SetOpacity(opacity: number) {
         this.meshs.children[0].traverse(child => {
@@ -96,7 +113,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
         this.gauge.position.z += 2
 
         if (this.text != undefined) {
-            this.text.position.y = 4
+            this.text.position.y = 7
             this.meshs.add(this.text)
         }
     }
@@ -119,6 +136,7 @@ export class AppleTree extends GhostModel implements IPhysicsObject, ITreeMotion
         this.meshs.visible = false
     }
     async CreateDeadTree() {
-        return await this.deadtree.CloneModel()
+        const mesh = await this.deadtree.CloneModel()
+        return mesh
     }
 }

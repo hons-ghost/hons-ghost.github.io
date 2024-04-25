@@ -23,6 +23,7 @@ export enum AppMode {
     Farmer,
     Portal,
     Lego,
+    NonLego,
     LegoDelete,
 }
 

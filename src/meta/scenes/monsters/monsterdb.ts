@@ -1,18 +1,6 @@
 import { ItemId } from "../../inventory/items/itemdb"
+import { MonsterId, MonsterType } from "./monsterid"
 
-export class MonsterId {
-    public static Zombie = Symbol("zombie")
-    public static Minataur = Symbol("minataur")
-
-    public static Stone = Symbol("stone")
-    public static Tree = Symbol("tree")
-}
-export enum MonsterType {
-    Undead, Dragon, Machine, Warrior, Angel,
-    Fish, Plant, Insect,
-    Wizard, Alien, Beast, Dinosaur,
-    Lightning, Flame, Rock
-}
 
 export type MonDrop = {
     itemId: string,
@@ -42,7 +30,55 @@ export class MonsterDb {
             attackSpeed: 2,
             drop: [
                 { itemId: ItemId.Leather, ratio: 0.5 },
-                { itemId: ItemId.ZombieDeck, ratio: 0.5 }
+                { itemId: ItemId.ZombieDeck, ratio: 0.1 }
+            ]
+        })
+        this.monDb.set(MonsterId.Minataur, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.MinataurDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Batpig, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.BatPigDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Bilby, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.BilbyDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Birdmon, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.BirdmonDeck, ratio: 0.05 }
             ]
         })
         this.monDb.set(MonsterId.Stone, {

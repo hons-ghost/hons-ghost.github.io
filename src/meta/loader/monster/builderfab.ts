@@ -47,7 +47,8 @@ export class BuilderFab extends AssetModel implements IAsset {
 
         const bbox = new THREE.Box3().setFromObject(this.meshs.children[0])
         this.size = bbox.getSize(new THREE.Vector3)
-        this.size.x = Math.ceil(this.size.x)
+        this.size.x = Math.ceil(this.size.x) * .8
+        this.size.y = Math.ceil(this.size.y) * 2
         this.size.z = Math.ceil(this.size.z)
         return this.size 
     }

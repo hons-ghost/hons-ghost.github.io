@@ -8,8 +8,10 @@ import { EventBricks } from "../bricks/eventbricks"
 import { GPhysics } from "../../common/physics/gphysics"
 import { Zombie } from "./zombie/zombie"
 import { ZombieCtrl } from "./zombie/zombiectrl"
-import { MonsterDb, MonsterId } from "./monsterdb"
+import { MonsterDb } from "./monsterdb"
 import { Char } from "../../loader/assetmodel";
+import { MonsterId } from "./monsterid";
+import { NonLegos } from "../bricks/nonlegos";
 
 export class CreateMon {
     monsterMap = new Map<MonsterId, Function>()
@@ -18,6 +20,7 @@ export class CreateMon {
         private eventCtrl: EventController,
         private player: Player,
         private legos: Legos,
+        private nonlegos: NonLegos,
         private eventBricks: EventBricks,
         private gphysic: GPhysics,
         private monDb: MonsterDb,
@@ -35,7 +38,7 @@ export class CreateMon {
         await zombie.Loader(this.loader.GetAssets(Char.Zombie),
                 pos, "Zombie", this.monsters.length)
 
-        const zCtrl = new ZombieCtrl(this.monsters.length, this.player, zombie, this.legos, this.eventBricks, this.gphysic,
+        const zCtrl = new ZombieCtrl(this.monsters.length, this.player, zombie, this.legos, this.nonlegos, this.eventBricks, this.gphysic,
             this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
         const monSet: MonsterSet =  { monModel: zombie, monCtrl: zCtrl, live: true }
         this.monsters.push(monSet)

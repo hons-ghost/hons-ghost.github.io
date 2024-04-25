@@ -15,6 +15,7 @@ import { IViewer } from "../models/iviewer";
 import { Canvas } from "../../common/canvas";
 import { TreeCtrl } from "./treectrl";
 import { AttackOption, AttackType, PlayerCtrl } from "../player/playerctrl";
+import { Alarm, AlarmType } from "../../common/alarm";
 
 export enum PlantState {
     NeedSeed,
@@ -54,6 +55,7 @@ export class Farmer implements IModelReload, IViewer {
     target?: IPhysicsObject
     targetId?: string
     plantDb = new PlantDb()
+    // 심을때 가이드하기 위한 메시
     plantsFab = new Map<string, IPhysicsObject>()
     plantset: PlantSet[] = []
     recycle: PlantSet[] = []
@@ -68,6 +70,7 @@ export class Farmer implements IModelReload, IViewer {
         private gphysic: GPhysics,
         canvas: Canvas,
         private eventCtrl: EventController,
+        private alarm: Alarm,
     ){
         canvas.RegisterViewer(this)
         store.RegisterStore(this)
@@ -86,7 +89,9 @@ export class Farmer implements IModelReload, IViewer {
                     this.target.Visible = true
                     this.target.CannonPos.x = this.player.CannonPos.x
                     this.target.CannonPos.z = this.player.CannonPos.z
+
                     this.eventCtrl.OnChangeCtrlObjEvent(this.target)
+                    this.CheckCollision()
                     console.log(id)
                     break
                 case EventFlag.End:
@@ -102,7 +107,7 @@ export class Farmer implements IModelReload, IViewer {
             if(!this.controllable) return
             switch(keyCommand.Type) {
                 case KeyType.Action0:
-                    if (!this.target || !this.targetId) return
+                    if (!this.target || !this.targetId || this.CheckPlantAPlant()) return
                     const e: PlantEntry = {
                         position: this.target.CannonPos, 
                         id: this.targetId, 
@@ -164,6 +169,22 @@ export class Farmer implements IModelReload, IViewer {
         })
         
     }
+    CheckPlantAPlant() {
+        const obj = this.target
+        if(!obj) return true
+        let ret = this.plantset.some((e) => {
+            return e.plant.Box.intersectsBox(obj.Box)
+        })
+        if(ret) {
+            this.alarm.NotifyInfo("다른 식물과 가깝습니다.", AlarmType.Normal)
+            return true
+        }
+        if(obj.CannonPos.y > 0.1){
+            this.alarm.NotifyInfo("지면에 심어야합니다.", AlarmType.Normal)
+            return true
+        } 
+        return false
+    }
     DeletePlant(id: number) {
         const plantset = this.plantset[id];
         plantset.used = false
@@ -205,6 +226,20 @@ export class Farmer implements IModelReload, IViewer {
             this.target.Meshs.position.z -= vz
         }
         // Check Collision Plant
+        this.CheckCollision()
+    }
+    CheckCollision() {
+        if(!this.target) return
+        if (this.gphysic.Check(this.target)) {
+            do {
+                this.target.CannonPos.y += 0.5
+            } while (this.gphysic.Check(this.target))
+        } else {
+            do {
+                this.target.CannonPos.y -= 0.5
+            } while (!this.gphysic.Check(this.target) && this.target.CannonPos.y >= 0)
+            this.target.CannonPos.y += 0.5
+        }
     }
     allocPos = 0
     AllocatePlantPool(property: PlantProperty, pos: THREE.Vector3) {
@@ -233,7 +268,6 @@ export class Farmer implements IModelReload, IViewer {
             case PlantId.AppleTree:
                 tree = new AppleTree(this.loader.AppleTreeAsset, this.loader.DeadTree2Asset)
                 const [_meshs, _exist] = await this.loader.AppleTreeAsset.UniqModel("appletree" + this.plantset.length)
-                
                 meshs = _meshs
                 break;
         }

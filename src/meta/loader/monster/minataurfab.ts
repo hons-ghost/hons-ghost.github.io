@@ -20,6 +20,8 @@ export class MinataurFab extends AssetModel implements IAsset {
             })
             const scale = 0.02
             this.meshs.scale.set(scale, scale, scale)
+            this.meshs.children[0].position.z -= 70
+            console.log(this.meshs)
             this.mixer = new THREE.AnimationMixer(gltf.scene)
             this.clips.set(Ani.Idle, gltf.animations.find((clip) => clip.name == "Armature|idle"))
             this.clips.set(Ani.Run, gltf.animations.find((clip) => clip.name == "Armature|Walk"))
@@ -48,8 +50,9 @@ export class MinataurFab extends AssetModel implements IAsset {
         
         const bbox = new THREE.Box3().setFromObject(this.meshs)
         this.size = bbox.getSize(new THREE.Vector3)
-        this.size.x = Math.ceil(this.size.x)
-        this.size.z = Math.ceil(this.size.z)
+        this.size.x = Math.ceil(this.size.x) / 2
+        this.size.y = Math.ceil(this.size.y) / 2
+        this.size.z = Math.ceil(this.size.z) / 2
         return this.size 
     }
 }

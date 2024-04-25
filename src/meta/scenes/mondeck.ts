@@ -2,7 +2,6 @@ import * as THREE from "three";
 import { EventController, EventFlag } from "../event/eventctrl";
 import { Game } from "./game";
 import { Player } from "./player/player";
-import { MonsterId } from "./monsters/monsterdb";
 import { AttackOption, PlayerCtrl } from "./player/playerctrl";
 import { Loader } from "../loader/loader";
 import { IViewer } from "./models/iviewer";
@@ -16,6 +15,7 @@ import { Char } from "../loader/assetmodel";
 import { IPhysicsObject } from "./models/iobject";
 import { CircleEffect } from "./models/circle";
 import { IModelReload, ModelStore } from "../common/modelstore";
+import { MonsterId } from "./monsters/monsterid";
 
 export type DeckMsg = {
     id: DeckId,

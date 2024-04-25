@@ -12,6 +12,20 @@ export class ItemId {
     public static Logs = "Logs"//Symbol("Logs")
     public static Rocks = "Rocks"//Symbol("Rocks")
     public static ZombieDeck = "ZombieDeck"
+    public static MinataurDeck = "MinataurDeck"
+    public static BatPigDeck = "BatPigDeck"
+    public static BilbyDeck = "BilbyDeck"
+    public static BirdmonDeck = "BirdmonDeck"
+    public static CrabDeck = "CrabDeck"
+    public static BuilderDeck = "BuilderDeck"
+    public static GolemDeck = "GolemDeck"
+    public static BigGolemDeck = "BigGolemDeck"
+    public static KittenMonkDeck = "KittenMonkDeck"
+    public static SkeletonDeck = "SkeletonDeck"
+    public static SnakeDeck = "SnakeDeck"
+    public static ToadMageDeck = "GolemDeck"
+    public static VikingDeck = "VikingDeck"
+    public static WereWolfDeck = "WerewolfDeck"
 }
 
 

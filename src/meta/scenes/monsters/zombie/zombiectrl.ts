@@ -9,6 +9,7 @@ import { IMonsterCtrl, IPlayerAction, MonsterBox } from "../monsters";
 import { EventController } from "../../../event/eventctrl";
 import { MonsterProperty } from "../monsterdb";
 import { EffectType } from "../../../effects/effector";
+import { NonLegos } from "../../bricks/nonlegos";
 
 
 
@@ -33,6 +34,7 @@ export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
         private player: IPhysicsObject, 
         private zombie: Zombie, 
         private legos: Legos,
+        private nonlegos: NonLegos,
         private eventBricks: EventBricks,
         private gphysic: GPhysics,
         private eventCtrl: EventController,
@@ -72,6 +74,10 @@ export class ZombieCtrl implements IGPhysic, IMonsterCtrl {
                 find = this.CheckVisible(this.legos.instancedBlock, dist)
             if (this.legos.bricks2.length > 0 && !find)
                 find = this.CheckVisibleMeshs(this.legos.bricks2, dist)
+            if (this.nonlegos.instancedBlock != undefined)
+                find = this.CheckVisible(this.nonlegos.instancedBlock, dist)
+            if (this.nonlegos.bricks2.length > 0 && !find)
+                find = this.CheckVisibleMeshs(this.nonlegos.bricks2, dist)
             if (this.eventBricks.instancedBlock != undefined && !find)
                 find = this.CheckVisible(this.eventBricks.instancedBlock, dist)
             if (this.eventBricks.bricks2.length > 0 && !find)

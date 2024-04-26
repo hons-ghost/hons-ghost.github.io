@@ -94,7 +94,7 @@ export class Lightning implements IEffect {
     lightning(start: THREE.Vector3, end: THREE.Vector3, iterations: number, max: number) {
         let result = [start, end]
         let temp = []
-        let mid, thrid, normal, randVec, l
+        let mid, normal, randVec, l
         max = max || 100
 
         if (iterations < 1) {
@@ -133,7 +133,6 @@ export class Lightning implements IEffect {
             return positions
 
         let l = count
-        let index = 0
         let vec3s = new THREE.Vector3()
         let vec3e = vec3s.clone()
         let vec3n = vec3s.clone()

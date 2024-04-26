@@ -1,13 +1,13 @@
 import { BlockStore } from "./store";
 import { Session } from "./session";
-import { HonReplyLinkTxId, HonTxId, HonsTxId } from "./models/tx";
+import { HonsTxId } from "./models/tx";
 import { HonEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
 import App, { AppMode } from "./meta/app";
 import { Page } from "./page";
 import { Ui } from "./models/ui";
 
-export class Hons extends Page{
+export class Hons extends Page {
     m_masterAddr: string;
     loadedCount: number
     targetLoadCount: number
@@ -111,13 +111,13 @@ export class Hons extends Page{
             .then(() => {
                 //this.meta.ModeChange(AppMode.Long, false)
                 this.ui.UiOn()
+                this.meta.render()
             })
         const myModel = this.blockStore.GetModel(this.session.UserId)
         this.blockStore.FetchModels(this.m_masterAddr)
             .then(async (result) => {
                 await this.meta.LoadVillage(result, myModel?.models)
             })
-        this.meta.render()
 
         const play = document.getElementById("playBtn") as HTMLButtonElement
         play.onclick = () => { 

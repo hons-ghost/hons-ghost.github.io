@@ -1,11 +1,9 @@
 import * as THREE from "three";
 import { IViewer } from "../scenes/models/iviewer";
-import { Player } from "../scenes/models/player";
+import { Player } from "../scenes/player/player";
 import { Canvas } from "../common/canvas";
 import SConf from "../configs/staticconf";
-import { MonDrop } from "../scenes/monsterdb";
-import { ItemId } from "../inventory/items/itemdb";
-import { math } from "../../libs/math";
+import { MonDrop } from "../scenes/monsters/monsterdb";
 import { Inventory } from "../inventory/inventory";
 import { Alarm, AlarmType } from "../common/alarm";
 import { EventController, EventFlag } from "../event/eventctrl";
@@ -14,7 +12,7 @@ import { AppMode } from "../app";
 type DropBox = {
     id: number
     droped: boolean
-    items?: symbol[]
+    items?: string[]
 }
 
 export class Drop implements IViewer {
@@ -27,6 +25,7 @@ export class Drop implements IViewer {
     maxCount = 300
     moveDist = 6
     dummy = new THREE.Object3D()
+    createPos = new THREE.Vector3()
 
     constructor(
         private alarm: Alarm,
@@ -34,7 +33,7 @@ export class Drop implements IViewer {
         private player: Player,
         canvas: Canvas,
         private scene: THREE.Scene,
-        private eventCtrl: EventController,
+        eventCtrl: EventController,
     ) {
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             if(mode != AppMode.Play) return
@@ -80,7 +79,7 @@ export class Drop implements IViewer {
 
     dropPoint(pos: THREE.Vector3, drop: MonDrop[] | undefined) {
         if (this.pointsGeometry == undefined) return
-        const itemIds: symbol[] = []
+        const itemIds: string[] = []
         if (drop != undefined) {
             const ticket = Math.random()
             drop.forEach((item) => {
@@ -97,7 +96,7 @@ export class Drop implements IViewer {
                 b.droped = true
                 b.items = itemIds
                 points.setX(b.id, pos.x)
-                points.setY(b.id, 5)
+                points.setY(b.id, pos.y)
                 points.setZ(b.id, pos.z)
                 this.activeDropBox.push(b)
                 break;
@@ -109,12 +108,13 @@ export class Drop implements IViewer {
     }
     pointsUpdate(delta: number) {
         if (!this.activeDropBox.length || this.pointsGeometry == undefined) return
-        const tp = this.player.CannonPos
+        this.createPos.copy(this.player.CannonPos)
+        this.createPos.y += this.player.Size.y / 2
         const points = this.pointsGeometry.attributes.position
         for (let i = 0; i < this.activeDropBox.length; i++) {
             const b = this.activeDropBox[i];
             const pos = new THREE.Vector3(points.getX(b.id), points.getY(b.id), points.getZ(b.id))
-            const dist = pos.distanceTo(tp)
+            const dist = pos.distanceTo(this.createPos)
             if (dist < 1) {
                 // Get Item
                 points.setX(b.id, this.resetPos.x)
@@ -128,12 +128,12 @@ export class Drop implements IViewer {
                     this.inventory.NewItem(item)
                 })
             } else if (dist < this.moveDist) {
-                if (tp.x - pos.x < 0) {
+                if (this.createPos.x - pos.x < 0) {
                     pos.x -= delta * this.speed
                 } else {
                     pos.x += delta * this.speed
                 }
-                if (tp.z - pos.z < 0) {
+                if (this.createPos.z - pos.z < 0) {
                     pos.z -= delta * this.speed
                 } else {
                     pos.z += delta * this.speed
@@ -146,7 +146,7 @@ export class Drop implements IViewer {
         points.needsUpdate = true
     }
 
-    resize(width: number, height: number): void { }
+    resize(): void { }
 
     speed = 1
     update(delta: number): void {

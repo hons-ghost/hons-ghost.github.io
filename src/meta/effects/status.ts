@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { IEffect } from "./effector";
 
 const font =  "bold 14pt sans-serif";
-const shadowColor =  "rgba(0,0,0,0.8)";
+//const shadowColor =  "rgba(0,0,0,0.8)";
 const shadowBlur = 2
 
 export class TextStatus extends THREE.Sprite implements IEffect {
@@ -13,7 +13,7 @@ export class TextStatus extends THREE.Sprite implements IEffect {
     get Mesh() { return this }
 
 
-    constructor(params: string, color: string, private left: boolean) {
+    constructor(params: string, color: string) {
         const element = document.createElement('canvas') as HTMLCanvasElement;
         let context2d = element.getContext('2d');
         if (context2d == null) return

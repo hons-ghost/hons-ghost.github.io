@@ -6,10 +6,10 @@ import { IScene } from "./scenes/models/iviewer";
 import { ModelStore } from "./common/modelstore";
 import { GPhysics } from "./common/physics/gphysics";
 import { Char } from "./loader/assetmodel";
-import { BrickOption } from "./scenes/bricks";
-import { Inventory } from "./inventory/inventory";
+import { BrickOption } from "./scenes/bricks/bricks";
 import { IBuffItem } from "./buff/buff";
 import { GameOptions } from "./scenes/gamecenter";
+import { LoadingManager } from "three";
 
 export enum AppMode {
     Long,
@@ -17,13 +17,13 @@ export enum AppMode {
     Play,
     EditPlay,
     Brick,
-    Locate,
     Face,
     Weapon,
-    Funiture,
+    Furniture,
     Farmer,
     Portal,
     Lego,
+    NonLego,
     LegoDelete,
 }
 
@@ -34,10 +34,11 @@ export default class App {
     physic: GPhysics
     currentScene: IScene
     eventCtrl: EventController
+    loadingManager: LoadingManager
     store: ModelStore
     initFlag: boolean = false
     renderFlag: boolean = false
-    currentMode = AppMode.Long
+    loadingVisible = true
 
     constructor() {
         this.canvas = this.factory.Canvas
@@ -45,10 +46,26 @@ export default class App {
         this.eventCtrl = this.factory.EventCtrl
         this.store = this.factory.ModelStore
         this.physic = this.factory.Physics
+        this.loadingManager = this.factory.LoadingManager
+
+        this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
+            if(mode != AppMode.Play) return
+            switch (e) {
+                case EventFlag.Start:
+                    this.loadingVisible = false
+                    break
+                case EventFlag.End:
+                    this.loadingVisible = true
+                    break
+            }
+        })
     }
 
     async init() {
         if (this.initFlag) return false
+
+        const progressBarContainer = document.querySelector('#progress-bar-container') as HTMLDivElement
+        progressBarContainer.style.display = "flex"
 
         await this.factory.GltfLoad()
         this.factory.InitScene()
@@ -90,6 +107,7 @@ export default class App {
             this.eventCtrl.OnKeyDownEvent(new KeySystem0)
         }
 
+        progressBarContainer.style.display = 'none'
         return true
     }
 
@@ -124,13 +142,11 @@ export default class App {
     ChangeBrickInfo(opt: BrickOption) {
         this.eventCtrl.OnChangeBrickInfo(opt)
     }
-    ModeChange(mode: AppMode, ...arg: any[]) {
-        this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.End)
-        this.eventCtrl.OnAppModeEvent(mode, EventFlag.Start, arg)
-        this.currentMode = mode
+    ModeChange(mode: AppMode, ...arg: any) {
+        this.eventCtrl.OnAppModeEvent(mode, ...arg)
     }
-    SendModeMessage(...arg: any[]) {
-        this.eventCtrl.OnAppModeEvent(this.currentMode, EventFlag.Message, arg)
+    SendModeMessage(...arg: any) {
+        this.eventCtrl.OnAppModeMessage(...arg)
     }
 
     ModelStore() {
@@ -149,9 +165,6 @@ export default class App {
         this.eventCtrl.OnSceneClearEvent()
         await this.store.LoadVillage(users, playerModel)
     }
-    async LoadInventory(inven: Inventory) {
-
-    }
     resize() {
         this.canvas.resize()
     }
@@ -163,5 +176,8 @@ export default class App {
     }
     SelectRandomBuff(buff: IBuffItem) {
         this.factory.Buff.SelectBuff(buff)
+    }
+    GetDeckInfo() {
+        return this.factory.ModelStore.Deck
     }
 }

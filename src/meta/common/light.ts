@@ -1,12 +1,9 @@
 import * as THREE from "three";
-import { IViewer } from "../scenes/models/iviewer";
-import { Canvas } from "./canvas";
-import { IPhysicsObject } from "../scenes/models/iobject";
 import SConf from "../configs/staticconf";
 //import { Gui } from "../factory/appfactory"
 
-export class Light extends THREE.DirectionalLight implements IViewer {
-    constructor(canvas: Canvas) {
+export class Light extends THREE.DirectionalLight {
+    constructor() {
         super(0xffffff, 2)
         //const pos = this.player.Position
         const pos = SConf.StartPosition
@@ -23,7 +20,7 @@ export class Light extends THREE.DirectionalLight implements IViewer {
         this.shadow.camera.top = 100
         this.shadow.camera.bottom = -100
 
-        canvas.RegisterViewer(this)
+        //canvas.RegisterViewer(this)
         /*
         Gui.add(this, "intensity", -30, 30).step(1).listen()
         Gui.add(this.position, "x", -30, 30).step(1).listen()
@@ -32,8 +29,7 @@ export class Light extends THREE.DirectionalLight implements IViewer {
         */
     }
 
-    resize(width: number, height: number): void {
-        
+    resize(): void {
     }
 
     update() {

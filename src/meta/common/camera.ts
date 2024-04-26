@@ -7,10 +7,13 @@ import { OrbitControls} from "three/examples/jsm/controls/OrbitControls"
 import { Npc } from "../scenes/models/npc";
 import { NpcManager } from "../scenes/npcmanager";
 import { EventController, EventFlag } from "../event/eventctrl";
-import { EventBricks } from "../scenes/eventbricks";
+import { EventBricks } from "../scenes/bricks/eventbricks";
 import { Portal } from "../scenes/models/portal";
-import { Legos } from "../scenes/legos";
+import { Legos } from "../scenes/bricks/legos";
 import { AppMode } from "../app";
+import { Farmer } from "../scenes/plants/farmer";
+import { Carpenter } from "../scenes/furniture/carpenter";
+import { NonLegos } from "../scenes/bricks/nonlegos";
 
 enum ViewMode {
     Close,
@@ -38,7 +41,10 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
         private npcs: NpcManager,
         private brick: EventBricks,
         private legos: Legos,
+        private nonlegos: NonLegos,
         private portal: Portal,
+        private farmer: Farmer,
+        private carp: Carpenter,
         private eventCtrl: EventController
     ) {
         super(75, canvas.Width / canvas.Height, 0.1, 800)
@@ -63,15 +69,34 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         this.focusAt(this.portal.CannonPos, new THREE.Vector3(0, 30, 30))
                     }
                     break;
-                case AppMode.Locate:
+                case AppMode.Furniture:
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
                         this.controls.enabled = false
-                        this.owner = this.npcs.Owner
-                        if (this.owner == undefined) return
+                        this.target = this.carp.target?.Meshs
+                        if (!this.target) break;
 
-                        this.target = this.owner.Meshs
-                        this.focusAt(this.owner.CannonPos)
+                        this.focusAt(this.target.position)
+                    }
+                    break;
+                case AppMode.Farmer:
+                    if (e == EventFlag.Start) {
+                        this.viewMode = ViewMode.Target
+                        this.controls.enabled = false
+                        this.target = this.farmer.target?.Meshs
+                        if (!this.target) break;
+
+                        this.focusAt(this.target.position)
+                    }
+                    break;
+                case AppMode.NonLego:
+                    if (e == EventFlag.Start) {
+                        this.viewMode = ViewMode.Target
+                        this.controls.enabled = false
+                        this.target = this.nonlegos.GetBrickGuide(this.player.CenterPos)
+                        if (this.animate != undefined) this.animate.kill()
+
+                        this.focusAt(this.target.position)
                     }
                     break;
                 case AppMode.LegoDelete:
@@ -79,7 +104,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
                         this.controls.enabled = false
-                        this.target = this.legos.GetBrickGuide()
+                        this.target = this.legos.GetBrickGuide(this.player.CenterPos)
                         if (this.animate != undefined) this.animate.kill()
 
                         this.focusAt(this.target.position)
@@ -89,7 +114,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                     if (e == EventFlag.Start) {
                         this.viewMode = ViewMode.Target
                         this.controls.enabled = false
-                        this.target = this.brick.GetBrickGuide(this.npcs.Owner.CannonPos)
+                        this.target = this.brick.GetBrickGuide(this.player.CenterPos)
                         if (this.animate != undefined) this.animate.kill()
 
                         this.focusAt(this.target.position)
@@ -161,7 +186,6 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         this.viewMode = ViewMode.Long
                         if (this.animate != undefined) this.animate.kill()
 
-                        const h = this.npcs.Helper
                         this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
                         this.rotation.x = -Math.PI / 4
                         this.position.set(this.longPos.x, this.longPos.y, this.longPos.z)
@@ -174,7 +198,7 @@ export class Camera extends THREE.PerspectiveCamera implements IViewer{
                         })
                         */
                         this.animate = gsap.to(this.longPos, {
-                            x: 16, y: 6.5, z: 36,
+                            x: 16, y: 4, z: 36,
                             duration: 4, ease: "power1.inOut", onUpdate: () => {
                                 this.rotation.set(this.bakRotation.x, this.bakRotation.y, this.bakRotation.z)
                                 this.position.set(this.longPos.x, this.longPos.y,

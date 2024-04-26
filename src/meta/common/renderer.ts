@@ -3,11 +3,13 @@ import { Camera } from "./camera";
 import { Canvas } from "./canvas";
 import { IViewer } from "../scenes/models/iviewer";
 import { OutlineEffect } from "three/examples/jsm/effects/OutlineEffect"
+/*
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass"
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass"
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass"
+*/
 
 export class Renderer extends THREE.WebGLRenderer implements IViewer{
     effect = new OutlineEffect(this)
@@ -15,7 +17,7 @@ export class Renderer extends THREE.WebGLRenderer implements IViewer{
     //finalComposer: EffectComposer
     bloomLayer = new THREE.Layers()
 
-    constructor(private camera: Camera, private scene: THREE.Scene, private canvas: Canvas) {
+    constructor(private camera: Camera, private scene: THREE.Scene, canvas: Canvas) {
         super({ /*alpha: true,*/ antialias: true, canvas: canvas.Canvas })
 
         THREE.ColorManagement.enabled = true

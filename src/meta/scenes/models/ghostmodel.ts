@@ -12,9 +12,14 @@ export class GhostModel {
     helper?: THREE.BoxHelper
 
     protected text?: FloatingName
+    protected centerPos = new THREE.Vector3()
 
     get Velocity() {return this.velocity}
     set Velocity(n: number) { this.velocity = n }
+    get CenterPos(): THREE.Vector3 { 
+        this.centerPos.copy(this.meshs.position).y += this.Size.y / 2
+        return this.centerPos
+    }
     get CannonPos(): THREE.Vector3 { return this.meshs.position }
     set CannonPos(v: THREE.Vector3) { this.meshs.position.copy(v) }
     set Quaternion(q: THREE.Quaternion) { this.meshs.quaternion.copy(q) }
@@ -28,6 +33,7 @@ export class GhostModel {
             this.meshs, new THREE.Color(0, 255, 0)
         )
     }
+    get UUID() { return this.meshs.uuid }
 
     get Visible() { return this.vFlag }
     set Visible(flag: boolean) {
@@ -52,20 +58,27 @@ export class GhostModel {
 export class GhostModel2 extends THREE.Mesh {
     protected size?: THREE.Vector3
     protected velocity = 0
+    protected centerPos = new THREE.Vector3()
 
     get Velocity() {return this.velocity}
     set Velocity(n: number) { this.velocity = n }
     get Box() {
         return new THREE.Box3().setFromObject(this)
     }
+    get CenterPos(): THREE.Vector3 { 
+        this.centerPos.copy(this.position).y += this.Size.y / 2
+        return this.centerPos
+    }
     get CannonPos(): THREE.Vector3 { return this.position}
     set CannonPos(v: THREE.Vector3) { this.position.copy(v) }
     set Quaternion(q: THREE.Quaternion) { this.quaternion.copy(q) }
     get Meshs() { return this }
+    get UUID() { return this.uuid }
     get Size() {
         const bbox = new THREE.Box3().setFromObject(this)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
+        this.size.y = Math.round(this.size.y)
         this.size.z = Math.ceil(this.size.z)
         return this.size
     }

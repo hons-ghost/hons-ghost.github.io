@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { ActionType, Player } from "../models/player"
+import { ActionType, Player } from "./player"
 import { PlayerCtrl } from "./playerctrl";
 import { KeyType } from "../../event/keycommand";
 import { GPhysics } from "../../common/physics/gphysics";
+import { AppMode } from "../../app";
 
 export interface IPlayerAction {
     Init(): void
@@ -42,20 +43,38 @@ export class State {
     }
     CheckAttack() {
         if (this.playerCtrl.KeyState[KeyType.Action1]) {
-            this.playerCtrl.AttackSt.Init()
-            return this.playerCtrl.AttackSt
+            if (this.playerCtrl.mode == AppMode.Play) {
+                this.playerCtrl.AttackSt.Init()
+                return this.playerCtrl.AttackSt
+            } else if(this.playerCtrl.mode == AppMode.Weapon) {
+                this.playerCtrl.DeckSt.Init()
+                return this.playerCtrl.DeckSt
+            } else {
+                this.playerCtrl.PlantASt.Init()
+                return this.playerCtrl.PlantASt
+            } 
         }
     }
     CheckMagic() {
         if (this.playerCtrl.KeyState[KeyType.Action2]) {
-            this.playerCtrl.MagicH1St.Init()
-            return this.playerCtrl.MagicH1St
+            if (this.playerCtrl.mode == AppMode.Play) {
+                this.playerCtrl.MagicH1St.Init()
+                return this.playerCtrl.MagicH1St
+            } else {
+                this.playerCtrl.WarteringSt.Init()
+                return this.playerCtrl.WarteringSt
+            }
         }
     }
-    CheckMagic2() {
+    CheckMagic2(): IPlayerAction | undefined {
         if (this.playerCtrl.KeyState[KeyType.Action3]) {
-            this.playerCtrl.MagicH2St.Init()
-            return this.playerCtrl.MagicH2St
+            if (this.playerCtrl.mode == AppMode.Play) {
+                this.playerCtrl.MagicH2St.Init()
+                return this.playerCtrl.MagicH2St
+            } else {
+                this.playerCtrl.PickFruitTreeSt.Init()
+                return this.playerCtrl.PickFruitTreeSt
+            }
         }
     }
     CheckJump() {
@@ -98,7 +117,7 @@ export class MagicH2State extends State implements IPlayerAction {
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) {
             this.Uninit()
@@ -129,7 +148,7 @@ export class MagicH1State extends State implements IPlayerAction {
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if (d != undefined) {
             this.Uninit()
@@ -143,7 +162,7 @@ export class MagicH1State extends State implements IPlayerAction {
 export class DeadState extends State implements IPlayerAction {
     constructor(playerPhy: PlayerCtrl, player: Player, gphysic: GPhysics) {
         super(playerPhy, player, gphysic)
-        this.Init()
+        //this.Init()
     }
     Init(): void {
         this.player.ChangeAction(ActionType.Dying)
@@ -151,7 +170,7 @@ export class DeadState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         return this
     }
 }
@@ -167,7 +186,7 @@ export class IdleState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
 

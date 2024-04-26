@@ -1,17 +1,12 @@
-import { BlockStore } from "./store";
-import { Session } from "./session";
 import { UploadTxId } from "./models/tx";
 import { Page } from "./page";
 
 
 export class UploadHon extends Page {
     m_masterAddr: string;
-    m_session: Session
-    public constructor(private blockStore: BlockStore
-        , private session: Session, url: string) {
+    public constructor(url: string) {
         super(url)
         this.m_masterAddr = "";
-        this.m_session = session;
     }
     warningMsg(msg: string) {
         const info = document.getElementById("information");

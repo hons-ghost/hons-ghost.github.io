@@ -1,7 +1,7 @@
 import * as EventEmitter from "eventemitter3";
 import { IKeyCommand } from "./keycommand";
 import SConf from "../configs/staticconf";
-import { BrickOption } from "../scenes/bricks";
+import { BrickOption } from "../scenes/bricks/bricks";
 import { AppMode } from "../app";
 import { IPhysicsObject } from "../scenes/models/iobject";
 import { AttackOption, PlayerStatus } from "../scenes/player/playerctrl";
@@ -88,9 +88,15 @@ export class EventController {
         this.eventEmitter.on("reload", callback)
     }
 
+    curMode = AppMode.Long
     // GAME MODE
-    OnAppModeEvent(mode: AppMode, e: EventFlag, ...arg: any[]) {
-        this.eventEmitter.emit(SConf.AppMode, mode, e, ...arg)
+    OnAppModeEvent(mode: AppMode, ...arg: any) {
+        this.eventEmitter.emit(SConf.AppMode, this.curMode, EventFlag.End, ...arg)
+        this.eventEmitter.emit(SConf.AppMode, mode, EventFlag.Start, ...arg)
+        this.curMode = mode
+    }
+    OnAppModeMessage(...arg: any) {
+        this.eventEmitter.emit(SConf.AppMode, this.curMode, EventFlag.Message, arg)
     }
     RegisterAppModeEvent(callback: (...e: any[]) => void) {
         this.eventEmitter.on(SConf.AppMode, callback)

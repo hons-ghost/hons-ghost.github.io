@@ -25,7 +25,7 @@ export class Joypad {
 		this.joy.height = 100;
 
 		this.joy.ontouchstart = (e) => {
-			this.start(e.touches[0].clientX, e.touches[0].clientY)
+			this.start()
             if (this.options.ontouchstart) {
                 this.options.ontouchstart(e)
 			}
@@ -41,10 +41,10 @@ export class Joypad {
                 this.options.ontouchend(e)
             }
 		}
-		this.joy.onmousedown = (e) => {
-			this.start(e.clientX, e.clientY)
+		this.joy.onmousedown = () => {
+			this.start()
 		}
-		this.joy.onmouseup = (e) => {
+		this.joy.onmouseup = () => {
 			this.end()
 		}
 		if (this.ctx == undefined) return
@@ -61,7 +61,7 @@ export class Joypad {
 		this.joy.style.display = "block"
 	}
 	send(msg: string) {
-		console.log(this.msg);
+		console.log(msg);
 	}
 
 	clearBackground() {
@@ -77,7 +77,7 @@ export class Joypad {
 		this.ctx.fill();
 	}
 
-	start(x: number, y: number) {
+	start() {
 		this.onTouch = true;
 		this.options.event("move", this.msg, this.moveX, this.moveY)
 	}

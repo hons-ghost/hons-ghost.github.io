@@ -53,7 +53,7 @@ export class Joystick {
 				this.move(e.clientX, e.clientY)
 			}
 		}
-		this.joy.onmouseup = (e) => {
+		this.joy.onmouseup = () => {
 			this.end()
 		}
 		if (this.ctx == undefined) return
@@ -73,7 +73,7 @@ export class Joystick {
 		this.joy.style.display = "block"
 	}
 	send(msg: string) {
-		console.log(this.msg);
+		console.log(msg);
 	}
 
 	clearBackground() {

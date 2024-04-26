@@ -1,6 +1,6 @@
 import { IBuffItem } from "../../buff/buff";
 import { Inventory } from "../../inventory/inventory";
-import { Bind } from "../../inventory/items/item";
+import { Bind } from "../../loader/assetmodel";
 import { PlayerStatus } from "./playerctrl";
 const defaultStatus: PlayerStatus = {
     level: 1,

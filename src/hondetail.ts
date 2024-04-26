@@ -1,9 +1,8 @@
 import { BlockStore } from "./store";
 import { HonUser, Session } from "./session";
-import { FollowTxId, GetFollowerTxId, HonDetailTxId, HonReplyLinkTxId, HonTxId, MyHonsTxId } from "./models/tx";
+import { FollowTxId, GetFollowerTxId, HonDetailTxId, MyHonsTxId } from "./models/tx";
 import { HonEntry, ProfileEntry } from "./models/param";
 import { DrawHtmlHonItem } from "./models/honview";
-import { gsap } from "gsap"
 import App, { AppMode } from "./meta/app";
 import { Page } from "./page";
 import { Ui } from "./models/ui";
@@ -224,7 +223,9 @@ export class HonDetail extends Page {
                     this.meta.ModeChange(AppMode.Close)
                 })
         })
-        this.meta.render()
+        .then(() => {
+            this.meta.render()
+        })
 
         const space = document.getElementById("avatar-space") as HTMLAnchorElement
         space.style.height = window.innerHeight - 230 + "px"

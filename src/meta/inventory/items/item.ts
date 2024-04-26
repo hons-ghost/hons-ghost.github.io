@@ -1,5 +1,5 @@
-import { Lang } from "../../lang/lang"
-import { IAsset } from "../../loader/assetmodel"
+import { Bind } from "../../loader/assetmodel"
+import { DeckType } from "./deck"
 import { ItemProperty } from "./itemdb"
 
 export enum ItemType {
@@ -9,6 +9,7 @@ export enum ItemType {
     Potion,
     Material,
     Farm,
+    Deck,
 }
 
 export enum AttackItemType {
@@ -21,14 +22,6 @@ export enum AttackItemType {
     Wand,
 }
 
-export enum Bind {
-    Body, // chainmail, platemail, wizard robe
-    Hands_L, //Gloves
-    Hands_R, //Gloves
-    Head,
-    Legs,
-    Feet,
-}
 
 export enum Level {
     Common,
@@ -40,9 +33,11 @@ export enum Level {
 }
 
 export interface IItem {
-    get Id(): symbol
+    get Id(): string
+    get Name(): string
     get DamageMin(): number
     get DamageMax(): number
+    get ItemType(): ItemType
     get Speed(): number
     get IconPath(): string
     get Bindable(): boolean
@@ -50,19 +45,23 @@ export interface IItem {
     get Mesh(): THREE.Group | undefined
     get AttackType(): AttackItemType | undefined
     get Stackable(): boolean
+    get Deck(): DeckType | undefined
     MakeInformation(): Array<{k?: string, v: string}>
 }
 export class Item implements IItem {
     get Id() { return this.property.id }
     get DamageMin() { return (this.property.damageMin == undefined) ? 0 : this.property.damageMin }
     get DamageMax() { return (this.property.damageMax == undefined) ? 0 : this.property.damageMax }
+    get ItemType() { return this.property.type }
     get Speed() { return (this.property.speed == undefined) ? 0 : this.property.speed }
     get IconPath() { return this.property.icon }
     get Bindable() { return this.property.binding }
     get Bind() { return this.property.bind }
     get Mesh() { return this.property.meshs }
+    get Name() { return this.property.name }
     get AttackType() { return this.property.weapon }
     get Stackable() { return this.property.stackable }
+    get Deck() { return this.property.deck }
     constructor(public property: ItemProperty) {}
 
     MakeInformation() {
@@ -97,7 +96,7 @@ export class Item implements IItem {
     async Loader() {
         const asset = this.property.asset
         if (asset == undefined) return
-        const [meshs, exist] = await asset.UniqModel(this.property.name)
+        const [meshs, _exist] = await asset.UniqModel(this.property.name)
         //const meshs = await asset.CloneModel()
         this.property.meshs = meshs
     }

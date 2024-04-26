@@ -9,13 +9,16 @@ export class Floor extends GhostModel2 implements IObject, IPhysicsObject {
         const v = this.CannonPos
         return new THREE.Vector3(v.x, v.y, v.z)
     }
-    constructor(width: number, height: number, depth: number, position: THREE.Vector3) {
-        const geometry = new THREE.CylinderGeometry(width, height, depth, 8)
+    constructor(width: number) {
+        const geometry = new THREE.CircleGeometry(width, 6)
         const material = new THREE.MeshStandardMaterial({ 
             color: 0xffcc66,
         })
 
         super(geometry, material)
+        this.position.set(0, 0, 0)
+        this.rotateX(-Math.PI / 2)
+        console.log(this)
         this.receiveShadow = true
     }
 }

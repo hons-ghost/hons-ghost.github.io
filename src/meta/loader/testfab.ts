@@ -1,8 +1,6 @@
 import * as THREE from "three";
 import { Loader } from "./loader";
-import { Ani, AssetModel, Char, IAsset, ModelType } from "./assetmodel";
-import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
-import { Bind } from "../inventory/items/item";
+import { Ani, AssetModel, Bind, Char, IAsset, ModelType } from "./assetmodel";
 
 
 export class TestFab extends AssetModel implements IAsset {
@@ -35,7 +33,7 @@ export class TestFab extends AssetModel implements IAsset {
             })
         })
     }
-    GetBodyMeshId(bind: Bind) { return "" }
+    GetBodyMeshId(_bind: Bind) { return "" }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
         return new THREE.Box3().setFromObject(this.meshs)
@@ -46,9 +44,5 @@ export class TestFab extends AssetModel implements IAsset {
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
         return this.size 
-    }
-    GetBoxPos(mesh: THREE.Group) {
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
     }
 }

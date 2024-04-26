@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { EventController, EventFlag } from "../../event/eventctrl";
 import { IKeyCommand, KeyNone, KeyType } from "../../event/keycommand";
 import { GPhysics, IGPhysic } from "../../common/physics/gphysics";
-import { Player } from "../models/player";
+import { Player } from "./player";
 import { DeadState, IPlayerAction, IdleState, JumpState, MagicH1State, MagicH2State, RunState } from "./playerstate";
 import { AttackIdleState, AttackState } from "./attackstate";
 import { Inventory } from "../../inventory/inventory";
@@ -11,7 +11,8 @@ import { PlayerSpec } from "./playerspec";
 import { IBuffItem } from "../../buff/buff";
 import { EffectType } from "../../effects/effector";
 import { InvenFactory } from "../../inventory/invenfactory";
-import { BuildingState, PickFruitState, PlantAPlantState, WateringState } from "./farmstate";
+import { BuildingState, DeleteState, PickFruitState, PickFruitTreeState, PlantAPlantState, WarteringState } from "./farmstate";
+import { DeckState } from "./deckstate";
 
 export enum AttackType {
     NormalSwing,
@@ -20,6 +21,13 @@ export enum AttackType {
     Heal,
     AOE, // Area of effect
     Buff,
+
+    PlantAPlant,
+    Wartering,
+
+    Building,
+
+    Delete,
 }
 
 export type AttackOption = {
@@ -42,7 +50,7 @@ export type PlayerStatus = {
 
 
 export class PlayerCtrl implements IGPhysic {
-
+    mode: AppMode = AppMode.Play
     keyDownQueue: IKeyCommand[] = []
     keyUpQueue: IKeyCommand[] = []
     inputVQueue: THREE.Vector3[] = []
@@ -64,10 +72,12 @@ export class PlayerCtrl implements IGPhysic {
     IdleSt = new IdleState(this, this.player, this.gphysic)
     DyingSt = new DeadState(this, this.player, this.gphysic)
     PickFruitSt = new PickFruitState(this, this.player, this.gphysic)
-    PickFruitTreeSt = new PickFruitState(this, this.player, this.gphysic)
-    PlantASt = new PlantAPlantState(this, this.player, this.gphysic)
-    WarteringSt = new WateringState(this, this.player, this.gphysic, this.invenFab)
-    BuildingSt = new BuildingState(this, this.player, this.gphysic, this.invenFab)
+    PickFruitTreeSt = new PickFruitTreeState(this, this.player, this.gphysic)
+    PlantASt = new PlantAPlantState(this, this.player, this.gphysic, this.eventCtrl)
+    DeckSt = new DeckState(this, this.player, this.gphysic, this.eventCtrl)
+    WarteringSt = new WarteringState(this, this.player, this.gphysic, this.invenFab, this.eventCtrl)
+    BuildingSt = new BuildingState(this, this.player, this.gphysic, this.invenFab, this.eventCtrl)
+    DeleteSt = new DeleteState(this, this.player, this.gphysic, this.eventCtrl)
     currentState: IPlayerAction = this.IdleSt
 
 
@@ -81,21 +91,33 @@ export class PlayerCtrl implements IGPhysic {
         gphysic.Register(this)
 
         eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
-            if(mode == AppMode.EditPlay) {
-                while (this.gphysic.Check(player)) {
-                    player.CannonPos.y += 0.2
+            this.mode = mode
+            if (mode == AppMode.EditPlay || mode == AppMode.Weapon) {
+                switch (e) {
+                    case EventFlag.Start:
+                        while (this.gphysic.Check(player)) {
+                            player.CannonPos.y += 0.2
+                        }
+                        this.currentState = this.IdleSt
+                        this.currentState.Init()
+                        break
+                    case EventFlag.End:
+                        this.currentState.Uninit()
+                        break
                 }
             }
-            if(mode != AppMode.Play) return
-            switch (e) {
-                case EventFlag.Start:
-                    this.spec.ResetStatus()
-                    eventCtrl.OnChangePlayerStatusEvent(this.spec.Status)
-                    this.currentState = this.IdleSt
-                    this.currentState.Init()
-                    break
-                case EventFlag.End:
-                    break
+            if (mode == AppMode.Play) {
+                switch (e) {
+                    case EventFlag.Start:
+                        this.spec.ResetStatus()
+                        eventCtrl.OnChangePlayerStatusEvent(this.spec.Status)
+                        this.currentState = this.IdleSt
+                        this.currentState.Init()
+                        break
+                    case EventFlag.End:
+                        this.currentState.Uninit()
+                        break
+                }
             }
         })
         eventCtrl.RegisterKeyDownEvent((keyCommand: IKeyCommand) => {
@@ -107,7 +129,7 @@ export class PlayerCtrl implements IGPhysic {
             this.keyUpQueue.push(keyCommand)
         })
 
-        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3, vir: THREE.Vector3) => { 
+        eventCtrl.RegisterInputEvent((e: any, real: THREE.Vector3) => { 
             if (!this.contollerEnable) return
             if (e.type == "move") {
                 this.inputVQueue.push(new THREE.Vector3().copy(real))

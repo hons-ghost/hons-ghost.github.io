@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { EventController, EventFlag } from '../../event/eventctrl'
 import { Joystick } from "./joystic";
 import { KeyAction1, KeyAction2, KeyDown, KeyLeft, KeyRight, KeySpace, KeyUp } from "../../event/keycommand";
-import App, { AppMode } from "../../app";
+import { AppMode } from "../../app";
 
 export class Input {
     //dom = document.createElement("div")
@@ -56,22 +56,24 @@ export class Input {
                 case AppMode.Brick:
                 case AppMode.LegoDelete:
                 case AppMode.Lego:
-                case AppMode.Locate:
                 case AppMode.Portal:
+                case AppMode.Farmer:
+                case AppMode.Furniture:
                     if (e == EventFlag.Start) {
                         this.LegacyButtonShow()
                         this.ButtonShow()
-                    } else {
+                    } else if (e == EventFlag.End) {
                         this.LegacyButtonHide()
                         this.ButtonHide()
                     }
                     break;
+                case AppMode.Weapon:
                 case AppMode.EditPlay:
                 case AppMode.Play:
                     if (e == EventFlag.Start) {
                         this.joystick.Show()
                         this.ButtonShow()
-                    } else {
+                    } else if (e == EventFlag.End) {
                         this.joystick.Hide()
                         this.ButtonHide()
                     }

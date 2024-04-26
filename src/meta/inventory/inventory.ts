@@ -1,5 +1,6 @@
 import { Alarm, AlarmType } from "../common/alarm";
-import { Bind, IItem, Item } from "./items/item";
+import { Bind } from "../loader/assetmodel";
+import { IItem, Item } from "./items/item";
 import { ItemDb } from "./items/itemdb";
 
 export type InventorySlot = {
@@ -30,7 +31,7 @@ export class Inventory {
         }
         this.data.inventroySlot.push({ item: item, count: 1 })
     }
-    async NewItem(key: symbol) {
+    async NewItem(key: string) {
         if(this.data.inventroySlot.length == maxSlot) {
             this.alarm.NotifyInfo("인벤토리가 가득찼습니다.", AlarmType.Warning)
             return 
@@ -70,11 +71,19 @@ export class Inventory {
     GetBindItem(pos: Bind) {
         return this.data.bodySlot[pos]
     }
-    GetItemInfo(key: symbol) {
+    GetItemInfo(key: string) {
         return this.itemDb.GetItem(key)
     }
     Copy(inven: InvenData) {
         this.data = inven
+        let index = this.data.inventroySlot.length - 1
+        while (index >= 0) {
+            const slot = this.data.inventroySlot[index]
+            const id = (slot.item as Item).property.id
+            if (id) slot.item = new Item(this.itemDb.GetItem(id))
+            else this.data.inventroySlot.splice(index, 1)
+            index --
+        }
     }
     Clear() {
         this.data.bodySlot.length = 0

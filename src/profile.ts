@@ -1,6 +1,5 @@
-import { BlockStore } from "./store";
 import { Channel } from "./models/com";
-import { HonUser, Session } from "./session";
+import { Session } from "./session";
 import { NewProfileTxId } from "./models/tx";
 import { Rout } from "./libs/router";
 import { Page } from "./page";
@@ -8,14 +7,10 @@ import { Page } from "./page";
 
 export class Profile extends Page implements Rout {
     m_masterAddr: string
-    m_session: Session
     m_img: Blob;
-    public constructor(private blockStore: BlockStore
-        , private session: Session
-        , private ipc: Channel, url: string) {
+    public constructor(private session: Session , private ipc: Channel, url: string) {
         super(url)
         this.m_masterAddr = "";
-        this.m_session = session;
         this.m_img = new Blob()
     }
     MsgHandler(msg: string, param: any): void {
@@ -48,17 +43,17 @@ export class Profile extends Page implements Rout {
     requestResult(ret: any) {
         if ("result" in ret) {
             console.log(ret)
-            window.ClickLoadPage("hondetail", false, `&email=${this.m_session.UserId}`);
+            window.ClickLoadPage("hondetail", false, `&email=${this.session.UserId}`);
         } else {
             this.printLog(ret)
         }
     }
     uploadImage() {
-        if (!this.m_session.CheckLogin()) {
+        if (!this.session.CheckLogin()) {
             this.printLog("need to sign in")
             return
         }
-        const user = this.m_session.GetHonUser();
+        const user = this.session.GetHonUser();
         const formData = new FormData()
         formData.append("file", this.m_img)
         formData.append("key", user.Email)
@@ -98,7 +93,7 @@ export class Profile extends Page implements Rout {
         console.log(prompt,"|", nprompt + prevent19, "|",height, "|",width, "|",step, "|",seed)
         this.ipc.SendMsg("generateImage", prompt, nprompt + prevent19, height, width, step, seed);
     }
-    public async Run(masterAddr: string): Promise<boolean> {
+    public async Run(): Promise<boolean> {
         await this.LoadHtml()
 
         if (!this.ipc.IsOpen()) this.ipc.OpenChannel(window.MasterWsAddr + "/ws")
@@ -113,7 +108,7 @@ export class Profile extends Page implements Rout {
         btn.onclick = () => this.generateImage();
         const uploadBtn = document.getElementById("uploadBtn") as HTMLButtonElement
         uploadBtn.onclick = () => this.uploadImage();
-        if (!this.m_session.CheckLogin()) {
+        if (!this.session.CheckLogin()) {
             this.printLog("sign in을 해야 변경이 가능합니다.")
         }
         return true;

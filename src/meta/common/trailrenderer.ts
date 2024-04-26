@@ -3,7 +3,7 @@
 /**
 * @author Mark Kellogg - http://www.github.com/mkkellogg
 */
-import * as THREE from 'three';
+//import * as THREE from 'three';
 
 //=======================================
 // Trail Renderer

@@ -1,11 +1,12 @@
 import * as THREE from "three";
 import { IPhysicsObject } from "../scenes/models/iobject";
 import { Camera } from "./camera";
-import { Legos } from "../scenes/legos";
-import { EventBricks } from "../scenes/eventbricks";
+import { Legos } from "../scenes/bricks/legos";
+import { EventBricks } from "../scenes/bricks/eventbricks";
 import { Canvas } from "./canvas";
 import { IViewer } from "../scenes/models/iviewer";
 import { EventController } from "../event/eventctrl";
+import { NonLegos } from "../scenes/bricks/nonlegos";
 
 
 export class RayViwer extends THREE.Raycaster implements IViewer {
@@ -17,9 +18,10 @@ export class RayViwer extends THREE.Raycaster implements IViewer {
         private target: IPhysicsObject, 
         private _camera: Camera, 
         private legos: Legos,
+        private nonlegos: NonLegos,
         private eventBricks: EventBricks,
-        private canvas: Canvas,
-        private eventCtrl: EventController
+        canvas: Canvas,
+        eventCtrl: EventController
     ) {
         super()
         canvas.RegisterViewer(this)
@@ -28,60 +30,67 @@ export class RayViwer extends THREE.Raycaster implements IViewer {
             this.target = obj
         })
     }
-    resize(width: number, height: number): void { }
+    resize(): void { }
 
     update(): void {
         if (this.target == undefined) {
-            if (this.opacityBox.length) {
-                this.ResetBox()
-            }
+            this.opacityBox.forEach((box)=> {
+                if (box.length) {
+                    this.ResetBox(box)
+                }
+            })
             return
         }
 
-        this.dir.subVectors(this.target.CannonPos, this._camera.position)
+        this.dir.subVectors(this.target.CenterPos, this._camera.position)
         this.set(this._camera.position, this.dir.normalize())
 
         if (this.legos.instancedBlock != undefined)
             this.CheckVisible(this.legos.instancedBlock)
         if( this.legos.bricks2.length > 0)
-            this.CheckVisibleMeshs(this.legos.bricks2)
+            this.CheckVisibleMeshs(this.legos.bricks2, this.opacityBox[0])
+        if (this.nonlegos.instancedBlock != undefined)
+            this.CheckVisible(this.nonlegos.instancedBlock)
+        if( this.nonlegos.bricks2.length > 0)
+            this.CheckVisibleMeshs(this.nonlegos.bricks2, this.opacityBox[1])
         if (this.eventBricks.instancedBlock != undefined)
             this.CheckVisible(this.eventBricks.instancedBlock)
         if( this.eventBricks.bricks2.length > 0)
-            this.CheckVisibleMeshs(this.eventBricks.bricks2)
+            this.CheckVisibleMeshs(this.eventBricks.bricks2, this.opacityBox[2])
+
     }
+    opacityBox: THREE.Mesh[][] = [[],[], []]
     CheckVisible(physBox: THREE.InstancedMesh) {
         const intersects = this.intersectObject(physBox, false)
-        const dis = this.target.CannonPos.distanceTo(this._camera.position)
+        const dis = this.target.CenterPos.distanceTo(this._camera.position)
         if (intersects.length > 0 && intersects[0].distance < dis) {
             (physBox.material as THREE.MeshStandardMaterial).opacity = 0.5;
         } else {
             (physBox.material as THREE.MeshStandardMaterial).opacity = 1;
         }
     }
-    opacityBox: THREE.Mesh[] = []
-    CheckVisibleMeshs(physBox: THREE.Mesh[]) {
+    CheckVisibleMeshs(physBox: THREE.Mesh[], opacityBox: THREE.Mesh[]) {
         const intersects = this.intersectObjects(physBox, false)
-        const dis = this.target.CannonPos.distanceTo(this._camera.position)
+        const dis = this.target.CenterPos.distanceTo(this._camera.position)
         if (intersects.length > 0 && intersects[0].distance < dis) {
             intersects.forEach((obj) => {
                 if (obj.distance > dis) return false
                 const mesh = obj.object as THREE.Mesh
                 if ((mesh.material as THREE.MeshStandardMaterial).opacity != 0.1) {
-                    this.opacityBox.push(mesh);
+                    opacityBox.push(mesh);
                     mesh.castShadow = false;
                     (mesh.material as THREE.MeshStandardMaterial).opacity = 0.1
                 }
             })
         } else {
-            this.ResetBox()
+            this.ResetBox(opacityBox)
         }
     }
-    ResetBox() {
-        this.opacityBox.forEach((mesh) => {
+    ResetBox(box: THREE.Mesh[]) {
+        box.forEach((mesh) => {
             mesh.castShadow = true;
             (mesh.material as THREE.MeshStandardMaterial).opacity = 1;
         })
-        this.opacityBox.length = 0
+        box.length = 0
     }
 }

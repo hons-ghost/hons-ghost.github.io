@@ -28,13 +28,14 @@ export class Effector {
                 this.meshs.add(lightning.points)
                 break;
             case EffectType.Status:
-                const status = new TextStatus("0", "#ff0000", true)
+                const status = new TextStatus("0", "#ff0000")
                 this.effects[EffectType.Status] = status
                 this.meshs.add(status)
                 break;
             case EffectType.Damage:
                 const damage = new Damage(arg[0], arg[1], arg[2])
                 this.effects[EffectType.Damage] = damage
+                damage.Mesh.position.y += 2
                 this.meshs.add(damage.Mesh)
                 break;
         }

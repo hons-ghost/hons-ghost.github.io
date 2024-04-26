@@ -7,7 +7,7 @@ export interface IGPhysic {
 }
 type MovingBox = {
     model: IPhysicsObject,
-    box: THREE.LineSegments | undefined
+    box: THREE.Mesh | undefined
 }
 export type PhysicBox = {
     pos: THREE.Vector3,
@@ -22,11 +22,19 @@ export class GPhysics {
 
     objs: IGPhysic[] = []
     pboxs = new Map<string, PhysicBox[]>()
+    debugBoxMat = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true})
+    /*debugBoxMat = new THREE.MeshBasicMaterial({ 
+            transparent: true,
+            opacity: .5,
+            color: 0xff0000,
+            //depthWrite: false,
+        })
+        */
 
-    debugBox: THREE.LineSegments[] = []
+    debugBox: THREE.Mesh[] = []
     get LandY() { return this.landPos.y }
 
-    constructor(private scene: THREE.Scene, private eventCtrl: EventController) {
+    constructor(private scene: THREE.Scene, eventCtrl: EventController) {
         eventCtrl.RegisterSceneClearEvent(() => {
             this.PBoxDispose()
         })
@@ -37,6 +45,16 @@ export class GPhysics {
     }
 
     DebugMode(flag: boolean) {
+        console.log("movingBox: ", this.movingBoxs.length)
+        console.log("buildingBox: ", this.debugBox.length)
+        console.log("pbox: ", this.pboxs.size)
+        /*
+        this.pboxs.forEach((vs, k) => {
+            vs.forEach((v) => {
+                console.log(k, v.pos)
+            })
+        })
+        */
         if(flag) {
             this.movingBoxs.forEach((box) => {
                 if (!box.box) return
@@ -57,6 +75,7 @@ export class GPhysics {
     }
 
     PBoxDispose() {
+        console.log("Physical Box Clear")
         this.pboxs.clear()
         this.debugBox.forEach((box) => {
             this.scene.remove(box)
@@ -65,9 +84,7 @@ export class GPhysics {
     }
 
     addPlayer(model: IPhysicsObject) {
-        const geometry = new THREE.BoxGeometry(model.Size.x, model.Size.y, model.Size.z)
-        const wireframe = new THREE.WireframeGeometry(geometry)
-        const box = new THREE.LineSegments(wireframe)
+        const box = new THREE.Mesh(new THREE.BoxGeometry(model.Size.x, model.Size.y, model.Size.z), this.debugBoxMat)
 
         this.player = model
         this.movingBoxs.push({ model: model, box: box })
@@ -76,19 +93,14 @@ export class GPhysics {
     add(...models: IPhysicsObject[]) {
         models.forEach((model) => {
             // for debugggin
-            const geometry = new THREE.BoxGeometry(model.Size.x, model.Size.y, model.Size.z)
-            const wireframe = new THREE.WireframeGeometry(geometry)
-            const box = new THREE.LineSegments(wireframe)
-
+            const box = new THREE.Mesh(new THREE.BoxGeometry(model.Size.x, model.Size.y, model.Size.z), this.debugBoxMat)
             this.movingBoxs.push({ model: model, box: box })
         })
     }
     addMeshBuilding(...models: IBuildingObject[]) {
         models.forEach((model) => {
             // for debugggin
-            const geometry = new THREE.BoxGeometry(model.Size.x, model.Size.y, model.Size.z)
-            const wireframe = new THREE.WireframeGeometry(geometry)
-            const box = new THREE.LineSegments(wireframe)
+            const box = new THREE.Mesh(new THREE.BoxGeometry(model.Size.x, model.Size.y, model.Size.z), this.debugBoxMat)
             const p = model.BoxPos
             box.position.set(p.x, p.y, p.z)
             this.debugBox.push(box)
@@ -102,11 +114,10 @@ export class GPhysics {
     }
     addBuilding(model: IBuildingObject, pos: THREE.Vector3, size: THREE.Vector3, rotation?: THREE.Euler) {
         // for debugggin
-        const geometry = new THREE.BoxGeometry(1, 1, 1)
-        const wireframe = new THREE.WireframeGeometry(geometry)
-        const box = new THREE.LineSegments(wireframe)
+        const box = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), this.debugBoxMat)
         box.position.copy(pos)
         box.scale.copy(size)
+        //box.scale.set(size.x * 1.1, size.y * 1.1, size.z * 1.1)
         if (rotation) box.rotation.copy(rotation)
 
         this.debugBox.push(box)
@@ -118,8 +129,8 @@ export class GPhysics {
         })
     }
     addLand(obj: IPhysicsObject) {
-        this.landPos.y = obj.BoxPos.y + obj.Size.y - 0.3
-        console.log("Land: " , this.landPos)
+        this.landPos.y = 0
+        console.log("Land: " , this.landPos, obj)
     }
     optx = 10
     opty = 10
@@ -155,11 +166,9 @@ export class GPhysics {
     }
     Check(obj: IPhysicsObject): boolean {
         const pos = obj.BoxPos
-
-        if (pos.y < this.landPos.y) return true
+        if (pos.y - obj.Size.y / 2 < this.landPos.y) return true
 
         const keys = this.makeHash(pos, obj.Size)
-
         const ret = keys.some((key) => {
             const boxs = this.pboxs.get(key)
             if (boxs == undefined) return false

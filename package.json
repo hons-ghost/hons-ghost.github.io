@@ -1,5 +1,5 @@
 {
-  "name": "ganada3d",
+  "name": "hons",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -29,6 +29,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@gltf-transform/cli": "^3.10.1",
     "@thednp/color-picker": "^2.0.0-alpha10",
     "bootstrap": "^5.3.2",
     "cannon-es": "^0.20.0",

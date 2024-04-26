@@ -1,6 +1,7 @@
 import App from "./meta/app";
 import { Inventory, InventorySlot } from "./meta/inventory/inventory";
-import { Bind, IItem, Item } from "./meta/inventory/items/item";
+import { IItem, Item } from "./meta/inventory/items/item";
+import { Bind } from "./meta/loader/assetmodel";
 
 
 export class UiInven {

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ISkill, SkillType } from "./skilltree";
+import { SkillType } from "./skilltree";
 import { GPhysics } from "../common/physics/gphysics";
 import { IPhysicsObject } from "../scenes/models/iobject";
 

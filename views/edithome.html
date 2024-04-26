@@ -3,18 +3,8 @@
         fullscreen
     </span>
 </div>
-<div id="brickctrl" class="brickctrl border rounded p-2 m-1 bg-white">
+<div id="brickctrl" class="brickctrl border rounded p-2 m-1 w-75">
     <div class="row">
-        <div class="col p-2 text-center handcursor">
-            <span class="material-symbols-outlined" id="rect">
-                    crop_square
-            </span>
-        </div>
-        <div class="col p-2 text-center handcursor">
-            <span class="material-symbols-outlined" id="rounded_corner">
-                rounded_corner
-            </span>
-        </div>
         <div class="col p-2 text-center handcursor" id="x_value">
             x
         </div>
@@ -49,9 +39,28 @@
             </span>
         </div>
         <div class="col p-2 text-center handcursor">
+            <span class="material-symbols-outlined" id="brickmodeexit">
+                disabled_by_default
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col p-2 text-center handcursor">
+            <span class="material-symbols-outlined" id="rect">
+                    crop_square
+            </span>
+        </div>
+        <div class="col p-2 text-center handcursor">
+            <span class="material-symbols-outlined" id="rounded_corner">
+                rounded_corner
+            </span>
+        </div>
+        <div class="col p-2 text-center handcursor">
             <span class="material-symbols-outlined" id="y_rotation">
                 360
             </span>
+        </div>
+        <div class="col p-2 text-center handcursor">
             <span class="material-symbols-outlined" id="x_rotation">
                 refresh
             </span>
@@ -63,139 +72,135 @@
         </div>
     </div>
 </div>
-<div id="editmenu">
-    <div class="container border rounded p-2 m-1 bg-white">
-        <div class="row">
-            <div class="col p-2 text-center handcursor" id="save">
-                <span class="material-symbols-outlined">
-                    save
-                </span>
-            </div>
+<div id="editmenu" class="container border rounded p-0 m-1">
+    <div class="row m-0">
+        <div class="col p-2 text-center handcursor" id="save">
+            <span class="material-symbols-outlined">
+                save
+            </span>
         </div>
+    </div>
+    <!--
         <div class="row">
             <div class="col p-2 text-center handcursor">
-                <span class="material-symbols-outlined" id="locatmode">
-                    location_on
+                <span class="material-symbols-outlined" id="editplaymode">
+                    play_arrow
                 </span>
             </div>
         </div>
-        <div class="row">
-            <div class="col p-2 text-center handcursor first-menu">
-                <span class="material-symbols-outlined" id="avatarmode">
-                    settings_accessibility
-                </span>
-                <div class="second-menu" id="avatar-second">
-                    <div class="container border rounded p-2 m-1 bg-white">
-                        <div class="row">
-                            <div class="col p-2" id="change-male">
-                                <span class="material-symbols-outlined">
-                                    face
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col p-2" id="change-female">
-                                <span class="material-symbols-outlined">
-                                    face_3
-                                </span>
-                    
-                            </div>
+    -->
+    <div class="row m-0">
+        <div class="col p-2 text-center handcursor first-menu" id="avatarmode">
+            <span class="material-symbols-outlined">
+                settings_accessibility
+            </span>
+            <div class="second-menu container border rounded p-0 m-1" id="avatar-second">
+                    <div class="row">
+                        <div class="col p-2" id="change-male">
+                            <span class="material-symbols-outlined">
+                                face
+                            </span>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col p-2 text-center handcursor first-menu">
-                <span class="material-symbols-outlined" id="funituremode">
-                    home_and_garden
-                </span>
-                <div class="second-menu" id="funiture-second">
-                    <div class="container border rounded p-2 m-1 bg-white">
-                        <div class="row">
-                            <div class="col p-2" id="gate">
-                                <span class="material-symbols-outlined">
-                                    gate
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col p-2" id="apart">
-                                <span class="material-symbols-outlined">
-                                    apartment
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col p-2" id="eraser">
-                                <span class="material-symbols-outlined">
-                                    ink_eraser
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col p-2" id="tree">
-                                <span class="material-symbols-outlined">
-                                    park
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col p-2" id="chair">
-                                <span class="material-symbols-outlined">
-                                    chair
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col p-2" id="reset-brick">
-                                <span class="material-symbols-outlined">
-                                    restart_alt
-                                </span>
-                            </div>
+                    <div class="row">
+                        <div class="col p-2" id="change-female">
+                            <span class="material-symbols-outlined">
+                                face_3
+                            </span>
+
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col p-2 text-center handcursor">
-                <span class="material-symbols-outlined" id="brickmode">
-                    crop_square
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col p-2 text-center handcursor" id="weaponmode">
-                <span class="material-symbols-outlined">
-                    bomb
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col p-2 text-center handcursor">
-                <span class="_tooltip-wrap" style="width:100%;">
-                    <span style="width:100%;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                        <span class="material-symbols-outlined">
-                            help
-                        </span>
-                    </span>
-                    <div class="_tooltip-left" style="top:-20px;left:50px;width:220px;">
-                        각 아이콘별 설명을<br>확인해보세요~!
-                    </div>
-                </span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col p-2 text-center handcursor" id="exit">
-                <span class="material-symbols-outlined">
-                    door_open
-                </span>
             </div>
         </div>
     </div>
+    <div class="row m-0">
+        <div class="col p-2 text-center handcursor first-menu">
+            <span class="material-symbols-outlined" id="funituremode">
+                home_and_garden
+            </span>
+            <div class="second-menu container border rounded p-0 m-1" id="funiture-second">
+                <div class="row">
+                    <div class="col p-2" id="gate">
+                        <span class="material-symbols-outlined">
+                            gate
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col p-2" id="apart">
+                        <span class="material-symbols-outlined">
+                            apartment
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col p-2 text-center handcursor" id="brickmode">
+                        <span class="material-symbols-outlined">
+                            crop_square
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col p-2" id="eraser">
+                        <span class="material-symbols-outlined">
+                            ink_eraser
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col p-2" id="tree">
+                        <span class="material-symbols-outlined">
+                            park
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col p-2" id="chair">
+                        <span class="material-symbols-outlined">
+                            chair
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col p-2" id="reset-brick">
+                        <span class="material-symbols-outlined">
+                            restart_alt
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row m-0">
+        <div class="col p-2 text-center handcursor" id="weaponmode">
+            <span class="material-symbols-outlined">
+                cards<!--bomb-->
+            </span>
+        </div>
+    </div>
+    <div class="row m-0">
+        <div class="col p-2 text-center handcursor">
+            <span class="_tooltip-wrap" style="width:100%;">
+                <span style="width:100%;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <span class="material-symbols-outlined">
+                        help
+                    </span>
+                </span>
+                <div class="_tooltip-left" style="top:-20px;left:50px;width:220px;">
+                    각 아이콘별 설명을<br>확인해보세요~!
+                </div>
+            </span>
+        </div>
+    </div>
+    <div class="row m-0">
+        <div class="col p-2 text-center handcursor" id="exit">
+            <span class="material-symbols-outlined">
+                door_open
+            </span>
+        </div>
+    </div>
 </div>
-<div id="invenContent" class="inven rounded p-2 m-1">
+<div id="invenContent" class="inven border rounded p-2 m-1">
     <div class="row">
         <div class="col">
             <ul class="nav nav-underline" id="pills-tab" role="tablist">
@@ -388,7 +393,7 @@
             </span>
         </div>
         <div class="col p-2">
-            행동하기<br>(심기, 수확하기)
+            심기 (수확하기)
         </div>
         <div class="col-auto p-2 text-center">
             <span class="material-symbols-outlined">
@@ -397,6 +402,11 @@
         </div>
         <div class="col p-2">
             물주기
+        </div>
+        <div class="col p-2 handcursor" id="plantctrlexit">
+            <span class="material-symbols-outlined">
+                disabled_by_default
+            </span>
         </div>
     </div>
     <div class="row handcursor" id="plantslot0">
@@ -451,4 +461,6 @@
         </div>
         <div class="col p-1"> 작업대를 만듭니다.<br>나무: 5</div>
     </div>
+</div>
+<div id="extension">
 </div>

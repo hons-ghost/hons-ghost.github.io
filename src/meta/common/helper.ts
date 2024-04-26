@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { GUI } from "lil-gui"
-import { Player } from "../scenes/models/player"
+import { Player } from "../scenes/player/player"
 import { EventController } from "../event/eventctrl"
 import { Game } from "../scenes/game"
 import { IKeyCommand, KeyType } from "../event/keycommand"
@@ -9,7 +9,7 @@ import { NpcManager } from "../scenes/npcmanager";
 import { Portal } from "../scenes/models/portal";
 import { Floor } from "../scenes/models/floor";
 import { GPhysics } from "./physics/gphysics";
-import { Legos } from "../scenes/legos";
+import { Legos } from "../scenes/bricks/legos";
 import { Camera } from "./camera";
 import { RayViwer } from "./raycaster";
 import { IViewer } from "../scenes/models/iviewer";
@@ -32,18 +32,18 @@ export class Helper implements IViewer {
 
     constructor(
         private scene: Game,
-        private player: Player,
+        player: Player,
         private playerCtrl: PlayerCtrl,
-        private npcs: NpcManager,
-        private portal: Portal,
-        private floor: Floor,
-        private legos: Legos,
-        private camera: Camera,
+        npcs: NpcManager,
+        portal: Portal,
+        floor: Floor,
+        legos: Legos,
+        camera: Camera,
         private rayViewer: RayViwer,
         private physics: GPhysics,
-        private canvas: Canvas,
-        private eventCtrl: EventController,
-        private drop: Drop
+        canvas: Canvas,
+        eventCtrl: EventController,
+        drop: Drop
     ) {
         this.gui.hide()
         this.gui.close()
@@ -60,7 +60,7 @@ export class Helper implements IViewer {
         const bp = this.CreateMeshGui(legos.brickfield, "Brick Field")
         bp.add(legos.brickfield, 'visible').listen().name("visible")
 
-        const ffp = this.gui.addFolder("floor")
+        const ffp = this.CreateMeshGui(floor, "floor")
         ffp.add(floor, 'visible').listen().name("visible")
 
         this.arrowHelper = new THREE.ArrowHelper(rayViewer.ray.direction, rayViewer.ray.origin, 300, 0x00ff00)
@@ -75,7 +75,7 @@ export class Helper implements IViewer {
         })
         canvas.RegisterViewer(this)
     }
-    resize(width: number, height: number): void { }
+    resize(): void { }
     update(): void {
         this.arrowHelper.position.copy(this.rayViewer.ray.origin)
         this.arrowHelper.setDirection(this.rayViewer.ray.direction)

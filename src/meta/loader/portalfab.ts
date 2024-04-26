@@ -17,27 +17,30 @@ export class PortalFab extends AssetModel implements IAsset {
                 child.castShadow = true
                 child.receiveShadow = true
             })
+            this.meshs.children[0].position.y += .8
         })
     }
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
-        const s = this.GetSize(mesh)
+        // Don't Use this.meshs
+        if (this.box == undefined) {
+            const s = this.GetSize(mesh)
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
+        }
+
         const p = this.GetBoxPos(mesh)
-        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
-        box.position.set(p.x, p.y, p.z)
-        return new THREE.Box3().setFromObject(box)
+        this.box.position.set(p.x, p.y, p.z)
+        return new THREE.Box3().setFromObject(this.box)
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
+        if (this.meshs == undefined) this.meshs = mesh
+        if (this.size) return this.size
         const bbox = new THREE.Box3().setFromObject(mesh)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x)
         this.size.z = Math.ceil(this.size.z)
+        console.log(this.meshs, this.size)
         return this.size 
     }
     GetBodyMeshId() { return "mixamorigRightHand" }
-
-    GetBoxPos(mesh: THREE.Group) {
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
-    }
 }

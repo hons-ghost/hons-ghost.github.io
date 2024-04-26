@@ -42,20 +42,20 @@ class Index {
     inven = new UiInven(this.meta)
     ipc = new Socket
     router = new Router(this.ipc)
-    newHon = new NewHon(this.blockStore, this.session, this.ipc, "views/newhon.html")
-    profile = new Profile(this.blockStore, this.session, this.ipc, "views/profile.html")
+    newHon = new NewHon(this.session, this.ipc, "views/newhon.html")
+    profile = new Profile(this.session, this.ipc, "views/profile.html")
 
     CurrentPage?: IPage
     funcMap: FuncMap = {
-        "signin": new Signin(this.blockStore, this.session, "views/signin.html"),
-        "signup":  new Signup(this.blockStore, this.session, "views/signup.html"),
+        "signin": new Signin(this.session, "views/signin.html"),
+        "signup":  new Signup("views/signup.html"),
         "hon": new Hon(this.blockStore, this.session, "views/hon.html"),
         "hons": new Hons(this.blockStore, this.session, this.meta, "views/hons.html"),
         "hondetail": new HonDetail(this.blockStore, this.session, this.meta, "views/hondetail.html"),
         "newhon": this.newHon,
-        "uploadhon": new UploadHon(this.blockStore, this.session, "views/uploadhon.html"),
+        "uploadhon": new UploadHon("views/uploadhon.html"),
         "profile": this.profile,
-        "main": new Main(this.blockStore, this.session, "views/main.html"),
+        "main": new Main(this.blockStore, "views/main.html"),
         "edithome": new EditHome(this.blockStore, this.session, this.meta, this.inven, "views/edithome.html"),
         "play": new Play(this.blockStore, this.session, this.meta, this.inven, "views/play.html"),
     };
@@ -88,7 +88,6 @@ class Index {
                 'args': args
             };
             console.log(`page change : ${this.beforPage} ==> ${key}`)
-            const backUpBeforPage = this.beforPage;
             this.beforPage = key;
 
             this.router.Activate(key)
@@ -106,11 +105,11 @@ class Index {
         };
 
         window.onpopstate = () => {
-            this.includeContentHTML(window.MasterAddr);
+            this.includeContentHTML();
         };
     }
 
-    async includeContentHTML(master: string) {
+    async includeContentHTML() {
         await this.session.DrawHtmlSessionInfo();
         const key = this.getPageIdParam();
         this.beforPage = key;
@@ -183,7 +182,7 @@ class Index {
                         .then((response) => response.json())
                         .then(this.parseResponse)
                         .then(this.loadNodesHtml)
-                        .then((url) => this.includeContentHTML(url))
+                        .then(() => this.includeContentHTML())
                         .catch((err) => {
                             console.log(err)
                             tag.innerHTML = this.errmsg(` Network Down`, ` 사용가능한 Node가 존재하지 않습니다.`);

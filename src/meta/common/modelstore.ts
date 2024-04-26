@@ -2,13 +2,15 @@ import * as THREE from "three";
 import SConf from "../configs/staticconf";
 import { EventController } from "../event/eventctrl";
 import { Char } from "../loader/assetmodel";
-import { BrickShapeType } from "../scenes/legos";
-import { Npc } from "../scenes/models/npc";
-import { Player } from "../scenes/models/player";
-import { InvenData, Inventory } from "../inventory/inventory";
+import { BrickShapeType } from "../scenes/bricks/legos";
+import { ActionType, Player } from "../scenes/player/player";
+import { InvenData } from "../inventory/inventory";
 import { InvenFactory } from "../inventory/invenfactory";
+import { PlantEntry } from "../scenes/plants/farmer";
+import { FurnEntry } from "../scenes/furniture/carpenter";
+import { DeckEntry } from "../scenes/mondeck";
 
-type Lego = {
+export type Lego = {
     position: THREE.Vector3
     size: THREE.Vector3
     rotation: THREE.Euler
@@ -22,28 +24,38 @@ type Brick = {
 }
 
 type StoreData = {
+    furn: FurnEntry[]
+    plants: PlantEntry[]
+    monDeck: DeckEntry[]
     bricks: Brick[]
     legos: Lego[]
+    nonlegos: Lego[]
     owner: THREE.Vector3 | undefined
     ownerModel: Char | undefined
+    ownerAction: ActionType
     portal: THREE.Vector3 | undefined
 }
 
 export interface IModelReload {
     Reload(): Promise<void>
-    Massload(): Promise<void>
+    Viliageload(): Promise<void>
 }
 
 export class ModelStore {
     private mgrs: IModelReload[] = []
-    private owner: Npc | undefined
+    //private owner: Npc | undefined
     private player: Player | undefined
     private playerModel: Char = Char.Male
     private data: StoreData = { 
+        furn: [],
+        plants: [],
+        monDeck: [],
         bricks: [], 
         legos: [], 
+        nonlegos: [],
         owner: undefined, 
         ownerModel: Char.Male, 
+        ownerAction: ActionType.Idle,
         portal: undefined,
     }
     private owners = new Array<THREE.Vector3 | undefined>()
@@ -55,7 +67,11 @@ export class ModelStore {
             new THREE.Vector3().copy(pos) : this.data.portal.copy(pos)
     }
     get Portal(): THREE.Vector3 | undefined { return this.data.portal }
+    get Plants() { return (this.data.plants) ? this.data.plants : this.data.plants = [] }
+    get Deck() { return (this.data.monDeck) ? this.data.monDeck : this.data.monDeck = [] }
+    get Furn() { return (this.data.furn) ? this.data.furn : this.data.furn = [] }
     get Legos() { return (this.data.legos) ? this.data.legos : this.data.legos = [] }
+    get NonLegos() { return (this.data.nonlegos) ? this.data.nonlegos : this.data.nonlegos = [] }
     get Bricks() { return this.data.bricks }
     get Owner() { return this.data.owner }
     set Owner(v: THREE.Vector3 | undefined) {
@@ -66,6 +82,7 @@ export class ModelStore {
         }
     }
     get OwnerModel() { return this.data.ownerModel }
+    get OwnerAction() { return this.data.ownerAction }
     get PlayerModel() { return this.playerModel }
     get Name() {return this.name}
     constructor(private eventCtrl: EventController, private invenFab: InvenFactory) {
@@ -80,10 +97,7 @@ export class ModelStore {
     RegisterStore(mgr: IModelReload) {
         this.mgrs.push(mgr)
     }
-    RegisterOwner(owner: Npc, mgr: IModelReload) {
-        this.owner = owner
-        this.mgrs.push(mgr)
-    }
+    
     RegisterPlayer(player: Player, mgr: IModelReload) {
         this.player = player
         this.mgrs.push(mgr)
@@ -118,8 +132,9 @@ export class ModelStore {
 
 
     StoreModels() {
-        this.data.owner = this.owner?.Meshs.position
-        this.data.ownerModel = this.owner?.Model
+        this.data.owner = this.player?.Meshs.position
+        this.data.ownerModel = this.player?.Model
+        this.data.ownerAction = (this.player) ? this.player.ActionType : ActionType.Idle
 
         const json = JSON.stringify(this.data)
         return json
@@ -148,6 +163,7 @@ export class ModelStore {
         }
         this.name = name
         this.data = JSON.parse(data)
+        this.data.portal = new THREE.Vector3(this.data.portal?.x, this.data.portal?.y, this.data.portal?.z)
         const promise = this.mgrs.map(async (mgr) => {
                 await mgr.Reload()
             })
@@ -162,7 +178,7 @@ export class ModelStore {
         this.data.legos.length = 0
         this.owners.length = 0
         this.ownerModels.length = 0
-        users.forEach((user, id) => {
+        users.forEach((user) => {
             i++
             const data = JSON.parse(user) as StoreData
             if(i == 0) {
@@ -173,11 +189,12 @@ export class ModelStore {
                 lego.position.x -= SConf.LegoFieldW * i
             })
             this.data.legos.push(...data.legos)
+            this.data.portal = new THREE.Vector3(data.portal?.x, data.portal?.y, data.portal?.z)
             this.owners.push(data.owner)
             this.ownerModels.push(data.ownerModel)
         })
         const promise = this.mgrs.map(async (mgr) => {
-            await mgr.Massload()
+            await mgr.Viliageload()
         })
         await Promise.all(promise)
     }

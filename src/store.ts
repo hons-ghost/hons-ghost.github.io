@@ -1,8 +1,7 @@
-import { InvenData, Inventory } from "./meta/inventory/inventory";
+import { InvenData } from "./meta/inventory/inventory";
 import { HonEntry, ModelsEntry, ProfileEntry } from "./models/param";
-import { GlobalLoadListTx, GlobalLoadTx, GlobalSaveTxId, HonTxId } from "./models/tx";
+import { GlobalLoadListTx, GlobalLoadTx, HonTxId } from "./models/tx";
 
-const MaxUnsignedInt = ((1 << 31) >>> 0); // unsigned int max
 
 export class BlockStore {
     hons = new Map<string, HonEntry>()

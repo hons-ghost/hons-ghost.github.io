@@ -28,7 +28,7 @@ export class InvenFactory {
             d.inventroySlot.push(e)
         }
     }
-    async GetNewItem(key: symbol) {
+    async GetNewItem(key: string) {
         const item = new Item(this.itemDb.GetItem(key))
         await item.Loader()
         return item

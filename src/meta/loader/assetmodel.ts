@@ -1,9 +1,18 @@
 import * as THREE from "three";
 import { Loader } from "./loader";
-import { Bind } from "../inventory/items/item";
+
+export enum Bind {
+    Body, // chainmail, platemail, wizard robe
+    Hands_L, //Gloves
+    Hands_R, //Gloves
+    Head,
+    Legs,
+    Feet,
+}
 
 export enum Ani {
     Idle,
+    Walk,
     Run,
     Jump,
     Punch,
@@ -31,6 +40,7 @@ export enum Char{
     Female,
     Tree,
     DeadTree,
+    DeadTree2,
     Mushroom1,
     Mushroom2,
     Portal,
@@ -47,6 +57,15 @@ export enum Char{
     PantherBlue,
     PantherRed,
     AnimalPack,
+    WereWolf,
+    Golem,
+    BigGolem,
+    Snake,
+    Viking,
+    Builder,
+    ToadMage,
+    KittenMonk,
+    Skeleton,
 
     Bat,
     Gun,
@@ -59,11 +78,14 @@ export enum Char{
 }
 export enum ModelType {
     Gltf,
+    GltfParser,
     Fbx
 }
 
 export interface IAsset {
     get Id(): Char
+    get Clips(): Map<Ani, THREE.AnimationClip | undefined>
+    get BoxMesh(): THREE.Mesh | undefined
     GetAnimationClip(id: Ani): THREE.AnimationClip | undefined 
     GetBox(mesh: THREE.Group): THREE.Box3
     GetBoxPos(mesh: THREE.Group): THREE.Vector3
@@ -75,14 +97,18 @@ export interface IAsset {
 }
 
 export class AssetModel {
+    protected box?: THREE.Mesh
     protected meshs?: THREE.Group
     protected size?: THREE.Vector3
     protected mixer?: THREE.AnimationMixer
         protected clips = new Map<Ani, THREE.AnimationClip | undefined>()
     private models = new Map<string, THREE.Group>()
     private mixers = new Map<string, THREE.AnimationMixer>()
+    protected boxMat = new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true})
 
+    get Clips() { return this.clips }
     get Mixer() { return this.mixer }
+    get BoxMesh() { return this.box }
     constructor(
         protected loader: Loader, 
         private loaderType: ModelType,
@@ -129,6 +155,10 @@ export class AssetModel {
                     resolve(gltf.scene)
                 })
             })
+        } else if (this.loaderType == ModelType.GltfParser) {
+            return await new Promise(async (resolve) => {
+                await this.afterLoad(resolve)
+            })
         }
         return await new Promise(async (resolve) => {
             await this.loader.FBXLoader.load(this.path, async (obj) => {
@@ -148,5 +178,11 @@ export class AssetModel {
             */
         }
         return await this.NewModel()
+    }
+    GetBoxPos(mesh: THREE.Group) {
+        // Don't Use this.meshs
+        const v = mesh.position
+        const Y = (this.size)? v.y + this.size.y / 2: v.y
+        return new THREE.Vector3(v.x, Y, v.z)
     }
 }

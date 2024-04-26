@@ -7,7 +7,7 @@ import { Game } from "./game"
 import { UserInfo } from "../common/param"
 import { IModelReload, ModelStore } from "../common/modelstore"
 import { GPhysics } from "../common/physics/gphysics";
-import { Char, IAsset } from "../loader/assetmodel";
+import { Char } from "../loader/assetmodel";
 import SConf from "../configs/staticconf";
 import { AppMode } from "../app";
 
@@ -29,13 +29,13 @@ export class NpcManager implements IModelReload {
         private game: Game,
         private canvas: Canvas,
         private store: ModelStore,
-        private gphysic: GPhysics,
+        gphysic: GPhysics,
     ) {
-        this.helper = new Npc(loader, eventCtrl, gphysic, loader.MaleAsset)
-        this.helper2 = new Npc(loader, eventCtrl, gphysic, loader.FemaleAsset)
-        this.owner = new Npc(loader, eventCtrl, gphysic, loader.MaleAsset)
+        this.helper = new Npc(eventCtrl, gphysic, loader.MaleAsset)
+        this.helper2 = new Npc(eventCtrl, gphysic, loader.FemaleAsset)
+        this.owner = new Npc(eventCtrl, gphysic, loader.MaleAsset)
 
-        this.store.RegisterOwner(this.owner, this)
+        this.store.RegisterStore(this)
 
         this.canvas.RegisterViewer(this.helper)
         this.canvas.RegisterViewer(this.helper2)
@@ -43,7 +43,13 @@ export class NpcManager implements IModelReload {
 
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             switch(mode) {
+                case AppMode.Weapon:
+                case AppMode.Farmer:
+                case AppMode.Furniture:
                 case AppMode.EditPlay:
+                case AppMode.Brick:
+                case AppMode.Lego:
+                case AppMode.LegoDelete:
                     switch (e) {
                         case EventFlag.Start:
                             this.owner.Visible = false
@@ -55,7 +61,6 @@ export class NpcManager implements IModelReload {
                             break
                     }
                     break;
-                case AppMode.Brick:
                 case AppMode.Close:
                 case AppMode.Face:
                     this.eventCtrl.OnChangeCtrlObjEvent(this.owner)
@@ -68,20 +73,6 @@ export class NpcManager implements IModelReload {
                         case EventFlag.End:
                             this.eventCtrl.OnChangeCtrlObjEvent()
                             this.owner.Visible = false
-                            break
-                    }
-                    break;
-                case AppMode.Locate:
-                    switch (e) {
-                        case EventFlag.Start:
-                            this.owner.Visible = true
-                            this.owner.ControllerEnable = true
-                            this.eventCtrl.OnChangeCtrlObjEvent(this.owner)
-                            break
-                        case EventFlag.End:
-                            this.eventCtrl.OnChangeCtrlObjEvent()
-                            this.owner.Visible = false
-                            this.owner.ControllerEnable = false
                             break
                     }
                     break;
@@ -112,27 +103,29 @@ export class NpcManager implements IModelReload {
             this.owner.Init(info.name)
             this.owner.CannonPos = info.position
         }
+        this.owner.ChangeAction(info.actionType)
         this.owner.Visible = true
     }
     async NpcLoader() {
         const p = SConf.DefaultPortalPosition
         return await Promise.all([
-            this.helper.Loader(this.loader.MaleAsset, new THREE.Vector3(p.x - 6, 4.7, p.z + 10), "Adam"),
-            this.helper2.Loader(this.loader.FemaleAsset, new THREE.Vector3(p.x - 4, 4.7, p.z + 10), "Eve"),
-            this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 5, 15), "unknown")
+            this.helper.Loader(this.loader.MaleAsset, new THREE.Vector3(p.x - 6, 0, p.z + 10), "마을 촌장"),
+            this.helper2.Loader(this.loader.FemaleAsset, new THREE.Vector3(p.x - 4, 0, p.z + 10), "Eve"),
+            this.owner.Loader(this.loader.GetAssets(this.ownerModel), new THREE.Vector3(10, 0, 15), "unknown")
         ])
     }
-    async Massload(): Promise<void> {
+    async Viliageload(): Promise<void> {
         this.game.remove(this.owner.Meshs)
     }
     async Reload(): Promise<void> {
         this.game.add(this.owner.Meshs)
         const loadPos = this.store.Owner
-        const info = {
+        const info: UserInfo = {
             name: this.store.Name,
             position: (loadPos == undefined) ?
                 new THREE.Vector3(10, 5, 15) : new THREE.Vector3().copy(loadPos),
             model: (this.store.OwnerModel == undefined) ? Char.Male : this.store.OwnerModel,
+            actionType: this.store.OwnerAction
         }
         
         await this.CreateOwner(info)

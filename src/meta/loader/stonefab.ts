@@ -23,24 +23,25 @@ export class StoneFab extends AssetModel implements IAsset {
     
     GetBox(mesh: THREE.Group) {
         if (this.meshs == undefined) this.meshs = mesh
-        const s = this.GetSize(mesh)
+        // Don't Use this.meshs
+        if (this.box == undefined) {
+            const s = this.GetSize(mesh)
+            this.box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), this.boxMat)
+        }
+
         const p = this.GetBoxPos(mesh)
-        const box = new THREE.Mesh(new THREE.BoxGeometry(s.x, s.y, s.z), new THREE.MeshStandardMaterial())
-        box.position.set(p.x, p.y, p.z)
-        return new THREE.Box3().setFromObject(box)
+        this.box.position.set(p.x, p.y, p.z)
+        return new THREE.Box3().setFromObject(this.box)
     }
     GetSize(mesh: THREE.Group): THREE.Vector3 {
+        if (this.meshs == undefined) this.meshs = mesh
+        if (this.size) return this.size
         const bbox = new THREE.Box3().setFromObject(mesh)
         this.size = bbox.getSize(new THREE.Vector3)
         this.size.x = Math.ceil(this.size.x - 2)
         this.size.y = Math.ceil(this.size.y - 3)
         this.size.z = Math.ceil(this.size.z - 1)
         return this.size 
-    }
-
-    GetBoxPos(mesh: THREE.Group) {
-        const v = mesh.position
-        return new THREE.Vector3(v.x, v.y, v.z)
     }
 
     GetBodyMeshId() { return "mixamorigRightHand" }

@@ -1,7 +1,7 @@
 import { BlockStore } from "./store";
 import { Session } from "./session";
 import { FetchResult, HonEntry } from "./models/param";
-import { HonReplyLinkTxId, HonReplyTxId, HonTxId, MyHonsTxId } from "./models/tx";
+import { HonReplyLinkTxId, HonReplyTxId, HonTxId } from "./models/tx";
 import { DrawHtmlHonItem } from "./models/honview";
 import { Page } from "./page";
 

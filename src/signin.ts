@@ -1,4 +1,3 @@
-import { BlockStore } from "./store";
 import { Session, HonUser } from "./session";
 import { SHA256 } from "./libs/sha256";
 import { SigninTxId } from "./models/tx";
@@ -7,15 +6,12 @@ import { Page } from "./page";
 
 export class Signin extends Page {
     m_masterAddr: string;
-    m_session: Session;
     m_user: HonUser;
 
-    public constructor(private blockStore: BlockStore
-        , private session: Session, url: string) {
+    public constructor(private session: Session, url: string) {
         super(url)
         this.m_user = {Email: "", Nickname:"", Password:""};
         this.m_masterAddr = "";
-        this.m_session = session;
     }
 
     warningMsg(msg: string) {
@@ -25,7 +21,7 @@ export class Signin extends Page {
     }
     loginResult(ret: any) {
         if ("email" in ret) {
-            this.m_session.SignIn({ 
+            this.session.SignIn({ 
                 Email: ret.email, Nickname: ret.id, 
                 Password: this.m_user.Password });
             window.ClickLoadPage("hondetail", false, `&email=${ret.email}`);

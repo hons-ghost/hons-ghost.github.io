@@ -9,7 +9,7 @@ type Client = { [key: string]: Rout }
 export class Router {
     objs: Client
     curId: string
-    public constructor(private ipc: Channel) {
+    public constructor(ipc: Channel) {
         this.curId = ""
         this.objs = {}
 

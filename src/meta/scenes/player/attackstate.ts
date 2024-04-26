@@ -1,11 +1,12 @@
 import * as THREE from "three";
 import { IPlayerAction, State } from "./playerstate"
 import { AttackType, PlayerCtrl } from "./playerctrl";
-import { ActionType, Player } from "../models/player";
+import { ActionType, Player } from "./player";
 import { GPhysics } from "../../common/physics/gphysics";
 import { EventController } from "../../event/eventctrl";
-import { AttackItemType, Bind } from "../../inventory/items/item";
+import { AttackItemType } from "../../inventory/items/item";
 import { PlayerSpec } from "./playerspec";
+import { Bind } from "../../loader/assetmodel";
 
 export class AttackState extends State implements IPlayerAction {
     raycast = new THREE.Raycaster()
@@ -60,9 +61,10 @@ export class AttackState extends State implements IPlayerAction {
     Uninit(): void {
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
     }
+    
     attack() {
         this.player.Meshs.getWorldDirection(this.attackDir)
-        this.raycast.set(this.player.CannonPos, this.attackDir.normalize())
+        this.raycast.set(this.player.CenterPos, this.attackDir.normalize())
     
         const intersects = this.raycast.intersectObjects(this.playerCtrl.targets)
         if (intersects.length > 0 && intersects[0].distance < this.attackDist) {
@@ -87,7 +89,7 @@ export class AttackState extends State implements IPlayerAction {
         }
         this.attackProcess = false
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(delta: number): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
         if(this.clock == undefined) return  this
@@ -119,7 +121,7 @@ export class AttackIdleState extends State implements IPlayerAction {
     Uninit(): void {
         
     }
-    Update(delta: number, v: THREE.Vector3): IPlayerAction {
+    Update(): IPlayerAction {
         const d = this.DefaultCheck()
         if(d != undefined) return d
 

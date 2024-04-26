@@ -154,7 +154,7 @@ export class EditHome extends Page {
             })
     }
 
-    public MenuEvent(email: string) {
+    public MenuEvent() {
         const sav = document.getElementById("save") as HTMLDivElement
         sav.onclick = () => {
             this.alarm.style.display = "block"
@@ -247,7 +247,7 @@ export class EditHome extends Page {
             }
             this.mode = AppMode.EditPlay
             this.UpdateMenu()
-            window.ClickLoadPage("hondetail", false, "&email=" + email)
+            window.history.back()
         }
     }
 
@@ -323,7 +323,7 @@ export class EditHome extends Page {
         if(email == null) return false;
         this.loadHelper()
         this.CanvasRenderer(email)
-        this.MenuEvent(email)
+        this.MenuEvent()
         this.inven.binding()
         this.UpdateMenu()
 

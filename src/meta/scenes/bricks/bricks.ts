@@ -226,22 +226,7 @@ export class Bricks {
             this.brickGuide.CannonPos.y += .5
         }
         if(this.brickGuide.CannonPos.y < 1) this.brickGuide.CannonPos.y = 1
-        /*
-        if (this.physics.CheckBox(this.brickGuide.position, box)) {
-            do {
-                this.brickGuide.position.y += .5
-                box = this.brickGuide.Box
-            } while (this.physics.CheckBox(this.brickGuide.position, box))
-        } else {
-            do {
-                this.brickGuide.position.y -= .5
-                box = this.brickGuide.Box
-            } while (!this.physics.CheckBox(this.brickGuide.position, box)
-                && this.brickGuide.position.y >= this.brickGuide.Size.y / 2)
-
-            this.brickGuide.position.y += .5
-        }
-        */
+      
         if (this.checkEx) this.checkEx()
     }
     ClearEventBrick() {

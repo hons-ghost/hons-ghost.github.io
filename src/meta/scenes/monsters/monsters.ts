@@ -21,6 +21,8 @@ export type MonsterSet = {
     monModel: IPhysicsObject,
     monCtrl: IMonsterCtrl
     live: boolean
+    respawn: boolean
+    initPos?: THREE.Vector3
 }
 export interface IMonsterCtrl {
     get MonsterBox(): MonsterBox
@@ -110,66 +112,73 @@ export class Monsters {
             this.drop.DropItem(z.monModel.CenterPos, z.monCtrl.Drop)
             this.playerCtrl.remove(z.monCtrl.MonsterBox)
             this.respawntimeout = setTimeout(() => {
-                z.monModel.CannonPos.x = this.player.CannonPos.x + Math.floor(math.rand_int(-20, 20))
-                z.monModel.CannonPos.z = this.player.CannonPos.z + Math.floor(math.rand_int(-20, 20))
-                z.live = true
-                z.monCtrl.Respawning()
-
-                while (this.gphysic.Check(z.monModel)) {
-                    z.monModel.CannonPos.y += 0.5
+                if(z.respawn) {
+                    this.Spawning(z, z.initPos)
                 }
-                this.playerCtrl.add(z.monCtrl.MonsterBox)
             }, THREE.MathUtils.randInt(4000, 8000))
         }
     }
     async InitMonster() {
         const zSet = await this.createMon.Call(MonsterId.Zombie)
 
-        this.keytimeout = setTimeout(()=> {
+        setTimeout(() => {
             zSet.monModel.Visible = true
             this.playerCtrl.add(zSet.monCtrl.MonsterBox)
             this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)
 
             this.keytimeout = setTimeout(() => {
-                this.randomSpawning()
+                this.RandomSpawning()
             }, 5000)
         }, 5000)
     }
-    async CreateMonster(id: MonsterId, pos?: THREE.Vector3) {
-        const zSet = await this.createMon.Call(id)
-        if (pos) zSet.monModel.CannonPos.copy(pos)
+    RandomSpawning() {
+        if(this.monsters.length < 30) {
+            this.Spawning()
+            this.keytimeout = setTimeout(() => {
+                this.RandomSpawning()
+            }, 5000)
+        }
+    }
+    async CreateMonster(id: MonsterId, respawn: boolean, pos?: THREE.Vector3) {
+        const zSet = await this.createMon.Call(id, pos)
+        zSet.respawn = respawn
         zSet.monModel.Visible = true
+        zSet.initPos = pos
+
         this.playerCtrl.add(zSet.monCtrl.MonsterBox)
         this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)
     }
     ReleaseMonster() {
         this.monsters.forEach((z) => {
             z.monModel.Visible = false
+            z.live = false
+            this.playerCtrl.remove(z.monCtrl.MonsterBox)
             this.game.remove(z.monModel.Meshs, z.monCtrl.MonsterBox)
         })
+        this.monsters.length = 0
         if (this.keytimeout != undefined) clearTimeout(this.keytimeout)
         if (this.respawntimeout != undefined) clearTimeout(this.respawntimeout)
     }
-    async randomSpawning(){
+    async Spawning(monSet?: MonsterSet, pos?: THREE.Vector3) {
         //const zSet = await this.CreateZombie()
-        const zSet = await this.createMon.Call(MonsterId.Zombie)
+        if (!monSet) monSet = await this.createMon.Call(MonsterId.Zombie)
 
-        zSet.monModel.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
-        zSet.monModel.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
-
-        while (this.gphysic.Check(zSet.monModel)) {
-            zSet.monModel.CannonPos.y += 0.5
+        if(!pos) {
+            monSet.monModel.CannonPos.x = this.player.CannonPos.x + math.rand_int(-20, 20)
+            monSet.monModel.CannonPos.z = this.player.CannonPos.z + math.rand_int(-20, 20)
+        } else {
+            monSet.monModel.CannonPos.copy(pos)
         }
 
-        zSet.monModel.Visible = true
-
-        this.playerCtrl.add(zSet.monCtrl.MonsterBox)
-        this.game.add(zSet.monModel.Meshs, zSet.monCtrl.MonsterBox)
-
-        if (this.monsters.length < 30) {
-            this.keytimeout = setTimeout(() => {
-                this.randomSpawning()
-            }, 5000)
+        while (this.gphysic.Check(monSet.monModel)) {
+            monSet.monModel.CannonPos.y += 0.5
         }
+        monSet.live = true
+        monSet.monCtrl.Respawning()
+
+        monSet.monModel.Visible = true
+
+        this.playerCtrl.add(monSet.monCtrl.MonsterBox)
+        this.game.add(monSet.monModel.Meshs, monSet.monCtrl.MonsterBox)
     }
 }

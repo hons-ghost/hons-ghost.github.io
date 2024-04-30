@@ -33,7 +33,7 @@ export class MonsterDb {
                 { itemId: ItemId.ZombieDeck, ratio: 0.1 }
             ]
         })
-        this.monDb.set(MonsterId.Minataur, {
+        this.monDb.set(MonsterId.Minotaur, {
             type: MonsterType.Beast,
             health: 10,
             speed: 1,
@@ -79,6 +79,123 @@ export class MonsterDb {
             drop: [
                 { itemId: ItemId.Leather, ratio: 0.5 },
                 { itemId: ItemId.BirdmonDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Crab, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.CrabDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Builder, {
+            type: MonsterType.Warrior,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.BuilderDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Golem, {
+            type: MonsterType.Element,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Rocks, ratio: 0.5 },
+                { itemId: ItemId.GolemDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.BigGolem, {
+            type: MonsterType.Element,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Rocks, ratio: 0.5 },
+                { itemId: ItemId.BigGolemDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.KittenMonk, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.KittenMonkDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Skeleton, {
+            type: MonsterType.Undead,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.SkeletonDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Snake, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.SnakeDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.ToadMage, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.ToadMageDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.Viking, {
+            type: MonsterType.Warrior,
+            health: 10,
+            speed: 1,
+            damageMin:1,
+            damageMax: 5,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.VikingDeck, ratio: 0.05 }
+            ]
+        })
+        this.monDb.set(MonsterId.WereWolf, {
+            type: MonsterType.Beast,
+            health: 10,
+            speed: 3,
+            damageMin:8,
+            damageMax: 10,
+            attackSpeed: 2,
+            drop: [
+                { itemId: ItemId.Leather, ratio: 0.5 },
+                { itemId: ItemId.WereWolfDeck, ratio: 0.05 }
             ]
         })
         this.monDb.set(MonsterId.Stone, {

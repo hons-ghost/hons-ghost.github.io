@@ -39,15 +39,32 @@ export class Play extends Page {
             <div class="col xxx-large text-white text-center h2">Game Tips</div>
         </div>
         <div class="row p-2">
-            <div class="col-auto text-white">게임 유형</div>
-            <div class="col text-white">Random</div>
+            <div class="col-auto text-white text-weight-bold">게임 유형</div>
+            <div class="col text-white text-start">Random</div>
         </div>
         <div class="row p-2">
-            <div class="col text-white ">인벤토리의 아이템은 비워진채 시작합니다.</div>
+            <div class="col text-white text-start">인벤토리의 아이템은 비워진채 시작합니다. 수집한 아이템을 저장하기 위해서는 포탈에서 종료 해야합니다. 
+            포탈을 통해 탈출 해야합니다.</div>
         </div>
         <div class="row p-2">
-            <div class="col text-white ">수집한 아이템을 저장하기 위해서는 포탈에서 종료 해야합니다. 
-            포탈을 통해 수집된 아이템은 기존 아이템과 인벤토리에서 병합됩니다.</div>
+            <div class="col text-white">
+                <div class="border rounded bg-secondary p-2 d-inline-block">space</div> or
+                <span class="material-symbols-outlined align-middle">
+                close
+                </span> = 점프
+            </div>
+            <div class="col text-white">
+                <div class="border rounded bg-secondary p-2 d-inline-block ps-3 pe-3">1</div> or
+                <span class="material-symbols-outlined align-middle">
+                circle
+                </span> = 액션 1
+            </div>
+            <div class="col text-white">
+                <div class="border rounded bg-secondary p-2 d-inline-block ps-3 pe-3">2</div> or
+                <span class="material-symbols-outlined align-middle">
+                square
+                </span> = 액션 2
+            </div>
         </div>
         <div class="row p-2">
             <div class="col text-white text-center">

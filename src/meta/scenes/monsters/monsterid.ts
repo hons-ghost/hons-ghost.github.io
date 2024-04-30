@@ -1,7 +1,7 @@
 
 export class MonsterId {
     public static Zombie = Symbol("zombie")
-    public static Minataur = Symbol("minataur")
+    public static Minotaur = Symbol("minataur")
     public static Batpig = Symbol("batpig")
     public static Bilby = Symbol("bilby")
     public static Birdmon = Symbol("birdmon")

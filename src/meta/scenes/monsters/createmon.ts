@@ -28,8 +28,8 @@ export class CreateMon {
     ) {
         this.monsterMap.set(MonsterId.Zombie, async (pos?: THREE.Vector3) => await this.CreateZombie(pos))
     }
-    async Call(id: MonsterId, pos?: THREE.Vector3): Promise<MonsterSet> {
-        const func = this.monsterMap.get(id)
+    async Call(monId: MonsterId, pos?: THREE.Vector3): Promise<MonsterSet> {
+        const func = this.monsterMap.get(monId)
         return (func) ? await func(pos) : undefined
     }
     async CreateZombie(pos?: THREE.Vector3): Promise<MonsterSet> {
@@ -40,7 +40,7 @@ export class CreateMon {
 
         const zCtrl = new ZombieCtrl(this.monsters.length, this.player, zombie, this.legos, this.nonlegos, this.eventBricks, this.gphysic,
             this.eventCtrl, this.monDb.GetItem(MonsterId.Zombie))
-        const monSet: MonsterSet =  { monModel: zombie, monCtrl: zCtrl, live: true }
+        const monSet: MonsterSet =  { monModel: zombie, monCtrl: zCtrl, live: true, respawn: false}
         this.monsters.push(monSet)
         return monSet
     }

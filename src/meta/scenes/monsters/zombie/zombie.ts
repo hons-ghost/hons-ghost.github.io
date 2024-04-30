@@ -49,7 +49,7 @@ export class Zombie extends GhostModel implements IPhysicsObject {
         
         this.meshs = meshs
 
-        this.meshs.position.set(position.x, position.y, position.z)
+        this.meshs.position.copy(position)
 
         if (this.text != undefined) {
             this.meshs.remove(this.text)

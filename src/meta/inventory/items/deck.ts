@@ -36,8 +36,178 @@ export class Deck {
         uniq: false,
         monId: MonsterId.Zombie,
     }
+    static Minotaur: DeckType = {
+        id: "minotaur_deck",
+        title: "미노타우르스의 자식들",
+        contents:`미노타우스는 고대 그리스 신화에 등장하는 괴물로, 크레타 섬에 사는 왕 미노스가 미로 속에 갇히게 한 공포의 존재입니다. 
+        이 괴물은 소의 몸에 인간의 상체를 갖춘 형상으로 묘사되며, 사람의 고기를 먹는 무서운 힘을 가졌습니다.
+        이 카드는 최대 10개의 자식을 소환할 수 있습니다.`,
+        maxLv: 5,
+        minTime: 0,
+        maxTime: 15,
+        maxSpawn: 5,
+        uniq: false,
+        monId: MonsterId.Minotaur,
+    }
+    static BatPig: DeckType = {
+        id: "batpig_deck",
+        title: "이상한 박쥐",
+        contents:`높은 곳도 추적할 수 있습니다.
+        이 카드는 최대 30마리를 소환할 수 있습니다.`,
+        maxLv: 5,
+        minTime: 0,
+        maxTime: 15,
+        maxSpawn: 30,
+        uniq: false,
+        monId: MonsterId.Batpig,
+    }
+    static BirdMon: DeckType = {
+        id: "birdmon_deck",
+        title: "탈출한 타조",
+        contents:`탈출에 5분의 시간이 필요합니다. 5분 이후 사용가능합니다.
+        이 카드는 최대 3마리를 소환할 수 있습니다.`,
+        maxLv: 5,
+        minTime: 5,
+        maxTime: 15,
+        maxSpawn: 3,
+        uniq: false,
+        monId: MonsterId.Birdmon,
+    }
+    static Crap: DeckType = {
+        id: "crap_deck",
+        title: "영혼의 게",
+        contents:`맛있는 요리에 필요한 재료를 얻을 수 있습니다.
+        이 카드는 최대 10마리를 소환할 수 있습니다.`,
+        maxLv: 5,
+        minTime: 5,
+        maxTime: 15,
+        maxSpawn: 10,
+        uniq: false,
+        monId: MonsterId.Crab,
+    }
+    static Builder: DeckType = {
+        id: "builder_deck",
+        title: "노동자",
+        contents:`
+        이 카드는 한번만 사용할 수 있습니다.`,
+        maxLv: 5,
+        minTime: 5,
+        maxTime: 15,
+        maxSpawn: 1,
+        uniq: true,
+        monId: MonsterId.Builder,
+    }
+    static Golem: DeckType = {
+        id: "golem_deck",
+        title: "골렘",
+        contents:`뛰어난 방어력으로 주변 데미지를 흡수합니다.
+        `,
+        maxLv: 5,
+        minTime: 5,
+        maxTime: 15,
+        maxSpawn: 20,
+        uniq: false,
+        monId: MonsterId.Golem,
+    }
+    static BigGolem: DeckType = {
+        id: "biggolem_deck",
+        title: "골렘의왕",
+        contents:`소환된 모든 카드에 뛰어난 방어력을 선사합니다.
+        `,
+        maxLv: 5,
+        minTime: 10,
+        maxTime: 15,
+        maxSpawn: 1,
+        uniq: true,
+        monId: MonsterId.BigGolem,
+    }
+    static KittenMonk: DeckType = {
+        id: "kittenmonk_deck",
+        title: "고양이전사",
+        contents:`너무 귀여워 이동속도를 느리게 만듭니다.
+        `,
+        maxLv: 10,
+        minTime: 5,
+        maxTime: 15,
+        maxSpawn: 1,
+        uniq: true,
+        monId: MonsterId.KittenMonk,
+    }
+    static Skeleton: DeckType = {
+        id: "skeleton_deck",
+        title: "말단 해골전사",
+        contents:`죽지 않고 끊임없이 부활합니다.
+        `,
+        maxLv: 5,
+        minTime: 0,
+        maxTime: 15,
+        maxSpawn: 30,
+        uniq: false,
+        monId: MonsterId.Skeleton,
+    }
+    static Snake: DeckType = {
+        id: "snake_deck",
+        title: "뱀의 왕",
+        contents:`플레이어의 체력을 지속적으로 감소 시킵니다.
+        `,
+        maxLv: 5,
+        minTime: 10,
+        maxTime: 15,
+        maxSpawn: 1,
+        uniq: true,
+        monId: MonsterId.Snake,
+    }
+    static ToadMage: DeckType = {
+        id: "toadmage_deck",
+        title: "개구리전사",
+        contents:`
+        `,
+        maxLv: 5,
+        minTime: 0,
+        maxTime: 15,
+        maxSpawn: 15,
+        uniq: false,
+        monId: MonsterId.ToadMage,
+    }
+    static Viking: DeckType = {
+        id: "viking_deck",
+        title: "바이킹전사",
+        contents:`
+        `,
+        maxLv: 5,
+        minTime: 0,
+        maxTime: 15,
+        maxSpawn: 15,
+        uniq: false,
+        monId: MonsterId.Viking,
+    }
+    static WereWolf: DeckType = {
+        id: "werewolf_deck",
+        title: "늑대인간",
+        contents:`빠르고 강력합니다.
+        `,
+        maxLv: 5,
+        minTime: 5,
+        maxTime: 15,
+        maxSpawn: 3,
+        uniq: false,
+        monId: MonsterId.WereWolf,
+    }
     constructor() {
         Deck.DeckDb.set(Deck.Zombie.id, Deck.Zombie)
+        Deck.DeckDb.set(Deck.Minotaur.id, Deck.Minotaur)
+        Deck.DeckDb.set(Deck.BatPig.id, Deck.BatPig)
+        Deck.DeckDb.set(Deck.BirdMon.id, Deck.BirdMon)
+        Deck.DeckDb.set(Deck.Crap.id, Deck.Crap)
+        Deck.DeckDb.set(Deck.Builder.id, Deck.Builder)
+        Deck.DeckDb.set(Deck.Golem.id, Deck.Golem)
+        Deck.DeckDb.set(Deck.BigGolem.id, Deck.BigGolem)
+        Deck.DeckDb.set(Deck.KittenMonk.id, Deck.KittenMonk)
+        Deck.DeckDb.set(Deck.Skeleton.id, Deck.Skeleton)
+        Deck.DeckDb.set(Deck.Snake.id, Deck.Snake)
+        Deck.DeckDb.set(Deck.ToadMage.id, Deck.ToadMage)
+        Deck.DeckDb.set(Deck.Viking.id, Deck.Viking)
+        Deck.DeckDb.set(Deck.WereWolf.id, Deck.WereWolf)
     }
 }
 /*

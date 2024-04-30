@@ -27,6 +27,8 @@ export type DeckInfo = {
     monId: MonsterId,
     position: THREE.Vector3[]
     title: string
+    max: number
+    createCnt: number
     time: number
     rand: boolean
     uniq: boolean
@@ -71,6 +73,7 @@ export class GameCenter implements IViewer, IModelReload {
             if(mode != AppMode.Play) return
             switch (e) {
                 case EventFlag.Start:
+                    this.deckEmpty = false
                     this.invenFab.inven.Clear()
                     this.StartDeckParse()
                     //delayed start
@@ -139,6 +142,8 @@ export class GameCenter implements IViewer, IModelReload {
                     rand: e.rand,
                     uniq: deck?.uniq,
                     execute: false,
+                    max: deck.maxSpawn,
+                    createCnt: 0
                 })
             }
         })
@@ -161,11 +166,12 @@ export class GameCenter implements IViewer, IModelReload {
                 this.alarm.NotifyInfo(`"${e.title}"이 발동되었습니다.`, AlarmType.Deck)
                 e.execute = true
                 if(e.rand) {
-                    this.monster.CreateMonster(e.monId)
+                    this.monster.CreateMonster(e.monId, true)
                 } else {
                     const idx = THREE.MathUtils.randInt(0, e.position.length - 1)
-                    this.monster.CreateMonster(e.monId, e.position[idx])
+                    this.monster.CreateMonster(e.monId, true, e.position[idx])
                 } 
+                e.createCnt++
                 if(!e.uniq) {
                     this.Respawning(e)
                 }
@@ -173,10 +179,12 @@ export class GameCenter implements IViewer, IModelReload {
         })
     }
     Respawning(deckInfo: DeckInfo) {
+        if (deckInfo.max == deckInfo.createCnt) { console.log("end of creation"); return }
         const interval = THREE.MathUtils.randInt(4000, 8000)
         this.keytimeout = setTimeout(() => {
             const idx = THREE.MathUtils.randInt(0, deckInfo.position.length - 1)
-            this.monster.CreateMonster(deckInfo.monId, deckInfo.position[idx])
+            this.monster.CreateMonster(deckInfo.monId, true, deckInfo.position[idx])
+            deckInfo.createCnt++
             this.Respawning(deckInfo)
         }, interval)
     }
@@ -211,6 +219,7 @@ export class GameCenter implements IViewer, IModelReload {
     }
     async Viliageload(): Promise<void> {
         this.deckInfo.length = 0
+        this.saveData.length = 0
     }
     async Reload(): Promise<void> {
         this.deckInfo.length = 0

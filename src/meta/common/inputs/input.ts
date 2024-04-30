@@ -54,6 +54,7 @@ export class Input {
         this.eventCtrl.RegisterAppModeEvent((mode: AppMode, e: EventFlag) => {
             switch (mode) {
                 case AppMode.Brick:
+                case AppMode.NonLego:
                 case AppMode.LegoDelete:
                 case AppMode.Lego:
                 case AppMode.Portal:

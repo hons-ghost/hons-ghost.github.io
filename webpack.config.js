@@ -2,12 +2,25 @@
 // https://velog.io/@ssh1997/webpack-typescript-%EA%B0%9C%EB%B0%9C%ED%99%98%EA%B2%BD-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.ts", // 번들링 시작 위치
   output: {
     path: path.join(__dirname, "/"), // 번들 결과물 위치
     filename: "bundle.js",
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+          new TerserPlugin({
+            terserOptions: {
+              compress: {
+                drop_console: true,
+              },
+            },
+          }),
+        ],
   },
   module: {
     rules: [

@@ -40,5 +40,6 @@ module.exports = {
     host: "localhost", // live-server host 및 port
     port: 5500,
   },
-  mode: "development", // 번들링 모드 development / production
+  devtool: false,
+  mode: "production", // 번들링 모드 development / production
 };

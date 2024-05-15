@@ -15,9 +15,7 @@ footer {
     position: absolute;
     top:0%;
     left:0%;
-    font-size: 20px;
-    color: #fff;
-    text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;
+    font-size: 30px;
 }
 .navbar {
     width: 100%;
@@ -205,7 +203,7 @@ header {
 }
 
 #progress-bar-container {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     right: 20px;
     transform: translate(0, 0);
@@ -423,7 +421,7 @@ display: inline-block;
     text-align: center;
 }
 .alarm-msg {
-    position: absolute;
+    position: fixed;
     display: none;
     background-color: rgba(0, 0, 0, 0.5);
     color: #fff;
@@ -555,6 +553,7 @@ display: inline-block;
     background-color: rgba(2, 0, 162, 0.6);
     text-align: center;
 }
+
 .gametext {
     color:#fff;
     text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;

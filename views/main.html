@@ -11,50 +11,64 @@
                         role="tab" aria-controls="sns" aria-selected="true">SNS</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-interior-tab" data-bs-toggle="pill" data-bs-target="#interior"
-                        type="button" role="tab" aria-controls="interior" aria-selected="false">인테리어</button>
-                </li>
-                <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-ai-tab" data-bs-toggle="pill" data-bs-target="#ai" type="button"
                         role="tab" aria-controls="ai" aria-selected="false">AI 사진만들기</button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-game-tab" data-bs-toggle="pill" data-bs-target="#game" type="button" role="tab"
+                        aria-controls="game" aria-selected="false">메타버스 게임 플레이</button>
+                </li>
             </ul>
-            <div class="p-0 m-0 main-view" id="tutorial">
+            <div class="p-0 m-0 main-view tab-content" id="tutorial">
                 
             </div>
             <ul class="nav nav-pills nav-fill mt-3 mb-3" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-sns-tab" data-bs-toggle="pill" data-bs-target="#sns" type="button" role="tab"
-                        aria-controls="sns" aria-selected="true">덱시스템</button>
+                    <button class="nav-link" id="pills-deck-tab" data-bs-toggle="pill" data-bs-target="#deck" type="button" role="tab"
+                        aria-controls="deck" aria-selected="true">덱시스템</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-interior-tab" data-bs-toggle="pill" data-bs-target="#interior" type="button"
-                        role="tab" aria-controls="interior" aria-selected="false">동식물 키우기</button>
+                    <button class="nav-link" id="pills-plant-tab" data-bs-toggle="pill" data-bs-target="#plant" type="button"
+                        role="tab" aria-controls="plant" aria-selected="false">동식물 키우기</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-ai-tab" data-bs-toggle="pill" data-bs-target="#ai" type="button" role="tab"
-                        aria-controls="ai" aria-selected="false">메타버스 게임 플레이</button>
+                    <button class="nav-link" id="pills-interior-tab" data-bs-toggle="pill" data-bs-target="#interior"
+                        type="button" role="tab" aria-controls="interior" aria-selected="false">인테리어</button>
                 </li>
             </ul>
             </div>
-        <div class="col">
-            <div class="container">
-                <div class="row">
-                    <div class="col m-2" id="taglist">
+        <div class="col ps-4 pe-0 ms-0 me-0">
+            <div class="container p-1">
+                <div class="row pb-1">
+                    <div class="col">
+                        <span style="font-size: 20px;"><b>Taglist</b></span>
                     </div>
                 </div>
-                <div class="row m-1" id="userlist">
+                <div class="row pb-4">
+                    <div class="col m-0" id="taglist">
+                    </div>
                 </div>
-                <div class="row text-center">
+                <div class="row pb-2 me-2">
+                    <div class="col" id="userlist">
+
+                    </div>
+                </div>
+                <div class="row pb-2 text-center">
                     <div class="col text-center">
                     <div class="spinner-grow text-primary" role="status" id="loadspinner">
                         <span class="visually-hidden"></span>
                     </div>
                     </div>
                 </div>
+                <div class="row pb-1">
+                    <div class="col text-center">
+                        <button type="button" class="btn btn-primary" 
+                        onclick="ClickLoadPage('hons', false)">"#최신글" 마을 구경하기</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </div><!--
     <div class="row p-3">
         <div class="col text-center">
             <button type="button" class="btn btn-primary" 
@@ -62,5 +76,5 @@
             <button type="button" class="btn btn-secondary" 
                         onclick="ClickLoadPage('signup', false)">Sign-Up</button>
         </div>
-    </div>
+    </div>-->
 </div>

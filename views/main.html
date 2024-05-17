@@ -6,38 +6,42 @@
     <div class="row row-cols-1 row-cols-md-2 ps-0 pe-0 ms-0 me-0">
         <div class="col ps-0 pe-0 ms-0 me-0 main-view">
             <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-sns-tab" data-bs-toggle="pill" data-bs-target="#sns" type="button"
-                        role="tab" aria-controls="sns" aria-selected="true">SNS</button>
+                <li class="nav-item dropdown" role="presentation">
+                    <button class="nav-link active dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-target="#sns"
+                        aria-controls="sns" aria-expanded="false" role="tab" aria-selected="true">SNS</button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item active" id="pills-sns-tab" data-bs-toggle="pill" data-bs-target="#sns"
+                                aria-controls="sns" aria-selected="true">SNS</a></li>
+                        <li><a class="dropdown-item" id="pills-ai-tab" data-bs-toggle="pill" data-bs-target="#ai"
+                                aria-controls="ai" aria-selected="false">AI 사진만들기</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-ai-tab" data-bs-toggle="pill" data-bs-target="#ai" type="button"
-                        role="tab" aria-controls="ai" aria-selected="false">AI 사진만들기</button>
+                <li class="nav-item dropdown" role="presentation">
+                    <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" 
+                        type="button" role="tab" aria-selected="false">집,동식물 꾸미기</button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" id="pills-interior-tab" data-bs-toggle="pill" data-bs-target="#interior"
+                                aria-controls="interior" aria-selected="false">인테리어</a></li>
+                        <li><a class="dropdown-item" id="pills-plant-tab" data-bs-toggle="pill" data-bs-target="#plant"
+                                aria-controls="plant" aria-selected="false">농사짓기</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-game-tab" data-bs-toggle="pill" data-bs-target="#game" type="button" role="tab"
-                        aria-controls="game" aria-selected="false">메타버스 게임 플레이</button>
+                <li class="nav-item dropdown" role="presentation">
+                    <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" role="tab"
+                        aria-expaned="false" aria-selected="false">메타버스 게임 플레이</button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" id="pills-game-tab" data-bs-toggle="pill" data-bs-target="#game"
+                                aria-controls="game" aria-selected="false">전투 시스템</a></li>
+                        <li><a class="dropdown-item" id="pills-deck-tab" data-bs-toggle="pill" data-bs-target="#deck"
+                                aria-controls="deck" aria-selected="false">덱시스템</a></li>
+                    </ul>
                 </li>
             </ul>
             <div class="p-0 m-0 main-view tab-content" id="tutorial">
-                
+
             </div>
-            <ul class="nav nav-pills nav-fill mt-3 mb-3" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-interior-tab" data-bs-toggle="pill" data-bs-target="#interior"
-                        type="button" role="tab" aria-controls="interior" aria-selected="false">인테리어</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-plant-tab" data-bs-toggle="pill" data-bs-target="#plant" type="button"
-                        role="tab" aria-controls="plant" aria-selected="false">동식물 키우기</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-deck-tab" data-bs-toggle="pill" data-bs-target="#deck" type="button" role="tab"
-                        aria-controls="deck" aria-selected="true">덱시스템</button>
-                </li>
-            </ul>
-            </div>
-        <div class="col ps-4 pe-0 ms-0 me-0">
+        </div>
+        <div class="col ps-4 pt-2 pe-0 ms-0 me-0">
             <div class="container p-1">
                 <div class="row pb-1">
                     <div class="col">
@@ -55,15 +59,15 @@
                 </div>
                 <div class="row pb-2 text-center">
                     <div class="col text-center">
-                    <div class="spinner-grow text-primary" role="status" id="loadspinner">
-                        <span class="visually-hidden"></span>
-                    </div>
+                        <div class="spinner-grow text-primary" role="status" id="loadspinner">
+                            <span class="visually-hidden"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="row pb-1">
                     <div class="col text-center">
-                        <button type="button" class="btn btn-primary" 
-                        onclick="ClickLoadPage('hons', false)">"#최신글" 마을 구경하기</button>
+                        <button type="button" class="btn btn-primary" onclick="ClickLoadPage('hons', false)">"#최신글" 마을
+                            구경하기</button>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,66 @@
+<div class="container my-3">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header font-weight-bold"> 클랜 마을 만들기 </div>
+                <div class="card-body p-2">
+                    <div class="row pb-2">
+                        <div class="col">
+                            <div class="input-group">
+                                <span class="input-group-text">마을 이름</span>
+                                <input type="text" id="name" class="form-control" aria-describedby="basic-addon3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row pb-2">
+                        <div class="col">
+                            <div class="input-group">
+                                <span class="input-group-text">마을 소개</span>
+                                <textarea type="text" class="form-control" rows="3" id="explain"
+                                    aria-describedby="contentHelp" aria-label="마을 소개"></textarea>
+                            </div>
+                            <p id="information" class="text-center text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="row pb-2">
+                        <div class="col text-center">
+                            <div class="form-check-inline">
+                                <input class="form-check-input" type="radio" name="openFlag" id="exampleRadios1"
+                                    value="open" checked>
+                                <label class="form-check-label" for="exampleRadios1">
+                                    공개
+                                </label>
+                            </div>
+                            <div class="form-check-inline">
+                                <input class="form-check-input" type="radio" name="openFlag" id="exampleRadios2"
+                                    value="close">
+                                <label class="form-check-label" for="exampleRadios2">
+                                    비공개
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small class="input-text">
+                                <ul>
+                                    <li>공개일 경우 누구나 가입할 수 있습니다.</li>
+                                    <li>비공개일 경우 사용자 등록을 직접 해야합니다.</li>
+                                    <li>아이디 하나당 하나의 마을만 만들 수 있습니다.</li>
+                                </ul>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col m-2 text-center">
+                            <button type="button" id="cityBtn" class="btn btn-primary">생성</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

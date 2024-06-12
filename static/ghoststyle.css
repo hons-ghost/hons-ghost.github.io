@@ -553,6 +553,15 @@ display: inline-block;
     background-color: rgba(2, 0, 162, 0.6);
     text-align: center;
 }
+.explain {
+    position: absolute;
+    width:fit-content;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    background-color: rgba(2, 0, 162, 0.6);
+    text-align: center;
+}
 
 .gametext {
     color:#fff;

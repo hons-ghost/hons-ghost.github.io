@@ -562,7 +562,17 @@ display: inline-block;
     background-color: rgba(2, 0, 162, 0.6);
     text-align: center;
 }
-
+.confirmbox {
+    position: fixed;
+    display: none;
+    width:fit-content;
+    top: 5%;
+    left: 50%;
+    z-index: 10;
+    transform: translate(-50%, 0%);
+    background-color: rgba(2, 0, 162, 0.6);
+    text-align: center;
+}
 .gametext {
     color:#fff;
     text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;

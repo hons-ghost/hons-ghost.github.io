@@ -47,6 +47,7 @@ header {
 }
 .container-hons {
     max-width: 520px;
+    display: none;
 }
 .container-detail {
     position: relative;

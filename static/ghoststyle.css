@@ -578,3 +578,12 @@ display: inline-block;
     color:#fff;
     text-shadow: -1px 0px black, 0px 1px black, 1px 0px black, 0px -1px black;
 }
+.citytitle {
+    position: absolute;
+    opacity: 0;
+    top: 20%;
+    left: 50%;
+    font-size:xx-large;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+}

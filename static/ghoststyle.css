@@ -585,5 +585,6 @@ display: inline-block;
     left: 50%;
     font-size:xx-large;
     font-weight: bold;
+    text-align: center;
     transform: translate(-50%, -50%);
 }
